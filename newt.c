@@ -55,6 +55,7 @@ struct newtColors newtDefaultColorPalette = {
 	"blue",					/* scale full */
 	"red",					/* scale empty */
 	"blue", "lightgray",			/* disabled entry fg, bg */
+	"white", "blue",			/* compact button fg, bg */
 };
 
 static struct keymap keymap[] = {
@@ -217,6 +218,9 @@ void newtSetColors(struct newtColors colors) {
 			colors.fullScale);
     SLtt_set_color(NEWT_COLORSET_DISENTRY, "", colors.disabledEntryFg,
 			colors.disabledEntryBg);
+
+    SLtt_set_color(NEWT_COLORSET_COMPACTBUTTON, "", colors.compactButtonFg,
+			colors.compactButtonBg);
 }
 
 int newtGetKey(void) {
