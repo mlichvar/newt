@@ -1,6 +1,22 @@
 #ifndef H_NEWT
 #define H_NEWT
 
+#define COLORSET_ROOT 		2
+#define COLORSET_BORDER 	3
+#define COLORSET_WINDOW		4
+#define COLORSET_SHADOW		5
+#define COLORSET_TITLE		6
+#define COLORSET_BUTTON		7
+#define COLORSET_ACTBUTTON	8
+#define COLORSET_CHECKBOX	9
+#define COLORSET_ACTCHECKBOX	10
+#define COLORSET_ENTRY		11
+#define COLORSET_LABEL		12
+#define COLORSET_LISTBOX	13
+#define COLORSET_ACTLISTBOX	14
+#define COLORSET_TEXTBOX	15
+#define COLORSET_ACTTEXTBOX	16
+
 struct newtColors {
     char * rootFg, * rootBg;
     char * borderFg, * borderBg;
@@ -84,6 +100,7 @@ struct newtExitStruct {
 
 newtComponent newtForm(newtComponent vertBar, char * help, int flags);
 newtComponent newtFormGetCurrent(newtComponent co);
+void newtFormSetBackground(newtComponent co, int color);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
