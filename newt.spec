@@ -59,6 +59,26 @@ rm -rf $RPM_BUILD_ROOT
 
 %postun -p /sbin/ldconfig
 
+%post devel -p /sbin/ldconfig
+
+%postun devel -p /sbin/ldconfig
+
+
+%files
+%defattr (-,root,root)
+%doc CHANGES COPYING
+/usr/lib/libnewt.so.*
+/usr/bin/whiptail
+/usr/lib/python1.5/snack.py*
+/usr/lib/python1.5/lib-dynload/_snackmodule.so
+
+%files devel
+%defattr (-,root,root)
+%doc tutorial.sgml
+/usr/include/newt.h
+/usr/lib/libnewt.a
+/usr/lib/libnewt.so
+
 %changelog
 * Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - bytecompile the snack python module
@@ -237,18 +257,3 @@ of keys
 
 * Tue Feb 25 1997 Erik Troan <ewt@redhat.com>
 - Added changes from sopwith for C++ cleanliness and some listbox fixes.
-
-%files
-%defattr (-,root,root)
-%doc CHANGES COPYING
-/usr/lib/libnewt.so.*
-/usr/bin/whiptail
-/usr/lib/python1.5/snack.py*
-/usr/lib/python1.5/lib-dynload/_snackmodule.so
-
-%files devel
-%defattr (-,root,root)
-%doc tutorial.sgml
-/usr/include/newt.h
-/usr/lib/libnewt.a
-/usr/lib/libnewt.so
