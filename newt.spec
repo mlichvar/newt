@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Feb 03 2000 Erik Troan <ewt@redhat.com>
+- strip shared libs
+
 * Mon Jan 31 2000 Matt Wilson <msw@redhat.com>
 - added patch from Toru Hoshina <t@kondara.org> to improve multibyte
   character wrapping
