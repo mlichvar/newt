@@ -698,6 +698,6 @@ void newtCursorOn(void) {
 
 void newtTrashScreen(void) {
     if (trashScreen)
-	SLsmg_touch_screen();
+	SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
 }
      
