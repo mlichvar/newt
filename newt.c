@@ -113,6 +113,12 @@ void newtSetSuspendCallback(newtSuspendCallback cb) {
     suspendCallback = cb;
 }
 
+void newtFlushInput(void) {
+    while (SLang_input_pending(0)) {
+	SLang_getkey();
+    }
+}
+
 void newtRefresh(void) {
     SLsmg_refresh();
 }
@@ -295,6 +301,8 @@ int newtOpenWindow(int left, int top, int width, int height,
 			  char * title) {
     int i, j, row, col;
     int n;
+
+    newtFlushInput();
 
     if (!currentWindow) {
 	currentWindow = windowStack;
