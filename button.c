@@ -7,7 +7,6 @@
 
 struct button {
     char * text;
-    char bgColor;
     int compact;
 };
 
@@ -54,7 +53,6 @@ static newtComponent createButton(int left, int row, const char * text, int comp
     co->isMapped = 0;
 
     newtGotorc(co->top, co->left);
-    bu->bgColor = -1;
 
     return co;
 }
@@ -76,13 +74,10 @@ static void buttonDestroy(newtComponent co) {
 }
 
 static void buttonPlace(newtComponent co, int newLeft, int newTop) {
-    struct button * bu = co->data;
-
     co->top = newTop;
     co->left = newLeft;
 
     newtGotorc(co->top, co->left);
-    bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
 }
 
 static void buttonDraw(newtComponent co) {
@@ -93,11 +88,6 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
     struct button * bu = co->data;
 
     if (!co->isMapped) return;
-
-    if (bu->bgColor == -1) {
-	newtGotorc(co->top, co->left);
-	bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
-    }
 
     SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
@@ -115,7 +105,7 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
 	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
 	    newtDrawBox(co->left + 1, co->top + 1, co->width - 1, 3, 0);
 
-	    SLsmg_set_color(bu->bgColor);
+	    SLsmg_set_color(NEWT_COLORSET_WINDOW);
 	    newtClearBox(co->left, co->top, co->width, 1);
 	    newtClearBox(co->left, co->top, 1, co->height);
 	} else {
