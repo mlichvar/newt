@@ -50,6 +50,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Thu Apr 30 1998 Erik Troan <ewt@redhat.com>
+
+- removed whiptcl.so -- it should be in a separate package
+
 * Mon Feb 16 1998 Erik Troan <ewt@redhat.com>
 
 - added newtWinMenu()
@@ -101,7 +105,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
-/usr/lib/whiptcl.so
 /usr/lib/python1.4/snack.py
 /usr/lib/python1.4/linux-%{buildarch}/_snackmodule.so
 
