@@ -37,6 +37,7 @@ struct listbox {
 static void listboxDraw(newtComponent co);
 static void listboxDestroy(newtComponent co);
 static struct eventResult listboxEvent(newtComponent co, struct event ev);
+static void newtListboxRealSetCurrent(newtComponent co);
 
 static struct componentOps listboxOps = {
     listboxDraw,
@@ -89,7 +90,8 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     return co;
 }
 
-void newtListboxSetCurrent(newtComponent co, int num) {
+void newtListboxSetCurrent(newtComponent co, int num)
+{
     struct listbox * li = co->data;
     if (num >= li->numItems)
 	li->currItem = li->numItems - 1;
@@ -106,12 +108,18 @@ void newtListboxSetCurrent(newtComponent co, int num) {
 	li->startShowItem = li->numItems - co->height;
     if(li->startShowItem < 0)
 	li->startShowItem = 0;
+    newtListboxRealSetCurrent(co);
+}
+
+static void
+newtListboxRealSetCurrent(newtComponent co)
+{
+    struct listbox * li = co->data;
     if(li->sb)
 	newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
     listboxDraw(co);
     if(co->callback) co->callback(co, co->callbackData);
 }
-
 
 void newtListboxSetWidth(newtComponent co , int width) {
     struct listbox * li = co->data;
@@ -383,11 +391,13 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 
 	switch(ev.u.key) {
 	  case NEWT_KEY_ENTER:
-	    if(li-> flags & NEWT_FLAG_RETURNEXIT)
+	    if(li->numItems <= 0) break;
+	    if(li->flags & NEWT_FLAG_RETURNEXIT)
 		er.result = ER_EXITFORM;
 	    break;
 
 	  case NEWT_KEY_UP:
+	    if(li->numItems <= 0) break;
 	    if(li->currItem > 0) {
 		li->currItem--;
 		if(li->currItem < li->startShowItem)
@@ -401,6 +411,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    break;
 
 	  case NEWT_KEY_DOWN:
+	    if(li->numItems <= 0) break;
 	    if(li->currItem < li->numItems - 1) {
 		li->currItem++;
 		if(li->currItem > (li->startShowItem + co->height - 1)) {
@@ -417,21 +428,42 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    break;
 
 	  case NEWT_KEY_PGUP:
-	    newtListboxSetCurrent(co, li->currItem - co->height + 1);
+	    if(li->numItems <= 0) break;
+	    li->startShowItem -= co->height - 1;
+	    if(li->startShowItem < 0)
+		li->startShowItem = 0;
+	    li->currItem -= co->height - 1;
+	    if(li->currItem < 0)
+		li->currItem = 0;
+	    newtListboxRealSetCurrent(co);
 	    er.result = ER_SWALLOWED;
 	    break;
 
 	  case NEWT_KEY_PGDN:
-	    newtListboxSetCurrent(co, li->currItem + co->height - 1);
+	    if(li->numItems <= 0) break;
+	    li->startShowItem += co->height;
+	    if(li->startShowItem > (li->numItems - co->height)) {
+		li->startShowItem = li->numItems - co->height;
+	    }
+	    li->currItem += co->height;
+	    if(li->currItem > li->numItems) {
+		li->currItem = li->numItems - 1;
+	    }
+	    newtListboxRealSetCurrent(co);
 	    er.result = ER_SWALLOWED;
 	    break;
 
 	  case NEWT_KEY_HOME:
+	    if(li->numItems <= 0) break;
 	    newtListboxSetCurrent(co, 0);
 	    er.result = ER_SWALLOWED;
 	    break;
 
 	  case NEWT_KEY_END:
+	    if(li->numItems <= 0) break;
+	    li->currItem = li->numItems - 1;
+	    li->startShowItem = li->numItems - co->height - 1;
+	    newtListboxRealSetCurrent(co);
 	    newtListboxSetCurrent(co, li->numItems - 1);
 	    er.result = ER_SWALLOWED;
 	    break;
