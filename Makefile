@@ -84,7 +84,7 @@ $(SHAREDDIR)/newt.o: newt.c Makefile
 	$(CC) $(SHCFLAGS) $(CFLAGS) -DVERSION=\"$(VERSION)\" -c -o $@ $<
 
 
-install: $(LIBNEWT) whiltail
+install: $(LIBNEWT) whiptail
 	[ -d $(instroot)/$(bindir) ] || install -m 755 -d $(instroot)/$(bindir)
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	[ -d $(instroot)/$(includedir) ] || install -m 755 -d $(instroot)/$(includedir)
