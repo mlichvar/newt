@@ -60,12 +60,12 @@ clean:
 depend:
 	$(CPP) $(CFLAGS) -M $(SOURCES) > .depend
 
-shareddir:
-	mkdir -p shared
+$(SHAREDDIR):
+	mkdir -p $(SHAREDDIR)
 
-shared: $(LIBNEWTSH)
+sharedlib: $(LIBNEWTSH)
 
-$(LIBNEWTSH): shareddir $(SHAREDOBJS)
+$(LIBNEWTSH): $(SHAREDDIR) $(SHAREDOBJS)
 	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(LIBS)
 
 $(SHAREDDIR)/%.o : %.c
@@ -83,7 +83,7 @@ install: $(LIBNEWT)
 	install -m 644 $(LIBNEWT) $(libdir)
 	install -s -m 755 whiptail $(bindir)
 
-install-sh: shared
+install-sh: sharedlib
 	install -m 755 $(LIBNEWTSH) $(libdir)
 	ln -sf $(LIBNEWTSH) $(libdir)/libnewt.so
 	/sbin/ldconfig

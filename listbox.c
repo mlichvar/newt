@@ -1,7 +1,7 @@
 /* This goofed-up box whacked into shape by Elliot Lee <sopwith@cuc.edu>
    (from the original listbox by Erik Troan <ewt@redhat.com>)
    and contributed to newt for use under the LGPL license.
-   Copyright Elliot Lee 1996 */
+   Copyright (C) 1996, 1997 Elliot Lee */
 
 #include <slang/slang.h>
 #include <stdio.h>
@@ -241,9 +241,6 @@ void newtListboxSetData(newtComponent co, int num, void * data) {
 
 int newtListboxAddEntry(newtComponent co, char * text, void * data) {
     struct listbox * li = co->data;
-#if 1
-    newtListboxInsertEntry(co, text, data, li->numItems + 1);
-#else
     struct items *item;
 
     if(li->boxItems) {
@@ -273,7 +270,6 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
     listboxDraw(co);
     
     return li->numItems;
-#endif
 }
 
 
@@ -286,7 +282,7 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
 	num = li->numItems;
 
     if (li->boxItems) {
-	if(num > 1) {
+	if(num > 0) {
 	    for(i = 0, item = li->boxItems; item->next != NULL && i < num - 1;
 		item = item->next, i++);
 	    t = item->next;
