@@ -6,9 +6,9 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g # -O2 -I/usr/include/slang
 endif
 
-VERSION = 0.25
+VERSION = 0.30
 CVSTAG = r$(subst .,-,$(VERSION))
-SONAME = 0.20
+SONAME = 0.30
 
 PROGS = test whiptail whiptcl.so testgrid
 TESTOBJS = test.o 
