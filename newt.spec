@@ -1,8 +1,8 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.20
+%define version 0.50.21
 Version: %{version}
-Release: 4
+Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -105,6 +105,13 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Mar 30 2001 Matt Wilson <msw@redhat.com>
+- don't blow the stack if we push a help line that is longer than the
+  curret number of columns
+- clip window to screen bounds so that if we get a window that is
+  larger than the screen we can still redraw the windows behind it
+  when we pop
+
 * Sun Feb 11 2001 Than Ngo <than@redhat.com>
 - disable building new-python2 sub package again
 

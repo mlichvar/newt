@@ -394,11 +394,20 @@ int newtOpenWindow(int left, int top, int width, int height,
 
     row = top - 1;
     col = left - 1;
+    /* clip to the current screen bounds - msw */
+    if (row < 0)
+	row = 0;
+    if (col < 0)
+	col = 0;
+    if (left + width > SLtt_Screen_Cols)
+	width = SLtt_Screen_Cols - left;
+    if (top + height > SLtt_Screen_Rows)
+	height = SLtt_Screen_Rows - top;
     n = 0;
     for (j = 0; j < height + 3; j++, row++) {
 	SLsmg_gotorc(row, col);
 	SLsmg_read_raw(currentWindow->buffer + n,
-				currentWindow->width + 3);
+		       currentWindow->width + 3);
 	n += currentWindow->width + 3;
     }
 
@@ -460,10 +469,14 @@ void newtPopWindow(void) {
 
     row = currentWindow->top - 1;
     col = currentWindow->left - 1;
+    if (row < 0)
+	row = 0;
+    if (col < 0)
+	col = 0;
     for (j = 0; j < currentWindow->height + 3; j++, row++) {
 	SLsmg_gotorc(row, col);
 	SLsmg_write_raw(currentWindow->buffer + n,
-				currentWindow->width + 3);
+			currentWindow->width + 3);
 	n += currentWindow->width + 3;
     }
 
@@ -578,9 +591,12 @@ void newtRedrawHelpLine(void) {
     memset(buf, ' ', SLtt_Screen_Cols);
     buf[SLtt_Screen_Cols] = '\0';
 
-    if (currentHelpline)
-	memcpy(buf, *currentHelpline, strlen(*currentHelpline));
-
+    if (currentHelpline) {
+	int len = strlen(*currentHelpline);
+	if (SLtt_Screen_Cols < len)
+	    len = SLtt_Screen_Cols;
+	memcpy(buf, *currentHelpline, len);
+    }
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     SLsmg_write_string(buf);
 }
