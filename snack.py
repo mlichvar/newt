@@ -241,6 +241,7 @@ class GridForm(Grid):
 	self.title = title
 	self.form = Form()
 	self.childList = []
+	self.form_created = 0
 	args = list(args)
 	args[:0] = [self]
 	apply(Grid.__init__, tuple(args))
@@ -253,12 +254,18 @@ class GridForm(Grid):
 		      growx, growy);
 	self.childList.append(widget)
 
-    def run(self):
-	self.place(1,1)
-	for child in self.childList:
-	    self.form.add(child)
-	self.screen.gridWrappedWindow(self, self.title)
-	result = self.form.run()
+    def run_once(self):
+	result = self.run()
 	self.screen.popWindow()
 	return result
+
+    def run(self):
+	if not self.form_created:
+	    self.place(1,1)
+	    for child in self.childList:
+		self.form.add(child)
+	    self.screen.gridWrappedWindow(self, self.title)
+	    self.form_created = 1
+	return self.form.run()
+	
 

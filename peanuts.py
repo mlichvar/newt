@@ -18,7 +18,7 @@ g.add(li, 0, 0)
 g.add(rb, 0, 1, (0, 1, 0, 1))
 g.add(bb, 0, 2, growx = 1)
 
-result = g.run()
+result = g.run_once()
 
 screen.finish()
 
