@@ -66,6 +66,10 @@ class Listbox(Widget):
     def current(self):
 	return self.key2item[self.w.listboxGetCurrent()]
 
+    def setCurrent(self, item):
+	pass
+	#self.w.listboxSetCurrent(self.item2key[item])
+
     def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
 	self.w = _snack.listbox(height, scroll, returnExit)
 	self.key2item = {}
