@@ -11,10 +11,14 @@ import string
 snackArgs = {}
 snackArgs['append'] = -1
 
-class Widget:
+FLAG_DISABLED = _snack.FLAG_DISABLED
+FLAGS_SET = _snack.FLAGS_SET
+FLAGS_RESET = _snack.FLAGS_RESET
+FLAGS_TOGGLE = _snack.FLAGS_TOGGLE
 
-    def setCallback(self, obj):
-	self.w.setCallback(obj)
+class Widget:
+    def setCallback(self, obj, data):
+	self.w.setCallback(obj, data)
 
 class Button(Widget):
 
@@ -122,6 +126,9 @@ class Entry(Widget):
     def set(self, text):
 	return self.w.entrySetValue(text)
 
+    def setFlags (self, flag, sense):
+        return self.w.entrySetFlags(flag, sense)
+
     def __init__(self, width, text = "", hidden = 0, scroll = 1, 
 		 returnExit = 0):
 	self.w = _snack.entry(width, text, hidden, scroll, returnExit)
@@ -169,6 +176,9 @@ class Form:
     def __init__(self):
 	self.trans = {}
 	self.w = _snack.form()
+
+    def setCurrent (self, co):
+        self.w.setcurrent (co.w)
 
 class Grid:
 
@@ -375,6 +385,9 @@ class GridForm(Grid):
 	result = self.form.run()
 	self.screen.popWindow()
 	return result
+
+    def setCurrent (self, co):
+        self.form.setCurrent (co)
 
 class CheckboxTree(Widget):
     def append(self, text, item = None, selected = 0):

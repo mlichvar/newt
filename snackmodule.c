@@ -11,7 +11,7 @@ typedef struct snackWidget_s snackWidget;
 typedef struct snackGrid_s snackGrid;
 typedef struct snackForm_s snackForm;
 
-struct suspendCallbackStruct {
+struct callbackStruct {
     PyObject * cb, * data;
 };
 
@@ -119,12 +119,14 @@ static PyObject * formAdd(snackForm * s, PyObject * args);
 static PyObject * formDraw(snackForm * s, PyObject * args);
 static PyObject * formRun(snackForm * s, PyObject * args);
 static PyObject * formHotKey(snackForm * s, PyObject * args);
+static PyObject * formSetCurrent(snackForm * form, PyObject * args);
 
 static PyMethodDef formMethods[] = {
     { "add", (PyCFunction) formAdd, METH_VARARGS, NULL },
     { "draw", (PyCFunction) formDraw, METH_VARARGS, NULL },
     { "run", (PyCFunction) formRun, METH_VARARGS, NULL },
     { "addhotkey", (PyCFunction) formHotKey, METH_VARARGS, NULL },
+    { "setcurrent", (PyCFunction) formSetCurrent, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -151,6 +153,7 @@ struct snackWidget_s {
     char achar;
     void * apointer;
     int anint;
+    struct callbackStruct scs;
 } ;
 
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
@@ -164,8 +167,8 @@ static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
-static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
-					   PyObject * args);
+static PyObject * widgetCheckboxTreeGetSel(snackWidget * s, PyObject * args);
+static PyObject * widgetEntrySetFlags(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
@@ -182,6 +185,7 @@ static PyMethodDef widgetMethods[] = {
       METH_VARARGS, NULL },
     { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
       METH_VARARGS, NULL },
+    { "entrySetFlags", (PyCFunction) widgetEntrySetFlags, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -201,10 +205,6 @@ static PyTypeObject snackWidgetType = {
         0,                              /* tp_as_sequence */
         0,                		/* tp_as_mapping */
 };
-
-static void callbackEntry(newtComponent co, void * arg) {
-    PyEval_CallObject(arg, arg);
-}
 
 static PyObject * initScreen(PyObject * s, PyObject * args) {
     newtInit();
@@ -260,8 +260,8 @@ static PyObject * screenSize(PyObject * s, PyObject * args) {
     return Py_BuildValue("(ii)", width, height);
 }
 
-static void suspendCallback(void * data) {
-    struct suspendCallbackStruct * scs = data;
+static void suspendCallbackMarshall(void * data) {
+    struct callbackStruct * scs = data;
     PyObject * args, * result;
 
     args = Py_BuildValue("(O)", scs->data);
@@ -273,13 +273,31 @@ static void suspendCallback(void * data) {
     return;
 }
 
-static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
-    static struct suspendCallbackStruct scs;
+static void callbackMarshall(newtComponent co, void * data) {
+    struct callbackStruct * scs = data;
+    PyObject * args, * result;
 
-    if (!PyArg_ParseTuple(args, "OO", &scs.cb, &scs.data))
+    args = Py_BuildValue("(O)", scs->data);
+    result = PyEval_CallObject(scs->cb, args);
+
+    if (!result) {
+	PyErr_Print();
+	PyErr_Clear();
+    }
+    
+    Py_DECREF(args);
+    Py_XDECREF(result);
+
+    return;
+}
+
+static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
+    static struct callbackStruct scs;
+
+    if (!PyArg_ParseTuple(args, "O|O", &scs.cb, &scs.data))
 	return NULL;
 
-    newtSetSuspendCallback(suspendCallback, &scs);
+    newtSetSuspendCallback(suspendCallbackMarshall, &scs);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -670,6 +688,18 @@ static PyObject * formHotKey(snackForm * s, PyObject * args) {
     return Py_None;
 }
 
+static PyObject * formSetCurrent(snackForm * form, PyObject * args) {
+    snackWidget * w;
+
+    if (!PyArg_ParseTuple(args, "O", &w))
+	return NULL;
+
+    newtFormSetCurrent(form->fo, w->co);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject * widgetGetAttr(PyObject * s, char * name) {
     snackWidget * w = (snackWidget *) s;
 
@@ -687,12 +717,10 @@ static PyObject * widgetGetAttr(PyObject * s, char * name) {
 }
 
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
-    PyObject * object;
-
-    if (!PyArg_ParseTuple(args, "O", &object))
+    if (!PyArg_ParseTuple(args, "O|O", &s->scs.cb, &s->scs.data))
 	return NULL;
 
-    newtComponentAddCallback(s->co, callbackEntry, object);
+    newtComponentAddCallback(s->co, callbackMarshall, &s->scs);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -709,6 +737,18 @@ static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args) {
     Py_INCREF(Py_None);
     return Py_None;
 }
+
+static PyObject * widgetEntrySetFlags(snackWidget * s, PyObject * args) {
+    int flag, sense;
+
+    if (!PyArg_ParseTuple(args, "ii", &flag, &sense)) return NULL;
+
+    newtEntrySetFlags(s->co, flag, sense);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 
 static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args) {
     char * text;
@@ -862,4 +902,9 @@ void init_snack(void) {
     PyDict_SetItemString(d, "KEY_F10", PyInt_FromLong(NEWT_KEY_F10));
     PyDict_SetItemString(d, "KEY_F11", PyInt_FromLong(NEWT_KEY_F11));
     PyDict_SetItemString(d, "KEY_F12", PyInt_FromLong(NEWT_KEY_F12));
+
+    PyDict_SetItemString(d, "FLAG_DISABLED", PyInt_FromLong(NEWT_FLAG_DISABLED));
+    PyDict_SetItemString(d, "FLAGS_SET", PyInt_FromLong(NEWT_FLAGS_SET));
+    PyDict_SetItemString(d, "FLAGS_RESET", PyInt_FromLong(NEWT_FLAGS_RESET));
+    PyDict_SetItemString(d, "FLAGS_TOGGLE", PyInt_FromLong(NEWT_FLAGS_TOGGLE));
 }

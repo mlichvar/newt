@@ -203,7 +203,8 @@ static struct eventResult entryEvent(newtComponent co,
 	    /*SLtt_set_cursor_visibility(1);*/
 	    newtGotorc(0, 0);
 	    er.result = ER_SWALLOWED;
-	    if (co->callback) co->callback(co, co->callbackData);
+	    if (co->callback)
+		co->callback(co, co->callbackData);
 	    break;
 
 	case EV_KEYPRESS:
