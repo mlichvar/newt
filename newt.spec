@@ -4,7 +4,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.51.6
 Version: %{version}
-Release: 1
+Release: 2
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Thu Nov  6 2003 Jeremy Katz <katzj@redhat.com> 0.51.6-2
+- rebuild for python 2.3
+
 * Tue Aug 19 2003 Michael K. Johnson <johnsonm@redhat.com> 0.51.6-1
 - rebuild
 
