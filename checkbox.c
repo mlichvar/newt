@@ -71,6 +71,20 @@ newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
     return co;
 }
 
+newtComponent newtRadioGetCurrent(newtComponent setMember) {
+    struct checkbox * rb = setMember->data;
+    
+    setMember = rb->lastButton;
+    rb = setMember->data;
+
+    while (rb && rb->value != '*') {
+	setMember = rb->prevButton;
+	rb = setMember->data;
+    }
+
+    return setMember;
+}
+
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 			   char * seq, char * result) {
     newtComponent co;
