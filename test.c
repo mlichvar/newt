@@ -6,7 +6,7 @@
 
 void main(void) {
     newtComponent b1, b2, r1, r2, r3, e1, e2, e3, l1, l2, l3;
-    newtComponent lb, t;
+    newtComponent lb, t, rsf;
     newtComponent cs[10];
     newtComponent f, chklist;
     char results[10];
@@ -26,8 +26,11 @@ void main(void) {
     b1 = newtButton(3, 1, "Push me");
     b2 = newtButton(18, 1, "Not me");
     r1 = newtRadiobutton(20, 6, "Choice 1", 0, NULL);
-    r2 = newtRadiobutton(20, 7, "Choice 2", 1, r1);
+    r2 = newtRadiobutton(20, 7, "Chc 2", 1, r1);
     r3 = newtRadiobutton(20, 8, "Choice 3", 0, r2);
+    rsf = newtForm(NULL, NULL, 0);
+    newtFormAddComponents(rsf, r1, r2, r3, NULL);
+    newtFormSetBackground(rsf, COLORSET_CHECKBOX);
 
     for (i = 0; i < 10; i++) {
 	sprintf(buf, "Check %d", i);
@@ -45,7 +48,7 @@ void main(void) {
     newtFormSetHeight(chklist, 3);
 
     newtFormAddComponents(f, b1, b2, chklist, NULL);
-    newtFormAddComponents(f, r1, r2, r3, l1, l2, l3, e1, e2, e3, NULL);
+    newtFormAddComponents(f, rsf, l1, l2, l3, e1, e2, e3, NULL);
 
     lb = newtListbox(45, 3, 4, 0);
     newtListboxAddEntry(lb, "First", NULL);
