@@ -14,7 +14,8 @@
 
 /* Linked list of items in the listbox */
 struct items {
-    void *key, *data;
+    void *key;
+    const void *data;
     unsigned char isSelected;
     struct items *next;
 };
@@ -141,7 +142,7 @@ void * newtListboxGetCurrent(newtComponent co) {
 	i++, item = item->next);
 
     if (item)
-	return item->data;
+	return (void *)item->data;
     else
 	return NULL;
 }
@@ -202,12 +203,12 @@ void ** newtListboxGetSelection(newtComponent co, int *numitems)
     for(i = 0, item = li->boxItems; item != NULL;
 	item = item->next)
 	if(item->isSelected)
-	    retval[i++] = item->data;
+	    retval[i++] = (void *)item->data;
     *numitems = li->numSelected;
     return retval;
 }
 
-void newtListboxSetText(newtComponent co, int num, char * text) {
+void newtListboxSetText(newtComponent co, int num, const char * text) {
     struct listbox * li = co->data;
     int i;
     struct items *item;
@@ -232,7 +233,7 @@ void newtListboxSetText(newtComponent co, int num, char * text) {
 	listboxDraw(co);
 }
 
-void newtListboxSetEntry(newtComponent co, int num, char * text) {
+void newtListboxSetEntry(newtComponent co, int num, const char * text) {
     newtListboxSetText(co, num, text);
 }
 
@@ -247,7 +248,8 @@ void newtListboxSetData(newtComponent co, int num, void * data) {
     item->data = data;
 }
 
-int newtListboxAddEntry(newtComponent co, char * text, void * data) {
+int newtListboxAddEntry(newtComponent co, const char * text,
+	const void * data) {
     struct listbox * li = co->data;
     struct items *item;
 
@@ -279,8 +281,8 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 }
 
 
-int newtListboxInsertEntry(newtComponent co, char * text, void * data, 
-			   int num) {
+int newtListboxInsertEntry(newtComponent co, const char * text,
+	const void * data, int num) {
     struct listbox * li = co->data;
     struct items *item, *t;
     int i;
@@ -414,7 +416,7 @@ void newtListboxGetEntry(newtComponent co, int num, char **text, void **data) {
 	if (text)
 	    *text = item->key;
 	if (data)
-	    *data = item->data; 
+	    *data = (void *)item->data; 
     }
 }
 

@@ -25,7 +25,7 @@ static struct componentOps buttonOps = {
     buttonDestroy,
 } ;
 
-static newtComponent createButton(int left, int row, char * text, int compact) {
+static newtComponent createButton(int left, int row, const char * text, int compact) {
     newtComponent co;
     struct button * bu;
 
@@ -55,11 +55,11 @@ static newtComponent createButton(int left, int row, char * text, int compact) {
     return co;
 }
 
-newtComponent newtCompactButton(int left, int row, char * text) {
+newtComponent newtCompactButton(int left, int row, const char * text) {
     return createButton(left, row, text, 1);
 }
 
-newtComponent newtButton(int left, int row, char * text) {
+newtComponent newtButton(int left, int row, const char * text) {
     return createButton(left, row, text, 0);
 }
 

@@ -15,7 +15,7 @@ struct checkbox {
     enum type type;
     char value;
     int active, inactive;
-    void * data;
+    const void * data;
     int flags;
 };
 
@@ -32,8 +32,8 @@ static struct componentOps cbOps = {
     cbDestroy,
 } ;
 
-newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem, void * data, int flags) {
+newtComponent newtListitem(int left, int top, const char * text, int isDefault,
+			      newtComponent prevItem, const void * data, int flags) {
     newtComponent co;
     struct checkbox * li;
 
@@ -51,10 +51,10 @@ newtComponent newtListitem(int left, int top, char * text, int isDefault,
 void * newtListitemGetData(newtComponent co) {
     struct checkbox * rb = co->data;
 
-    return rb->data;
+    return (void *)rb->data;
 }
 
-void newtListitemSet(newtComponent co, char * text) {
+void newtListitemSet(newtComponent co, const char * text) {
     struct checkbox * li = co->data;
 
     free(li->text);
@@ -64,7 +64,7 @@ void newtListitemSet(newtComponent co, char * text) {
 	co->width = strlen(text) + 4;
 }
 
-newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
+newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton) {
     newtComponent co;
     newtComponent curr;
@@ -104,8 +104,8 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
     return setMember;
 }
 
-newtComponent newtCheckbox(int left, int top, char * text, char defValue,
-			   char * seq, char * result) {
+newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
+			   const char * seq, char * result) {
     newtComponent co;
     struct checkbox * cb;
 
@@ -191,7 +191,7 @@ static void cbDestroy(newtComponent co) {
 struct eventResult cbEvent(newtComponent co, struct event ev) {
     struct checkbox * cb = co->data;
     struct eventResult er;
-    char * cur;
+    const char * cur;
 
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {

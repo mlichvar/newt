@@ -31,7 +31,7 @@ static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
 
-static char * defaultHelpLine = 
+static const char * defaultHelpLine = 
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
 ;
 
@@ -105,7 +105,7 @@ static struct keymap keymap[] = {
 };
 static char keyPrefix = '\033';
 
-static char * version = "Newt windowing library version " VERSION
+static const char * version = "Newt windowing library version " VERSION
 			" - (C) 1996 Red Hat Software. "
 		        "Redistributable under the term of the Library "
 		        "GNU Public License. "
@@ -310,7 +310,7 @@ void newtClearKeyBuffer(void) {
 }
 
 int newtOpenWindow(int left, int top, int width, int height, 
-			  char * title) {
+			  const char * title) {
     int j, row, col;
     int n;
     int i;
@@ -353,7 +353,7 @@ int newtOpenWindow(int left, int top, int width, int height,
 	SLsmg_set_char_set(0);
 	SLsmg_write_char(' ');
 	SLsmg_set_color(NEWT_COLORSET_TITLE);
-	SLsmg_write_string(currentWindow->title);
+	SLsmg_write_string((char *)currentWindow->title);
 	SLsmg_set_color(NEWT_COLORSET_BORDER);
 	SLsmg_write_char(' ');
 	SLsmg_set_char_set(1);
@@ -501,7 +501,7 @@ void newtRedrawHelpLine(void) {
     SLsmg_write_string(buf);
 }
 
-void newtPushHelpLine(char * text) {
+void newtPushHelpLine(const char * text) {
     if (!text)
 	text = defaultHelpLine;
     
@@ -527,7 +527,7 @@ void newtPopHelpLine(void) {
     newtRedrawHelpLine();
 }
 
-void newtDrawRootText(int row, int col, char * text) {
+void newtDrawRootText(int row, int col, const char * text) {
     SLsmg_set_color(NEWT_COLORSET_ROOTTEXT);
 
     if (col < 0) {
@@ -539,7 +539,7 @@ void newtDrawRootText(int row, int col, char * text) {
     }
    
     SLsmg_gotorc(row, col);
-    SLsmg_write_string(text);
+    SLsmg_write_string((char *)text);
 }
 
 int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {

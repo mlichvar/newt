@@ -28,7 +28,7 @@ struct form {
     int flags;
     int vertOffset;
     newtComponent vertBar, exitComp;
-    char * help;
+    const char * help;
     int numRows;
     int * hotKeys;
     int numHotKeys;
@@ -56,7 +56,7 @@ static inline int componentFits(newtComponent co, int compNum) {
     return 1;
 }
 
-newtComponent newtForm(newtComponent vertBar, char * help, int flags) {
+newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     newtComponent co;
     struct form * form;
 

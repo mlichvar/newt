@@ -29,7 +29,7 @@ static struct componentOps entryOps = {
     entryDestroy,
 } ;
 
-void newtEntrySet(newtComponent co, char * value, int cursorAtEnd) {
+void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {
     struct entry * en = co->data;
 
     if ((strlen(value) + 1) > (unsigned int)en->bufAlloced) {
@@ -50,7 +50,7 @@ void newtEntrySet(newtComponent co, char * value, int cursorAtEnd) {
     entryDraw(co);
 } ;
 
-newtComponent newtEntry(int left, int top, char * initialValue, int width,
+newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 			char ** resultPtr, int flags) {
     newtComponent co;
     struct entry * en;

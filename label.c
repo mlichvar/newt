@@ -19,7 +19,7 @@ static struct componentOps labelOps = {
     labelDestroy,
 } ;
 
-newtComponent newtLabel(int left, int top, char * text) {
+newtComponent newtLabel(int left, int top, const char * text) {
     newtComponent co;
     struct label * la;
 
@@ -41,7 +41,7 @@ newtComponent newtLabel(int left, int top, char * text) {
     return co;
 }
 
-void newtLabelSetText(newtComponent co, char * text) {
+void newtLabelSetText(newtComponent co, const char * text) {
     int newLength;
     struct label * la = co->data;
 

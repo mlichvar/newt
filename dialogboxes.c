@@ -12,7 +12,7 @@
 
 /* globals -- ick */
 int buttonHeight = 1;
-newtComponent (*makeButton)(int left, int right, char * text) = 
+newtComponent (*makeButton)(int left, int right, const char * text) = 
 		newtCompactButton;
 
 static void addButtons(int height, int width, newtComponent form, 

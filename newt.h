@@ -93,35 +93,35 @@ void newtClearKeyBuffer(void);
 void newtDelay(int usecs);
 /* top, left are *not* counting the border */
 int newtOpenWindow(int left, int top, int width, int height, 
-			  char * title);
+			  const char * title);
 void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);
 void newtSetSuspendCallback(newtSuspendCallback cb);
 void newtResume(void);
-void newtPushHelpLine(char * text);
+void newtPushHelpLine(const char * text);
 void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
-void newtDrawRootText(int row, int col, char * text);
+void newtDrawRootText(int row, int col, const char * text);
 void newtBell(void);
 
 /* Components */
 
-newtComponent newtCompactButton(int left, int top, char * text);
-newtComponent newtButton(int left, int top, char * text);
-newtComponent newtCheckbox(int left, int top, char * text, char defValue,
-			   char * seq, char * result);
-newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
+newtComponent newtCompactButton(int left, int top, const char * text);
+newtComponent newtButton(int left, int top, const char * text);
+newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
+			   const char * seq, char * result);
+newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
-newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem, void * data, int flags);
-void newtListitemSet(newtComponent co, char * text);
+newtComponent newtListitem(int left, int top, const char * text, int isDefault,
+			      newtComponent prevItem, const void * data, int flags);
+void newtListitemSet(newtComponent co, const char * text);
 void * newtListitemGetData(newtComponent co);
 
-newtComponent newtLabel(int left, int top, char * text);
-void newtLabelSetText(newtComponent co, char * text);
+newtComponent newtLabel(int left, int top, const char * text);
+void newtLabelSetText(newtComponent co, const char * text);
 newtComponent newtVerticalScrollbar(int left, int top, int height,
 				    int normalColorset, int thumbColorset);
 void newtScrollbarSet(newtComponent co, int where, int total);
@@ -129,13 +129,13 @@ void newtScrollbarSet(newtComponent co, int where, int total);
 newtComponent newtListbox(int left, int top, int height, int flags);
 void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
-void newtListboxSetText(newtComponent co, int num, char * text);
-void newtListboxSetEntry(newtComponent co, int num, char * text);
+void newtListboxSetText(newtComponent co, int num, const char * text);
+void newtListboxSetEntry(newtComponent co, int num, const char * text);
 void newtListboxSetWidth(newtComponent co, int width);
 /* return the data passed to AddEntry */
 void newtListboxSetData(newtComponent co, int num, void * data);
-int newtListboxAddEntry(newtComponent co, char * text, void * data);
-int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
+int newtListboxAddEntry(newtComponent co, const char * text, const void * data);
+int newtListboxInsertEntry(newtComponent co, const char * text, const void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
 void newtListboxClear(newtComponent co); /* removes all entries from listbox */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
@@ -159,7 +159,7 @@ struct newtExitStruct {
     } u;
 } ;
 
-newtComponent newtForm(newtComponent vertBar, char * help, int flags);
+newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetBackground(newtComponent co, int color);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
@@ -172,9 +172,9 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);
 void newtFormAddHotKey(newtComponent co, int key);
 
-newtComponent newtEntry(int left, int top, char * initialValue, int width,
+newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 			char ** resultPtr, int flags);
-void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
+void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
