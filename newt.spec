@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.5
+%define version 0.50.6
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -55,6 +55,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Mon Jan 31 2000 Matt Wilson <msw@redhat.com>
+- added patch from Toru Hoshina <t@kondara.org> to improve multibyte
+  character wrapping
+
 * Thu Jan 20 2000 Erik Troan <ewt@redhat.com>
 - see CHANGES
 
