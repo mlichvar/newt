@@ -17,8 +17,10 @@ FLAGS_RESET = _snack.FLAGS_RESET
 FLAGS_TOGGLE = _snack.FLAGS_TOGGLE
 
 class Widget:
-    def setCallback(self, obj, data):
-	self.w.setCallback(obj, data)
+    def setCallback(self, obj, data = None):
+        if data:
+            self.w.setCallback(obj, data)
+        self.w.setCallback(obj)
 
 class Button(Widget):
 
@@ -231,8 +233,10 @@ class SnackScreen:
     def finish(self):
 	return _snack.finish()
 
-    def suspendCallback(self, cb, data):
-	return _snack.suspendcallback(cb, data)
+    def suspendCallback(self, cb, data = None):
+        if data:
+            return _snack.suspendcallback(cb, data)
+        return _snack.suspendcallback(cb)
 
     def openWindow(self, left, top, width, height, title):
 	return _snack.openwindow(left, top, width, height, title)

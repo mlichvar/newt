@@ -15,6 +15,8 @@ struct callbackStruct {
     PyObject * cb, * data;
 };
 
+static struct callbackStruct suspend;
+
 static void emptyDestructor(PyObject * s);
 
 static snackWidget * buttonWidget(PyObject * s, PyObject * args);
@@ -158,6 +160,7 @@ struct snackWidget_s {
 
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
 static PyObject * widgetGetAttr(PyObject * s, char * name);
+static void widgetDestructor(PyObject * s);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
 static PyObject * widgetLabelText(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
@@ -199,7 +202,7 @@ static PyTypeObject snackWidgetType = {
         "snackwidget",                  /* tp_name */
         sizeof(snackWidget),            /* tp_size */
         0,                              /* tp_itemsize */
-        emptyDestructor,      		/* tp_dealloc */
+        widgetDestructor,      		/* tp_dealloc */
         0,                              /* tp_print */
         widgetGetAttr,  		/* tp_getattr */
         0,                              /* tp_setattr */
@@ -210,7 +213,21 @@ static PyTypeObject snackWidgetType = {
         0,                		/* tp_as_mapping */
 };
 
+static snackWidget * snackWidgetNew (void) {
+    snackWidget * widget;
+     
+    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+
+    widget->scs.cb = NULL;
+    widget->scs.data = NULL;
+
+    return widget;
+}
+
 static PyObject * initScreen(PyObject * s, PyObject * args) {
+    suspend.cb = NULL;
+    suspend.data = NULL;
+    
     newtInit();
     newtCls();
 
@@ -236,7 +253,7 @@ static PyObject * scaleWidget(PyObject * s, PyObject * args) {
 
     if (!PyArg_ParseTuple(args, "ii", &width, &fullAmount)) return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtScale(-1, -1, width, fullAmount);
 
     return (PyObject *) widget;
@@ -268,10 +285,18 @@ static void suspendCallbackMarshall(void * data) {
     struct callbackStruct * scs = data;
     PyObject * args, * result;
 
-    args = Py_BuildValue("(O)", scs->data);
-    result = PyEval_CallObject(scs->cb, args);
+    if (scs->data) {
+	args = Py_BuildValue("(O)", scs->data);
+	result = PyEval_CallObject(scs->cb, args);
+	Py_DECREF (args);
+    } else
+	result = PyEval_CallObject(scs->cb, NULL);
+    
+    if (!result) {
+	PyErr_Print();
+	PyErr_Clear();
+    }
 
-    Py_DECREF(args);
     Py_XDECREF(result);
 
     return;
@@ -281,27 +306,31 @@ static void callbackMarshall(newtComponent co, void * data) {
     struct callbackStruct * scs = data;
     PyObject * args, * result;
 
-    args = Py_BuildValue("(O)", scs->data);
-    result = PyEval_CallObject(scs->cb, args);
+    if (scs->data) {
+	args = Py_BuildValue("(O)", scs->data);
+	result = PyEval_CallObject(scs->cb, args);
+	Py_DECREF (args);
+    } else
+	result = PyEval_CallObject(scs->cb, NULL);
 
     if (!result) {
 	PyErr_Print();
 	PyErr_Clear();
     }
     
-    Py_DECREF(args);
     Py_XDECREF(result);
 
     return;
 }
 
 static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
-    static struct callbackStruct scs;
-
-    if (!PyArg_ParseTuple(args, "O|O", &scs.cb, &scs.data))
+    if (!PyArg_ParseTuple(args, "O|O", &suspend.cb, &suspend.data))
 	return NULL;
 
-    newtSetSuspendCallback(suspendCallbackMarshall, &scs);
+    Py_INCREF (suspend.cb);
+    Py_XINCREF (suspend.data);    
+    
+    newtSetSuspendCallback(suspendCallbackMarshall, &suspend);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -450,7 +479,7 @@ static snackWidget * buttonWidget(PyObject * s, PyObject * args) {
 
     if (!PyArg_ParseTuple(args, "s", &label)) return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtButton(-1, -1, label);
 
     return widget;
@@ -462,7 +491,7 @@ static snackWidget * labelWidget(PyObject * s, PyObject * args) {
 
     if (!PyArg_ParseTuple(args, "s", &label)) return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtLabel(-1, -1, label);
 
     return widget;
@@ -498,7 +527,7 @@ static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i|ii", &height, &doScroll, &returnExit))
 	return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtListbox(-1, -1, height,
 				(doScroll ? NEWT_FLAG_SCROLL : 0) |
 				(returnExit ? NEWT_FLAG_RETURNEXIT : 0));
@@ -517,7 +546,7 @@ static snackWidget * textWidget(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "iis|ii", &width, &height, &text, &scrollBar, &wrap))
 	return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtTextbox(-1, -1, width, height,
 				(scrollBar ? NEWT_FLAG_SCROLL : 0) |
  			        (wrap ? NEWT_FLAG_WRAP : 0));
@@ -534,7 +563,7 @@ static snackWidget * radioButtonWidget(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "sOi", &text, &group, &isOn)) 
 		return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
 
     if ((PyObject *) group == Py_None)
 	widget->co = newtRadiobutton(-1, -1, text, isOn, NULL);
@@ -551,7 +580,7 @@ static snackWidget * checkboxWidget(PyObject * s, PyObject * args) {
 
     if (!PyArg_ParseTuple(args, "si", &text, &isOn)) return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtCheckbox(-1, -1, text, isOn ? '*' : ' ', NULL, 
 				&widget->achar);
 
@@ -579,7 +608,7 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "isiii", &width, &initial,
 			  &isHidden, &isScrolled, &returnExit)) return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtEntry(-1, -1, initial, width, (char **) &widget->apointer, 
 			   (isHidden ? NEWT_FLAG_HIDDEN : 0) |
 			   (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
@@ -732,10 +761,25 @@ static PyObject * widgetGetAttr(PyObject * s, char * name) {
     return Py_FindMethod(widgetMethods, s, name);
 }
 
+static void widgetDestructor(PyObject * o) {
+    snackWidget * s = (snackWidget *) o;
+    
+    Py_XDECREF (s->scs.cb);
+    Py_XDECREF (s->scs.data);
+
+    PyMem_DEL(o);
+}
+
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
+    s->scs.cb = NULL;
+    s->scs.data = NULL;
+    
     if (!PyArg_ParseTuple(args, "O|O", &s->scs.cb, &s->scs.data))
 	return NULL;
 
+    Py_INCREF (s->scs.cb);
+    Py_XINCREF (s->scs.data);
+    
     newtComponentAddCallback(s->co, callbackMarshall, &s->scs);
 
     Py_INCREF(Py_None);
@@ -843,7 +887,7 @@ static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i|i", &height, &scrollBar))
 	return NULL;
 
-    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget = snackWidgetNew ();
     widget->co = newtCheckboxTree(-1, -1, height,
 				  scrollBar ? NEWT_FLAG_SCROLL : 0);
 
