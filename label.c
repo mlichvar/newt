@@ -47,6 +47,7 @@ void newtLabelSetText(newtComponent co, const char * text) {
     int newLength;
     struct label * la = co->data;
 
+    co->width = wstrlen(text,-1);
     newLength = strlen(text);
     if (newLength <= la->length) {
 	memset(la->text, ' ', la->length);
@@ -55,7 +56,6 @@ void newtLabelSetText(newtComponent co, const char * text) {
 	free(la->text);
 	la->text = strdup(text);
 	la->length = newLength;
-	co->width = wstrlen(text,-1);
     }
 
     labelDraw(co);

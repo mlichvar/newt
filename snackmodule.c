@@ -13,6 +13,7 @@
 
 #include "Python.h"
 #include "newt.h"
+#include "newt_pr.h"
 
 typedef struct snackWidget_s snackWidget;
 typedef struct snackGrid_s snackGrid;
@@ -63,6 +64,7 @@ static PyObject * reflowText(PyObject * s, PyObject * args);
 static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
 static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args, PyObject * kwargs);
+static PyObject * pywstrlen(PyObject * s, PyObject * args);
 
 static PyMethodDef snackModuleMethods[] = {
     { "button", (PyCFunction) buttonWidget, METH_VARARGS, NULL },
@@ -96,6 +98,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
     { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
     { "checkboxtree", (PyCFunction) checkboxTreeWidget, METH_VARARGS | METH_KEYWORDS, NULL },
+    { "wstrlen", (PyCFunction) pywstrlen, METH_VARARGS | METH_KEYWORDS, NULL },
     { NULL }
 } ;
 
@@ -1201,6 +1204,16 @@ static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
     free(selection);
 
     return sel;
+}
+
+static PyObject * pywstrlen(PyObject * s, PyObject * args)
+{
+    char *str;
+    int len = -1;
+    
+    if (!PyArg_ParseTuple(args, "s|i", &str, &len)) return NULL;
+
+    return PyInt_FromLong(wstrlen(str, len));
 }
 
 void init_snack(void) {

@@ -592,9 +592,10 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
     return (bb.buttonPressed(result), tuple(entryValues))
 
 class CListbox(Grid):
-	def __init__(self, height, cols, col_widths, scroll = 0, returnExit = 0,
-			width = 0, col_pad = 1, col_text_align = None,
-			col_labels = None, col_label_align = None):
+        def __init__(self, height, cols, col_widths, scroll = 0,
+                     returnExit = 0, width = 0, col_pad = 1,
+                     col_text_align = None, col_labels = None,
+                     col_label_align = None, adjust_width=0):
 
 		self.cols = cols
 		self.col_widths = col_widths[:]
@@ -605,9 +606,9 @@ class CListbox(Grid):
 			Grid.__init__(self, 1, 2)
 			box_y = 1
 
-			lstr = self.colFormText(col_labels, col_label_align)
+			lstr = self.colFormText(col_labels, col_label_align,
+                                                adjust_width=adjust_width)
 			self.label = Label(lstr)
-
 			self.setField(self.label, 0, 0, anchorLeft=1)
 
 		else:
@@ -618,14 +619,22 @@ class CListbox(Grid):
 		self.listbox = Listbox(height, scroll, returnExit, width)
 		self.setField(self.listbox, 0, box_y, anchorRight=1)
 
-	def colFormText(self, col_text, align = None):
+	def colFormText(self, col_text, align = None, adjust_width=0):
 		i = 0
 		str = ""
 		c_len = len(col_text)
 		while (i < self.cols) and (i < c_len):
 		
-			cstr = col_text[i][:self.col_widths[i]] 
-			delta = self.col_widths[i] - len(cstr)
+			cstr = col_text[i]
+                        cstrlen = _snack.wstrlen(cstr)
+                        if self.col_widths[i] < cstrlen:
+                            if adjust_width:
+                                self.col_widths[i] = cstrlen
+                            else:
+                                cstr = cstr[:self.col_widths[i]]
+
+			delta = self.col_widths[i] - _snack.wstrlen(cstr)
+                        
 			if delta > 0:
 				if align == None:
                                     a = LEFT

@@ -155,7 +155,7 @@ static void entryDraw(newtComponent co) {
 	chptr = tmpptr;
     }			
 
-    len = strlen(chptr);
+    len = wstrlen(chptr, -1);
 
     if (len <= co->width) {
 	i = len;

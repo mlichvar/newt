@@ -2,9 +2,9 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.3
+%define version 0.51.4
 Version: %{version}
-Release: 2
+Release: 1
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -83,6 +83,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Wed Feb  5 2003 Matt Wilson <msw@redhat.com> 0.51.4-1
+- fixed help line drawing in UTF-8 (#81718)
+- calculate the width of text in entries using wstrlen
+- always set component width to the new label width in newtLabelSetText
+- fixed snack.CListbox to work properly with UTF-8 (#81718)
+
 * Tue Feb 04 2003 Florian La Roche <Florian.LaRoche@redhat.de>
 - add symlink to shared lib
 

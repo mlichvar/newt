@@ -653,15 +653,23 @@ void newtRedrawHelpLine(void) {
 
     SLsmg_set_color(NEWT_COLORSET_HELPLINE);
 
-    buf = alloca(SLtt_Screen_Cols + 1);
-    memset(buf, ' ', SLtt_Screen_Cols);
-    buf[SLtt_Screen_Cols] = '\0';
-
     if (currentHelpline) {
-	int len = wstrlen(*currentHelpline, -1);
-	if (SLtt_Screen_Cols < len)
-	    len = SLtt_Screen_Cols;
-	memcpy(buf, *currentHelpline, len);
+	/* buffer size needs to be wide enough to hold all the multibyte
+	   currentHelpline + all the single byte ' ' to fill the line */
+	int wlen = wstrlen(*currentHelpline, -1);
+	int len;
+
+	if (wlen > SLtt_Screen_Cols)
+	    wlen = SLtt_Screen_Cols;
+	len = strlen(*currentHelpline) + (SLtt_Screen_Cols - wlen);
+	buf = alloca(len + 1);
+	memset(buf, ' ', len);
+	memcpy(buf, *currentHelpline, strlen(*currentHelpline));
+	buf[len] = '\0';
+    } else {
+	buf = alloca(SLtt_Screen_Cols + 1);
+	memset(buf, ' ', SLtt_Screen_Cols);
+	buf[SLtt_Screen_Cols] = '\0';
     }
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     SLsmg_write_string(buf);
