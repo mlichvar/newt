@@ -260,6 +260,11 @@ void newtWinMessagev(char * title, char * buttonText, char * text,
 int newtWinChoice(char * title, char * button1, char * button2, 
 		   char * text, ...);
 
+/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2, 
+   3 for button3 */
+int newtWinTernary(char * title, char * button1, char * button2, 
+		   char * button3, char * message, ...);
+
 
 #ifdef __cplusplus
 } /* End of extern "C" { */

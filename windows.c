@@ -7,9 +7,9 @@
 #include "errno.h"
 #include "newt.h"
 
-static int newtvwindow(char * title, char * button1, char * button2, 
-		   char * message, va_list args) {
-    newtComponent b1, b2 = NULL, t, f, answer;
+static void * newtvwindow(char * title, char * button1, char * button2, 
+		       char * button3, char * message, va_list args) {
+    newtComponent b1, b2 = NULL, b3 = NULL, t, f, answer;
     char * buf = NULL;
     int size = 0;
     int i = 0;
@@ -35,7 +35,10 @@ static int newtvwindow(char * title, char * button1, char * button2,
     newtTextboxSetText(t, flowedText);
     free(flowedText);
 
-    if (button2) {
+    if (button3) {
+	buttonGrid = newtButtonBar(button1, &b1, button2, &b2, 
+				   button3, &b3, NULL);
+    } else if (button2) {
 	buttonGrid = newtButtonBar(button1, &b1, button2, &b2, NULL);
     } else {
 	buttonGrid = newtButtonBar(button1, &b1, NULL);
@@ -55,6 +58,8 @@ static int newtvwindow(char * title, char * button1, char * button2,
 
     if (button2)
 	newtFormAddComponent(f, b2);
+    if (button3)
+	newtFormAddComponent(f, b3);
 
     answer = newtRunForm(f);
     newtGridFree(grid, 1);
@@ -63,34 +68,60 @@ static int newtvwindow(char * title, char * button1, char * button2,
     newtPopWindow();
 
     if (answer == f)
-	return 2;
+	return NULL;
+    else if (answer == b1)
+	return button1;
     else if (answer == b2)
-	return 1;
+	return button2;
 
-    return 0;
+    return button3;
 }
 
 int newtWinChoice(char * title, char * button1, char * button2, 
 		   char * message, ...) {
     va_list args;
-    int rc;
+    void * rc;
 
     va_start(args, message);
-    rc = newtvwindow(title, button1, button2, message, args);
+    rc = newtvwindow(title, button1, button2, NULL, message, args);
     va_end(args);
 
-    return rc;
+    if (rc == button1)
+	return 0;
+    else if (rc == button2)
+	return 1;
+
+    return 2;
 }
 
 void newtWinMessage(char * title, char * buttonText, char * text, ...) {
     va_list args;
 
     va_start(args, text);
-    newtvwindow(title, buttonText, NULL, text, args);
+    newtvwindow(title, buttonText, NULL, NULL, text, args);
     va_end(args);
 }
 
 void newtWinMessagev(char * title, char * buttonText, char * text, 
 		     va_list argv) {
-    newtvwindow(title, buttonText, NULL, text, argv);
+    newtvwindow(title, buttonText, NULL, NULL, text, argv);
+}
+
+int newtWinTernary(char * title, char * button1, char * button2, 
+		   char * button3, char * message, ...) {
+    va_list args;
+    void * rc;
+
+    va_start(args, message);
+    rc = newtvwindow(title, button1, button2, button3, message, args);
+    va_end(args);
+
+    if (rc == button1)
+	return 1;
+    else if (rc == button2)
+	return 2;
+    else if (rc == button3)
+	return 3;
+
+    return 0;
 }
