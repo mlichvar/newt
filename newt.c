@@ -66,6 +66,9 @@ static struct keymap keymap[] = {
 	{ "\033[5~",		NEWT_KEY_PGUP,		NULL },
 	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
 
+	{ "\033[11~",		NEWT_KEY_F1,		NULL },
+	{ "\033[24~",		NEWT_KEY_F12,		NULL },
+
 	{ NULL, 	0, 			NULL },	/* LEAVE this one */
 };
 static char keyPrefix = '\033';
@@ -161,6 +164,12 @@ int newtGetKey(void) {
     *chptr++ = key;
     while (SLang_input_pending(5)) {
 	key = SLang_getkey();
+	if (key == keyPrefix) {
+	    /* he hit unknown keys too many times -- start over */
+	    memset(buf, 0, sizeof(buf));
+	    chptr = buf;
+	}
+
 	*chptr++ = key;
 
 	/* this search should use bsearch(), but when we only look through
