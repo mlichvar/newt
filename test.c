@@ -17,6 +17,9 @@ void main(void) {
     newtInit();
     newtCls();
 
+    newtDrawRootText(0, 0, "Newt test program");
+    newtPushHelpLine("Some help text");
+
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
 
@@ -30,7 +33,7 @@ void main(void) {
     r3 = newtRadiobutton(20, 8, "Choice 3", 0, r2);
     rsf = newtForm(NULL, NULL, 0);
     newtFormAddComponents(rsf, r1, r2, r3, NULL);
-    newtFormSetBackground(rsf, COLORSET_CHECKBOX);
+    newtFormSetBackground(rsf, NEWT_COLORSET_CHECKBOX);
 
     for (i = 0; i < 10; i++) {
 	sprintf(buf, "Check %d", i);
