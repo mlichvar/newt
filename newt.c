@@ -376,6 +376,21 @@ int newtOpenWindow(int left, int top, int width, int height,
     return 0;
 }
 
+int newtCenteredWindow(int width, int height, const char * title) {
+    int top, left;
+
+    top = (SLtt_Screen_Rows - height) / 2;
+
+    /* I don't know why, but this seems to look better */ 
+    if ((SLtt_Screen_Rows % 2) && (top % 2)) top--;
+
+    left = (SLtt_Screen_Cols - width) / 2;
+
+    newtOpenWindow(left, top, width, height, title);
+
+    return 0;
+}
+
 void newtPopWindow(void) {
     int j, row, col;
     int n = 0;    

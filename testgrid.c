@@ -38,9 +38,7 @@ int main(void) {
 
     newtPopWindow();
 
-    newtOpenWindow(10, 5, 45, 15, "another example");
-
-    t = newtTextbox(-1, -1, 40, 5, NEWT_FLAG_WRAP);
+    t = newtTextbox(-1, -1, 40, 4, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, "This is a quite a bit of text. It is 40 "
 			  "columns long, so some wrapping should be "
 			  "done. Did you know that the quick, brown "
@@ -55,10 +53,10 @@ int main(void) {
     newtGridSetField(subgrid, 0, 0, NEWT_GRID_COMPONENT, b1, 0, 0, 0, 0, 0, 0);
     newtGridSetField(subgrid, 1, 0, NEWT_GRID_COMPONENT, b2, 0, 0, 0, 0, 0, 0);
 
-    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, t, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, t, 0, 0, 0, 1, 0, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 0, 0, 0, 0, 0,
 			NEWT_GRID_FLAG_GROWX);
-    newtGridPlace(grid, 1, 1);
+    newtGridWrappedWindow(grid, "another example");
 
     f = newtForm(NULL, NULL, 0);
     newtFormAddComponents(f, b1, t, b2, NULL);

@@ -94,6 +94,7 @@ void newtDelay(int usecs);
 /* top, left are *not* counting the border */
 int newtOpenWindow(int left, int top, int width, int height, 
 			  const char * title);
+int newtCenteredWindow(int width, int height, const char * title);
 void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
@@ -240,6 +241,7 @@ void newtGridSetField(newtGrid grid, int col, int row,
 void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
+void newtGridWrappedWindow(newtGrid grid, char * title);
 
 #ifdef __cplusplus
 } /* End of extern "C" { */

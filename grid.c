@@ -233,3 +233,11 @@ void newtGridGetSize(newtGrid grid, int * width, int * height) {
     *width = grid->width;
     *height = grid->height;
 }
+
+void newtGridWrappedWindow(newtGrid grid, char * title) {
+    int width, height;
+
+    newtGridGetSize(grid, &width, &height);
+    newtCenteredWindow(width + 2, height + 2, title);
+    newtGridPlace(grid, 1, 1);
+}
