@@ -97,8 +97,9 @@ newtComponent newtListbox(int left, int top, int height, int flags);
 /* return the data passed to AddEntry */
 void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
-void newtListboxAddEntry(newtComponent co, char * text, void * data);
+int newtListboxAddEntry(newtComponent co, char * text, void * data);
 void newtListboxSetEntry(newtComponent co, int num, char * text);
+int newtListboxDeleteEntry(newtComponent co, int num);
 
 #define NEWT_TEXTBOX_WRAP	(1 << 0)
 #define NEWT_TEXTBOX_SCROLL	(1 << 1)
