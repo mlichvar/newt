@@ -1,6 +1,7 @@
 /* a reasonable dialog */
 
 #include <fcntl.h>
+#include <popt.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,7 +9,6 @@
 
 #include "dialogboxes.h"
 #include "newt.h"
-#include "popt.h"
 
 enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
 	    MODE_RADIOLIST, MODE_MENU, MODE_GAUGE };
