@@ -105,8 +105,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
-/usr/lib/python1.4/snack.py
-/usr/lib/python1.4/linux-%{buildarch}/_snackmodule.so
+/usr/lib/python1.5/snack.py
+/usr/lib/python1.5/lib-dynload/_snackmodule.so
 
 %files devel
 /usr/include/newt.h
