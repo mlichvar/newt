@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.3
+%define version 0.50.4
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Jan 20 2000 Preston Brown <pbrown@redhat.com>
+- fix segfault in newtRadioGetCurrent
+
 * Mon Jan 17 2000 Erik Troan <ewt@redhat.com>
 - added numerous bug fixes (see CHANGES)
 

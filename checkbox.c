@@ -64,6 +64,8 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
     struct checkbox * rb = setMember->data;
 
     setMember = rb->lastButton;
+    if (!setMember)
+      return NULL;
     rb = setMember->data;
 
     while (rb && rb->value != '*') {
