@@ -1,13 +1,14 @@
 LIBS = -L. -lnewt -lslang -lm #-lefence
 CFLAGS = -g -Wall
 
-VERSION = 0.2
+VERSION = 0.3
+SONAME = 0
 
 PROGS = test
 OBJS = test.o
 LIBNEWT = libnewt.a
-LIBNEWTSH = libnewt.so.0.1
-LIBNEWTSONAME = libnewt.so.0
+LIBNEWTSH = libnewt.so.$(VERSION)
+LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
           scrollbar.o textbox.o
 
