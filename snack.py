@@ -42,7 +42,6 @@ class Listbox(Widget):
 	key = self.w.listboxAddItem(text)
 	self.key2item[key] = item
 	self.item2key[item] = key
-	print "key", key, "item", item
 
     def insert(self, text, item, before):
 	if (not before):
@@ -105,6 +104,10 @@ class Form:
 	self.w.addhotkey(hotkeys[keyname])
 
     def add(self, widget):
+	if widget.__dict__.has_key('hotkeys'):
+	    for key in widget.hotkeys.keys():
+		self.addHotKey(key)
+
 	if widget.__dict__.has_key('gridmembers'):
 	    for w in widget.gridmembers:
 		self.add(w)
@@ -248,19 +251,29 @@ class ButtonBar(Grid):
 
     def __init__(self, screen, buttonlist):
 	self.list = []
+	self.hotkeys = {}
 	self.item = 0
 	Grid.__init__(self, len(buttonlist), 1)
-	for (title, value) in buttonlist:
+	for blist in buttonlist:
+	    if len(blist) == 2:
+		(title, value) = blist
+	    else:
+		(title, value, hotkey) = blist
+		self.hotkeys[hotkey] = value
 	    b = Button(title)
 	    self.list.append(b, value)
 	    self.setField(b, self.item, 0, (1, 0, 1, 0))
 	    self.item = self.item + 1
 
-    def buttonPressed(self, widget):
+    def buttonPressed(self, result):
 	"""Takes the widget returned by Form.run and looks to see
 	if it was one of the widgets in the ButtonBar."""
+
+	if self.hotkeys.has_key(result):
+	    return self.hotkeys[result]
+
 	for (button, value) in self.list:
-	    if widget == button:
+	    if result == button:
 		return value
 	return None
 
