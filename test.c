@@ -103,6 +103,7 @@ void main(void) {
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
 
     newtFormAddComponents(f, lb, t, NULL);
+    newtRefresh();
 
     do {
 	answer = newtRunForm(f);
