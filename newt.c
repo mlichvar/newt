@@ -566,7 +566,15 @@ int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {
       case NEWT_FLAGS_RESET:
 	return oldFlags & (~newFlags); 
 
+      case NEWT_FLAGS_TOGGLE:
+	return oldFlags ^ newFlags;
+
       default:
 	return oldFlags;
     }
+}
+
+void newtBell(void)
+{
+	SLtt_beep();
 }

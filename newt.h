@@ -54,7 +54,7 @@ struct newtColors {
     char * selListboxFg, * selListboxBg;
 };
 
-enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
+enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 
 #define NEWT_FLAG_RETURNEXIT 	(1 << 0)
 #define NEWT_FLAG_HIDDEN 	(1 << 1)
@@ -65,6 +65,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 #define NEWT_FLAG_WRAP		(1 << 6)
 #define NEWT_FLAG_NOF12		(1 << 7)
 #define NEWT_FLAG_MULTIPLE      (1 << 8)
+#define NEWT_FLAG_SELECTED	(1 << 9)
 
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
@@ -103,6 +104,7 @@ void newtPushHelpLine(char * text);
 void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
 void newtDrawRootText(int row, int col, char * text);
+void newtBell(void);
 
 /* Components */
 
@@ -139,6 +141,9 @@ void newtListboxClear(newtComponent co); /* removes all entries from listbox */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 void **newtListboxGetSelection(newtComponent co);
 void newtListboxClearSelection(newtComponent co);
+void newtListboxSelectItem(newtComponent co, int item,
+	enum newtFlagsSense sense);
+
     
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
