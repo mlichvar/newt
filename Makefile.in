@@ -113,7 +113,7 @@ archive:
 	@cvs tag -F $(CVSTAG)
 	@rm -rf /tmp/newt-$(VERSION)
 	@mkdir /tmp/newt-$(VERSION)
-	@cvs export -r$(CVSTAG) -d /tmp/newt-$(VERSION) newt
+	@cd /tmp; cvs export -r$(CVSTAG) newt; mv newt newt-$(VERSION)
 	@cd /tmp/newt-$(VERSION); autoconf
 	@cd ..; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
 	@rm -rf /tmp/newt-$(VERSION)
