@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -527,7 +528,9 @@ static void listboxDraw(newtComponent co)
 static struct eventResult listboxEvent(newtComponent co, struct event ev) {
     struct eventResult er;
     struct listbox * li = co->data;
-
+    struct items *item;
+    int i;
+    
     er.result = ER_IGNORED;
 
     if(ev.when == EV_EARLY || ev.when == EV_LATE) {
@@ -603,7 +606,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		li->startShowItem = li->numItems - li->curHeight;
 	    }
 	    li->currItem += li->curHeight;
-	    if(li->currItem > li->numItems) {
+	    if(li->currItem >= li->numItems) {
 		li->currItem = li->numItems - 1;
 	    }
 	    newtListboxRealSetCurrent(co);
@@ -626,7 +629,34 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    er.result = ER_SWALLOWED;
 	    break;
 	  default:
-	    /* keeps gcc quiet */
+	      if (isalpha(ev.u.key)) {
+
+		  for(i = 0, item = li->boxItems; item != NULL &&
+			  i < li->currItem; i++, item = item->next);
+
+		  if (item->text && (toupper(*item->text) == toupper(ev.u.key))) {
+		      item = item->next;
+		      i++;
+		  } else { 
+		      item = li->boxItems;
+		      i = 0;
+		  }
+		  while (item && item->text &&
+			 toupper(*item->text) != toupper(ev.u.key)) {
+		      item = item->next;
+		      i++;
+		  }
+		  if (item) {
+		      li->currItem = i;
+		      if(li->currItem < li->startShowItem ||
+			 li->currItem > li->startShowItem)
+			  li->startShowItem = li->currItem;
+		      if(li->sb)
+			  newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
+		      newtListboxRealSetCurrent(co);
+		      er.result = ER_SWALLOWED;
+		  }
+	      }
 	}
 	break;
 

@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.40
 Version: %{version}
-Release: 4
+Release: 5
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Feb 25 1999 Matt Wilson <msw@redhat.com>
+- updated descriptions
+- added support for navigating listboxes with alphabetical keypresses
+
 * Mon Feb  8 1999 Matt Wilson <msw@redhat.com>
 - made grid wrapped windows at least the size of their title bars
 
