@@ -147,15 +147,16 @@ static char * expandTabs(const char * text) {
     return buf;
 }
 
+#define iseuckanji(c)   (0xa1 <= (unsigned char)(c&0xff) && (unsigned char)(c&0xff) <= 0xfe)
+
 static void doReflow(const char * text, char ** resultPtr, int width, 
 		     int * badness, int * heightPtr) {
     char * result = NULL;
     const char * chptr, * end;
+    int i;
     int howbad = 0;
     int height = 0;
-    int cl =0;
-    int len = 0;
-    int wrap = 0;
+    int kanji = 0;
 
     if (resultPtr) {
 	/* XXX I think this will work */
@@ -164,6 +165,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     }
     
     while (*text) {
+        kanji = 0;
 	end = strchr(text, '\n');
 	if (!end)
 	    end = text + strlen(text);
@@ -181,25 +183,22 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 		text = end;
 		if (*text) text++;
 	    } else {
-	       chptr = text;
-	       len = 0;
-	       do {
-		  cl = mblen(chptr, MB_CUR_MAX * 4);
-		  if (cl <= 0)
-		    cl = 1;
-		  len += cl;
-		  chptr += cl;
-	       } while (len < width - 1);
-	       chptr = text + width - 1;
-	       if (len > width - 1) {
-		     wrap = 1;
-	       } else {
-		     wrap = 0;
-	       }
-	       if (cl == 1) {
-		   while (chptr > text && !isspace(*chptr)) chptr--;
-		   while (chptr > text && isspace(*chptr)) chptr--;
-		   chptr++;
+	        chptr = text;
+	        kanji = 0;
+	        for ( i = 0; i < width - 1; i++ ) {
+		    if ( !iseuckanji(*chptr)) {
+			kanji = 0;
+		    } else if ( kanji == 1 ) {
+		        kanji = 2; 
+		    } else {
+		        kanji = 1;
+		    }
+		    chptr++;
+		}
+	        if (kanji == 0) {
+		    while (chptr > text && !isspace(*chptr)) chptr--;
+		    while (chptr > text && isspace(*chptr)) chptr--;
+		    chptr++;
 		}
 		
 		if (chptr-text == 1 && !isspace(*chptr))
@@ -208,17 +207,18 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 		if (chptr > text)
 		    howbad += width - (chptr - text) + 1;
 		if (result) {
-		    if (wrap == 1) {
-		       strncat(result, text, chptr - text + 1);
-		       chptr++;
-		    } else {
-		       strncat(result, text, chptr - text);
-		    }
+		  if (kanji == 1) {
+		    strncat(result, text, chptr - text + 1 );
+		    chptr++;
+		    kanji = 0;
+		  } else {
+		    strncat(result, text, chptr - text );
+		  }
 		    strcat(result, "\n");
 		    height++;
 		}
 
-		if (isspace(*chptr))
+	        if (isspace(*chptr))
 		    text = chptr + 1;
 		else
 		  text = chptr;
