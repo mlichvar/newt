@@ -160,6 +160,7 @@ int wstrlen(const char *str, int len) {
 		
 		x = mbrtowc(&tmp,str,len,&ps);
 		if (x >0) {
+		    	str += x;
 			len -= x;
 			y = wcwidth(tmp);
 			if (y>0)
