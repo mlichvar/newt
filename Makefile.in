@@ -108,6 +108,7 @@ install: $(LIBNEWT) install-sh whiptail
 	install -s -m 755 whiptail $(instroot)/$(bindir)
 
 install-sh: sharedlib whiptcl.so _snackmodule.so
+	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
 	install -m 755 whiptcl.so $(instroot)/$(libdir)
