@@ -246,6 +246,14 @@ void newtGridWrappedWindow(newtGrid grid, char * title) {
     newtGridPlace(grid, 1, 1);
 }
 
+void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top) {
+    int width, height;
+
+    newtGridGetSize(grid, &width, &height);
+    newtOpenWindow(left, top, left + width, top + height, title);
+    newtGridPlace(grid, 1, 1);
+}
+
 void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
 				 int recurse) {
     int row, col;
@@ -255,8 +263,67 @@ void newtGridAddComponentsToForm(newtGrid grid, newtComponent form,
 	    if (grid->fields[col][row].type == NEWT_GRID_SUBGRID && recurse)
 		newtGridAddComponentsToForm(grid->fields[col][row].u.grid,
 					    form, 1);
-	    else
+	    else if (grid->fields[col][row].type == NEWT_GRID_COMPONENT)
 		newtFormAddComponent(form, grid->fields[col][row].u.co);
 	}
     }
+}
+
+/* this handles up to 50 items */
+static newtGrid stackem(int isVert, enum newtGridElement type1, void * what1,
+			va_list args) {
+    struct item {
+	enum newtGridElement type;
+	void * what;
+    } items[50];
+    int i, num;
+    newtGrid grid;
+    
+    items[0].type = type1, items[0].what = what1, num = 1;
+    while (1) {
+	items[num].type = va_arg(args, enum newtGridElement);
+	if (items[num].type == NEWT_GRID_EMPTY) break;
+
+	items[num].what = va_arg(args, void *);
+	num++;
+    }
+
+    grid = newtCreateGrid(isVert ? 1 : num, isVert ? num : 1);
+
+    for (i = 0; i < num; i++) {
+	newtGridSetField(grid, isVert ? 0 : i, isVert ? i : 0, 
+			 items[i].type, items[i].what,
+			 i ? (isVert ? 0 : 1) : 0,
+			 i ? (isVert ? 1 : 0) : 0, 0, 0, 0, 
+		         items[i].type == NEWT_GRID_SUBGRID ? 
+				NEWT_GRID_FLAG_GROWX : 0);
+    }
+
+    return grid;
+}
+
+newtGrid newtGridVStacked(enum newtGridElement type1, void * what1, ...) {
+    va_list args;
+    newtGrid grid;
+
+    va_start(args, what1);
+
+    grid = stackem(1, type1, what1, args);
+
+    va_start(args, what1);
+
+    return grid;
+}
+
+newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...) {
+    va_list args;
+    newtGrid grid;
+
+    va_start(args, what1);
+
+    grid = stackem(0, type1, what1, args);
+
+    va_start(args, what1);
+
+    return grid;
 }
