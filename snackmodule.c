@@ -818,9 +818,10 @@ static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
 
     selection = newtCheckboxTreeGetSelection(s->co, &numselected);
 
+    sel = PyList_New(0);
+    
     if (!selection) {
-	Py_INCREF(Py_None);
-	return Py_None;
+	return sel;
     }
 
     sel = PyList_New(0);

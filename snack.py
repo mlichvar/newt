@@ -394,11 +394,9 @@ class CheckboxTree(Widget):
 
     def getSelection(self):
         selection = []
-        i = 0
         list = self.w.checkboxtreeGetSelection()
         for key in list:
             selection.append(self.key2item[key])
-            i = i + 1
 	return selection
 
 

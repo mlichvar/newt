@@ -54,7 +54,7 @@ static int countItems(struct items * item, enum countWhat what) {
     while (item) {
         if ((!item->branch) || (what == COUNT_EXPOSED))
 	    count++;
-	if (item->branch && (what == COUNT_EXPOSED && item->selected))
+	if (item->branch || (what == COUNT_EXPOSED && item->selected))
 	    count += countItems(item->branch, what);
 	item = item->next;
     }
