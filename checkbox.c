@@ -15,6 +15,7 @@ struct checkbox {
     enum type type;
     char value;
     int active, inactive;
+    void * data;
 };
 
 static void cbDrawIt(newtComponent c, int active);
@@ -31,7 +32,7 @@ static struct componentOps cbOps = {
 } ;
 
 newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem) {
+			      newtComponent prevItem, void * data) {
     newtComponent co;
     struct checkbox * li;
 
@@ -41,8 +42,25 @@ newtComponent newtListitem(int left, int top, char * text, int isDefault,
 
     li->inactive = COLORSET_LISTBOX;
     li->active = COLORSET_ACTLISTBOX;
+    li->data = data;
 
     return co;
+}
+
+void * newtListitemGetData(newtComponent co) {
+    struct checkbox * rb = co->data;
+
+    return rb->data;
+}
+
+void newtListitemSet(newtComponent co, char * text) {
+    struct checkbox * li = co->data;
+
+    free(li->text);
+    li->text = strdup(text);
+
+    if (strlen(text) + 4 > co->width)
+	co->width = strlen(text) + 4;
 }
 
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
