@@ -31,6 +31,9 @@ extern "C" {
 #define NEWT_COLORSET_ACTSELLISTBOX	23
 #define NEWT_COLORSET_SELLISTBOX	24
 
+#define NEWT_ARG_LAST			-100000
+#define NEWT_ARG_APPEND			-1
+
 struct newtColors {
     char * rootFg, * rootBg;
     char * borderFg, * borderBg;
@@ -68,6 +71,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define NEWT_FLAG_NOF12		(1 << 7)
 #define NEWT_FLAG_MULTIPLE      (1 << 8)
 #define NEWT_FLAG_SELECTED	(1 << 9)
+#define NEWT_FLAG_CHECKBOX	(1 << 10)
 
 #define NEWT_FD_READ		(1 << 0)
 #define NEWT_FD_WRITE		(1 << 1)
@@ -161,11 +165,17 @@ void **newtListboxGetSelection(newtComponent co, int *numitems);
 void newtListboxClearSelection(newtComponent co);
 void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense);
+
 newtComponent newtCheckboxTree(int left, int top, int height, int flags);
 void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
-int newtCheckboxTreeAppend(newtComponent co, int selected,
-			   const char * text,
-			   const void * data);
+/* last item is NEWT_ARG_LAST for all of these */
+int newtCheckboxTreeAddItem(newtComponent co, 
+			    const char * text, const void * data,
+			    int flags, int index, ...);
+int newtCheckboxTreeAddArray(newtComponent co, 
+			    const char * text, const void * data,
+			    int flags, int * indexes);
+int * newtCheckboxTreeFindItem(newtComponent co, void * data);
     
 newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
 				  int flexDown, int flexUp, int flags);

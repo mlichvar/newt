@@ -12,7 +12,7 @@ VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @VERSION@
 
-PROGS = test whiptail whiptcl.so testgrid
+PROGS = test whiptail whiptcl.so testgrid testtree
 TESTOBJS = test.o
 NDIALOGOBJS = whiptail.o dialogboxes.o
 WHIPTCLOBJS = whiptcl.o dialogboxes.o
@@ -53,6 +53,9 @@ test:	$(TESTOBJS) $(LIBNEWT)
 
 testgrid:	testgrid.o $(LIBNEWT)
 	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
+
+testtree:	testtree.o $(LIBNEWT)
+	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
 
 _snackmodule.so:   snackmodule.o $(LIBNEWTSH)
 	gcc --shared -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
