@@ -82,6 +82,8 @@ static const struct keymap keymap[] = {
 
 	{ "\033[5~",		NEWT_KEY_PGUP,		NULL },
 	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
+	{ "\033V",		NEWT_KEY_PGDN, 		"kH" },
+	{ "\033v",		NEWT_KEY_PGDN, 		"kH" },
 
 	{ "\033[[A",		NEWT_KEY_F1,		NULL },
 	{ "\033[[B",		NEWT_KEY_F2,		NULL },
@@ -279,6 +281,10 @@ int newtGetKey(void) {
     } while (key == NEWT_KEY_SUSPEND);
 
     switch (key) {
+      case 'v' | 0x80:
+      case 'V' | 0x80:
+	return NEWT_KEY_PGDN;
+
       case 0x7f:
 	return NEWT_KEY_BKSPC;
 
