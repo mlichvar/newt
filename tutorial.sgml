@@ -85,6 +85,8 @@ when input is ready), programming with the newt libraries should be
 simple.
 
 <sect1>Components
+
+<p>
 Displayable items in <tt/newt/ are known as <bf/components/, which are
 analagous to the widgets provided by most Unix widget sets. There are
 two main types of components in <tt/newt/, forms and everything else.
@@ -1191,6 +1193,7 @@ many of the details.
 
 <sect2>Exiting From Forms
 
+<p>
 Forms return control to the application for a number of reasons:
 
 <itemize>
@@ -1214,16 +1217,19 @@ void newtFormAddHotKey(newtComponent co, int key);
 void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
 </verb></tscreen>
 
+<tscreen><verb>
 void newtDrawForm(newtComponent form);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormRun(newtComponent co, struct newtExitStruct * es);
+</verb></tscreen>
 
+<tscreen><verb>
 newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
 void newtFormSetBackground(newtComponent co, int color);
 void newtFormSetHeight(newtComponent co, int height);
 void newtFormSetWidth(newtComponent co, int width);
-
+</verb></tscreen>
 
 
 <!-- make sure we discuss this when we get to grids 
