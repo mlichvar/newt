@@ -467,7 +467,7 @@ class CheckboxTree(Widget):
     	self.addItem(text, (snackArgs['append'], ), item, selected)
 
     def addItem(self, text, path, item = None, selected = 0):
-    	if (not item):
+    	if item is None:
 	    item = text
 	key = self.w.checkboxtreeAddItem(text, path, selected)
 	self.key2item[key] = item

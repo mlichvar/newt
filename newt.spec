@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.38
+%define version 0.50.39
 Version: %{version}
 Release: 1
 License: LGPL
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Wed Jul 01 2002 Michael Fulbright <msf@redhat.com> 0.50.39-1
+- Changed a test to check for 'None' the correct way
+
 * Wed Jun 26 2002 Bill Nottingham <notting@redhat.com> 0.50.38-1
 - don't hardcode linedrawing characters in the scrollbar code
 
