@@ -1,15 +1,18 @@
 #include "config.h"
 
+#include <sys/types.h>
+
 #include <slang.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
+#endif
 #include <sys/time.h>
 
 #ifdef USE_GPM
 #include <ctype.h>
 #include <sys/time.h>      /* timeval */
-#include <sys/types.h>     /* socket() */
 #include <sys/socket.h>    /* socket() */
 #include <sys/un.h>        /* struct sockaddr_un */
 #include <sys/fcntl.h>     /* O_RDONLY */

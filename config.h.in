@@ -3,6 +3,9 @@
 /* Define if you have the <alloca.h> header file.  */
 #undef HAVE_ALLOCA_H
 
+/* Define if you have the <sys/select.h> header file.  */
+#undef HAVE_SYS_SELECT_H
+
 /* Define to 1 if GPM support is enabled */
 #undef USE_GPM
 
