@@ -92,7 +92,7 @@ install: $(LIBNEWT) whiptail
 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
 	install -s -m 755 whiptail $(instroot)/$(bindir)
 
-install-sh: sharedlib
+install-sh: sharedlib whiptcl.so
 	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
 	install -m 755 whiptcl.so $(instroot)/$(libdir)
