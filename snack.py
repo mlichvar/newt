@@ -39,6 +39,9 @@ class Checkbox(Widget):
     def setFlags (self, flag, sense):
         return self.w.checkboxSetFlags(flag, sense)
 
+    def setValue (self, value):
+        return self.w.checkboxSetValue(value)
+
     def __init__(self, text, isOn = 0):
 	self.w = _snack.checkbox(text, isOn)
 

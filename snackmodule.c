@@ -188,6 +188,7 @@ static PyObject * widgetCheckboxTreeSetEntryValue(snackWidget * s, PyObject * ar
 static PyObject * widgetCheckboxTreeGetEntryValue(snackWidget * s, PyObject * args);
 static PyObject * widgetEntrySetFlags(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxSetFlags(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxSetValue(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
@@ -215,6 +216,7 @@ static PyMethodDef widgetMethods[] = {
       METH_VARARGS, NULL },
     { "entrySetFlags", (PyCFunction) widgetEntrySetFlags, METH_VARARGS, NULL },
     { "checkboxSetFlags", (PyCFunction) widgetCheckboxSetFlags, METH_VARARGS, NULL },
+    { "checkboxSetValue", (PyCFunction) widgetCheckboxSetValue, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -669,6 +671,16 @@ static PyObject * widgetCheckboxSetFlags(snackWidget * s, PyObject * args) {
     return Py_None;
 }
 
+static PyObject * widgetCheckboxSetValue(snackWidget * s, PyObject * args) {
+    char *value;
+
+    if (!PyArg_ParseTuple(args, "s", &value)) return NULL;
+
+    newtCheckboxSetValue(s->co, *value);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
 static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
