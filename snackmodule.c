@@ -236,6 +236,9 @@ static PyObject * initScreen(PyObject * s, PyObject * args) {
 }
 
 static PyObject * finishScreen(PyObject * s, PyObject * args) {
+    Py_XDECREF (suspend.cb);
+    Py_XDECREF (suspend.data);
+    
     newtFinished();
     Py_INCREF(Py_None);
     return Py_None;

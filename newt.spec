@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50
 Version: %{version}
-Release: 9
+Release: 10
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -57,6 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Aug 25 1999 Matt Wilson <msw@redhat.com>
 - fixed snack callback function refcounts, as well as optional data args
+- fixed suspend callback ref counts
 
 * Mon Aug 23 1999 Matt Wilson <msw@redhat.com>
 - added buttons argument to entrywindow
