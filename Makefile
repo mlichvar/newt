@@ -72,7 +72,7 @@ install: $(LIBNEWT)
 
 install-sh: shared
 	install -m 755 -o 0 -g 0 $(LIBNEWTSH) $(libdir)
-	ln -s $(LIBNEWTSH) $(libdir)/libnewt.so
+	ln -sf $(LIBNEWTSH) $(libdir)/libnewt.so
 	/sbin/ldconfig
 
 archive: 
