@@ -2,16 +2,17 @@ Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
 %define version 0.24
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
 Requires: slang
 Provides: snack
+
 %package devel
 Summary: Developer's toolkit for newt windowing library
 Requires: slang-devel
-Group: Libraries
+Group: Development/Libraries
 BuildRoot: /var/tmp/newtroot
 
 %description
@@ -49,23 +50,21 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri May 01 1998 Cristian Gafton <gafton@redhat.com>
+- devel package moved to Development/Libraries
 
 * Thu Apr 30 1998 Erik Troan <ewt@redhat.com>
-
 - removed whiptcl.so -- it should be in a separate package
 
 * Mon Feb 16 1998 Erik Troan <ewt@redhat.com>
-
 - added newtWinMenu()
 - many bug fixes in grid code
 
 * Wed Jan 21 1998 Erik Troan <ewt@redhat.com>
-
 - removed newtWinTernary()
 - made newtWinChoice() return codes consistent with newtWinTernary()
 
 * Fri Jan 16 1998 Erik Troan <ewt@redhat.com>
-
 - added changes from Bruce Perens
     - small cleanups
     - lets whiptail automatically resize windows
@@ -74,16 +73,13 @@ rm -rf $RPM_BUILD_ROOT
 - added newtGridAddComponentsToForm()
 
 * Wed Oct 08 1997 Erik Troan <ewt@redhat.com>
-
 - added newtWinTernary()
 
 * Tue Oct 07 1997 Erik Troan <ewt@redhat.com>
-
 - made Make/spec files use a buildroot
 - added grid support (for newt 0.11 actually)
 
 * Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
-
 - Added patched from Clarence Smith for setting the size of a listbox
 - Version 0.9
 
@@ -92,14 +88,12 @@ rm -rf $RPM_BUILD_ROOT
 - Cleaned up NEWT_FLAGS_*
 
 * Tue Mar 18 1997 Erik Troan <ewt@redhat.com>
-
 - Cleaned up listbox
 - Added whiptail
 - Added newtButtonCompact button type and associated colors
 - Added newtTextboxGetNumLines() and newtTextboxSetHeight()
 
 * Tue Feb 25 1997 Erik Troan <ewt@redhat.com>
-
 - Added changes from sopwith for C++ cleanliness and some listbox fixes.
 
 %files
