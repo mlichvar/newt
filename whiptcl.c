@@ -57,9 +57,9 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
     enum mode mode = MODE_NONE;
     poptContext optCon;
     int arg;
-    char * optArg;
-    char * text;
-    char * nextArg;
+    const char * optArg;
+    const char * text;
+    const char * nextArg;
     char * end;
     int height;
     int width;

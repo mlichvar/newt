@@ -30,12 +30,13 @@ static void addButtons(int height, int width, newtComponent form,
     }
 }
 
-static newtComponent textbox(int maxHeight, int width, char * text, int flags, 
-			     int * height) {
+static newtComponent textbox(int maxHeight, int width, const char * text,
+			int flags, int * height) {
     newtComponent tb;
     int sFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
     int i;
-    char * buf, * src, * dst;
+    char * buf, * dst;
+    const char * src;
 
     dst = buf = alloca(strlen(text) + 1);
     src = text; 
@@ -62,11 +63,12 @@ static newtComponent textbox(int maxHeight, int width, char * text, int flags,
     return tb;
 }
 
-int gauge(char * text, int height, int width, poptContext optCon, int fd, 
+int gauge(const char * text, int height, int width, poptContext optCon, int fd, 
 		int flags) {
     newtComponent form, scale, tb;
     int top;
-    char * arg, * end;
+    const char * arg;
+    char * end;
     int val;
     FILE * f = fdopen(fd, "r");
     char buf[3000];
@@ -125,7 +127,7 @@ int gauge(char * text, int height, int width, poptContext optCon, int fd,
     return DLG_OKAY;
 }
 
-int inputBox(char * text, int height, int width, poptContext optCon, 
+int inputBox(const char * text, int height, int width, poptContext optCon, 
 		int flags, char ** result) {
     newtComponent form, entry, okay, cancel, answer, tb;
     char * val;
@@ -153,11 +155,12 @@ int inputBox(char * text, int height, int width, poptContext optCon,
     return rc;
 }
 
-int listBox(char * text, int height, int width, poptContext optCon,
+int listBox(const char * text, int height, int width, poptContext optCon,
 		int flags, char ** result) {
     newtComponent form, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
-    char * arg, * end;
+    const char * arg;
+    char * end;
     int listHeight;
     int numItems = 0;
     int allocedItems = 5;
@@ -168,8 +171,8 @@ int listBox(char * text, int height, int width, poptContext optCon,
     int maxTextWidth = 0;
     int scrollFlag;
     struct {
-	char * text;
-	char * tag;
+	const char * text;
+	const char * tag;
     } * itemInfo = malloc(allocedItems * sizeof(*itemInfo));
 
     if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
@@ -236,11 +239,12 @@ int listBox(char * text, int height, int width, poptContext optCon,
     return rc;
 }
 
-int checkList(char * text, int height, int width, poptContext optCon,
+int checkList(const char * text, int height, int width, poptContext optCon,
 		int useRadio, int flags, char *** selections) {
     newtComponent form, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
-    char * arg, * end;
+    const char * arg;
+    char * end;
     int listHeight;
     int numBoxes = 0;
     int allocedBoxes = 5;
@@ -251,8 +255,8 @@ int checkList(char * text, int height, int width, poptContext optCon,
     int maxWidth = 0;
     int top;
     struct {
-	char * text;
-	char * tag;
+	const char * text;
+	const char * tag;
 	newtComponent comp;
     } * cbInfo = malloc(allocedBoxes * sizeof(*cbInfo));
     char * cbStates = malloc(allocedBoxes * sizeof(cbStates));
@@ -359,7 +363,7 @@ int checkList(char * text, int height, int width, poptContext optCon,
     return rc;
 }
 
-int messageBox(char * text, int height, int width, int type, int flags) {
+int messageBox(const char * text, int height, int width, int type, int flags) {
     newtComponent form, yes, tb, answer;
     newtComponent no = NULL;
     int tFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;

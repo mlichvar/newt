@@ -16,14 +16,14 @@
 #define DLG_OKAY		0
 #define DLG_CANCEL		1
 
-int messageBox(char * text, int height, int width, int type, int flags);
-int checkList(char * text, int height, int width, poptContext optCon,
+int messageBox(const char * text, int height, int width, int type, int flags);
+int checkList(const char * text, int height, int width, poptContext optCon,
 		int useRadio, int flags, char *** selections);
-int listBox(char * text, int height, int width, poptContext optCon,
+int listBox(const char * text, int height, int width, poptContext optCon,
 		int flags, char ** result);
-int inputBox(char * text, int height, int width, poptContext optCon, 
+int inputBox(const char * text, int height, int width, poptContext optCon, 
 		int flags, char ** result);
-int gauge(char * text, int height, int width, poptContext optCon, int fd, 
+int gauge(const char * text, int height, int width, poptContext optCon, int fd, 
 		int flags);
 void useFullButtons(int state);
 

@@ -28,13 +28,13 @@ static void usage(void) {
     exit(1);
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, const char ** argv) {
     enum mode mode = MODE_NONE;
     poptContext optCon;
     int arg;
-    char * optArg;
-    char * text;
-    char * nextArg;
+    const char * optArg;
+    const char * text;
+    const char * nextArg;
     char * end;
     int height;
     int width;
