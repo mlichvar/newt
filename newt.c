@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include "newt.h"
@@ -62,6 +64,12 @@ static struct keymap keymap[] = {
 	{ "\033[5~",		NEWT_KEY_PGUP,		NULL },
 	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
 
+	{ "\033[[A",		NEWT_KEY_F1,		NULL },
+	{ "\033[[B",		NEWT_KEY_F2,		NULL },
+	{ "\033[[C",		NEWT_KEY_F3,		NULL },
+	{ "\033[[D",		NEWT_KEY_F4,		NULL },
+	{ "\033[[E",		NEWT_KEY_F5,		NULL },
+
 	{ "\033[11~",		NEWT_KEY_F1,		NULL },
 	{ "\033[12~",		NEWT_KEY_F2,		NULL },
 	{ "\033[13~",		NEWT_KEY_F3,		NULL },
@@ -98,10 +106,17 @@ void newtCls(void) {
 }
 
 int newtInit(void) {
+    struct winsize ws;
+
     /* use the version variable just to be sure it gets included */
     strlen(version);
 
     SLtt_get_terminfo();
+
+    if (!ioctl(1, TIOCGWINSZ, &ws)) {
+	SLtt_Screen_Rows = ws.ws_row;
+	SLtt_Screen_Cols = ws.ws_col;
+    }
 
     SLtt_Use_Ansi_Colors = 1;
 
