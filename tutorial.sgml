@@ -18,7 +18,7 @@ library designed for writing applications with a simple, but user-friendly,
 interface. While <literal remap="tt">newt</literal> is not intended to provide the rich feature
 set advanced applications may require, it has proven to be flexible enough
 for a wide range of applications (most notably, Red Hat's installation
-process). This tutorial explains the design philospohy behind <literal remap="tt">newt</literal> and
+process). This tutorial explains the design philosophy behind <literal remap="tt">newt</literal> and
 how to use <literal remap="tt">newt</literal> from your programs.
 </para>
 
@@ -57,7 +57,7 @@ decisions were made early in it's implementation:
 <listitem>
 <para>
  <literal remap="tt">newt</literal> is written in C, not C++. While there has been interest
-in contructing C++ wrapper classes around the <literal remap="tt">newt</literal> API, nothing has
+in constructing C++ wrapper classes around the <literal remap="tt">newt</literal> API, nothing has
 yet come of those ideas.</para>
 </listitem>
 <listitem>
@@ -106,7 +106,7 @@ means that <literal remap="tt">newt</literal> applications look dramatically dif
 written for event-driven architectures such as Motif, <literal remap="tt">gtk</literal>, or even
 Borland's old TurboVision libraries.
 
-When your're desiging your <literal remap="tt">newt</literal> program, keep this differentiation
+When you're designing your <literal remap="tt">newt</literal> program, keep this differentiation
 in mind. As long as you plan your application to call a function to
 get input and then continue (rather then having your program called
 when input is ready), programming with the newt libraries should be
@@ -117,10 +117,10 @@ simple.</para></sect2>
 
 <para>
 Displayable items in <literal remap="tt">newt</literal> are known as <emphasis remap="bf">components</emphasis>, which are
-analagous to the widgets provided by most Unix widget sets. There are
+analogous to the widgets provided by most Unix widget sets. There are
 two main types of components in <literal remap="tt">newt</literal>, forms and everything else.
 Forms logically group components into functional sets. When an application
-is ready to get input frm a user, it ``runs a form'', which makes the
+is ready to get input from a user, it ``runs a form'', which makes the
 form active and lets the user enter information into the components the
 form contains. A form may contain any other component, including other
 forms. Using subforms in this manner lets the application change the details
@@ -165,20 +165,20 @@ is a form, as the name would suggest.</para></listitem>
 <listitem>
 
 <para>
- When screen coordinates are passed into a function, the y value
-preceeds the x location preceeds the y location. To help keep this clear,
-we'll use the words ``left'' and ``top'' to describe those indicators (which
+ When screen coordinates are passed into a function, the 
+x location precedes the y location. To help keep this clear,
+we'll use the words ``left'' and ``top'' to describe those indicators (with
 left corresponding to the x position).</para></listitem>
 <listitem>
 
 <para>
- When box sizes are passed, the horizonal width preceeds the vertical
+ When box sizes are passed, the horizontal width precedes the vertical
 width.</para></listitem>
 <listitem>
 
 <para>
  When both a screen location and a box size are being passed, the
-screen location preceeds the box size.</para></listitem>
+screen location precedes the box size.</para></listitem>
 <listitem>
 
 <para>
@@ -193,8 +193,8 @@ flags may be logically ORed together to pass more then one flag at a time.</para
 
 <para>
  <literal remap="tt">Newt</literal> uses <emphasis remap="bf">callback</emphasis> functions to convey certain events to
-the application. While callbacks differe slightly in their parameters, most
-of them allow the application to speicfy an arbitrary argument to be passed
+the application. While callbacks differ slightly in their parameters, most
+of them allow the application to specify an arbitrary argument to be passed
 to the callback when the callback is invoked. This argument is always a 
 <literal remap="tt">void *</literal>, which allows the application great flexibility.
 </para>
@@ -280,11 +280,11 @@ buffer without waiting for additional input.</para></sect2>
 <para>
 The background of the terminal's display (the part without any windows 
 covering it) is known as the <emphasis remap="bf">root window</emphasis> (it's the parent of all
-windows, just like the system's root directory is ther parent of all 
+windows, just like the system's root directory is the parent of all 
 subdirectories). Normally, applications don't use the root window, instead
 drawing all of their text inside of windows (<literal remap="tt">newt</literal> doesn't require
 this though -- widgets may be placed directly on the root window without
-difficulty). It is often desireable to display some text, such as a
+difficulty). It is often desirable to display some text, such as a
 program's name or copyright information, on the root window, however.
 <literal remap="tt">Newt</literal> provides two ways of displaying text on the root window. These
 functions may be called at any time. They are the only <literal remap="tt">newt</literal> functions
@@ -309,7 +309,7 @@ As it's common to use the last line on the screen to display help information,
 <literal remap="tt">newt</literal> includes special support for doing exactly that. The last
 line on the display is known as the <emphasis remap="bf">help line</emphasis>, and is treated as a
 stack. As the value of the help line normally relates to the window
-currently displayed, using the same structure forwindow order and the
+currently displayed, using the same structure for window order and the
 help line is very natural. Two functions are provided to manipulate the
 help line.
 
@@ -337,7 +337,7 @@ replaced. It's important not to call tt/newtPopHelpLine()/ more then
 
 By default, <literal remap="tt">newt</literal> programs cannot be suspended by the user (compare
 this to most Unix programs which can be suspended by pressing the suspend
-key (normmaly <literal remap="tt">^Z</literal>).  Instead, programs can specify a <emphasis remap="bf">callback</emphasis>
+key (normally <literal remap="tt">^Z</literal>).  Instead, programs can specify a <emphasis remap="bf">callback</emphasis>
 function which gets invoked when the user presses the suspend key. 
 
 
@@ -348,7 +348,7 @@ void newtSetSuspendCallback(newtSuspendCallback cb);
 </screen>
 
 
-The suepnd function neither expects nor returns any value, and can
+The suspend function neither expects nor returns any value, and can
 do whatever it likes to when it is invoked. If no suspend callback
 is registered, the suspend keystroke is ignored.
 
@@ -373,7 +373,7 @@ takes over the terminal, it disables the part of the terminal interface
 which sends the suspend signal. Instead, if <literal remap="tt">newt</literal> sees the suspend
 keystroke during normal input processing, it immediately calls the suspend
 callback if one has been set. This means that suspending newt applications
-is not asyncronous.</para></sect2>
+is not asynchronous.</para></sect2>
 
 
 <sect2><title>Refreshing the Screen</title>
@@ -385,7 +385,7 @@ needs to'' is implemented as ``right before the we wait for the user to
 press a key''. While this allows for optimized screen displays most of
 the time, this optimization makes things difficult for programs which
 want to display progress messages without forcing the user to input 
-characters. Applications can foce S-Lang to immediately update modified
+characters. Applications can force S-Lang to immediately update modified
 portions of the screen by calling <literal remap="tt">newtRefresh</literal>.
 
 
@@ -407,7 +407,7 @@ always be practical.
 
 
 
-<sect2><title>Other Miscellaenous Funtions</title>
+<sect2><title>Other Miscellaneous Functions</title>
 
 <para>
 As always, some function defy characterization. Two of <literal remap="tt">newt</literal>'s general
@@ -429,7 +429,7 @@ current size of the terminal.</para></sect2>
 <sect2><title>Basic <literal remap="tt">newt</literal> Example</title>
 
 <para>
-To help illustrate the functions presented in this secion here is a short
+To help illustrate the functions presented in this section here is a short
 sample <literal remap="tt">newt</literal> program which uses many of them. While it doesn't do
 anything interesting, it does show the basic structure of <literal remap="tt">newt</literal> programs.
 
@@ -509,7 +509,7 @@ int newtOpenWindow(int left, int top, int width, int height,
 
 The first of these functions open a centered window of the specified
 size. The <literal remap="tt">title</literal> is optional -- if it is <literal remap="tt">NULL</literal>, then no title
-is used. <literal remap="tt">nwtOpenWindow*(</literal> is similiar, but it requires a specific
+is used. <literal remap="tt">newtOpenWindow*(</literal> is similar, but it requires a specific
 location for the upper left-hand corner of the window.</para></sect2>
 
 
@@ -541,7 +541,7 @@ combination of these two functions.
 Forms, however, are a component whose primary purpose is not noticed by
 the user at all. Forms are collections of components (a form may contain
 another form) which logically relate the components to one another. Once
-a form is created and had all of its consituent components added to it,
+a form is created and had all of its constituent components added to it,
 applications normally then run the form.  This gives control of the
 application to the form, which then lets the user enter data onto the
 form. When the user is done (a number of different events qualify as
@@ -550,7 +550,7 @@ invoked it. The application may then read the information the user provided
 and continue appropriately.
 
 All <literal remap="tt">newt</literal> components are stored in a common data type, a
-<literal remap="tt">newtComponent</literal> (some of the particulars of <literal remap="tt">newtComponents</literal>s have
+<literal remap="tt">newtComponent</literal> (some of the particulars of <literal remap="tt">newtComponent</literal>s have
 already been mentioned. While this makes it easy for programmers to pass
 components around, it does force them to make sure they use they don't pass
 entry boxes to routines expecting push buttons, as the compiler can't
@@ -582,7 +582,7 @@ To create a form, call <literal remap="tt">newtForm()</literal>. The first param
 scrollbar which should be associated with the form. For now, that should
 always be <literal remap="tt">NULL</literal> (we'll discuss how to create scrolling forms later in
 this section). The second parameter, <literal remap="tt">help</literal>, is currently unused and
-should always be <literal remap="tt">NULL</literal>. The <literal remap="tt">flags</literal> is normally 0, and othervalues
+should always be <literal remap="tt">NULL</literal>. The <literal remap="tt">flags</literal> is normally 0, and other values
 it can take will be discussed later. Now that we've waved away the
 complexity of this function, creating a form boils down to simply:
 
@@ -595,7 +595,7 @@ myForm = newtForm(NULL, NULL, 0);
 
 
 After a form is created, components need to be added to it --- after all,
-an empty form isn't terribly usefull. There are two functions which add
+an empty form isn't terribly useful. There are two functions which add
 components to a form.
 
 
@@ -607,7 +607,7 @@ void newtFormAddComponents(newtComponent form, ...);
 
 The first function, <literal remap="tt">newtFormAddComponent()</literal>, adds a single component
 to the form which is passed as the first parameter. The second function
-is simply a convience function. After passing the form to
+is simply a convenience function. After passing the form to
 <literal remap="tt">newtFormAddComponents()</literal>, an arbitrary number of components is then
 passed, followed by <literal remap="tt">NULL</literal>. Every component passed is added to the form.
 
@@ -699,7 +699,7 @@ newtComponent newtCompactButton(int left, int top, const char * text);
 </screen>
 
 
-Both functions take identical paramters. The first two parameters are the
+Both functions take identical parameters. The first two parameters are the
 location of the upper left corner of the button, and the final parameter is
 the text which should be displayed in the button (such as ``Ok'' or
 ``Cancel'').</para>
@@ -782,7 +782,7 @@ void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
 <para>
 <literal remap="tt">newtEntry()</literal> creates a new entry box. After the location of the entry
 box, the initial value for the entry box is passed, which may be <literal remap="tt">NULL</literal>
-if the box should start off empty. Next, the width of the phsyical box is
+if the box should start off empty. Next, the width of the physical box is
 given. This width may or may not limit the length of the string the user is
 allowed to enter; that depends on the <literal remap="tt">flags</literal>. The <literal remap="tt">resultPtr</literal> must
 be the address of a <literal remap="tt">char *</literal>. Until the entry box is destroyed by
@@ -808,7 +808,7 @@ arbitrary length.</para></listitem>
 <term>NEWT_FLAG_HIDDEN</term>
 <listitem>
 <para>If this flag is specified, the value of the entry box
-is not displayed. This is usefull when the application needs to read a
+is not displayed. This is useful when the application needs to read a
 password, for example.</para></listitem>
 </varlistentry>
 <varlistentry>
@@ -844,7 +844,7 @@ to the user (such as automatically adding a '.' after the user has typed in
 the first three numbers in an IP address). 
 
 When a filter is registered through <literal remap="tt">newtEntrySetFilter()</literal>, both the
-filter itself and an aribtrary <literal remap="tt">void *</literal>, which passed to the filter
+filter itself and an arbitrary <literal remap="tt">void *</literal>, which passed to the filter
 whenever it is invoked, are recorded. This data pointer isn't used for any
 other purpose, and may be <literal remap="tt">NULL</literal>. Entry filters take four arguments.
 
@@ -927,11 +927,11 @@ or not checked). <literal remap="tt">Newt</literal> checkboxes are more flexible
 presses the space bar on a checkbox, the checkbox's value changes to the
 next value in an arbitrary sequence (which wraps). Most checkboxes have
 two items in that sequence, checked or not, but <literal remap="tt">newt</literal> allows an
-arbitrary number of value. This is usefull when the user must pick from a
+arbitrary number of value. This is useful when the user must pick from a
 limited number of choices.
 
 Each item in the sequence is a single character, and the sequence itself is
-represented as a string. The checkbox comoonents displays the character
+represented as a string. The checkbox components displays the character
 which currently represents its value the left of a text label, and returns
 the same character as its current value. The default sequence for
 checkboxes is <literal remap="tt">" *"</literal>, with <literal remap="tt">' '</literal> indicating false and <literal remap="tt">'*'</literal> true.
@@ -958,7 +958,7 @@ checkbox should always record it's current value in. If <literal remap="tt">resu
 value of the checkbox.
 
 <literal remap="tt">newtCheckboxGetValue()</literal> is straightforward, returning the character
-in the sequence which indicates the current value of the checkboxl
+in the sequence which indicates the current value of the checkbox
 
 If a callback is attached to a checkbox, the callback is invoked whenever
 the checkbox responds to a user's keystroke. The entry box may respond by
@@ -968,7 +968,7 @@ taking focus or giving up focus, as well as by changing its current value.</para
 <sect2><title>Radio Buttons</title>
 
 <para>
-Radio buttons look very similiar to checkboxes. The key difference between
+Radio buttons look very similar to checkboxes. The key difference between
 the two is that radio buttons are grouped into sets, and exactly one radio
 button in that set may be turned on. If another radio button is selected,
 the button which was selected is automatically deselected.
@@ -985,15 +985,15 @@ newtComponent newtRadioGetCurrent(newtComponent setMember);
 Each radio button is created by calling <literal remap="tt">newtRadiobutton()</literal>. After
 the position of the radio button, the text displayed with the button
 is passed. <literal remap="tt">isDefault</literal> should be nonzero if the radio button is to
-be turned on by default. The final paramater, <literal remap="tt">prevMember</literal> is used
+be turned on by default. The final parameter, <literal remap="tt">prevMember</literal> is used
 to group radio buttons into sets. If <literal remap="tt">prevMember</literal> is <literal remap="tt">NULL</literal>, the 
 radio button is assigned to a new set. If the radio button should belong
 to a preexisting set, <literal remap="tt">prevMember</literal> must be the previous radio button
 added to that set.
 
-Discovering which radio button in a set is currently selected neccesitates
+Discovering which radio button in a set is currently selected necessitates
 <literal remap="tt">newtRadioGetCurrent()</literal>. It may be passed any radio button in the set
-you're inerested in, and it returns the radio button component currently
+you're interested in, and it returns the radio button component currently
 selected.
 
 Here is an example of both checkboxes and radio buttons.
@@ -1050,8 +1050,8 @@ void main(void) {
 
 <para>
 It's common for programs to need to display a progress meter on the
-terminal while it performs somey length operation (it behaves like an
-anaesthetic). The scale component is a simple way of doing this. It
+terminal while it performs some length operation (it behaves like an
+anesthetic). The scale component is a simple way of doing this. It
 displays a horizontal bar graph which the application can update as the
 operation continues.
 
@@ -1066,7 +1066,7 @@ When the scale is created with <literal remap="tt">newtScale</literal>, it is gi
 scale itself as well as the value which means that the scale should be
 drawn as full. When the position of the scale is set with
 <literal remap="tt">newtScaleSet()</literal>, the scale is told the amount of the scale which should
-be filled in realative to the <literal remap="tt">fullAmount</literal>. For example, if the
+be filled in relative to the <literal remap="tt">fullAmount</literal>. For example, if the
 application is copying a file, <literal remap="tt">fullValue</literal> could be the number of bytes
 in the file, and when the scale is updated <literal remap="tt">newtScaleSet()</literal> would be
 passed the number of bytes which have been copied so far.</para></sect2>
@@ -1097,7 +1097,7 @@ following flags:
 <listitem>
 <para>All text in the textbox should be wrapped to fit
 the width of the textbox. If this flag is not specified, each newline
-delimited line in the text is trunctated if it is too long to fit.
+delimited line in the text is truncated if it is too long to fit.
 
 When <literal remap="tt">newt</literal> wraps text, it tries not to break lines on spaces or tabs.
 Literal newline characters are respected, and may be used to force line
@@ -1122,7 +1122,7 @@ After a textbox has been created, text may be added to it through
 <literal remap="tt">newtTextboxSetText()</literal>, which takes only the textbox and the new text as
 parameters. If the textbox already contained text, that text is replaced by
 the new text. The textbox makes its own copy of the passed text, so these
-is no need to keep the original around unless it's convienent.</para></listitem></varlistentry></variablelist></para>
+is no need to keep the original around unless it's convenient.</para></listitem></varlistentry></variablelist></para>
 
 
 <sect3><title>Reflowing Text</title>
@@ -1133,7 +1133,7 @@ know exactly where the linebreaks should go. While textboxes are quite
 willing to scroll the text, the programmer still must know what width the
 text will look ``best'' at (where ``best'' means most exactly rectangular;
 no lines much shorter or much longer then the rest). This common is
-escpecially prevalent in internationalized programs, which need to make a
+especially prevalent in internationalized programs, which need to make a
 wide variety of message string look god on a screen.
 
 To help with this, <literal remap="tt">newt</literal> provides routines to reformat text to look
@@ -1157,7 +1157,7 @@ int newtTextboxGetNumLines(newtComponent co);
 <literal remap="tt">newtReflowText()</literal> reflows the <literal remap="tt">text</literal> to a target width of
 <literal remap="tt">width</literal>. The actual width of the longest line in the returned string is
 between <literal remap="tt">width - flexDown</literal> and <literal remap="tt">width + flexUp</literal>; the actual maximum
-line length is chosen to make the displayed check look rectuangular. 
+line length is chosen to make the displayed check look rectangular. 
 The <literal remap="tt">int</literal>s pointed to by <literal remap="tt">actualWidth</literal> and <literal remap="tt">actualHeight</literal> are set
 to the width of the longest line and the number of lines in in the
 returned text, respectively. Either one may be <literal remap="tt">NULL</literal>. The return
@@ -1170,7 +1170,7 @@ position of the final textbox, the width and flex values for the text
 (which are identical to the parameters passed to <literal remap="tt">newtReflowText()</literal>,
 and the flags for the textbox (which are the same as the flags for
 <literal remap="tt">newtTextbox()</literal>. This function does not let you limit the height of the
-textbox, however, making limiting it's use to contructing textbox's which
+textbox, however, making limiting it's use to constructing textboxes which
 don't need to scroll.
 
 To find out how tall the textbox created by <literal remap="tt">newtTextboxReflowed()</literal> is, 
@@ -1221,7 +1221,7 @@ void main(void) {
 Scrollbars (which, currently, are always vertical in <literal remap="tt">newt</literal>), may be
 attached to forms to let them contain more data then they have space for.
 While the actual process of making scrolling forms is discussed at the end 
-of this section, we'll go ahead and introduct scrollbars now so you'll be
+of this section, we'll go ahead and introduce scrollbars now so you'll be
 ready.
 
 
@@ -1239,7 +1239,7 @@ component. It's done here to let the colors a scrollbar use match the
 colors of the component the scrollbar is mated too. When a scrollbar is
 being used with a form, <literal remap="tt">normalColorset</literal> is often
 <literal remap="tt">NEWT_COLORSET_WINDOW</literal> and <literal remap="tt">thumbColorset</literal>
-<literal remap="tt">NEWT_COLORSET_ACTCHECKBOX</literal>. Of course, feel free to puruse
+<literal remap="tt">NEWT_COLORSET_ACTCHECKBOX</literal>. Of course, feel free to peruse
 <literal remap="tt">&lt;newt.h&gt;</literal> and pick your own colors.
 
 As the scrollbar is normally updated by the component it is mated with,
@@ -1331,8 +1331,8 @@ returns the key of the currently selected item.
 Normally, a listbox is as wide as it's widest element, plus space for a
 scrollbar if the listbox is supposed to have one. To make the listbox
 any larger then that, use <literal remap="tt">newtListboxSetWidth()</literal>, which overrides the
-natural lis of the listbox. Once the width has been set, it's fixed. The
-listbox will no longer grow to accomodate new entries, so bad things may
+natural list of the listbox. Once the width has been set, it's fixed. The
+listbox will no longer grow to accommodate new entries, so bad things may
 happen! 
 
 An application can change the current position of the listbox (where the
@@ -1349,7 +1349,7 @@ to the entry whose <literal remap="tt">key</literal> is passed into the function
 While the contents of many listboxes never need to change, some applications
 need to change the contents of listboxes regularly. <literal remap="tt">Newt</literal> includes
 complete support for updating listboxes. These new functions are in
-addtion to <literal remap="tt">newtListboxAppendEntry()</literal>, which was already discussed.
+addition to <literal remap="tt">newtListboxAppendEntry()</literal>, which was already discussed.
 
 
 <screen>
