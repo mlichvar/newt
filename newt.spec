@@ -81,6 +81,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Tue Dec 17 2002 Matt Wilson <msw@redhat.com> 0.51.2-1
+- fixed wstrlen() it was calculating wcwidth(first wide char in
+  string) * strlen(str) instead of the actual width of the whole
+  string
+- fixed newtRedrawHelpLine() to copy all the bytes from a multibyte
+  string
+
 * Fri Dec 13 2002 Elliot Lee <sopwith@redhat.com> 0.51.1-1
 - Merge multilib changes
 
