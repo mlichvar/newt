@@ -9,7 +9,7 @@ Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
 BuildRequires: python,python-devel,perl
 Requires: slang
 Provides: snack
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{root}
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %package devel
 Summary: Newt windowing toolkit development files.
