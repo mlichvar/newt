@@ -25,9 +25,7 @@ int main(void) {
     newtInit();
     newtCls();
 
-    newtOpenWindow(2, 2, 40, 15, "first window");
-
-    b1 = newtButton(-1, -1, "Button 1");
+    b1 = newtCheckbox(-1, -1, "An pretty long checkbox for testing", ' ', NULL, NULL);
     b2 = newtButton(-1, -1, "Another Button");
     b3 = newtButton(-1, -1, "But, but");
     b4 = newtButton(-1, -1, "But what?");
@@ -44,7 +42,7 @@ int main(void) {
 
     newtFormAddComponents(f, b1, b2, b3, b4, NULL);
 
-    newtGridPlace(grid, 1, 1);
+    newtGridWrappedWindow(grid, "first window");
 
     answer = newtRunForm(f);
 	

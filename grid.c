@@ -112,8 +112,8 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
 	    j += field->padLeft + field->padRight;
 
-	    i += j;
 	    if (j > widths[col]) widths[col] = j;
+	    i += widths[col];
 	}
 
 	if (i > minWidth) minWidth = i;
@@ -136,8 +136,8 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
 	    j += field->padTop + field->padBottom;
 
-	    i += j;
 	    if (j > heights[row]) heights[row] = j;
+	    i += heights[row];
 	}
 
 	if (i > minHeight) minHeight = i;
