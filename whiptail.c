@@ -11,7 +11,8 @@
 #include "newt.h"
 
 enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
-		MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE };
+	    MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE,
+            MODE_TEXTBOX };
 
 #define OPT_MSGBOX 		1000
 #define OPT_CHECKLIST 		1001
@@ -22,11 +23,35 @@ enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
 #define OPT_RADIOLIST	 	1006
 #define OPT_GAUGE	 	1007
 #define OPT_INFOBOX	 	1008
+#define OPT_TEXTBOX	 	1009
 
 static void usage(void) {
     newtFinished(); 
     fprintf(stderr, "whiptail: bad parameters (see man whiptail(1) for details)\n");
     exit(DLG_ERROR);
+}
+
+char *
+readTextFile(const char * filename)
+{
+    int fd = open(filename, O_RDONLY, 0);
+    struct stat s;
+    char * buf;
+
+    if ( fd < 0 || fstat(fd, &s) != 0 ) {
+       perror(filename);
+       exit(DLG_ERROR);
+     }
+
+    if ( (buf = malloc(s.st_size)) == 0 )
+       fprintf(stderr, "%s: too large to display.\n", filename);
+
+    if ( read(fd, buf, s.st_size) != s.st_size ) {
+        perror(filename);
+        exit(DLG_ERROR);
+    }
+   close(fd);
+   return buf;
 }
 
 int main(int argc, const char ** argv) {
@@ -76,6 +101,7 @@ int main(int argc, const char ** argv) {
 	    { "separate-output", '\0', 0, &separateOutput, 0 },
 	    { "title", '\0', POPT_ARG_STRING, &title, 0 },
 	    { "yesno", '\0', 0, 0, OPT_YESNO },
+	    { "textbox", '\0', 0, 0, OPT_TEXTBOX },
 	    { 0, 0, 0, 0, 0 } 
     };
     
@@ -99,7 +125,10 @@ int main(int argc, const char ** argv) {
 	    if (mode != MODE_NONE) usage();
 	    mode = MODE_MSGBOX;
 	    break;
-
+          case OPT_TEXTBOX:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_TEXTBOX;
+            break;
 	  case OPT_RADIOLIST:
 	    if (mode != MODE_NONE) usage();
 	    mode = MODE_RADIOLIST;
@@ -148,6 +177,8 @@ int main(int argc, const char ** argv) {
 
     if (!(text = poptGetArg(optCon))) usage();
 
+    if ( mode == MODE_TEXTBOX ) text = readTextFile(text);
+
     if (!(nextArg = poptGetArg(optCon))) usage();
     height = strtoul(nextArg, &end, 10);
     if (*end) usage();
@@ -179,6 +210,7 @@ int main(int argc, const char ** argv) {
 
     switch (mode) {
       case MODE_MSGBOX:
+      case MODE_TEXTBOX:
 	rc = messageBox(text, height, width, MSGBOX_MSG, flags);
 	break;
 
