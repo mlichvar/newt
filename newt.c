@@ -588,7 +588,7 @@ void newtPopHelpLine(void) {
     newtRedrawHelpLine();
 }
 
-void newtDrawRootText(int row, int col, const char * text) {
+void newtDrawRootText(int col, int row, const char * text) {
     SLsmg_set_color(NEWT_COLORSET_ROOTTEXT);
 
     if (col < 0) {
@@ -596,7 +596,7 @@ void newtDrawRootText(int row, int col, const char * text) {
     }
 
     if (row < 0) {
-	col = SLtt_Screen_Cols + col;
+	row = SLtt_Screen_Rows + row;
     }
    
     SLsmg_gotorc(row, col);
