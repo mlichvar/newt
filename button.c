@@ -92,7 +92,7 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
     SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
     if (bu->compact) {
-	if (active) 
+	if (active)
 	    SLsmg_set_color(NEWT_COLORSET_COMPACTBUTTON);
 	else
 	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
@@ -162,11 +162,22 @@ static struct eventResult buttonEvent(newtComponent co,
 		}
 
 		er.result = ER_EXITFORM;
-	    } else 
+	    } else
 		er.result = ER_IGNORED;
 	    break;
+	  case EV_MOUSE:
+	    if (!bu->compact) {
+		buttonDrawIt(co, 1, 1);
+		newtRefresh();
+		newtDelay(150000);
+		buttonDrawIt(co, 1, 0);
+		newtRefresh();
+		newtDelay(150000);
+	    }
+	    er.result = ER_EXITFORM;
+	    break;
 	}
-    } else 
+    } else
 	er.result = ER_IGNORED;
 
     return er;

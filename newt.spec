@@ -33,6 +33,7 @@ widgets and stackable windows.
 %setup
 
 %build
+./configure
 make
 make shared
 

@@ -62,7 +62,7 @@ newtComponent newtRadiobutton(int left, int top, const char * text, int isDefaul
 
 newtComponent newtRadioGetCurrent(newtComponent setMember) {
     struct checkbox * rb = setMember->data;
-    
+
     setMember = rb->lastButton;
     rb = setMember->data;
 
@@ -147,7 +147,7 @@ static void cbDraw(newtComponent c) {
 
     SLsmg_write_string(cb->text);
 
-    if (cb->hasFocus) 
+    if (cb->hasFocus)
 	SLsmg_set_color(cb->active);
 
     newtGotorc(c->top, c->left + 1);
@@ -192,7 +192,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 			*cb->result = *cb->seq;
 		    else {
 			cur++;
-			if (! *cur) 
+			if (! *cur)
 			    *cb->result = *cb->seq;
 			else
 			    *cb->result = *cur;
@@ -211,8 +211,30 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 		er.result = ER_IGNORED;
 	    }
 	    break;
+   	  case EV_MOUSE:
+	    if (ev.u.mouse.type == MOUSE_BUTTON_DOWN) {
+		if (cb->type == RADIO) {
+		    makeActive(co);
+		} else if (cb->type == CHECK) {
+		    cur = strchr(cb->seq, *cb->result);
+		    if (!cur)
+			*cb->result = *cb->seq;
+		    else {
+			cur++;
+			if (! *cur)
+			    *cb->result = *cb->seq;
+			else
+			    *cb->result = *cur;
+		    }
+		    cbDraw(co);
+		    er.result = ER_SWALLOWED;
+
+		    if (co->callback)
+			co->callback(co, co->callbackData);
+		}
+	    }
 	}
-    } else 
+    } else
 	er.result = ER_IGNORED;
 
     return er;
@@ -233,7 +255,7 @@ static void makeActive(newtComponent co) {
     if (curr) {
 	rb->value = rb->seq[0];
 	cbDraw(curr);
-    } 
+    }
     cb->value = cb->seq[1];
     cbDraw(co);
 

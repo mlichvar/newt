@@ -1,8 +1,8 @@
 #ifndef H_NEWT_PR
 #define H_NEWT_PR
 
-#define COLORSET_ROOT 		NEWT_COLORSET_ROOT 
-#define COLORSET_BORDER 	NEWT_COLORSET_BORDER 
+#define COLORSET_ROOT 		NEWT_COLORSET_ROOT
+#define COLORSET_BORDER 	NEWT_COLORSET_BORDER
 #define COLORSET_WINDOW		NEWT_COLORSET_WINDOW
 #define COLORSET_SHADOW		NEWT_COLORSET_SHADOW
 #define COLORSET_TITLE		NEWT_COLORSET_TITLE
@@ -21,6 +21,7 @@ int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense);
 
 void newtGotorc(int row, int col);
 void newtGetrc(int * row, int * col);
+void newtGetWindowPos(int * x, int * y);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
 void newtClearBox(int left, int top, int width, int height);
 
@@ -28,7 +29,7 @@ int newtGetKey(void);
 
 struct newtComponent_struct {
     /* common data */
-    int height, width; 
+    int height, width;
     int top, left;
     int takesFocus;
     int isMapped;
@@ -48,9 +49,9 @@ struct eventResult {
     union {
 	newtComponent focus;
     } u;
-}; 
+};
 
-enum eventTypes { EV_FOCUS, EV_UNFOCUS, EV_KEYPRESS };
+enum eventTypes { EV_FOCUS, EV_UNFOCUS, EV_KEYPRESS, EV_MOUSE };
 enum eventSequence { EV_EARLY, EV_NORMAL, EV_LATE };
 
 struct event {
@@ -58,6 +59,10 @@ struct event {
     enum eventSequence when;
     union {
 	int key;
+	struct {
+	    enum { MOUSE_MOTION, MOUSE_BUTTON_DOWN, MOUSE_BUTTON_UP } type;
+	    int x, y;
+	} mouse;
     } u;
 } ;
 

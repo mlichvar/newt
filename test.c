@@ -88,7 +88,7 @@ int main(void) {
     newtFormAddComponents(f, b1, b2, l1, l2, l3, e1, e2, e3, chklist, NULL);
     newtFormAddComponents(f, rsf, scale, NULL);
 
-    lb = newtListbox(45, 1, 4, NEWT_FLAG_MULTIPLE | NEWT_FLAG_BORDER | 
+    lb = newtListbox(45, 1, 6, NEWT_FLAG_MULTIPLE | NEWT_FLAG_BORDER |
 				NEWT_FLAG_SCROLL);
     newtListboxAppendEntry(lb, "First", (void *) 1);
     newtListboxAppendEntry(lb, "Second", (void *) 2);
@@ -112,14 +112,14 @@ int main(void) {
 
     do {
 	answer = newtRunForm(f);
-	
+
 	if (answer == b2) {
 	    newtScaleSet(scale, atoi(scaleVal));
 	    newtRefresh();
 	    answer = NULL;
 	}
     } while (!answer);
- 
+
     scaleVal = strdup(scaleVal);
     enr2 = strdup(enr2);
     enr3 = strdup(enr3);

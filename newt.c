@@ -32,12 +32,12 @@ static char ** currentHelpline = NULL;
 static int cursorRow, cursorCol;
 static int needResize;
 
-static const char * defaultHelpLine = 
+static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
 ;
 
 const struct newtColors newtDefaultColorPalette = {
-	"white", "blue", 			/* root fg, bg */     
+	"white", "blue", 			/* root fg, bg */
 	"black", "lightgray",			/* border fg, bg */
 	"black", "lightgray",			/* window fg, bg */
 	"white", "black",			/* shadow fg, bg */
@@ -192,7 +192,7 @@ int newtInit(void) {
 
     SLsmg_init_smg();
     SLang_init_tty(0, 0, 0);
- 
+
     newtSetColors(newtDefaultColorPalette);
     /*initKeymap();*/
 
@@ -204,6 +204,8 @@ int newtInit(void) {
 
     SLsignal_intr(SIGWINCH, handleSigwinch);
     SLang_getkey_intr_hook = getkeyInterruptHook;
+
+
 
     return 0;
 }
@@ -224,25 +226,25 @@ void newtSetColors(struct newtColors colors) {
     SLtt_set_color(NEWT_COLORSET_SHADOW, "", colors.shadowFg, colors.shadowBg);
     SLtt_set_color(NEWT_COLORSET_TITLE, "", colors.titleFg, colors.titleBg);
     SLtt_set_color(NEWT_COLORSET_BUTTON, "", colors.buttonFg, colors.buttonBg);
-    SLtt_set_color(NEWT_COLORSET_ACTBUTTON, "", colors.actButtonFg, 
+    SLtt_set_color(NEWT_COLORSET_ACTBUTTON, "", colors.actButtonFg,
 			colors.actButtonBg);
-    SLtt_set_color(NEWT_COLORSET_CHECKBOX, "", colors.checkboxFg, 
+    SLtt_set_color(NEWT_COLORSET_CHECKBOX, "", colors.checkboxFg,
 			colors.checkboxBg);
-    SLtt_set_color(NEWT_COLORSET_ACTCHECKBOX, "", colors.actCheckboxFg, 
+    SLtt_set_color(NEWT_COLORSET_ACTCHECKBOX, "", colors.actCheckboxFg,
 			colors.actCheckboxBg);
     SLtt_set_color(NEWT_COLORSET_ENTRY, "", colors.entryFg, colors.entryBg);
     SLtt_set_color(NEWT_COLORSET_LABEL, "", colors.labelFg, colors.labelBg);
-    SLtt_set_color(NEWT_COLORSET_LISTBOX, "", colors.listboxFg, 
+    SLtt_set_color(NEWT_COLORSET_LISTBOX, "", colors.listboxFg,
 			colors.listboxBg);
-    SLtt_set_color(NEWT_COLORSET_ACTLISTBOX, "", colors.actListboxFg, 
+    SLtt_set_color(NEWT_COLORSET_ACTLISTBOX, "", colors.actListboxFg,
 			colors.actListboxBg);
-    SLtt_set_color(NEWT_COLORSET_TEXTBOX, "", colors.textboxFg, 
+    SLtt_set_color(NEWT_COLORSET_TEXTBOX, "", colors.textboxFg,
 			colors.textboxBg);
-    SLtt_set_color(NEWT_COLORSET_ACTTEXTBOX, "", colors.actTextboxFg, 
+    SLtt_set_color(NEWT_COLORSET_ACTTEXTBOX, "", colors.actTextboxFg,
 			colors.actTextboxBg);
-    SLtt_set_color(NEWT_COLORSET_HELPLINE, "", colors.helpLineFg, 
+    SLtt_set_color(NEWT_COLORSET_HELPLINE, "", colors.helpLineFg,
 			colors.helpLineBg);
-    SLtt_set_color(NEWT_COLORSET_ROOTTEXT, "", colors.rootTextFg, 
+    SLtt_set_color(NEWT_COLORSET_ROOTTEXT, "", colors.rootTextFg,
 			colors.rootTextBg);
 
     SLtt_set_color(NEWT_COLORSET_EMPTYSCALE, "", "black",
@@ -254,7 +256,7 @@ void newtSetColors(struct newtColors colors) {
 
     SLtt_set_color(NEWT_COLORSET_COMPACTBUTTON, "", colors.compactButtonFg,
 			colors.compactButtonBg);
-    
+
     SLtt_set_color(NEWT_COLORSET_ACTSELLISTBOX, "", colors.actSelListboxFg,
 		   colors.actSelListboxBg);
     SLtt_set_color(NEWT_COLORSET_SELLISTBOX, "", colors.selListboxFg,
@@ -336,7 +338,7 @@ int newtGetKey(void) {
        for later */
 
     chptr--;
-    while (chptr > buf) 
+    while (chptr > buf)
 	SLang_ungetkey(*chptr--);
 
     return *chptr;
@@ -355,7 +357,7 @@ void newtClearKeyBuffer(void) {
     }
 }
 
-int newtOpenWindow(int left, int top, int width, int height, 
+int newtOpenWindow(int left, int top, int width, int height,
 			  const char * title) {
     int j, row, col;
     int n;
@@ -427,7 +429,7 @@ int newtCenteredWindow(int width, int height, const char * title) {
 
     top = (SLtt_Screen_Rows - height) / 2;
 
-    /* I don't know why, but this seems to look better */ 
+    /* I don't know why, but this seems to look better */
     if ((SLtt_Screen_Rows % 2) && (top % 2)) top--;
 
     left = (SLtt_Screen_Cols - width) / 2;
@@ -439,7 +441,7 @@ int newtCenteredWindow(int width, int height, const char * title) {
 
 void newtPopWindow(void) {
     int j, row, col;
-    int n = 0;    
+    int n = 0;
 
     row = col = 0;
 
@@ -455,7 +457,7 @@ void newtPopWindow(void) {
     free(currentWindow->buffer);
     free(currentWindow->title);
 
-    if (currentWindow == windowStack) 
+    if (currentWindow == windowStack)
 	currentWindow = NULL;
     else
 	currentWindow--;
@@ -463,6 +465,14 @@ void newtPopWindow(void) {
     SLsmg_set_char_set(0);
 
     newtRefresh();
+}
+
+void newtGetWindowPos(int * x, int * y) {
+    if (currentWindow) {
+	*x = currentWindow->left;
+	*y = currentWindow->top;
+    } else
+	*x = *y = 0;
 }
 
 void newtGetrc(int * row, int * col) {
@@ -505,7 +515,7 @@ void newtClearBox(int left, int top, int width, int height) {
     SLsmg_fill_region(top, left, height, width, ' ');
 }
 
-#if 0    
+#if 0
 /* This doesn't seem to work quite right. I don't know why not, but when
    I rsh from an rxvt into a box and run this code, the machine returns
    console key's (\033[B) rather then xterm ones (\033OB). */
@@ -550,7 +560,7 @@ void newtRedrawHelpLine(void) {
     char * buf;
 
     SLsmg_set_color(NEWT_COLORSET_HELPLINE);
-   
+
     buf = alloca(SLtt_Screen_Cols + 1);
     memset(buf, ' ', SLtt_Screen_Cols);
     buf[SLtt_Screen_Cols] = '\0';
@@ -565,7 +575,7 @@ void newtRedrawHelpLine(void) {
 void newtPushHelpLine(const char * text) {
     if (!text)
 	text = defaultHelpLine;
-    
+
     if (currentHelpline)
 	(*(++currentHelpline)) = strdup(text);
     else {
@@ -598,7 +608,7 @@ void newtDrawRootText(int col, int row, const char * text) {
     if (row < 0) {
 	row = SLtt_Screen_Rows + row;
     }
-   
+
     SLsmg_gotorc(row, col);
     SLsmg_write_string((char *)text);
 }
@@ -609,7 +619,7 @@ int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {
 	return oldFlags | newFlags;
 
       case NEWT_FLAGS_RESET:
-	return oldFlags & (~newFlags); 
+	return oldFlags & (~newFlags);
 
       case NEWT_FLAGS_TOGGLE:
 	return oldFlags ^ newFlags;

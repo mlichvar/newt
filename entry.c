@@ -20,7 +20,7 @@ struct entry {
 
 static void entryDraw(newtComponent co);
 static void entryDestroy(newtComponent co);
-static struct eventResult entryEvent(newtComponent co, 
+static struct eventResult entryEvent(newtComponent co,
 			             struct event ev);
 
 static struct eventResult entryHandleKey(newtComponent co, int key);
@@ -90,7 +90,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     en->buf = malloc(en->bufAlloced);
     en->resultPtr = resultPtr;
     if (en->resultPtr) *en->resultPtr = en->buf;
-  
+
     memset(en->buf, 0, en->bufAlloced);
     if (initialValue) {
 	strcpy(en->buf, initialValue);
@@ -113,11 +113,11 @@ static void entryDraw(newtComponent co) {
 
     if (!co->isMapped) return;
 
-    if (en->flags & NEWT_FLAG_DISABLED) 
+    if (en->flags & NEWT_FLAG_DISABLED)
 	SLsmg_set_color(NEWT_COLORSET_DISENTRY);
     else
 	SLsmg_set_color(NEWT_COLORSET_ENTRY);
- 
+
     if (en->flags & NEWT_FLAG_HIDDEN) {
 	newtGotorc(co->top, co->left);
 	for (i = 0; i < co->width; i++)
@@ -139,7 +139,7 @@ static void entryDraw(newtComponent co) {
 
     chptr = en->buf + en->firstChar;
     len = strlen(chptr);
- 
+
     if (len <= co->width) {
 	i = len;
 	SLsmg_write_string(chptr);
@@ -181,7 +181,7 @@ static void entryDestroy(newtComponent co) {
     free(co);
 }
 
-static struct eventResult entryEvent(newtComponent co, 
+static struct eventResult entryEvent(newtComponent co,
 				     struct event ev) {
     struct entry * en = co->data;
     struct eventResult er;
@@ -189,28 +189,43 @@ static struct eventResult entryEvent(newtComponent co,
 
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
-	  case EV_FOCUS:
+	case EV_FOCUS:
 	    /*SLtt_set_cursor_visibility(0);*/
 	    if (en->flags & NEWT_FLAG_HIDDEN)
 		newtGotorc(co->top, co->left);
 	    else
-		newtGotorc(co->top, co->left + 
-				(en->cursorPosition - en->firstChar));
+		newtGotorc(co->top, co->left +
+			   (en->cursorPosition - en->firstChar));
 	    er.result = ER_SWALLOWED;
 	    break;
 
-	  case EV_UNFOCUS:
+	case EV_UNFOCUS:
 	    /*SLtt_set_cursor_visibility(1);*/
 	    newtGotorc(0, 0);
 	    er.result = ER_SWALLOWED;
 	    if (co->callback) co->callback(co, co->callbackData);
 	    break;
 
-	  case EV_KEYPRESS:
+	case EV_KEYPRESS:
 	    ch = ev.u.key;
 	    if (en->filter)
 		ch = en->filter(co, en->filterData, ch, en->cursorPosition);
 	    if (ch) er = entryHandleKey(co, ch);
+	    break;
+
+	case EV_MOUSE:
+	    if ((ev.u.mouse.type == MOUSE_BUTTON_DOWN) &&
+		(en->flags ^ NEWT_FLAG_HIDDEN)) {
+		if (strlen(en->buf) >= ev.u.mouse.x - co->left) {
+		    en->cursorPosition = ev.u.mouse.x - co->left;
+		    newtGotorc(co->top,
+			       co->left +(en->cursorPosition - en->firstChar));
+		} else {
+		    en->cursorPosition = strlen(en->buf);
+		    newtGotorc(co->top,
+			       co->left +(en->cursorPosition - en->firstChar));
+		}
+	    }
 	    break;
 	}
     } else
@@ -294,8 +309,8 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed == co->width) {
 		SLtt_beep();
 		break;
-	    } 
-	
+	    }
+
 	    if ((en->bufUsed + 1) == en->bufAlloced) {
 		en->bufAlloced += 20;
 		en->buf = realloc(en->buf, en->bufAlloced);
@@ -313,7 +328,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 		if ((en->bufUsed + 1) == en->bufAlloced) {
 		    /* this string fills the buffer, so clip it */
 		    chptr--;
-		} else 
+		} else
 		    en->bufUsed++;
 
 		insPoint = en->buf + en->cursorPosition;
@@ -324,12 +339,12 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 		}
 
 	    }
-		
+
 	    en->buf[en->cursorPosition++] = key;
 	} else {
 	    er.result = ER_IGNORED;
 	}
-    } 
+    }
 
     entryDraw(co);
 

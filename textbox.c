@@ -345,7 +345,23 @@ static struct eventResult textboxEvent(newtComponent co,
 	    break;
 	}
     }
-
+    if (ev.when == EV_EARLY && ev.event == EV_MOUSE && tb->sb) {
+	/* Top scroll arrow */
+	if (ev.u.mouse.x == co->width && ev.u.mouse.y == co->top) {
+	    if (tb->topLine) tb->topLine--;
+	    textboxDraw(co);
+	    
+	    er.result = ER_SWALLOWED;
+	}
+	/* Bottom scroll arrow */
+	if (ev.u.mouse.x == co->width &&
+	    ev.u.mouse.y == co->top + co->height - 1) {
+	    if (tb->topLine < (tb->numLines - co->height)) tb->topLine++;
+	    textboxDraw(co);
+	    
+	    er.result = ER_SWALLOWED;
+	}
+    }
     return er;
 }
 

@@ -1,10 +1,12 @@
 configure
 config.log
 config.cache
+config.status
 config.h
+.depend
 Makefile
 test
 testgrid
 whiptail
 libnewt*
-snack.pcy
+snack.pyc

@@ -8,6 +8,7 @@
 struct scrollbar {
     int curr;
     int cs, csThumb;
+    int arrows;
 } ;
 
 static void sbDraw(newtComponent co);
@@ -26,7 +27,10 @@ void newtScrollbarSet(newtComponent co, int where, int total) {
     struct scrollbar * sb = co->data;
     int new;
 
-    new = (where * (co->height - 1)) / (total ? total : 1);
+    if (sb->arrows)
+	new = (where * (co->height - 3)) / (total ? total : 1) + 1;
+    else
+	new = (where * (co->height - 1)) / (total ? total : 1);
     if (new != sb->curr) {
 	sbDrawThumb(co, 0);
 	sb->curr = new;
@@ -43,7 +47,13 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     sb = malloc(sizeof(*sb));
     co->data = sb;
 
-    sb->curr = 0;
+    if (!strcmp(getenv("TERM"), "linux") && height >= 2) {
+	sb->arrows = 1;
+	sb->curr = 1;
+    } else {
+	sb->arrows = 0;
+	sb->curr = 0;
+    }
     sb->cs = normalColorset;
     sb->csThumb = thumbColorset;
 
@@ -67,9 +77,20 @@ static void sbDraw(newtComponent co) {
     SLsmg_set_color(sb->cs);
 
     SLsmg_set_char_set(1);
-    for (i = 0; i < co->height; i++) {
-	newtGotorc(i + co->top, co->left);
-	SLsmg_write_char('\x61');
+    if (sb->arrows) {
+	newtGotorc(co->top, co->left);
+ 	SLsmg_write_char('\x2d');
+	for (i = 1; i < co->height - 1; i++) {
+	    newtGotorc(i + co->top, co->left);
+	    SLsmg_write_char('\x61');
+	}
+	newtGotorc(co->top + co->height - 1, co->left);
+ 	SLsmg_write_char('\x2e');
+    } else {
+	for (i = 0; i < co->height; i++) {
+	    newtGotorc(i + co->top, co->left);
+	    SLsmg_write_char('\x61');
+	}
     }
 
     SLsmg_set_char_set(0);

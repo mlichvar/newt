@@ -1,14 +1,20 @@
+#include "config.h"
+
 #include <slang.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/select.h>
 
+#ifdef HAVE_LIBGPM
+#include <gpm.h>
+#endif
+
 #include "newt.h"
 #include "newt_pr.h"
 
 /****************************************************************************
-    These forms handle vertical scrolling of components with a height of 1 
-   
+    These forms handle vertical scrolling of components with a height of 1
+
     Horizontal scrolling won't work, and scrolling large widgets will fail
     miserably. It shouldn't be too hard to fix either of those if anyone
     cares to. I only use scrolling for listboxes and text boxes though so
@@ -110,7 +116,7 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     if (vertBar)
 	form->vertBar = vertBar;
     else
-	form->vertBar = NULL; 
+	form->vertBar = NULL;
 
     return co;
 }
@@ -160,7 +166,7 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 
     if (form->numCompsAlloced == form->numComps) {
 	form->numCompsAlloced += 5;
-	form->elements = realloc(form->elements, 
+	form->elements = realloc(form->elements,
 			    sizeof(*(form->elements)) * form->numCompsAlloced);
     }
 
@@ -183,7 +189,7 @@ void newtFormAddComponents(newtComponent co, ...) {
 
     while ((subco = va_arg(ap, newtComponent)))
 	newtFormAddComponent(co, subco);
- 
+
     va_end(ap);
 }
 
@@ -235,7 +241,7 @@ void newtDrawForm(newtComponent co) {
     }
 
     if (form->vertBar)
-	newtScrollbarSet(form->vertBar, form->vertOffset, 
+	newtScrollbarSet(form->vertBar, form->vertOffset,
 			 form->numRows - co->height);
 }
 
@@ -245,7 +251,8 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
     int new, wrap = 0;
     struct eventResult er;
     int dir = 0, page = 0;
-    int i, num;
+    int i, num, found;
+    struct element * el;
 
     er.result = ER_IGNORED;
     if (!form->numComps) return er;
@@ -254,7 +261,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
     switch (ev.when) {
       case EV_EARLY:
-	if (ev.event == EV_KEYPRESS) {
+	  if (ev.event == EV_KEYPRESS) {
 	    if (ev.u.key == NEWT_KEY_TAB) {
 		er.result = ER_SWALLOWED;
 		dir = 1;
@@ -279,8 +286,30 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	}
 
 	break;
-	
+
       case EV_NORMAL:
+	  if (ev.event == EV_MOUSE) {
+	      found = 0;
+	      for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
+		  if ((el->co->top <= ev.u.mouse.y) &&
+		      (el->co->top + el->co->height > ev.u.mouse.y) &&
+		      (el->co->left <= ev.u.mouse.x) &&
+		      (el->co->left + el->co->width > ev.u.mouse.x)) {
+		      found = 1;
+		      if (el->co->takesFocus) {
+			  gotoComponent(form, i);
+			  subco = form->elements[form->currComp].co;
+		      }
+		  }
+		  /* If we did not find a co to send this event to, we
+		     should just swallow the event here. */
+	      }
+	      if (!found) {
+		  er.result = ER_SWALLOWED;
+
+		  return er;
+	      }
+	  }
 	er = subco->ops->event(subco, ev);
 	switch (er.result) {
 	  case ER_NEXTCOMP:
@@ -299,7 +328,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
       case EV_LATE:
 	er = subco->ops->event(subco, ev);
-	
+
 	if (er.result == ER_IGNORED) {
 	    switch (ev.u.key) {
 	      case NEWT_KEY_UP:
@@ -320,7 +349,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		dir = -1;
 		page = 1;
 		break;
-		
+
 	     case NEWT_KEY_PGDN:
 		er.result = ER_SWALLOWED;
 		dir = 1;
@@ -351,7 +380,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 			new = form->numComps - 1;
 		    else if (new >= form->numComps)
 			new = 0;
-		} else if (new < 0 || new >= form->numComps) 
+		} else if (new < 0 || new >= form->numComps)
 		    return er;
 	    } while (!form->elements[new].co->takesFocus);
 	}
@@ -365,7 +394,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		form->vertOffset = form->elements[new].top - co->top;
 	    } else {
 		/* make the new component the last one */
-		form->vertOffset = (form->elements[new].top + 
+		form->vertOffset = (form->elements[new].top +
 					form->elements[new].co->height) -
 				    (co->top + co->height);
 	    }
@@ -398,7 +427,7 @@ void newtFormDestroy(newtComponent co) {
 	} else {
 	    if (subco->data) free(subco->data);
 	    free(subco);
-	}	
+	}
     }
 
     free(form->elements);
@@ -466,11 +495,11 @@ void newtFormSetSize(newtComponent co) {
 		co->height += delta;
 	}
 
-	if ((co->left + co->width) < (el->co->left + el->co->width)) 
+	if ((co->left + co->width) < (el->co->left + el->co->width))
 	    co->width = (el->co->left + el->co->width) - co->left;
 
 	if (!form->fixedHeight) {
-	    if ((co->top + co->height) < (el->co->top + el->co->height)) 
+	    if ((co->top + co->height) < (el->co->top + el->co->height))
 		co->height = (el->co->top + el->co->height) - co->top;
 	}
 
@@ -480,13 +509,27 @@ void newtFormSetSize(newtComponent co) {
     }
 }
 
+
 void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct form * form = co->data;
     struct event ev;
     struct eventResult er;
-    int key, i;
+    int key, i, max;
     int done = 0;
     fd_set readSet, writeSet;
+#ifdef HAVE_LIBGPM
+    int x, y;
+    Gpm_Connect conn;
+    Gpm_Event event;
+
+    /* Set up GPM interface */
+    conn.eventMask   = ~GPM_MOVE;
+    conn.defaultMask = GPM_MOVE;
+    conn.minMod      = 0;
+    conn.maxMod      = 0;
+
+    Gpm_Open(&conn, 0);
+#endif
 
     newtFormSetSize(co);
     /* draw all of the components */
@@ -496,13 +539,24 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	gotoComponent(form, 0);
     } else
 	gotoComponent(form, form->currComp);
-  
+
     while (!done) {
 	newtRefresh();
 
 	FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
 	FD_SET(0, &readSet);
+#ifdef HAVE_LIBGPM
+	if (gpm_visiblepointer) GPM_DRAWPOINTER(&event);
+
+	if (gpm_fd > 0) {
+	    FD_SET(gpm_fd, &readSet);
+	}
+	max = form->maxFd > gpm_fd ? form->maxFd : gpm_fd;
+#else
+	max = form->maxFd;
+#endif
+
 	for (i = 0; i < form->numFds; i++) {
 	    if (form->fds[i].flags & NEWT_FD_READ)
 		FD_SET(form->fds[i].fd, &readSet);
@@ -510,45 +564,75 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		FD_SET(form->fds[i].fd, &writeSet);
 	}
 
-	i = select(form->maxFd + 1, &readSet, &writeSet, NULL, NULL);
+	i = select(max + 1, &readSet, &writeSet, NULL, NULL);
 	if (i < 0) continue;	/* ?? What should we do here? */
 
-	if (FD_ISSET(0, &readSet)) {
-	    key = newtGetKey(); 
+#ifdef HAVE_LIBGPM
+	if (gpm_fd > 0 && FD_ISSET(gpm_fd, &readSet)) {
+	    Gpm_GetEvent(&event);
 
-	    if (key == NEWT_KEY_RESIZE) {
-		/* newtResizeScreen(1); */
-		continue;
-	    }
+	    if (event.type & GPM_DOWN) {
+		/* Transform coordinates to current window */
+		newtGetWindowPos(&x, &y);
 
-	    for (i = 0; i < form->numHotKeys; i++) {
-		if (form->hotKeys[i] == key) {
-		    es->reason = NEWT_EXIT_HOTKEY;
-		    es->u.key = key;
-		    done = 1;
-		    break;
-		}
-	    }
+		ev.event = EV_MOUSE;
+		ev.u.mouse.type = MOUSE_BUTTON_DOWN;
+		ev.u.mouse.x = event.x - x - 1;
+		ev.u.mouse.y = event.y - y - 1;
 
-	    if (!done) {
-		ev.event = EV_KEYPRESS;
-		ev.u.key = key;
-
+		/* Send the form the event */
 		er = sendEvent(co, ev);
-	 
+
 		if (er.result == ER_EXITFORM) {
 		    done = 1;
 		    es->reason = NEWT_EXIT_COMPONENT;
 		    es->u.co = form->exitComp;
-		} 
-	    }
-	} else {
-	    es->reason = NEWT_EXIT_FDREADY;
-	    done = 1;
-	}
-    } 
+		}
 
+	    }
+	} else
+#endif
+	{
+	    if (FD_ISSET(0, &readSet)) {
+
+		key = newtGetKey();
+
+		if (key == NEWT_KEY_RESIZE) {
+		    /* newtResizeScreen(1); */
+		    continue;
+		}
+
+		for (i = 0; i < form->numHotKeys; i++) {
+		    if (form->hotKeys[i] == key) {
+			es->reason = NEWT_EXIT_HOTKEY;
+			es->u.key = key;
+			done = 1;
+			break;
+		    }
+		}
+
+		if (!done) {
+		    ev.event = EV_KEYPRESS;
+		    ev.u.key = key;
+
+		    er = sendEvent(co, ev);
+
+		    if (er.result == ER_EXITFORM) {
+			done = 1;
+			es->reason = NEWT_EXIT_COMPONENT;
+			es->u.co = form->exitComp;
+		    }
+		}
+	    } else {
+		es->reason = NEWT_EXIT_FDREADY;
+		done = 1;
+	    }
+	}
+    }
     newtRefresh();
+#ifdef HAVE_LIBGPM
+    Gpm_Close();
+#endif
 }
 
 static struct eventResult sendEvent(newtComponent co, struct event ev) {
@@ -579,7 +663,7 @@ static void gotoComponent(struct form * form, int newComp) {
     }
 
     form->currComp = newComp;
-    
+
     if (form->currComp != -1) {
 	ev.event = EV_FOCUS;
 	ev.when = EV_NORMAL;

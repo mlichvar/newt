@@ -1,3 +1,6 @@
+0.30 -> 0.40
+        - GPM mouse support added
+
 0.30 -> 0.31:
 	- pgdn could core dump on short textboxes
 
