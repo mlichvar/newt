@@ -19,7 +19,12 @@ struct newtColors {
     char * actTextboxFg, * actTextboxBg;
 };
 
+typedef struct newtComponent * newtComponent;
+
+
 extern struct newtColors newtDefaultColorPalette;
+
+typedef void (*newtCallback)(newtComponent, void *);
 
 int newtInit(void);
 int newtFinished(void);
@@ -36,13 +41,12 @@ void newtRefresh(void);
 
 /* Components */
 
-typedef struct newtComponent * newtComponent;
-
 newtComponent newtButton(int left, int top, char * text);
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 			   char * seq, char * result);
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton);
+newtComponent newtRadioGetCurrent(newtComponent setMember);
 newtComponent newtListitem(int left, int top, char * text, int isDefault,
 			      newtComponent prevItem);
 
@@ -71,7 +75,8 @@ newtComponent newtRunForm(newtComponent form);
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
-
+void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
+void newtEntryAddCallback(newtComponent co, newtCallback f, void * data);
 
 /* this also destroys all of the components (including other forms) on the 
    form */
