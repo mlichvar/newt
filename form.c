@@ -1,3 +1,4 @@
+#include <slang/slang.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
@@ -82,6 +83,12 @@ newtComponent newtForm(newtComponent vertScrollbar) {
     return co;
 }
 
+newtComponent newtFormGetCurrent(newtComponent co) {
+    struct form * form = co->data;
+
+    return form->elements[form->currComp].co;
+}
+
 void newtFormSetHeight(newtComponent co, int height) {
     struct form * form = co->data;
 
@@ -107,10 +114,6 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 	form->currComp = form->numComps;
 
     form->numComps++;
-
-    if ((newco->top + newco->height - co->top) > form->numRows) {
-	form->numRows = newco->top + newco->height - co->top;
-    }
 
     if (co->left == -1) {
 	co->left = newco->left;
@@ -141,6 +144,11 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 		co->height = (newco->top + newco->height) - co->top;
 	}
     }
+
+    if ((newco->top + newco->height - co->top) > form->numRows) {
+	form->numRows = newco->top + newco->height - co->top;
+    }
+
 }
 
 void newtFormAddComponents(newtComponent co, ...) {
