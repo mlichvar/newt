@@ -166,7 +166,7 @@ int listBox(char * text, int height, int width, poptContext optCon,
     char buf[80], format[20];
     int maxTagWidth = 0;
     int maxTextWidth = 0;
-    int noScrollFlag;
+    int scrollFlag;
     struct {
 	char * text;
 	char * tag;
@@ -204,17 +204,17 @@ int listBox(char * text, int height, int width, poptContext optCon,
 			text, flags, &top);
 
     if (listHeight >= numItems) {
-	noScrollFlag = NEWT_FLAG_NOSCROLL;
+	scrollFlag = 0;
 	i = 0;
     } else {
-	noScrollFlag = 0;
+	scrollFlag = NEWT_FLAG_SCROLL;
 	i = 2;
     }
 
     listBox = newtListbox(3 + ((width - 10 - maxTagWidth - maxTextWidth - i) 
 					/ 2),
 			  top + 1, listHeight, 
-			    NEWT_FLAG_RETURNEXIT | noScrollFlag);
+			    NEWT_FLAG_RETURNEXIT | scrollFlag);
 
     sprintf(format, "%%-%ds  %%s", maxTagWidth);
     for (i = 0; i < numItems; i++) {
