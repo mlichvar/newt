@@ -50,7 +50,7 @@ struct newtColors newtDefaultColorPalette = {
 	"lightgray", "black",			/* active textbox fg, bg */
 	"white", "blue",			/* help line */
 	"yellow", "blue",			/* root text */
-	"green",				/* scale full */
+	"blue",					/* scale full */
 	"red",					/* scale empty */
 };
 
