@@ -546,7 +546,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	switch(ev.u.key) {
 	  case ' ':
 	    if(!(li->flags & NEWT_FLAG_MULTIPLE)) break;
-	    newtListboxSelectItem(co, li->boxItems[li->currItem].data,
+	    newtListboxSelectItem(co, newtListboxGetCurrent(co),
 				  NEWT_FLAGS_TOGGLE);
 	    er.result = ER_SWALLOWED;
 	    /* We don't break here, because it is cool to be able to
