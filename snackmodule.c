@@ -201,7 +201,7 @@ static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
-static PyObject * widgetCheckboxTreeAppend(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
 static cbSelection * widgetCheckboxTreeGetSel(snackWidget * s,
 					      PyObject * args);
 
@@ -216,7 +216,7 @@ static PyMethodDef widgetMethods[] = {
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
     { "scaleSet", (PyCFunction) scaleSet, METH_VARARGS, NULL },
-    { "checkboxtreeAppend", (PyCFunction) widgetCheckboxTreeAppend,
+    { "checkboxtreeAddItem", (PyCFunction) widgetCheckboxTreeAddItem,
       METH_VARARGS, NULL },
     { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
       METH_VARARGS, NULL },
@@ -821,15 +821,28 @@ static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args) {
     return widget;
 }
 
-static PyObject * widgetCheckboxTreeAppend(snackWidget * s, PyObject * args) {
+static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args) {
     char * text;
-    void * key;
     int selected = 0;
-    
-    if (!PyArg_ParseTuple(args, "s|i", &text, &selected))
+    PyObject * pathList, * o;
+    int len;
+    int * path;
+    int i;
+
+    if (!PyArg_ParseTuple(args, "sOi", &text, &pathList, &selected))
 	return NULL;
 
-    newtCheckboxTreeAppend(s->co, selected, text, (void *) s->anint);
+    len = PyTuple_Size(pathList);
+    path = alloca(sizeof(*path) * (len + 1));
+    for (i = 0; i < len; i++) {
+        o = PyTuple_GetItem(pathList, i);
+	path[i] = PyInt_AsLong(o);
+	printf("found %d\n", path[i]);
+    }
+    path[len] = NEWT_ARG_LAST;
+
+    newtCheckboxTreeAddArray(s->co, text, (void *) 5,
+    			     selected ? NEWT_FLAG_SELECTED : 0, path);
 
     return PyInt_FromLong(s->anint++);
 }

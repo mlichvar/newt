@@ -8,6 +8,9 @@ import _snack
 import types
 import string
 
+snackArgs = {}
+snackArgs['append'] = -1
+
 class Widget:
 
     def setCallback(self, obj):
@@ -374,8 +377,13 @@ class GridForm(Grid):
 	return result
 
 class CheckboxTree(Widget):
-    def append(self, text, item, selected):
-	key = self.w.checkboxtreeAppend(text, selected)
+    def append(self, text, item = None, selected = 0):
+    	self.addItem(text, (snackArgs['append'], ), item, selected)
+
+    def addItem(self, text, path, item = None, selected = 0):
+    	if (not item):
+	    item = text
+	key = self.w.checkboxtreeAddItem(text, path, selected)
 	self.key2item[key] = item
 	self.item2key[item] = key
 
