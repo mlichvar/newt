@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.16
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -11,7 +11,7 @@ Provides: snack
 
 %package devel
 Summary: Newt windowing toolkit development files.
-Requires: slang-devel
+Requires: slang-devel %{name} = %{version}
 Group: Development/Libraries
 BuildRoot: /var/tmp/newtroot
 
@@ -57,6 +57,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Sat Aug 19 2000 Preston Brown <pbrown@redhat.com>
+- explicit requirement of devel subpackage on same version of main package
+  so that .so file link doesn't break
+
 * Wed Aug 16 2000 Erik Troan <ewt@redhat.com>
 - fixed cursor disappearing in suspend
 - moved libnewt.so to main package from -devel
