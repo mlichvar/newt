@@ -13,6 +13,8 @@ struct entry {
     int bufUsed;		/* amount of the buffer that's been used */
     int cursorPosition; 	/* cursor *in the string* on on screen */
     int firstChar;		/* first character position being shown */
+    void * callbackData;
+    newtCallback callback;
 };
 
 static void entryDraw(newtComponent co);
@@ -26,6 +28,26 @@ static struct componentOps entryOps = {
     entryDraw,
     entryEvent,
     entryDestroy,
+} ;
+
+void newtEntrySet(newtComponent co, char * value, int cursorAtEnd) {
+    struct entry * en = co->data;
+
+    if ((strlen(value) + 1) > en->bufAlloced) {
+	free(en->buf);
+	en->bufAlloced = strlen(value) + 1;
+	en->buf = malloc(en->bufAlloced);
+	*en->resultPtr = en->buf;
+    }
+    strcpy(en->buf, value);
+    en->bufUsed = strlen(value);
+    en->firstChar = 0;
+    if (cursorAtEnd)
+	en->cursorPosition = en->bufUsed;
+    else
+	en->cursorPosition = 0;
+
+    entryDraw(co);
 } ;
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
@@ -50,6 +72,7 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     en->firstChar = 0;
     en->bufUsed = 0;
     en->bufAlloced = width + 1;
+    en->callback = NULL;
 
     if (initialValue && strlen(initialValue) > width) {
 	en->bufAlloced = strlen(initialValue) + 1;
@@ -65,6 +88,13 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     }
 
     return co;
+}
+
+void newtEntryAddCallback(newtComponent co, newtCallback f, void * data) {
+    struct entry * en = co->data;
+
+    en->callback = f;
+    en->callbackData = data;
 }
 
 static void entryDraw(newtComponent co) {
@@ -139,6 +169,7 @@ static struct eventResult entryEvent(struct newtComponent * co,
 	    /*SLtt_set_cursor_visibility(1);*/
 	    newtGotorc(0, 0);
 	    er.result = ER_SWALLOWED;
+	    if (en->callback) en->callback(co, en->callbackData);
 	    break;
 
 	  case EV_KEYPRESS:
