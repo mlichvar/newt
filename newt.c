@@ -186,6 +186,9 @@ void newtFlushInput(void) {
     }
 }
 
+/**
+ * @brief Refresh the screen
+ */
 void newtRefresh(void) {
     SLsmg_refresh();
 }
@@ -197,6 +200,10 @@ void newtSuspend(void) {
     SLtt_set_cursor_visibility (cursorOn);
 }
 
+/**
+ *  @brief Return after suspension.
+ *  @return 0 on success.
+ */
 int newtResume(void) {
     SLsmg_resume_smg ();
     SLsmg_refresh();
@@ -211,6 +218,10 @@ void newtCls(void) {
     newtRefresh();
 }
 
+/**
+ * @brief Resize the screen
+ * @param redraw - boolean - should we redraw the screen?
+ */
 void newtResizeScreen(int redraw) {
     SLtt_get_screen_size();
     SLsmg_reinit_smg();
@@ -220,6 +231,10 @@ void newtResizeScreen(int redraw) {
     }
 }
 
+/**
+ * @brief Initialize the newt library
+ * @return int - 0 for success, else < 0
+ */
 int newtInit(void) {
     char * MonoValue, * MonoEnv = "NEWT_MONO";
     const char *lang;
@@ -263,6 +278,10 @@ int newtInit(void) {
     return 0;
 }
 
+/**
+ * @brief Closedown the newt library, tidying screen.
+ * @returns int , 0. (no errors reported)
+ */
 int newtFinished(void) {
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     newtCursorOn();
@@ -273,6 +292,10 @@ int newtFinished(void) {
     return 0;
 }
 
+/**
+ * @brief Set the colors used.
+ * @param colors - newtColor struct used.
+ */
 void newtSetColors(struct newtColors colors) {
     if (!SLtt_Use_Ansi_Colors) {
         int i;
@@ -420,6 +443,9 @@ int newtGetKey(void) {
     return *chptr;
 }
 
+/**
+ * @brief Wait for a keystroke
+ */
 void newtWaitForKey(void) {
     newtRefresh();
 
@@ -427,12 +453,24 @@ void newtWaitForKey(void) {
     newtClearKeyBuffer();
 }
 
+/**
+ * @brief Clear the keybuffer
+ */
 void newtClearKeyBuffer(void) {
     while (SLang_input_pending(1)) {
 	getkey();
     }
 }
 
+/**
+ * Open a new window.
+ * @param left. unsigned int Size; _not_ including border
+ * @param top: unsigned int size, _not_ including border
+ * @param width unsigned int
+ * @param height unsigned int
+ * @param title - title string
+ * @return zero on success (currently no errors reported)
+ */
 int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
 			  const char * title) {
     int j, row, col;
@@ -511,6 +549,13 @@ int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
     return 0;
 }
 
+/**
+ * @brief Draw a centered window.
+ * @param width - width in char cells
+ * @param height - no. of char cells.
+ * @param title - fixed title
+ * @returns 0. No errors reported
+ */
 int newtCenteredWindow(unsigned width, unsigned height, const char * title) {
     unsigned top, left;
 
@@ -526,6 +571,9 @@ int newtCenteredWindow(unsigned width, unsigned height, const char * title) {
     return 0;
 }
 
+/**
+ * @brief Remove the top window
+ */
 void newtPopWindow(void) {
     int j, row, col;
     int n = 0;
@@ -629,6 +677,10 @@ static void initKeymap(void) {
 }
 #endif
 
+/**
+ * @brief Delay for a specified number of usecs
+ * @param int - number of usecs to wait for.
+ */
 void newtDelay(unsigned usecs) {
     fd_set set;
     struct timeval tv;

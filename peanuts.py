@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Demo program to show use of python-newt module
+
 from snack import *
 
 screen = SnackScreen()
