@@ -1,8 +1,8 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.16
+%define version 0.50.17
 Version: %{version}
-Release: 2
+Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Tue Aug 22 2000 Erik Troan <ewt@redhat.com>
+- fixed cursor disappearing in suspend (again)
+
 * Sat Aug 19 2000 Preston Brown <pbrown@redhat.com>
 - explicit requirement of devel subpackage on same version of main package
   so that .so file link doesn't break
