@@ -107,6 +107,12 @@ static char * version = "Newt windowing library version " VERSION
 		        "GNU Public Library. "
 			"Written by Erik Troan\n";
 
+static newtSuspendCallback suspendCallback = NULL;
+
+void newtSetSuspendCallback(newtSuspendCallback cb) {
+    suspendCallback = cb;
+}
+
 void newtRefresh(void) {
     SLsmg_refresh();
 }
@@ -212,7 +218,11 @@ int newtGetKey(void) {
     char buf[10], * chptr = buf;
     struct keymap * curr;
 
-    key = SLang_getkey();
+    do {
+	key = SLang_getkey();
+	if (key == NEWT_KEY_SUSPEND && suspendCallback)
+	    suspendCallback();
+    } while (key == NEWT_KEY_SUSPEND);
 
     switch (key) {
       case 0x7f:

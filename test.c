@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 
 #include "newt.h"
 
@@ -21,6 +22,12 @@ void disableCallback(newtComponent co, void * data) {
     newtRefresh();
 }
 
+void suspend(void) {
+    newtSuspend();
+    raise(SIGTSTP);
+    newtResume();
+}
+
 void main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
     newtComponent lb, t, rsf, answer;
@@ -34,6 +41,8 @@ void main(void) {
 
     newtInit();
     newtCls();
+
+    newtSetSuspendCallback(suspend);
 
     newtDrawRootText(0, 0, "Newt test program");
     newtPushHelpLine(NULL);

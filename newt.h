@@ -48,10 +48,10 @@ struct newtColors {
 
 typedef struct newtComponent * newtComponent;
 
-
 extern struct newtColors newtDefaultColorPalette;
 
 typedef void (*newtCallback)(newtComponent, void *);
+typedef void (*newtSuspendCallback)(void);
 
 int newtInit(void);
 int newtFinished(void);
@@ -66,6 +66,7 @@ void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);
+void newtSetSuspendCallback(newtSuspendCallback cb);
 void newtResume(void);
 void newtPushHelpLine(char * text);
 void newtRedrawHelpLine(void);
@@ -151,6 +152,7 @@ void newtFormDestroy(newtComponent form);
 
 #define NEWT_KEY_TAB			'\t'
 #define NEWT_KEY_ENTER			'\r'
+#define NEWT_KEY_SUSPEND		'\032'			/* ctrl - z*/
 #define NEWT_KEY_RETURN			NEWT_KEY_ENTER
 
 #define NEWT_KEY_EXTRA_BASE		0x8000
