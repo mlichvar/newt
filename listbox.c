@@ -1,4 +1,7 @@
-/* This goofed-up box whacked into shape by Elliot Lee <sopwith@cuc.edu> */
+/* This goofed-up box whacked into shape by Elliot Lee <sopwith@cuc.edu>
+   (from the original listbox by Erik Troan <ewt@redhat.com>)
+   and contributed to newt for use under the LGPL license.
+   Copyright Elliot Lee 1996 */
 
 #include <slang/slang.h>
 #include <stdlib.h>
@@ -287,16 +290,15 @@ static void listboxDraw(newtComponent co)
     struct items *item;
     int i, j;
 
-    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
-
     if(li->sb)
 	li->sb->ops->draw(li->sb);
+
+    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
     for(i = 0, item = li->boxItems; item != NULL && i < li->startShowItem;
 	i++, item = item->next);
 
     j = i;
-    newtGotorc(co->top - 1, co->left);
 
     for (i = 0; item != NULL && i < co->height; i++, item = item->next) {
 	if (!item->key) continue;
@@ -310,6 +312,7 @@ static void listboxDraw(newtComponent co)
 	if(j + i == li->currItem)
 	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
     }
+    newtGotorc(co->top + (li->currItem - li->startShowItem), co->left);
 }
 
 static struct eventResult listboxEvent(newtComponent co, struct event ev) {
@@ -318,6 +321,10 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 
     er.result = ER_IGNORED;
 	       
+    if(ev.when == EV_EARLY || ev.when == EV_LATE) {
+	return er;
+    }
+		       
     switch(ev.event) {
       case EV_KEYPRESS:
 	if (!li->isActive) break;
@@ -333,12 +340,9 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		li->currItem--;
 		if(li->currItem < li->startShowItem)
 		    li->startShowItem = li->currItem;
+		newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
-
-	    newtGotorc(co->top + li->currItem - li->startShowItem,
-		       co->left);
-	    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -350,12 +354,9 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		    if(li->startShowItem + co->height > li->numItems)
 			li->startShowItem = li->numItems - co->height;
 		}
+		newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
-
-	    newtGotorc(co->top + li->currItem - li->startShowItem,
-		       co->left);
-	    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -375,8 +376,8 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	break;
 	
       case EV_FOCUS:
-	newtGotorc(co->top + li->currItem - li->startShowItem, co->left);
 	li->isActive = 1;
+	listboxDraw(co);
 	er.result = ER_SWALLOWED;
 	break;
 
