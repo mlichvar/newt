@@ -530,7 +530,8 @@ static void listboxDraw(newtComponent co)
 	SLsmg_write_nstring(item->text, li->curWidth);
 
     }
-    newtGotorc(co->top + (li->currItem - li->startShowItem) + 1, co->left + 1);
+    newtGotorc(co->top + (li->currItem - li->startShowItem) + li->bdyAdjust,
+               co->left + li->bdxAdjust);
 }
 
 static struct eventResult listboxEvent(newtComponent co, struct event ev) {

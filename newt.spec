@@ -2,7 +2,7 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.4
+%define version 0.51.5
 Version: %{version}
 Release: 1
 License: LGPL
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Tue Aug 19 2003 Michael K. Johnson <johnsonm@redhat.com>
+- incorporated listbox cursor location patch (#69903)
+
 * Wed Feb  5 2003 Matt Wilson <msw@redhat.com> 0.51.4-1
 - fixed help line drawing in UTF-8 (#81718)
 - calculate the width of text in entries using wstrlen
