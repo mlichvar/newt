@@ -14,11 +14,11 @@ int main(void) {
     char * menuContents[] = { "One", "Two", "Three", "Four", "Five", NULL };
     const char * entries[10];
     struct newtWinEntry autoEntries[] = {
-	{ "An entry", entries + 0, 0 },
-	{ "Another entry", entries + 1, 0 },
-	{ "Third entry", entries + 2, 0 },
-	{ "Fourth entry", entries + 3, 0 },
-	{ NULL, NULL, 0 } };
+        { "An entry", entries + 0, 0 },
+        { "Another entry", entries + 1, 0 },
+        { "Third entry", entries + 2, 0 },
+        { "Fourth entry", entries + 3, 0 },
+        { NULL, NULL, 0 } };
 
     memset(entries, 0, sizeof(entries));
 
@@ -34,7 +34,7 @@ int main(void) {
 
     grid = newtCreateGrid(2, 2);
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, b1, 0, 0, 0, 0, 
-			NEWT_ANCHOR_RIGHT, 0);
+                        NEWT_ANCHOR_RIGHT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, b2, 0, 0, 0, 0, 0, 0);
     newtGridSetField(grid, 1, 0, NEWT_GRID_COMPONENT, b3, 0, 0, 0, 0, 0, 0);
     newtGridSetField(grid, 1, 1, NEWT_GRID_COMPONENT, b4, 0, 0, 0, 0, 0, 0);
@@ -46,17 +46,17 @@ int main(void) {
     newtGridFree(grid, 1);
 
     answer = newtRunForm(f);
-	
+        
     newtFormDestroy(f);
     newtPopWindow();
 
     flowedText = newtReflowText("This is a quite a bit of text. It is 40 "
-			  	"columns long, so some wrapping should be "
-			  	"done. Did you know that the quick, brown "
-			  	"fox jumped over the lazy dog?\n\n"
-				"In other news, it's pretty important that we "
-				"can properly force a line break.",
-				40, 5, 5, &textWidth, &textHeight);
+                                "columns long, so some wrapping should be "
+                                "done. Did you know that the quick, brown "
+                                "fox jumped over the lazy dog?\n\n"
+                                "In other news, it's pretty important that we "
+                                "can properly force a line break.",
+                                40, 5, 5, &textWidth, &textHeight);
     t = newtTextbox(-1, -1, textWidth, textHeight, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, flowedText);
     free(flowedText);
@@ -73,7 +73,7 @@ int main(void) {
 
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, t, 0, 0, 0, 1, 0, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 0, 0, 0, 0, 0,
-			NEWT_GRID_FLAG_GROWX);
+                        NEWT_GRID_FLAG_GROWX);
     newtGridWrappedWindow(grid, "another example");
     newtGridDestroy(grid, 1);
 
@@ -89,14 +89,14 @@ int main(void) {
 
     textWidth = 0;
     rc = newtWinMenu("Test Menu", "This is a sample invovation of the "
-		     "newtWinMenu() call. It may or may not have a scrollbar, "
-		     "depending on the need for one.", 50, 5, 5, 3, 
-		     menuContents, &textWidth, "Ok", "Cancel", NULL);
+                     "newtWinMenu() call. It may or may not have a scrollbar, "
+                     "depending on the need for one.", 50, 5, 5, 3, 
+                     menuContents, &textWidth, "Ok", "Cancel", NULL);
 
     rc = newtWinEntries("Text newtWinEntries()", "This is a sample invovation of "
-		     "newtWinEntries() call. It lets you get a lot of input "
-		     "quite easily.", 50, 5, 5, 20, autoEntries, "Ok", 
-		     "Cancel", NULL);
+                     "newtWinEntries() call. It lets you get a lot of input "
+                     "quite easily.", 50, 5, 5, 20, autoEntries, "Ok", 
+                     "Cancel", NULL);
 
     newtFinished();
 

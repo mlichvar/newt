@@ -12,8 +12,8 @@
 struct gridField {
     enum newtGridElement type;
     union {
-	newtGrid grid;
-	newtComponent co;
+        newtGrid grid;
+        newtComponent co;
     } u;
     int padLeft, padTop, padRight, padBottom;
     int anchor;
@@ -22,7 +22,7 @@ struct gridField {
 
 struct grid_s {
     int rows, cols;
-    int width, height;		/* totals, -1 means unknown */
+    int width, height;          /* totals, -1 means unknown */
     struct gridField ** fields;
 };
 
@@ -38,8 +38,8 @@ newtGrid newtCreateGrid(int cols, int rows) {
 
     grid->fields = malloc(sizeof(*grid->fields) * cols);
     while (cols--) {
-	grid->fields[cols] = malloc(sizeof(**(grid->fields)) * rows);
-	memset(grid->fields[cols], 0, sizeof(**(grid->fields)) * rows);
+        grid->fields[cols] = malloc(sizeof(**(grid->fields)) * rows);
+        memset(grid->fields[cols], 0, sizeof(**(grid->fields)) * rows);
     }
 
     grid->width = grid->height = -1;
@@ -48,13 +48,13 @@ newtGrid newtCreateGrid(int cols, int rows) {
 }
 
 void newtGridSetField(newtGrid grid, int col, int row, 
-		      enum newtGridElement type, void * val, int padLeft,
-		      int padTop, int padRight, int padBottom, int anchor,
-		      int flags) {
+                      enum newtGridElement type, void * val, int padLeft,
+                      int padTop, int padRight, int padBottom, int anchor,
+                      int flags) {
     struct gridField * field = &grid->fields[col][row];
 
     if (field->type == NEWT_GRID_SUBGRID) 
-	newtGridFree(field->u.grid, 1);
+        newtGridFree(field->u.grid, 1);
 
     field->type = type;
     field->u.co = (void *) val;
@@ -75,11 +75,11 @@ static void distSpace(int extra, int items, int * list) {
     all = extra / items;
     some = extra % items;
     for (i = 0; i < items; i++) {
-	list[i] += all;
-	if (some) {
-	    list[i]++;
-	    some--;
-	}
+        list[i] += all;
+        if (some) {
+            list[i]++;
+            some--;
+        }
     }
 }
 
@@ -99,57 +99,57 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
     minWidth = 0;
     for (row = 0; row < grid->rows; row++) {
-	i = 0;
-	for (col = 0; col < grid->cols; col++) {
-	    field = &grid->fields[col][row];
-	    if (field->type == NEWT_GRID_SUBGRID) {
-		/* we'll have to redo this later */
-		if (field->u.grid->width == -1) 
-		    shuffleGrid(field->u.grid, left, top, 0);
-		j = field->u.grid->width;
-	    } else if (field->type == NEWT_GRID_COMPONENT) {
-		if (field->u.co->ops == formOps)
-		    newtFormSetSize(field->u.co);
-		j = field->u.co->width;
-	    } else 
-		j = 0;
+        i = 0;
+        for (col = 0; col < grid->cols; col++) {
+            field = &grid->fields[col][row];
+            if (field->type == NEWT_GRID_SUBGRID) {
+                /* we'll have to redo this later */
+                if (field->u.grid->width == -1) 
+                    shuffleGrid(field->u.grid, left, top, 0);
+                j = field->u.grid->width;
+            } else if (field->type == NEWT_GRID_COMPONENT) {
+                if (field->u.co->ops == formOps)
+                    newtFormSetSize(field->u.co);
+                j = field->u.co->width;
+            } else 
+                j = 0;
 
-	    j += field->padLeft + field->padRight;
+            j += field->padLeft + field->padRight;
 
-	    if (j > widths[col]) widths[col] = j;
-	    i += widths[col];
-	}
+            if (j > widths[col]) widths[col] = j;
+            i += widths[col];
+        }
 
-	if (i > minWidth) minWidth = i;
+        if (i > minWidth) minWidth = i;
     }
 
     minHeight = 0;
     for (col = 0; col < grid->cols; col++) {
-	i = 0;
-	for (row = 0; row < grid->rows; row++) {
-	    field = &grid->fields[col][row];
-	    if (field->type == NEWT_GRID_SUBGRID) {
-		/* we'll have to redo this later */
-		if (field->u.grid->height == -1) 
-		    shuffleGrid(field->u.grid, 0, 0, 0);
-		j = field->u.grid->height;
-	    } else if (field->type == NEWT_GRID_COMPONENT){
-		j = field->u.co->height;
-	    } else 
-		j = 0;
+        i = 0;
+        for (row = 0; row < grid->rows; row++) {
+            field = &grid->fields[col][row];
+            if (field->type == NEWT_GRID_SUBGRID) {
+                /* we'll have to redo this later */
+                if (field->u.grid->height == -1) 
+                    shuffleGrid(field->u.grid, 0, 0, 0);
+                j = field->u.grid->height;
+            } else if (field->type == NEWT_GRID_COMPONENT){
+                j = field->u.co->height;
+            } else 
+                j = 0;
 
-	    j += field->padTop + field->padBottom;
+            j += field->padTop + field->padBottom;
 
-	    if (j > heights[row]) heights[row] = j;
-	    i += heights[row];
-	}
+            if (j > heights[row]) heights[row] = j;
+            i += heights[row];
+        }
 
-	if (i > minHeight) minHeight = i;
+        if (i > minHeight) minHeight = i;
     }
 
     /* this catches the -1 case */
-    if (grid->width < minWidth) grid->width = minWidth;		/* ack! */
-    if (grid->height < minHeight) grid->height = minHeight;	/* ditto! */
+    if (grid->width < minWidth) grid->width = minWidth;         /* ack! */
+    if (grid->height < minHeight) grid->height = minHeight;     /* ditto! */
 
     if (!set) return;
 
@@ -158,57 +158,57 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
     thisTop = top;
     for (row = 0; row < grid->rows; row++) {
-	i = 0;
-	thisLeft = left;
-	for (col = 0; col < grid->cols; col++) {
-	    field = &grid->fields[col][row];
+        i = 0;
+        thisLeft = left;
+        for (col = 0; col < grid->cols; col++) {
+            field = &grid->fields[col][row];
 
-	    if (field->type == NEWT_GRID_EMPTY) continue;
+            if (field->type == NEWT_GRID_EMPTY) continue;
 
-	    x = thisLeft + field->padLeft;
-	    remx = widths[col] - field->padLeft - field->padRight;
-	    y = thisTop + field->padTop;
-	    remy = heights[row] - field->padTop - field->padBottom;
+            x = thisLeft + field->padLeft;
+            remx = widths[col] - field->padLeft - field->padRight;
+            y = thisTop + field->padTop;
+            remy = heights[row] - field->padTop - field->padBottom;
 
-	    if (field->type == NEWT_GRID_SUBGRID) {
-		remx -= field->u.grid->width;
-		remy -= field->u.grid->height;
-	    } else if (field->type == NEWT_GRID_COMPONENT) {
-		remx -= field->u.co->width;
-		remy -= field->u.co->height;
-	    }
+            if (field->type == NEWT_GRID_SUBGRID) {
+                remx -= field->u.grid->width;
+                remy -= field->u.grid->height;
+            } else if (field->type == NEWT_GRID_COMPONENT) {
+                remx -= field->u.co->width;
+                remy -= field->u.co->height;
+            }
 
-	    if (!(field->flags & NEWT_GRID_FLAG_GROWX)) {
-		if (field->anchor & NEWT_ANCHOR_RIGHT)
-		    x += remx;
-		else if (!(field->anchor & NEWT_ANCHOR_LEFT))
-		    x += (remx / 2);
-	    }
-	 
-	    if (!(field->flags & NEWT_GRID_FLAG_GROWY)) {
-		if (field->anchor & NEWT_ANCHOR_BOTTOM)
-		    y += remx;
-		else if (!(field->anchor & NEWT_ANCHOR_TOP))
-		    y += (remy / 2);
-	    }
+            if (!(field->flags & NEWT_GRID_FLAG_GROWX)) {
+                if (field->anchor & NEWT_ANCHOR_RIGHT)
+                    x += remx;
+                else if (!(field->anchor & NEWT_ANCHOR_LEFT))
+                    x += (remx / 2);
+            }
+         
+            if (!(field->flags & NEWT_GRID_FLAG_GROWY)) {
+                if (field->anchor & NEWT_ANCHOR_BOTTOM)
+                    y += remx;
+                else if (!(field->anchor & NEWT_ANCHOR_TOP))
+                    y += (remy / 2);
+            }
 
-	    if (field->type == NEWT_GRID_SUBGRID) {
-		if (field->flags & NEWT_GRID_FLAG_GROWX)
-		    field->u.grid->width = widths[col] - field->padLeft 
-						- field->padRight;
-		if (field->flags & NEWT_GRID_FLAG_GROWY)
-		    field->u.grid->height = heights[col] - field->padTop
-						- field->padBottom;
+            if (field->type == NEWT_GRID_SUBGRID) {
+                if (field->flags & NEWT_GRID_FLAG_GROWX)
+                    field->u.grid->width = widths[col] - field->padLeft 
+                                                - field->padRight;
+                if (field->flags & NEWT_GRID_FLAG_GROWY)
+                    field->u.grid->height = heights[col] - field->padTop
+                                                - field->padBottom;
 
-		shuffleGrid(field->u.grid, x, y, 1);
-	    } else if (field->type == NEWT_GRID_COMPONENT) {
-		field->u.co->ops->place(field->u.co, x, y);
-	    }
+                shuffleGrid(field->u.grid, x, y, 1);
+            } else if (field->type == NEWT_GRID_COMPONENT) {
+                field->u.co->ops->place(field->u.co, x, y);
+            }
 
-	    thisLeft += widths[col];
-	}
+            thisLeft += widths[col];
+        }
 
-	thisTop += heights[row];
+        thisTop += heights[row];
     }
 }
 
@@ -220,14 +220,14 @@ void newtGridFree(newtGrid grid, int recurse) {
     int row, col;
 
     for (col = 0; col < grid->cols; col++) {
-	if (recurse) {
-	    for (row = 0; row < grid->rows; row++) {
-		if (grid->fields[col][row].type == NEWT_GRID_SUBGRID)
-		    newtGridFree(grid->fields[col][row].u.grid, 1);
-	    }
-	}
+        if (recurse) {
+            for (row = 0; row < grid->rows; row++) {
+                if (grid->fields[col][row].type == NEWT_GRID_SUBGRID)
+                    newtGridFree(grid->fields[col][row].u.grid, 1);
+            }
+        }
 
-	free(grid->fields[col]);
+        free(grid->fields[col]);
     }
 
     free(grid->fields);
@@ -236,8 +236,8 @@ void newtGridFree(newtGrid grid, int recurse) {
 
 void newtGridGetSize(newtGrid grid, int * width, int * height) {
     if (grid->width == -1 || grid->height == -1) {
-	grid->width = grid->height = -1;
-	shuffleGrid(grid, 0, 0, 1);
+        grid->width = grid->height = -1;
+        shuffleGrid(grid, 0, 0, 1);
     }
 
     *width = grid->width;
@@ -250,8 +250,8 @@ void newtGridWrappedWindow(newtGrid grid, char * title) {
     newtGridGetSize(grid, &width, &height);
     w = wstrlen(title,-1);
     if (width < w + 2) {
-	offset = ((w + 2) - width) / 2; 
-	width = w + 2;
+        offset = ((w + 2) - width) / 2; 
+        width = w + 2;
     }
     newtCenteredWindow(width + 2, height + 2, title);
     newtGridPlace(grid, 1 + offset, 1);
@@ -266,46 +266,46 @@ void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top) {
 }
 
 void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
-				 int recurse) {
+                                 int recurse) {
     int row, col;
 
     for (col = 0; col < grid->cols; col++) {
-	for (row = 0; row < grid->rows; row++) {
-	    if (grid->fields[col][row].type == NEWT_GRID_SUBGRID && recurse)
-		newtGridAddComponentsToForm(grid->fields[col][row].u.grid,
-					    form, 1);
-	    else if (grid->fields[col][row].type == NEWT_GRID_COMPONENT)
-		newtFormAddComponent(form, grid->fields[col][row].u.co);
-	}
+        for (row = 0; row < grid->rows; row++) {
+            if (grid->fields[col][row].type == NEWT_GRID_SUBGRID && recurse)
+                newtGridAddComponentsToForm(grid->fields[col][row].u.grid,
+                                            form, 1);
+            else if (grid->fields[col][row].type == NEWT_GRID_COMPONENT)
+                newtFormAddComponent(form, grid->fields[col][row].u.co);
+        }
     }
 }
 
 /* this handles up to 50 items */
 static newtGrid stackem(int isVert, enum newtGridElement type1, void * what1,
-			va_list args, int close) {
+                        va_list args, int close) {
     struct item {
-	enum newtGridElement type;
-	void * what;
+        enum newtGridElement type;
+        void * what;
     } items[50];
     int i, num;
     newtGrid grid;
     
     items[0].type = type1, items[0].what = what1, num = 1;
     while (1) {
-	items[num].type = va_arg(args, enum newtGridElement);
-	if (items[num].type == NEWT_GRID_EMPTY) break;
+        items[num].type = va_arg(args, enum newtGridElement);
+        if (items[num].type == NEWT_GRID_EMPTY) break;
 
-	items[num].what = va_arg(args, void *);
-	num++;
+        items[num].what = va_arg(args, void *);
+        num++;
     }
 
     grid = newtCreateGrid(isVert ? 1 : num, isVert ? num : 1);
 
     for (i = 0; i < num; i++) {
-	newtGridSetField(grid, isVert ? 0 : i, isVert ? i : 0, 
-			 items[i].type, items[i].what,
-			 close ? 0 : (i ? (isVert ? 0 : 1) : 0),
-			 close ? 0 : (i ? (isVert ? 1 : 0) : 0), 0, 0, 0, 0);
+        newtGridSetField(grid, isVert ? 0 : i, isVert ? i : 0, 
+                         items[i].type, items[i].what,
+                         close ? 0 : (i ? (isVert ? 0 : 1) : 0),
+                         close ? 0 : (i ? (isVert ? 1 : 0) : 0), 0, 0, 0, 0);
     }
 
     return grid;
@@ -364,31 +364,31 @@ newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...) {
 }
 
 newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
-			     newtGrid buttons) {
+                             newtGrid buttons) {
     newtGrid grid;
 
     grid = newtCreateGrid(1, 3);
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
-		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
+                     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, middle,
-		     0, 1, 0, 0, 0, 0);
+                     0, 1, 0, 0, 0, 0);
     newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttons,
-		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
+                     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
 
     return grid;
 }
 
 newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
-			     newtGrid buttons) {
+                             newtGrid buttons) {
     newtGrid grid;
 
     grid = newtCreateGrid(1, 3);
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
-		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
+                     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, middle,
-		     0, 1, 0, 0, 0, 0);
+                     0, 1, 0, 0, 0, 0);
     newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttons,
-		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
+                     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
 
     return grid;
 }

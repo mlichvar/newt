@@ -11,19 +11,19 @@
 #include "newt.h"
 
 enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
-	    MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE,
+            MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE,
             MODE_TEXTBOX };
 
-#define OPT_MSGBOX 		1000
-#define OPT_CHECKLIST 		1001
-#define OPT_YESNO 		1002
-#define OPT_INPUTBOX 		1003
-#define OPT_FULLBUTTONS 	1004
-#define OPT_MENU	 	1005
-#define OPT_RADIOLIST	 	1006
-#define OPT_GAUGE	 	1007
-#define OPT_INFOBOX	 	1008
-#define OPT_TEXTBOX	 	1009
+#define OPT_MSGBOX              1000
+#define OPT_CHECKLIST           1001
+#define OPT_YESNO               1002
+#define OPT_INPUTBOX            1003
+#define OPT_FULLBUTTONS         1004
+#define OPT_MENU                1005
+#define OPT_RADIOLIST           1006
+#define OPT_GAUGE               1007
+#define OPT_INFOBOX             1008
+#define OPT_TEXTBOX             1009
 
 static void usage(void) {
     newtFinished(); 
@@ -82,89 +82,89 @@ int main(int argc, const char ** argv) {
     char * title = NULL;
     char * backtitle = NULL;
     struct poptOption optionsTable[] = {
-	    { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
-	    { "checklist", '\0', 0, 0, OPT_CHECKLIST },
-	    { "clear", '\0', 0, &clear, 0 },
-	    { "defaultno", '\0', 0, &defaultNo, 0 },
-	    { "inputbox", '\0', 0, 0, OPT_INPUTBOX },
-	    { "fb", '\0', 0, 0, OPT_FULLBUTTONS },
-	    { "fullbuttons", '\0', 0, 0, OPT_FULLBUTTONS },
-	    { "gauge", '\0', 0, 0, OPT_GAUGE },
-	    { "infobox", '\0', 0, 0, OPT_INFOBOX },
-	    { "menu", '\0', 0, 0, OPT_MENU },
-	    { "msgbox", '\0', 0, 0, OPT_MSGBOX },
-	    { "nocancel", '\0', 0, &noCancel, 0 },
-	    { "noitem", '\0', 0, &noItem, 0 },
-	    { "notags", '\0', 0, &noTags, 0 },
-	    { "radiolist", '\0', 0, 0, OPT_RADIOLIST },
-	    { "scrolltext", '\0', 0, &scrollText, 0 },
-	    { "separate-output", '\0', 0, &separateOutput, 0 },
-	    { "title", '\0', POPT_ARG_STRING, &title, 0 },
-	    { "yesno", '\0', 0, 0, OPT_YESNO },
-	    { "textbox", '\0', 0, 0, OPT_TEXTBOX },
-	    { 0, 0, 0, 0, 0 } 
+            { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
+            { "checklist", '\0', 0, 0, OPT_CHECKLIST },
+            { "clear", '\0', 0, &clear, 0 },
+            { "defaultno", '\0', 0, &defaultNo, 0 },
+            { "inputbox", '\0', 0, 0, OPT_INPUTBOX },
+            { "fb", '\0', 0, 0, OPT_FULLBUTTONS },
+            { "fullbuttons", '\0', 0, 0, OPT_FULLBUTTONS },
+            { "gauge", '\0', 0, 0, OPT_GAUGE },
+            { "infobox", '\0', 0, 0, OPT_INFOBOX },
+            { "menu", '\0', 0, 0, OPT_MENU },
+            { "msgbox", '\0', 0, 0, OPT_MSGBOX },
+            { "nocancel", '\0', 0, &noCancel, 0 },
+            { "noitem", '\0', 0, &noItem, 0 },
+            { "notags", '\0', 0, &noTags, 0 },
+            { "radiolist", '\0', 0, 0, OPT_RADIOLIST },
+            { "scrolltext", '\0', 0, &scrollText, 0 },
+            { "separate-output", '\0', 0, &separateOutput, 0 },
+            { "title", '\0', POPT_ARG_STRING, &title, 0 },
+            { "yesno", '\0', 0, 0, OPT_YESNO },
+            { "textbox", '\0', 0, 0, OPT_TEXTBOX },
+            { 0, 0, 0, 0, 0 } 
     };
     
     optCon = poptGetContext("whiptail", argc, argv, optionsTable, 0);
 
     while ((arg = poptGetNextOpt(optCon)) > 0) {
-	optArg = poptGetOptArg(optCon);
+        optArg = poptGetOptArg(optCon);
 
-	switch (arg) {
-	  case OPT_INFOBOX:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_INFOBOX;
-	    break;
+        switch (arg) {
+          case OPT_INFOBOX:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_INFOBOX;
+            break;
 
-	  case OPT_MENU:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_MENU;
-	    break;
+          case OPT_MENU:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_MENU;
+            break;
 
-	  case OPT_MSGBOX:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_MSGBOX;
-	    break;
+          case OPT_MSGBOX:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_MSGBOX;
+            break;
           case OPT_TEXTBOX:
             if (mode != MODE_NONE) usage();
             mode = MODE_TEXTBOX;
             break;
-	  case OPT_RADIOLIST:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_RADIOLIST;
-	    break;
+          case OPT_RADIOLIST:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_RADIOLIST;
+            break;
 
-	  case OPT_CHECKLIST:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_CHECKLIST;
-	    break;
+          case OPT_CHECKLIST:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_CHECKLIST;
+            break;
 
-	  case OPT_FULLBUTTONS:
-	    useFullButtons(1);
-	    break;
+          case OPT_FULLBUTTONS:
+            useFullButtons(1);
+            break;
 
-	  case OPT_YESNO:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_YESNO;
-	    break;
+          case OPT_YESNO:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_YESNO;
+            break;
 
-	  case OPT_GAUGE:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_GAUGE;
-	    break;
+          case OPT_GAUGE:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_GAUGE;
+            break;
 
-	  case OPT_INPUTBOX:
-	    if (mode != MODE_NONE) usage();
-	    mode = MODE_INPUTBOX;
-	    break;
-	}
+          case OPT_INPUTBOX:
+            if (mode != MODE_NONE) usage();
+            mode = MODE_INPUTBOX;
+            break;
+        }
     }
     
     if (arg < -1) {
-	fprintf(stderr, "%s: %s\n", 
-		poptBadOption(optCon, POPT_BADOPTION_NOALIAS), 
-		poptStrerror(arg));
-	exit(1);
+        fprintf(stderr, "%s: %s\n", 
+                poptBadOption(optCon, POPT_BADOPTION_NOALIAS), 
+                poptStrerror(arg));
+        exit(1);
     }
 
     output = fdopen (outputfd, "w");
@@ -188,9 +188,9 @@ int main(int argc, const char ** argv) {
     if (*end) usage();
 
     if (mode == MODE_GAUGE) {
-	fd = dup(0);
-	close(0);
-	if (open("/dev/tty", O_RDWR) != 0) perror("open /dev/tty");
+        fd = dup(0);
+        close(0);
+        if (open("/dev/tty", O_RDWR) != 0) perror("open /dev/tty");
     }
 
     newtInit();
@@ -200,7 +200,7 @@ int main(int argc, const char ** argv) {
     newtOpenWindow((80 - width) / 2, (24 - height) / 2, width, height, title);
 
     if (backtitle)
-	newtDrawRootText(0, 0, backtitle);
+        newtDrawRootText(0, 0, backtitle);
 
     if (noCancel) flags |= FLAG_NOCANCEL;
     if (noItem) flags |= FLAG_NOITEM;
@@ -211,65 +211,65 @@ int main(int argc, const char ** argv) {
     switch (mode) {
       case MODE_MSGBOX:
       case MODE_TEXTBOX:
-	rc = messageBox(text, height, width, MSGBOX_MSG, flags);
-	break;
+        rc = messageBox(text, height, width, MSGBOX_MSG, flags);
+        break;
 
       case MODE_INFOBOX:
-	rc = messageBox(text, height, width, MSGBOX_INFO, flags);
-	break;
+        rc = messageBox(text, height, width, MSGBOX_INFO, flags);
+        break;
 
       case MODE_YESNO:
-	rc = messageBox(text, height, width, MSGBOX_YESNO, flags);
-	break;
+        rc = messageBox(text, height, width, MSGBOX_YESNO, flags);
+        break;
 
       case MODE_INPUTBOX:
-	rc = inputBox(text, height, width, optCon, flags, &result);
+        rc = inputBox(text, height, width, optCon, flags, &result);
         if (rc == DLG_OKAY) fprintf(output, "%s", result);
-	break;
+        break;
 
       case MODE_MENU:
-	rc = listBox(text, height, width, optCon, flags, &result);
-	if (rc == DLG_OKAY) fprintf(output, "%s", result);
-	break;
+        rc = listBox(text, height, width, optCon, flags, &result);
+        if (rc == DLG_OKAY) fprintf(output, "%s", result);
+        break;
 
       case MODE_RADIOLIST:
-	rc = checkList(text, height, width, optCon, 1, flags, &selections);
+        rc = checkList(text, height, width, optCon, 1, flags, &selections);
         if (rc == DLG_OKAY) {
             fprintf(output, "%s", selections[0]);
-	    free(selections);
-	}
-	break;
+            free(selections);
+        }
+        break;
 
       case MODE_CHECKLIST:
-	rc = checkList(text, height, width, optCon, 0, flags, &selections);
+        rc = checkList(text, height, width, optCon, 0, flags, &selections);
 
-	if (!rc) {
-	    for (next = selections; *next; next++) {
-		if (!separateOutput) {
-		    if (needSpace) putc(' ', output);
-		    fprintf(output, "\"%s\"", *next);
-		    needSpace = 1;
-		} else {
-		    fprintf(output, "%s\n", *next);
-		}
-	    }
+        if (!rc) {
+            for (next = selections; *next; next++) {
+                if (!separateOutput) {
+                    if (needSpace) putc(' ', output);
+                    fprintf(output, "\"%s\"", *next);
+                    needSpace = 1;
+                } else {
+                    fprintf(output, "%s\n", *next);
+                }
+            }
 
-	    free(selections);
-	}
-	break;
+            free(selections);
+        }
+        break;
 
       case MODE_GAUGE:
-	rc = gauge(text, height, width, optCon, fd, flags);
-	break;
+        rc = gauge(text, height, width, optCon, fd, flags);
+        break;
 
       default:
-	usage();
+        usage();
     }
 
     if (rc == -1) usage();
 
     if (clear)
-	newtPopWindow();
+        newtPopWindow();
     newtFinished();
 
     return rc;

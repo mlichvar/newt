@@ -46,81 +46,81 @@ static const char * defaultHelpLine =
 ;
 
 const struct newtColors newtDefaultColorPalette = {
-	"white", "blue", 			/* root fg, bg */
-	"black", "lightgray",			/* border fg, bg */
-	"black", "lightgray",			/* window fg, bg */
-	"white", "black",			/* shadow fg, bg */
-	"red", "lightgray",			/* title fg, bg */
-	"lightgray", "red",			/* button fg, bg */
-	"red", "lightgray",			/* active button fg, bg */
-	"yellow", "blue",			/* checkbox fg, bg */
-	"blue", "brown",			/* active checkbox fg, bg */
-	"yellow", "blue",			/* entry box fg, bg */
-	"blue", "lightgray",			/* label fg, bg */
-	"black", "lightgray",			/* listbox fg, bg */
-	"yellow", "blue",			/* active listbox fg, bg */
-	"black", "lightgray",			/* textbox fg, bg */
-	"lightgray", "black",			/* active textbox fg, bg */
-	"white", "blue",			/* help line */
-	"yellow", "blue",			/* root text */
-	"blue",					/* scale full */
-	"red",					/* scale empty */
-	"blue", "lightgray",			/* disabled entry fg, bg */
-	"white", "blue",			/* compact button fg, bg */
-	"yellow", "red",			/* active & sel listbox */
-	"black", "brown"			/* selected listbox */
+        "white", "blue",                        /* root fg, bg */
+        "black", "lightgray",                   /* border fg, bg */
+        "black", "lightgray",                   /* window fg, bg */
+        "white", "black",                       /* shadow fg, bg */
+        "red", "lightgray",                     /* title fg, bg */
+        "lightgray", "red",                     /* button fg, bg */
+        "red", "lightgray",                     /* active button fg, bg */
+        "yellow", "blue",                       /* checkbox fg, bg */
+        "blue", "brown",                        /* active checkbox fg, bg */
+        "yellow", "blue",                       /* entry box fg, bg */
+        "blue", "lightgray",                    /* label fg, bg */
+        "black", "lightgray",                   /* listbox fg, bg */
+        "yellow", "blue",                       /* active listbox fg, bg */
+        "black", "lightgray",                   /* textbox fg, bg */
+        "lightgray", "black",                   /* active textbox fg, bg */
+        "white", "blue",                        /* help line */
+        "yellow", "blue",                       /* root text */
+        "blue",                                 /* scale full */
+        "red",                                  /* scale empty */
+        "blue", "lightgray",                    /* disabled entry fg, bg */
+        "white", "blue",                        /* compact button fg, bg */
+        "yellow", "red",                        /* active & sel listbox */
+        "black", "brown"                        /* selected listbox */
 };
 
 static const struct keymap keymap[] = {
-	{ "\033OA", 		NEWT_KEY_UP, 		"kh" },
-	{ "\033[A", 		NEWT_KEY_UP, 		"ku" },
-	{ "\033OB", 		NEWT_KEY_DOWN, 		"kd" },
-	{ "\033[B", 		NEWT_KEY_DOWN, 		"kd" },
-	{ "\033[C", 		NEWT_KEY_RIGHT, 	"kr" },
-	{ "\033OC", 		NEWT_KEY_RIGHT, 	"kr" },
-	{ "\033[D", 		NEWT_KEY_LEFT, 		"kl" },
-	{ "\033OD", 		NEWT_KEY_LEFT, 		"kl" },
-	{ "\033[H",		NEWT_KEY_HOME, 		"kh" },
-	{ "\033[1~",		NEWT_KEY_HOME, 		"kh" },
-	{ "\033Ow",		NEWT_KEY_END, 		"kH" },
-	{ "\033[4~",		NEWT_KEY_END, 		"kH" },
+        { "\033OA",             NEWT_KEY_UP,            "kh" },
+        { "\033[A",             NEWT_KEY_UP,            "ku" },
+        { "\033OB",             NEWT_KEY_DOWN,          "kd" },
+        { "\033[B",             NEWT_KEY_DOWN,          "kd" },
+        { "\033[C",             NEWT_KEY_RIGHT,         "kr" },
+        { "\033OC",             NEWT_KEY_RIGHT,         "kr" },
+        { "\033[D",             NEWT_KEY_LEFT,          "kl" },
+        { "\033OD",             NEWT_KEY_LEFT,          "kl" },
+        { "\033[H",             NEWT_KEY_HOME,          "kh" },
+        { "\033[1~",            NEWT_KEY_HOME,          "kh" },
+        { "\033Ow",             NEWT_KEY_END,           "kH" },
+        { "\033[4~",            NEWT_KEY_END,           "kH" },
 
-	{ "\033[3~",		NEWT_KEY_DELETE,	"kl" },
-	{ "\033[2~", 		NEWT_KEY_INSERT,	NULL },
+        { "\033[3~",            NEWT_KEY_DELETE,        "kl" },
+        { "\033[2~",            NEWT_KEY_INSERT,        NULL },
 
-	{ "\033\t",		NEWT_KEY_UNTAB,		NULL },
+        { "\033\t",             NEWT_KEY_UNTAB,         NULL },
 
-	{ "\033[5~",		NEWT_KEY_PGUP,		NULL },
-	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
-	{ "\033V",		NEWT_KEY_PGUP, 		"kH" },
-	{ "\033v",		NEWT_KEY_PGUP, 		"kH" },
+        { "\033[5~",            NEWT_KEY_PGUP,          NULL },
+        { "\033[6~",            NEWT_KEY_PGDN,          NULL },
+        { "\033V",              NEWT_KEY_PGUP,          "kH" },
+        { "\033v",              NEWT_KEY_PGUP,          "kH" },
 
-	{ "\033[[A",		NEWT_KEY_F1,		NULL },
-	{ "\033[[B",		NEWT_KEY_F2,		NULL },
-	{ "\033[[C",		NEWT_KEY_F3,		NULL },
-	{ "\033[[D",		NEWT_KEY_F4,		NULL },
-	{ "\033[[E",		NEWT_KEY_F5,		NULL },
+        { "\033[[A",            NEWT_KEY_F1,            NULL },
+        { "\033[[B",            NEWT_KEY_F2,            NULL },
+        { "\033[[C",            NEWT_KEY_F3,            NULL },
+        { "\033[[D",            NEWT_KEY_F4,            NULL },
+        { "\033[[E",            NEWT_KEY_F5,            NULL },
 
-	{ "\033OP",		NEWT_KEY_F1,		NULL },
-	{ "\033OQ",		NEWT_KEY_F2,		NULL },
-	{ "\033OR",		NEWT_KEY_F3,		NULL },
-	{ "\033OS",		NEWT_KEY_F4,		NULL },
+        { "\033OP",             NEWT_KEY_F1,            NULL },
+        { "\033OQ",             NEWT_KEY_F2,            NULL },
+        { "\033OR",             NEWT_KEY_F3,            NULL },
+        { "\033OS",             NEWT_KEY_F4,            NULL },
 
-	{ "\033[11~",		NEWT_KEY_F1,		NULL },
-	{ "\033[12~",		NEWT_KEY_F2,		NULL },
-	{ "\033[13~",		NEWT_KEY_F3,		NULL },
-	{ "\033[14~",		NEWT_KEY_F4,		NULL },
-	{ "\033[15~",		NEWT_KEY_F5,		NULL },
-	{ "\033[17~",		NEWT_KEY_F6,		NULL },
-	{ "\033[18~",		NEWT_KEY_F7,		NULL },
-	{ "\033[19~",		NEWT_KEY_F8,		NULL },
-	{ "\033[20~",		NEWT_KEY_F9,		NULL },
-	{ "\033[21~",		NEWT_KEY_F10,		NULL },
-	{ "\033[23~",		NEWT_KEY_F11,		NULL },
-	{ "\033[24~",		NEWT_KEY_F12,		NULL },
-	{ "\033",		NEWT_KEY_ESCAPE,	NULL },
+        { "\033[11~",           NEWT_KEY_F1,            NULL },
+        { "\033[12~",           NEWT_KEY_F2,            NULL },
+        { "\033[13~",           NEWT_KEY_F3,            NULL },
+        { "\033[14~",           NEWT_KEY_F4,            NULL },
+        { "\033[15~",           NEWT_KEY_F5,            NULL },
+        { "\033[17~",           NEWT_KEY_F6,            NULL },
+        { "\033[18~",           NEWT_KEY_F7,            NULL },
+        { "\033[19~",           NEWT_KEY_F8,            NULL },
+        { "\033[20~",           NEWT_KEY_F9,            NULL },
+        { "\033[21~",           NEWT_KEY_F10,           NULL },
+        { "\033[23~",           NEWT_KEY_F11,           NULL },
+        { "\033[24~",           NEWT_KEY_F12,           NULL },
+        { "\033",               NEWT_KEY_ESCAPE,        NULL },
 
-	{ 0 },	/* LEAVE this one */
+        { 0 },  /* LEAVE this one */
 };
 static char keyPrefix = '\033';
 
@@ -146,27 +146,27 @@ static int getkeyInterruptHook(void) {
 }
 
 int wstrlen(const char *str, int len) {
-	mbstate_t ps;
-	wchar_t tmp;
-	int nchars = 0;
-	
-	if (!str) return 0;
-	if (!len) return 0;
-	if (len < 0) len = strlen(str);
-	memset(&ps,0,sizeof(mbstate_t));
-	while (len > 0) {
-		int x,y;
-		
-		x = mbrtowc(&tmp,str,len,&ps);
-		if (x >0) {
-		    	str += x;
-			len -= x;
-			y = wcwidth(tmp);
-			if (y>0)
-			  nchars+=y;
-		} else break;
-	}
-	return nchars;
+        mbstate_t ps;
+        wchar_t tmp;
+        int nchars = 0;
+        
+        if (!str) return 0;
+        if (!len) return 0;
+        if (len < 0) len = strlen(str);
+        memset(&ps,0,sizeof(mbstate_t));
+        while (len > 0) {
+                int x,y;
+                
+                x = mbrtowc(&tmp,str,len,&ps);
+                if (x >0) {
+                        str += x;
+                        len -= x;
+                        y = wcwidth(tmp);
+                        if (y>0)
+                          nchars+=y;
+                } else break;
+        }
+        return nchars;
 }
 
 static int getkey() {
@@ -182,7 +182,7 @@ static int getkey() {
 
 void newtFlushInput(void) {
     while (SLang_input_pending(0)) {
-	getkey();
+        getkey();
     }
 }
 
@@ -245,7 +245,7 @@ int newtInit(void) {
             if ((lang = getenv("LANG")) == NULL)
                 lang = "";
     if (strstr (lang, ".euc") != NULL)
-	trashScreen = 1;
+        trashScreen = 1;
 
     (void) strlen(ident);
 
@@ -254,15 +254,15 @@ int newtInit(void) {
 
     MonoValue = getenv(MonoEnv);
     if ( MonoValue == NULL ) {
-	SLtt_Use_Ansi_Colors = 1;
+        SLtt_Use_Ansi_Colors = 1;
     } else {
-	SLtt_Use_Ansi_Colors = 0;
+        SLtt_Use_Ansi_Colors = 0;
     }
 
     if ((ret = SLsmg_init_smg()) < 0)
-	return ret;
+        return ret;
     if ((ret = SLang_init_tty(0, 0, 0)) < 0)
-	return ret;
+        return ret;
 
     newtSetColors(newtDefaultColorPalette);
     newtCursorOff();
@@ -324,40 +324,40 @@ void newtSetColors(struct newtColors colors) {
     SLtt_set_color(NEWT_COLORSET_TITLE, "", colors.titleFg, colors.titleBg);
     SLtt_set_color(NEWT_COLORSET_BUTTON, "", colors.buttonFg, colors.buttonBg);
     SLtt_set_color(NEWT_COLORSET_ACTBUTTON, "", colors.actButtonFg,
-			colors.actButtonBg);
+                        colors.actButtonBg);
     SLtt_set_color(NEWT_COLORSET_CHECKBOX, "", colors.checkboxFg,
-			colors.checkboxBg);
+                        colors.checkboxBg);
     SLtt_set_color(NEWT_COLORSET_ACTCHECKBOX, "", colors.actCheckboxFg,
-			colors.actCheckboxBg);
+                        colors.actCheckboxBg);
     SLtt_set_color(NEWT_COLORSET_ENTRY, "", colors.entryFg, colors.entryBg);
     SLtt_set_color(NEWT_COLORSET_LABEL, "", colors.labelFg, colors.labelBg);
     SLtt_set_color(NEWT_COLORSET_LISTBOX, "", colors.listboxFg,
-			colors.listboxBg);
+                        colors.listboxBg);
     SLtt_set_color(NEWT_COLORSET_ACTLISTBOX, "", colors.actListboxFg,
-			colors.actListboxBg);
+                        colors.actListboxBg);
     SLtt_set_color(NEWT_COLORSET_TEXTBOX, "", colors.textboxFg,
-			colors.textboxBg);
+                        colors.textboxBg);
     SLtt_set_color(NEWT_COLORSET_ACTTEXTBOX, "", colors.actTextboxFg,
-			colors.actTextboxBg);
+                        colors.actTextboxBg);
     SLtt_set_color(NEWT_COLORSET_HELPLINE, "", colors.helpLineFg,
-			colors.helpLineBg);
+                        colors.helpLineBg);
     SLtt_set_color(NEWT_COLORSET_ROOTTEXT, "", colors.rootTextFg,
-			colors.rootTextBg);
+                        colors.rootTextBg);
 
     SLtt_set_color(NEWT_COLORSET_EMPTYSCALE, "", "white",
-			colors.emptyScale);
+                        colors.emptyScale);
     SLtt_set_color(NEWT_COLORSET_FULLSCALE, "", "white",
-			colors.fullScale);
+                        colors.fullScale);
     SLtt_set_color(NEWT_COLORSET_DISENTRY, "", colors.disabledEntryFg,
-			colors.disabledEntryBg);
+                        colors.disabledEntryBg);
 
     SLtt_set_color(NEWT_COLORSET_COMPACTBUTTON, "", colors.compactButtonFg,
-			colors.compactButtonBg);
+                        colors.compactButtonBg);
 
     SLtt_set_color(NEWT_COLORSET_ACTSELLISTBOX, "", colors.actSelListboxFg,
-		   colors.actSelListboxBg);
+                   colors.actSelListboxBg);
     SLtt_set_color(NEWT_COLORSET_SELLISTBOX, "", colors.selListboxFg,
-		   colors.selListboxBg);
+                   colors.selListboxBg);
 }
 
 int newtGetKey(void) {
@@ -366,76 +366,76 @@ int newtGetKey(void) {
     const struct keymap * curr;
 
     do {
-	key = getkey();
-	if (key == SLANG_GETKEY_ERROR) {
-	    /* Either garbage was read, or stdin disappeared
-	     * (the parent terminal was proably closed)
-	     * if the latter, die.
-	     */
-	    if (feof(stdin))
-		    exit(1);
-	    if (needResize) {
+        key = getkey();
+        if (key == SLANG_GETKEY_ERROR) {
+            /* Either garbage was read, or stdin disappeared
+             * (the parent terminal was proably closed)
+             * if the latter, die.
+             */
+            if (feof(stdin))
+                    exit(1);
+            if (needResize) {
                 needResize = 0;
-		return NEWT_KEY_RESIZE;
+                return NEWT_KEY_RESIZE;
             }
 
-	    /* ignore other signals */
-	    continue;
-	}
+            /* ignore other signals */
+            continue;
+        }
 
-	if (key == NEWT_KEY_SUSPEND && suspendCallback)
-	    suspendCallback(suspendCallbackData);
+        if (key == NEWT_KEY_SUSPEND && suspendCallback)
+            suspendCallback(suspendCallbackData);
     } while (key == NEWT_KEY_SUSPEND);
 
     switch (key) {
       case 'v' | 0x80:
       case 'V' | 0x80:
-	return NEWT_KEY_PGUP;
+        return NEWT_KEY_PGUP;
 
       case 22:
-	return NEWT_KEY_PGDN;
+        return NEWT_KEY_PGDN;
 
-	return NEWT_KEY_BKSPC;
+        return NEWT_KEY_BKSPC;
       case 0x7f:
-	return NEWT_KEY_BKSPC;
+        return NEWT_KEY_BKSPC;
 
       case 0x08:
-	return NEWT_KEY_BKSPC;
+        return NEWT_KEY_BKSPC;
 
       default:
-	if (key != keyPrefix) return key;
+        if (key != keyPrefix) return key;
     }
 
     memset(buf, 0, sizeof(buf));
 
     *chptr++ = key;
     while (SLang_input_pending(5)) {
-	key = getkey();
-	if (key == keyPrefix) {
-	    /* he hit unknown keys too many times -- start over */
-	    memset(buf, 0, sizeof(buf));
-	    chptr = buf;
-	}
+        key = getkey();
+        if (key == keyPrefix) {
+            /* he hit unknown keys too many times -- start over */
+            memset(buf, 0, sizeof(buf));
+            chptr = buf;
+        }
 
-	*chptr++ = key;
+        *chptr++ = key;
 
-	/* this search should use bsearch(), but when we only look through
-	   a list of 20 (or so) keymappings, it's probably faster just to
-	   do a inline linear search */
+        /* this search should use bsearch(), but when we only look through
+           a list of 20 (or so) keymappings, it's probably faster just to
+           do a inline linear search */
 
-	for (curr = keymap; curr->code; curr++) {
-	    if (curr->str) {
-		if (!strcmp(curr->str, buf))
-		    return curr->code;
-	    }
-	}
+        for (curr = keymap; curr->code; curr++) {
+            if (curr->str) {
+                if (!strcmp(curr->str, buf))
+                    return curr->code;
+            }
+        }
     }
 
     for (curr = keymap; curr->code; curr++) {
-	if (curr->str) {
-	    if (!strcmp(curr->str, buf))
-		return curr->code;
-	}
+        if (curr->str) {
+            if (!strcmp(curr->str, buf))
+                return curr->code;
+        }
     }
 
     /* Looks like we were a bit overzealous in reading characters. Return
@@ -444,7 +444,7 @@ int newtGetKey(void) {
 
     chptr--;
     while (chptr > buf)
-	SLang_ungetkey(*chptr--);
+        SLang_ungetkey(*chptr--);
 
     return *chptr;
 }
@@ -464,7 +464,7 @@ void newtWaitForKey(void) {
  */
 void newtClearKeyBuffer(void) {
     while (SLang_input_pending(1)) {
-	getkey();
+        getkey();
     }
 }
 
@@ -478,7 +478,7 @@ void newtClearKeyBuffer(void) {
  * @return zero on success (currently no errors reported)
  */
 int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
-			  const char * title) {
+                          const char * title) {
     int j, row, col;
     int n;
     int i;
@@ -486,9 +486,9 @@ int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
     newtFlushInput();
 
     if (!currentWindow) {
-	currentWindow = windowStack;
+        currentWindow = windowStack;
     } else {
-	currentWindow++;
+        currentWindow++;
     }
 
     currentWindow->left = left;
@@ -503,19 +503,19 @@ int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
     col = left - 1;
     /* clip to the current screen bounds - msw */
     if (row < 0)
-	row = 0;
+        row = 0;
     if (col < 0)
-	col = 0;
+        col = 0;
     if (left + width > SLtt_Screen_Cols)
-	width = SLtt_Screen_Cols - left;
+        width = SLtt_Screen_Cols - left;
     if (top + height > SLtt_Screen_Rows)
-	height = SLtt_Screen_Rows - top;
+        height = SLtt_Screen_Rows - top;
     n = 0;
     for (j = 0; j < height + 3; j++, row++) {
-	SLsmg_gotorc(row, col);
-	SLsmg_read_raw(currentWindow->buffer + n,
-		       currentWindow->width + 3);
-	n += currentWindow->width + 3;
+        SLsmg_gotorc(row, col);
+        SLsmg_read_raw(currentWindow->buffer + n,
+                       currentWindow->width + 3);
+        n += currentWindow->width + 3;
     }
 
     newtTrashScreen();
@@ -524,20 +524,20 @@ int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
     SLsmg_draw_box(top - 1, left - 1, height + 2, width + 2);
 
     if (currentWindow->title) {
-	i = wstrlen(currentWindow->title,-1) + 4;
-	i = ((width - i) / 2) + left;
-	SLsmg_gotorc(top - 1, i);
-	SLsmg_set_char_set(1);
-	SLsmg_write_char(SLSMG_RTEE_CHAR);
-	SLsmg_set_char_set(0);
-	SLsmg_write_char(' ');
-	SLsmg_set_color(NEWT_COLORSET_TITLE);
-	SLsmg_write_string((char *)currentWindow->title);
-	SLsmg_set_color(NEWT_COLORSET_BORDER);
-	SLsmg_write_char(' ');
-	SLsmg_set_char_set(1);
-	SLsmg_write_char(SLSMG_LTEE_CHAR);
-	SLsmg_set_char_set(0);
+        i = wstrlen(currentWindow->title,-1) + 4;
+        i = ((width - i) / 2) + left;
+        SLsmg_gotorc(top - 1, i);
+        SLsmg_set_char_set(1);
+        SLsmg_write_char(SLSMG_RTEE_CHAR);
+        SLsmg_set_char_set(0);
+        SLsmg_write_char(' ');
+        SLsmg_set_color(NEWT_COLORSET_TITLE);
+        SLsmg_write_string((char *)currentWindow->title);
+        SLsmg_set_color(NEWT_COLORSET_BORDER);
+        SLsmg_write_char(' ');
+        SLsmg_set_char_set(1);
+        SLsmg_write_char(SLSMG_LTEE_CHAR);
+        SLsmg_set_char_set(0);
     }
 
     SLsmg_set_color(NEWT_COLORSET_WINDOW);
@@ -548,8 +548,8 @@ int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
     SLsmg_fill_region(top, left + width + 1, height + 1, 1, ' ');
 
     for (i = top; i < (top + height + 1); i++) {
-	SLsmg_gotorc(i, left + width + 1);
-	SLsmg_write_string(" ");
+        SLsmg_gotorc(i, left + width + 1);
+        SLsmg_write_string(" ");
     }
 
     return 0;
@@ -589,23 +589,23 @@ void newtPopWindow(void) {
     row = currentWindow->top - 1;
     col = currentWindow->left - 1;
     if (row < 0)
-	row = 0;
+        row = 0;
     if (col < 0)
-	col = 0;
+        col = 0;
     for (j = 0; j < currentWindow->height + 3; j++, row++) {
-	SLsmg_gotorc(row, col);
-	SLsmg_write_raw(currentWindow->buffer + n,
-			currentWindow->width + 3);
-	n += currentWindow->width + 3;
+        SLsmg_gotorc(row, col);
+        SLsmg_write_raw(currentWindow->buffer + n,
+                        currentWindow->width + 3);
+        n += currentWindow->width + 3;
     }
 
     free(currentWindow->buffer);
     free(currentWindow->title);
 
     if (currentWindow == windowStack)
-	currentWindow = NULL;
+        currentWindow = NULL;
     else
-	currentWindow--;
+        currentWindow--;
 
     SLsmg_set_char_set(0);
 
@@ -616,10 +616,10 @@ void newtPopWindow(void) {
 
 void newtGetWindowPos(int * x, int * y) {
     if (currentWindow) {
-	*x = currentWindow->left;
-	*y = currentWindow->top;
+        *x = currentWindow->left;
+        *y = currentWindow->top;
     } else
-	*x = *y = 0;
+        *x = *y = 0;
 }
 
 void newtGetrc(int * row, int * col) {
@@ -629,8 +629,8 @@ void newtGetrc(int * row, int * col) {
 
 void newtGotorc(int newRow, int newCol) {
     if (currentWindow) {
-	newRow += currentWindow->top;
-	newCol += currentWindow->left;
+        newRow += currentWindow->top;
+        newCol += currentWindow->left;
     }
 
     cursorRow = newRow;
@@ -640,23 +640,23 @@ void newtGotorc(int newRow, int newCol) {
 
 void newtDrawBox(int left, int top, int width, int height, int shadow) {
     if (currentWindow) {
-	top += currentWindow->top;
-	left += currentWindow->left;
+        top += currentWindow->top;
+        left += currentWindow->left;
     }
 
     SLsmg_draw_box(top, left, height, width);
 
     if (shadow) {
-	SLsmg_set_color(NEWT_COLORSET_SHADOW);
-	SLsmg_fill_region(top + height, left + 1, 1, width - 1, ' ');
-	SLsmg_fill_region(top + 1, left + width, height, 1, ' ');
+        SLsmg_set_color(NEWT_COLORSET_SHADOW);
+        SLsmg_fill_region(top + height, left + 1, 1, width - 1, ' ');
+        SLsmg_fill_region(top + 1, left + width, height, 1, ' ');
     }
 }
 
 void newtClearBox(int left, int top, int width, int height) {
     if (currentWindow) {
-	top += currentWindow->top;
-	left += currentWindow->left;
+        top += currentWindow->top;
+        left += currentWindow->left;
     }
 
     SLsmg_fill_region(top, left, height, width, ' ');
@@ -670,8 +670,8 @@ static void initKeymap(void) {
     struct keymap * curr;
 
     for (curr = keymap; curr->code; curr++) {
-	if (!curr->str)
-	    curr->str = SLtt_tgetstr(curr->tc);
+        if (!curr->str)
+            curr->str = SLtt_tgetstr(curr->tc);
     }
 
     /* Newt's keymap handling is a bit broken. It assumes that any extended
@@ -679,7 +679,7 @@ static void initKeymap(void) {
        will probably need to fix this, or just yell at me and I'll be so
        ashamed of myself for doing it this way I'll fix it */
 
-    keyPrefix = 0x1b;		/* ESC */
+    keyPrefix = 0x1b;           /* ESC */
 }
 #endif
 
@@ -700,7 +700,7 @@ void newtDelay(unsigned usecs) {
 }
 
 struct eventResult newtDefaultEventHandler(newtComponent c,
-					   struct event ev) {
+                                           struct event ev) {
     struct eventResult er;
 
     er.result = ER_IGNORED;
@@ -713,22 +713,22 @@ void newtRedrawHelpLine(void) {
     SLsmg_set_color(NEWT_COLORSET_HELPLINE);
 
     if (currentHelpline) {
-	/* buffer size needs to be wide enough to hold all the multibyte
-	   currentHelpline + all the single byte ' ' to fill the line */
-	int wlen = wstrlen(*currentHelpline, -1);
-	int len;
+        /* buffer size needs to be wide enough to hold all the multibyte
+           currentHelpline + all the single byte ' ' to fill the line */
+        int wlen = wstrlen(*currentHelpline, -1);
+        int len;
 
-	if (wlen > SLtt_Screen_Cols)
-	    wlen = SLtt_Screen_Cols;
-	len = strlen(*currentHelpline) + (SLtt_Screen_Cols - wlen);
-	buf = alloca(len + 1);
-	memset(buf, ' ', len);
-	memcpy(buf, *currentHelpline, strlen(*currentHelpline));
-	buf[len] = '\0';
+        if (wlen > SLtt_Screen_Cols)
+            wlen = SLtt_Screen_Cols;
+        len = strlen(*currentHelpline) + (SLtt_Screen_Cols - wlen);
+        buf = alloca(len + 1);
+        memset(buf, ' ', len);
+        memcpy(buf, *currentHelpline, strlen(*currentHelpline));
+        buf[len] = '\0';
     } else {
-	buf = alloca(SLtt_Screen_Cols + 1);
-	memset(buf, ' ', SLtt_Screen_Cols);
-	buf[SLtt_Screen_Cols] = '\0';
+        buf = alloca(SLtt_Screen_Cols + 1);
+        memset(buf, ' ', SLtt_Screen_Cols);
+        buf[SLtt_Screen_Cols] = '\0';
     }
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     SLsmg_write_string(buf);
@@ -736,13 +736,13 @@ void newtRedrawHelpLine(void) {
 
 void newtPushHelpLine(const char * text) {
     if (!text)
-	text = defaultHelpLine;
+        text = defaultHelpLine;
 
     if (currentHelpline)
-	(*(++currentHelpline)) = strdup(text);
+        (*(++currentHelpline)) = strdup(text);
     else {
-	currentHelpline = helplineStack;
-	*currentHelpline = strdup(text);
+        currentHelpline = helplineStack;
+        *currentHelpline = strdup(text);
     }
 
     newtRedrawHelpLine();
@@ -753,9 +753,9 @@ void newtPopHelpLine(void) {
 
     free(*currentHelpline);
     if (currentHelpline == helplineStack)
-	currentHelpline = NULL;
+        currentHelpline = NULL;
     else
-	currentHelpline--;
+        currentHelpline--;
 
     newtRedrawHelpLine();
 }
@@ -764,11 +764,11 @@ void newtDrawRootText(int col, int row, const char * text) {
     SLsmg_set_color(NEWT_COLORSET_ROOTTEXT);
 
     if (col < 0) {
-	col = SLtt_Screen_Cols + col;
+        col = SLtt_Screen_Cols + col;
     }
 
     if (row < 0) {
-	row = SLtt_Screen_Rows + row;
+        row = SLtt_Screen_Rows + row;
     }
 
     SLsmg_gotorc(row, col);
@@ -778,16 +778,16 @@ void newtDrawRootText(int col, int row, const char * text) {
 int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {
     switch (sense) {
       case NEWT_FLAGS_SET:
-	return oldFlags | newFlags;
+        return oldFlags | newFlags;
 
       case NEWT_FLAGS_RESET:
-	return oldFlags & (~newFlags);
+        return oldFlags & (~newFlags);
 
       case NEWT_FLAGS_TOGGLE:
-	return oldFlags ^ newFlags;
+        return oldFlags ^ newFlags;
 
       default:
-	return oldFlags;
+        return oldFlags;
     }
 }
 
@@ -822,6 +822,6 @@ void newtCursorOn(void) {
 
 void newtTrashScreen(void) {
     if (trashScreen)
-	SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
 }
      

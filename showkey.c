@@ -10,13 +10,13 @@ int main(void) {
 
     buf = SLtt_tgetstr("ku");
     if (!buf) {
-	printf("termcap entry not found for kl\n\r");
+        printf("termcap entry not found for kl\n\r");
     } else {
-	printf("termcap entry found for kl: %s", buf);
-	while (*buf) {
-	    printf("0x%02x ", *buf++);
-	}
-	printf("\n\r");
+        printf("termcap entry found for kl: %s", buf);
+        while (*buf) {
+            printf("0x%02x ", *buf++);
+        }
+        printf("\n\r");
     }
 
     printf("\n\r");
@@ -30,8 +30,8 @@ int main(void) {
     printf("You pressed: ");
 
     while (SLang_input_pending(1)) {
-	i = SLang_getkey();
-	printf("0x%02x ", i);
+        i = SLang_getkey();
+        printf("0x%02x ", i);
     }
 
     printf("\n\r");

@@ -16,7 +16,7 @@ static void buttonDrawText(newtComponent co, int active, int pushed);
 static void buttonDraw(newtComponent c);
 static void buttonDestroy(newtComponent co);
 static struct eventResult buttonEvent(newtComponent c,
-				      struct event ev);
+                                      struct event ev);
 static void buttonPlace(newtComponent co, int newLeft, int newTop);
 
 static struct componentOps buttonOps = {
@@ -38,11 +38,11 @@ static newtComponent createButton(int left, int row, const char * text, int comp
 
     co = malloc(sizeof(*co));
     if (co == NULL) 
-	return NULL;
+        return NULL;
     bu = malloc(sizeof(struct button));
     if (bu == NULL)  {
-	free (co);
-	return NULL;
+        free (co);
+        return NULL;
     }
     co->data = bu;
 
@@ -51,11 +51,11 @@ static newtComponent createButton(int left, int row, const char * text, int comp
     co->ops = &buttonOps;
 
     if (bu->compact) {
-	co->height = 1;
-	co->width = width + 3;
+        co->height = 1;
+        co->width = width + 3;
     } else {
-	co->height = 4;
-	co->width = width + 5;
+        co->height = 4;
+        co->width = width + 5;
     }
 
     co->top = row;
@@ -104,27 +104,27 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
     SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
     if (bu->compact) {
-	if (active)
-	    SLsmg_set_color(NEWT_COLORSET_COMPACTBUTTON);
-	else
-	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
-	newtGotorc(co->top+ pushed, co->left + 1 + pushed);
-	SLsmg_write_char('<');
-	SLsmg_write_string(bu->text);
-	SLsmg_write_char('>');
+        if (active)
+            SLsmg_set_color(NEWT_COLORSET_COMPACTBUTTON);
+        else
+            SLsmg_set_color(NEWT_COLORSET_BUTTON);
+        newtGotorc(co->top+ pushed, co->left + 1 + pushed);
+        SLsmg_write_char('<');
+        SLsmg_write_string(bu->text);
+        SLsmg_write_char('>');
     } else {
-	if (pushed) {
-	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
-	    newtDrawBox(co->left + 1, co->top + 1, co->width - 1, 3, 0);
+        if (pushed) {
+            SLsmg_set_color(NEWT_COLORSET_BUTTON);
+            newtDrawBox(co->left + 1, co->top + 1, co->width - 1, 3, 0);
 
-	    SLsmg_set_color(NEWT_COLORSET_WINDOW);
-	    newtClearBox(co->left, co->top, co->width, 1);
-	    newtClearBox(co->left, co->top, 1, co->height);
-	} else {
-	    newtDrawBox(co->left, co->top, co->width - 1, 3, 1);
-	}
+            SLsmg_set_color(NEWT_COLORSET_WINDOW);
+            newtClearBox(co->left, co->top, co->width, 1);
+            newtClearBox(co->left, co->top, 1, co->height);
+        } else {
+            newtDrawBox(co->left, co->top, co->width - 1, 3, 1);
+        }
 
-	buttonDrawText(co, active, pushed);
+        buttonDrawText(co, active, pushed);
     }
 }
 
@@ -134,9 +134,9 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
     if (pushed) pushed = 1;
 
     if (active)
-	SLsmg_set_color(NEWT_COLORSET_ACTBUTTON);
+        SLsmg_set_color(NEWT_COLORSET_ACTBUTTON);
     else
-	SLsmg_set_color(NEWT_COLORSET_BUTTON);
+        SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
     newtGotorc(co->top + 1 + pushed, co->left + 1 + pushed);
     SLsmg_write_char(' ');
@@ -145,58 +145,58 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
 }
 
 static struct eventResult buttonEvent(newtComponent co,
-				      struct event ev) {
+                                      struct event ev) {
     struct eventResult er;
     struct button * bu = co->data;
 
     if (ev.when == EV_NORMAL) {
-	switch (ev.event) {
-	  case EV_FOCUS:
-	    buttonDrawIt(co, 1, 0);
-	    er.result = ER_SWALLOWED;
-	    break;
+        switch (ev.event) {
+          case EV_FOCUS:
+            buttonDrawIt(co, 1, 0);
+            er.result = ER_SWALLOWED;
+            break;
 
-	  case EV_UNFOCUS:
-	    buttonDrawIt(co, 0, 0);
-	    er.result = ER_SWALLOWED;
-	    break;
+          case EV_UNFOCUS:
+            buttonDrawIt(co, 0, 0);
+            er.result = ER_SWALLOWED;
+            break;
 
-	  case EV_KEYPRESS:
-	    if (ev.u.key == ' ' || ev.u.key == '\r') {
-		if (!bu->compact) {
-		    /* look pushed */
-		    buttonDrawIt(co, 1, 1);
-		    newtRefresh();
-		    newtDelay(150000);
-		    buttonDrawIt(co, 1, 0);
-		    newtRefresh();
-		    newtDelay(150000);
-		}
+          case EV_KEYPRESS:
+            if (ev.u.key == ' ' || ev.u.key == '\r') {
+                if (!bu->compact) {
+                    /* look pushed */
+                    buttonDrawIt(co, 1, 1);
+                    newtRefresh();
+                    newtDelay(150000);
+                    buttonDrawIt(co, 1, 0);
+                    newtRefresh();
+                    newtDelay(150000);
+                }
 
-		er.result = ER_EXITFORM;
-	    } else
-		er.result = ER_IGNORED;
-	    break;
-	  case EV_MOUSE:
-	      if (ev.u.mouse.type == MOUSE_BUTTON_DOWN &&
-		  co->top <= ev.u.mouse.y &&
-		  co->top + co->height - !bu->compact > ev.u.mouse.y &&
-		  co->left <= ev.u.mouse.x &&
-		  co->left + co->width - !bu->compact > ev.u.mouse.x) {
-		  if (!bu->compact) {
-		      buttonDrawIt(co, 1, 1);
-		      newtRefresh();
-		      newtDelay(150000);
-		      buttonDrawIt(co, 1, 0);
-		      newtRefresh();
-		      newtDelay(150000);
-		  }
-		  er.result = ER_EXITFORM;
-	      }
-	    break;
-	}
+                er.result = ER_EXITFORM;
+            } else
+                er.result = ER_IGNORED;
+            break;
+          case EV_MOUSE:
+              if (ev.u.mouse.type == MOUSE_BUTTON_DOWN &&
+                  co->top <= ev.u.mouse.y &&
+                  co->top + co->height - !bu->compact > ev.u.mouse.y &&
+                  co->left <= ev.u.mouse.x &&
+                  co->left + co->width - !bu->compact > ev.u.mouse.x) {
+                  if (!bu->compact) {
+                      buttonDrawIt(co, 1, 1);
+                      newtRefresh();
+                      newtDelay(150000);
+                      buttonDrawIt(co, 1, 0);
+                      newtRefresh();
+                      newtDelay(150000);
+                  }
+                  er.result = ER_EXITFORM;
+              }
+            break;
+        }
     } else
-	er.result = ER_IGNORED;
+        er.result = ER_IGNORED;
 
     return er;
 }

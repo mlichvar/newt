@@ -28,18 +28,18 @@ void newtScrollbarSet(newtComponent co, int where, int total) {
     int new;
 
     if (sb->arrows)
-	new = (where * (co->height - 3)) / (total ? total : 1) + 1;
+        new = (where * (co->height - 3)) / (total ? total : 1) + 1;
     else
-	new = (where * (co->height - 1)) / (total ? total : 1);
+        new = (where * (co->height - 1)) / (total ? total : 1);
     if (new != sb->curr) {
-	sbDrawThumb(co, 0);
-	sb->curr = new;
-	sbDrawThumb(co, 1);
+        sbDrawThumb(co, 0);
+        sb->curr = new;
+        sbDrawThumb(co, 1);
     }
 }
 
 newtComponent newtVerticalScrollbar(int left, int top, int height,
-				    int normalColorset, int thumbColorset) {
+                                    int normalColorset, int thumbColorset) {
     newtComponent co;
     struct scrollbar * sb;
 
@@ -48,11 +48,11 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     co->data = sb;
 
     if (!strcmp(getenv("TERM"), "linux") && height >= 2) {
-	sb->arrows = 1;
-	sb->curr = 1;
+        sb->arrows = 1;
+        sb->curr = 1;
     } else {
-	sb->arrows = 0;
-	sb->curr = 0;
+        sb->arrows = 0;
+        sb->curr = 0;
     }
     sb->cs = normalColorset;
     sb->csThumb = thumbColorset;
@@ -78,19 +78,19 @@ static void sbDraw(newtComponent co) {
 
     SLsmg_set_char_set(1);
     if (sb->arrows) {
-	newtGotorc(co->top, co->left);
-	SLsmg_write_char(SLSMG_UARROW_CHAR);
-	for (i = 1; i < co->height - 1; i++) {
-	    newtGotorc(i + co->top, co->left);
-	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
-	}
-	newtGotorc(co->top + co->height - 1, co->left);
-	SLsmg_write_char(SLSMG_DARROW_CHAR);
+        newtGotorc(co->top, co->left);
+        SLsmg_write_char(SLSMG_UARROW_CHAR);
+        for (i = 1; i < co->height - 1; i++) {
+            newtGotorc(i + co->top, co->left);
+            SLsmg_write_char(SLSMG_CKBRD_CHAR);
+        }
+        newtGotorc(co->top + co->height - 1, co->left);
+        SLsmg_write_char(SLSMG_DARROW_CHAR);
     } else {
-	for (i = 0; i < co->height; i++) {
-	    newtGotorc(i + co->top, co->left);
-	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
-	}
+        for (i = 0; i < co->height; i++) {
+            newtGotorc(i + co->top, co->left);
+            SLsmg_write_char(SLSMG_CKBRD_CHAR);
+        }
     }
 
     SLsmg_set_char_set(0);
@@ -108,9 +108,9 @@ static void sbDrawThumb(newtComponent co, int isOn) {
     SLsmg_set_char_set(1);
 
     /*if (isOn)
-	SLsmg_set_color(sb->csThumb);
+        SLsmg_set_color(sb->csThumb);
     else*/
-	SLsmg_set_color(sb->cs);
+        SLsmg_set_color(sb->cs);
 
     SLsmg_write_char(ch);
     SLsmg_set_char_set(0);

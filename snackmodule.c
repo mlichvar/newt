@@ -123,15 +123,15 @@ static PyTypeObject snackGridType = {
         "snackgrid",                    /* tp_name */
         sizeof(snackGrid),              /* tp_size */
         0,                              /* tp_itemsize */
-        emptyDestructor,      			/* tp_dealloc */
+        emptyDestructor,                        /* tp_dealloc */
         0,                              /* tp_print */
-        gridGetAttr,    		/* tp_getattr */
+        gridGetAttr,                    /* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
-        0,                		/* tp_as_mapping */
+        0,                              /* tp_as_mapping */
 };
 
 struct snackForm_s {
@@ -165,15 +165,15 @@ static PyTypeObject snackFormType = {
         "snackform",                    /* tp_name */
         sizeof(snackForm),              /* tp_size */
         0,                              /* tp_itemsize */
-        emptyDestructor,      		/* tp_dealloc */
+        emptyDestructor,                /* tp_dealloc */
         0,                              /* tp_print */
-        formGetAttr,    		/* tp_getattr */
+        formGetAttr,                    /* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
-        0,                		/* tp_as_mapping */
+        0,                              /* tp_as_mapping */
 };
 
 struct snackWidget_s {
@@ -250,15 +250,15 @@ static PyTypeObject snackWidgetType = {
         "snackwidget",                  /* tp_name */
         sizeof(snackWidget),            /* tp_size */
         0,                              /* tp_itemsize */
-        widgetDestructor,      		/* tp_dealloc */
+        widgetDestructor,               /* tp_dealloc */
         0,                              /* tp_print */
-        widgetGetAttr,  		/* tp_getattr */
+        widgetGetAttr,                  /* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
-        0,                		/* tp_as_mapping */
+        0,                              /* tp_as_mapping */
 };
 
 static snackWidget * snackWidgetNew (void) {
@@ -325,7 +325,7 @@ static PyObject * screenSize(PyObject * s, PyObject * args) {
     int width, height;
 
     if (!PyArg_ParseTuple(args, ""))
-	return NULL;
+        return NULL;
 
     newtGetScreenSize(&width, &height);
 
@@ -348,15 +348,15 @@ static void suspendCallbackMarshall(void * data) {
     PyObject * args, * result;
 
     if (scs->data) {
-	args = Py_BuildValue("(O)", scs->data);
-	result = PyEval_CallObject(scs->cb, args);
-	Py_DECREF (args);
+        args = Py_BuildValue("(O)", scs->data);
+        result = PyEval_CallObject(scs->cb, args);
+        Py_DECREF (args);
     } else
-	result = PyEval_CallObject(scs->cb, NULL);
+        result = PyEval_CallObject(scs->cb, NULL);
     
     if (!result) {
-	PyErr_Print();
-	PyErr_Clear();
+        PyErr_Print();
+        PyErr_Clear();
     }
 
     Py_XDECREF(result);
@@ -369,15 +369,15 @@ static void callbackMarshall(newtComponent co, void * data) {
     PyObject * args, * result;
 
     if (scs->data) {
-	args = Py_BuildValue("(O)", scs->data);
-	result = PyEval_CallObject(scs->cb, args);
-	Py_DECREF (args);
+        args = Py_BuildValue("(O)", scs->data);
+        result = PyEval_CallObject(scs->cb, args);
+        Py_DECREF (args);
     } else
-	result = PyEval_CallObject(scs->cb, NULL);
+        result = PyEval_CallObject(scs->cb, NULL);
 
     if (!result) {
-	PyErr_Print();
-	PyErr_Clear();
+        PyErr_Print();
+        PyErr_Clear();
     }
     
     Py_XDECREF(result);
@@ -387,7 +387,7 @@ static void callbackMarshall(newtComponent co, void * data) {
 
 static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "O|O", &suspend.cb, &suspend.data))
-	return NULL;
+        return NULL;
 
     Py_INCREF (suspend.cb);
     Py_XINCREF (suspend.data);    
@@ -400,10 +400,10 @@ static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
 
 static PyObject * setHelpCallback(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "O", &helpCallback.cb))
-	return NULL;
+        return NULL;
 
     /*if (helpCallback.cb) {
-	Py_DECREF (helpCallback.cb);
+        Py_DECREF (helpCallback.cb);
     }*/
 
     Py_INCREF (helpCallback.cb);
@@ -419,7 +419,7 @@ static PyObject * drawRootText(PyObject * s, PyObject * args) {
     char * text;
 
     if (!PyArg_ParseTuple(args, "iis", &left, &top, &text))
-	return NULL;
+        return NULL;
 
     newtDrawRootText(left, top, text);
 
@@ -451,12 +451,12 @@ static PyObject * pushHelpLine(PyObject * s, PyObject * args) {
     char * text;
 
     if (!PyArg_ParseTuple(args, "s", &text))
-	return NULL;
+        return NULL;
 
     if (!strcmp(text, "*default*"))
-	newtPushHelpLine(NULL);
+        newtPushHelpLine(NULL);
     else
-	newtPushHelpLine(text);
+        newtPushHelpLine(text);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -469,7 +469,7 @@ static PyObject * reflowText(PyObject * s, PyObject * args) {
     PyObject * tuple;
 
     if (!PyArg_ParseTuple(args, "si|ii", &text, &width, &minus, &plus))
-	return NULL;
+        return NULL;
 
     new = newtReflowText(text, width, minus, plus, &realWidth, &realHeight);
 
@@ -484,7 +484,7 @@ static PyObject * centeredWindow(PyObject * s, PyObject * args) {
     char * title;
 
     if (!PyArg_ParseTuple(args, "iis", &width, &height, &title))
-	return NULL;
+        return NULL;
 
     newtCenteredWindow(width, height, title);
 
@@ -498,13 +498,13 @@ static PyObject * gridWrappedWindow(PyObject * s, PyObject * args) {
     int x = -1, y = -1;
 
     if (!PyArg_ParseTuple(args, "O!s|ii", &snackGridType, &grid, &title, 
-			  &x, &y))
-	return NULL;
+                          &x, &y))
+        return NULL;
 
     if (y == -1)
-	newtGridWrappedWindow(grid->grid, title);
+        newtGridWrappedWindow(grid->grid, title);
     else
-	newtGridWrappedWindowAt(grid->grid, title, x, y);
+        newtGridWrappedWindowAt(grid->grid, title, x, y);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -515,7 +515,7 @@ static PyObject * openWindow(PyObject * s, PyObject * args) {
     char * title;
 
     if (!PyArg_ParseTuple(args, "iiiis", &left, &top, &width, &height, &title))
-	return NULL;
+        return NULL;
 
     newtOpenWindow(left, top, width, height, title);
 
@@ -534,7 +534,7 @@ static PyObject * messageWindow(PyObject * s, PyObject * args) {
     char * okbutton = "Ok";
 
     if (!PyArg_ParseTuple(args, "ss|s", &title, &text, &okbutton)) 
-	return NULL;
+        return NULL;
 
     newtWinMessage(title, okbutton, text);
 
@@ -549,8 +549,8 @@ static PyObject * choiceWindow(PyObject * s, PyObject * args) {
     int rc;
 
     if (!PyArg_ParseTuple(args, "ss|ss", &title, &text, &okbutton, 
-			  &cancelbutton)) 
-	return NULL;
+                          &cancelbutton)) 
+        return NULL;
 
     rc = newtWinChoice(title, okbutton, cancelbutton, text);
 
@@ -562,8 +562,8 @@ static PyObject * ternaryWindow(PyObject * s, PyObject * args) {
     int rc;
 
     if (!PyArg_ParseTuple(args, "sssss", &title, &text, &button1, &button2, 
-			  &button3)) 
-	return NULL;
+                          &button3)) 
+        return NULL;
 
     rc = newtWinTernary(title, button1, button2, button3, text);
 
@@ -634,14 +634,14 @@ static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     int doScroll = 0, returnExit = 0, showCursor = 0 ;
 
     if (!PyArg_ParseTuple(args, "i|iii", &height, &doScroll, &returnExit, &showCursor))
-	return NULL;
+        return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtListbox(-1, -1, height,
-			     (doScroll ? NEWT_FLAG_SCROLL : 0) |
-			     (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
-			     (showCursor ? NEWT_FLAG_SHOWCURSOR : 0)
-			     );
+                             (doScroll ? NEWT_FLAG_SCROLL : 0) |
+                             (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
+                             (showCursor ? NEWT_FLAG_SHOWCURSOR : 0)
+                             );
     widget->anint = 1;
     
     return widget;
@@ -655,12 +655,12 @@ static snackWidget * textWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
     
     if (!PyArg_ParseTuple(args, "iis|ii", &width, &height, &text, &scrollBar, &wrap))
-	return NULL;
+        return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtTextbox(-1, -1, width, height,
-				(scrollBar ? NEWT_FLAG_SCROLL : 0) |
- 			        (wrap ? NEWT_FLAG_WRAP : 0));
+                                (scrollBar ? NEWT_FLAG_SCROLL : 0) |
+                                (wrap ? NEWT_FLAG_WRAP : 0));
     newtTextboxSetText(widget->co, text);
     
     return widget;
@@ -672,14 +672,14 @@ static snackWidget * radioButtonWidget(PyObject * s, PyObject * args) {
     int isOn;
 
     if (!PyArg_ParseTuple(args, "sOi", &text, &group, &isOn)) 
-		return NULL;
+                return NULL;
 
     widget = snackWidgetNew ();
 
     if ((PyObject *) group == Py_None)
-	widget->co = newtRadiobutton(-1, -1, text, isOn, NULL);
+        widget->co = newtRadiobutton(-1, -1, text, isOn, NULL);
     else
-	widget->co = newtRadiobutton(-1, -1, text, isOn, group->co);
+        widget->co = newtRadiobutton(-1, -1, text, isOn, group->co);
 
     return widget;
 }
@@ -693,7 +693,7 @@ static snackWidget * checkboxWidget(PyObject * s, PyObject * args) {
 
     widget = snackWidgetNew ();
     widget->co = newtCheckbox(-1, -1, text, isOn ? '*' : ' ', NULL, 
-				&widget->achar);
+                                &widget->achar);
 
     return widget;
 }
@@ -727,15 +727,15 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     int isHidden, isScrolled, returnExit, isPassword;
 
     if (!PyArg_ParseTuple(args, "isiiii", &width, &initial,
-			  &isHidden, &isPassword, &isScrolled, &returnExit)) return NULL;
+                          &isHidden, &isPassword, &isScrolled, &returnExit)) return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtEntry(-1, -1, initial, width,
                            (const char **) &widget->apointer, 
-			   (isHidden ? NEWT_FLAG_HIDDEN : 0) |
-			   (isPassword ? NEWT_FLAG_PASSWORD : 0) |
-			   (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
-			   (isScrolled ? NEWT_FLAG_SCROLL : 0));
+                           (isHidden ? NEWT_FLAG_HIDDEN : 0) |
+                           (isPassword ? NEWT_FLAG_PASSWORD : 0) |
+                           (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
+                           (isScrolled ? NEWT_FLAG_SCROLL : 0));
 
     return widget;
 }
@@ -747,7 +747,7 @@ static snackForm * formCreate(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "|O", &help)) return NULL;
 
     if (help == Py_None)
-	help = NULL;
+        help = NULL;
 
     form = PyObject_NEW(snackForm, &snackFormType);
     form->fo = newtForm(NULL, help, 0);
@@ -790,19 +790,19 @@ static PyObject * gridSetField(snackGrid * grid, PyObject * args) {
     int anchorFlags = 0, growFlags = 0;
 
     if (!PyArg_ParseTuple(args, "iiO|(iiii)ii", &x, &y, 
-				&w, &pLeft, &pTop, &pRight, &pBottom,
-				&anchorFlags, &growFlags)) 
-	return NULL;
+                                &w, &pLeft, &pTop, &pRight, &pBottom,
+                                &anchorFlags, &growFlags)) 
+        return NULL;
 
     if (w->ob_type == &snackWidgetType) {
-	newtGridSetField(grid->grid, x, y, NEWT_GRID_COMPONENT,
-			 w->co, pLeft, pTop, pRight, pBottom, anchorFlags, 
-			 growFlags);
+        newtGridSetField(grid->grid, x, y, NEWT_GRID_COMPONENT,
+                         w->co, pLeft, pTop, pRight, pBottom, anchorFlags, 
+                         growFlags);
     } else {
-	g = (snackGrid *) w;
-	newtGridSetField(grid->grid, x, y, NEWT_GRID_SUBGRID,
-			 g->grid, pLeft, pTop, pRight, pBottom, anchorFlags, 
-			 growFlags);
+        g = (snackGrid *) w;
+        newtGridSetField(grid->grid, x, y, NEWT_GRID_SUBGRID,
+                         g->grid, pLeft, pTop, pRight, pBottom, anchorFlags, 
+                         growFlags);
     }
 
     Py_INCREF(Py_None);
@@ -825,14 +825,14 @@ static PyObject * formAdd(snackForm * s, PyObject * args) {
     int size = PyTuple_Size(args), i;
     
     if (!size) {
-	/* this is a hack, I should give an error directly */
-	if (!PyArg_ParseTuple(args, "O!", &snackWidgetType, &w)) 
-	    return NULL;
+        /* this is a hack, I should give an error directly */
+        if (!PyArg_ParseTuple(args, "O!", &snackWidgetType, &w)) 
+            return NULL;
     }
 
     for (i = 0; i < size; i++) {
-	w = (snackWidget *) PyTuple_GET_ITEM(args, i);
-	newtFormAddComponent(s->fo, w->co);
+        w = (snackWidget *) PyTuple_GET_ITEM(args, i);
+        newtFormAddComponent(s->fo, w->co);
     }
 
     Py_INCREF(Py_None);
@@ -845,20 +845,20 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
     newtFormRun(s->fo, &result);
 
     if (result.reason == NEWT_EXIT_HOTKEY)
-	return Py_BuildValue("(si)", "hotkey", result.u.key);
+        return Py_BuildValue("(si)", "hotkey", result.u.key);
     else if (result.reason == NEWT_EXIT_TIMER)
-	return Py_BuildValue("(si)", "timer", 0);
+        return Py_BuildValue("(si)", "timer", 0);
     else if (result.reason == NEWT_EXIT_FDREADY)
-	return Py_BuildValue("(si)", "fdready", result.u.watch);
+        return Py_BuildValue("(si)", "fdready", result.u.watch);
     else
-	return Py_BuildValue("(si)", "widget", result.u.co);
+        return Py_BuildValue("(si)", "widget", result.u.co);
 }
 
 static PyObject * formHotKey(snackForm * s, PyObject * args) {
     int key;
 
     if (!PyArg_ParseTuple(args, "i", &key))
-	return NULL;
+        return NULL;
 
     newtFormAddHotKey(s->fo, key);
 
@@ -870,7 +870,7 @@ static PyObject * formSetTimer(snackForm * form, PyObject * args) {
     int millisecs;
 
     if (!PyArg_ParseTuple(args, "i", &millisecs))
-	return NULL;
+        return NULL;
 
     newtFormSetTimer(form->fo, millisecs);
 
@@ -882,7 +882,7 @@ static PyObject * formWatchFD(snackForm * form, PyObject * args) {
     int fd, fdflags;
 
     if (!PyArg_ParseTuple(args, "ii", &fd, &fdflags))
-	return NULL;
+        return NULL;
 
     newtFormWatchFd(form->fo, fd, fdflags);
 
@@ -894,7 +894,7 @@ static PyObject * formSetCurrent(snackForm * form, PyObject * args) {
     snackWidget * w;
 
     if (!PyArg_ParseTuple(args, "O", &w))
-	return NULL;
+        return NULL;
 
     newtFormSetCurrent(form->fo, w->co);
 
@@ -906,13 +906,13 @@ static PyObject * widgetGetAttr(PyObject * s, char * name) {
     snackWidget * w = (snackWidget *) s;
 
     if (!strcmp(name, "key")) {
-	return Py_BuildValue("i", w->co);
+        return Py_BuildValue("i", w->co);
     } else if (!strcmp(name, "entryValue")) {
-	return Py_BuildValue("s", w->apointer);
+        return Py_BuildValue("s", w->apointer);
     } else if (!strcmp(name, "checkboxValue")) {
-	return Py_BuildValue("i", w->achar == ' ' ? 0 : 1);
+        return Py_BuildValue("i", w->achar == ' ' ? 0 : 1);
     } else if (!strcmp(name, "radioValue")) {
-	return Py_BuildValue("i", newtRadioGetCurrent(w->co));
+        return Py_BuildValue("i", newtRadioGetCurrent(w->co));
     }
 
     return Py_FindMethod(widgetMethods, s, name);
@@ -932,7 +932,7 @@ static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
     s->scs.data = NULL;
     
     if (!PyArg_ParseTuple(args, "O|O", &s->scs.cb, &s->scs.data))
-	return NULL;
+        return NULL;
 
     Py_INCREF (s->scs.cb);
     Py_XINCREF (s->scs.data);
@@ -947,7 +947,7 @@ static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args) {
     char * val;
 
     if (!PyArg_ParseTuple(args, "s", &val))
-	return NULL;
+        return NULL;
 
     newtEntrySet(s->co, val, 1);
 
@@ -971,7 +971,7 @@ static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args) {
     char * text;
     
     if (!PyArg_ParseTuple(args, "s", &text))
-	return NULL;
+        return NULL;
 
     newtListboxAddEntry(s->co, text, I2P(s->anint));
 
@@ -983,7 +983,7 @@ static PyObject * widgetListboxIns(snackWidget * s, PyObject * args) {
     int key;
     
     if (!PyArg_ParseTuple(args, "si", &text, &key))
-	return NULL;
+        return NULL;
 
     newtListboxInsertEntry(s->co, text, I2P(s->anint), I2P(key));
 
@@ -994,7 +994,7 @@ static PyObject * widgetListboxDel(snackWidget * s, PyObject * args) {
     int key;
     
     if (!PyArg_ParseTuple(args, "i", &key))
-	return NULL;
+        return NULL;
 
     newtListboxDeleteEntry(s->co, I2P(key));
 
@@ -1004,7 +1004,7 @@ static PyObject * widgetListboxDel(snackWidget * s, PyObject * args) {
 
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, ""))
-	return NULL;
+        return NULL;
 
     return PyInt_FromLong((long) newtListboxGetCurrent(s->co));
 }
@@ -1013,7 +1013,7 @@ static PyObject * widgetListboxSet(snackWidget * s, PyObject * args) {
     int index;
     
     if (!PyArg_ParseTuple(args, "i", &index))
-	return NULL;
+        return NULL;
 
     newtListboxSetCurrentByKey(s->co, I2P(index));
 
@@ -1025,7 +1025,7 @@ static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args) {
     int width;
 
     if (!PyArg_ParseTuple(args, "i", &width))
-	return NULL;
+        return NULL;
 
     newtListboxSetWidth(s->co, width);
 
@@ -1056,12 +1056,12 @@ static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args, PyObject 
     const char *kw[] = {"height", "scrollbar", "hide_checkbox", "unselectable", NULL};
     
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|iii", (char **) kw,
-		&height, &scrollBar, &hide_checkbox, &unselectable))
-	return NULL;
+                &height, &scrollBar, &hide_checkbox, &unselectable))
+        return NULL;
 
     flags = (scrollBar ? NEWT_FLAG_SCROLL : 0) |
-	(hide_checkbox ? NEWT_CHECKBOXTREE_HIDE_BOX : 0) |    
-	(unselectable ? NEWT_CHECKBOXTREE_UNSELECTABLE : 0);
+        (hide_checkbox ? NEWT_CHECKBOXTREE_HIDE_BOX : 0) |    
+        (unselectable ? NEWT_CHECKBOXTREE_UNSELECTABLE : 0);
 
     widget = snackWidgetNew ();
     widget->co = newtCheckboxTree(-1, -1, height, flags);
@@ -1080,25 +1080,25 @@ static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args) {
     int i;
 
     if (!PyArg_ParseTuple(args, "sOi", &text, &pathList, &selected))
-	return NULL;
+        return NULL;
 
     len = PyTuple_Size(pathList);
     path = alloca(sizeof(*path) * (len + 1));
     for (i = 0; i < len; i++) {
         o = PyTuple_GetItem(pathList, i);
-	path[i] = PyInt_AsLong(o);
+        path[i] = PyInt_AsLong(o);
     }
     path[len] = NEWT_ARG_LAST;
 
     newtCheckboxTreeAddArray(s->co, text, I2P(s->anint),
-    			     selected ? NEWT_FLAG_SELECTED : 0, path);
+                             selected ? NEWT_FLAG_SELECTED : 0, path);
 
     return PyInt_FromLong(s->anint++);
 }
 
 static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, ""))
-	return NULL;
+        return NULL;
 
     return PyInt_FromLong((long)newtCheckboxTreeGetCurrent(s->co));
 }
@@ -1119,7 +1119,7 @@ static PyObject * widgetCheckboxTreeSetWidth(snackWidget * s, PyObject * args) {
     int width;
 
     if (!PyArg_ParseTuple(args, "i", &width))
-	return NULL;
+        return NULL;
 
     newtCheckboxTreeSetWidth(s->co, width);
 
@@ -1145,8 +1145,8 @@ static PyObject * widgetCheckboxTreeSetEntryValue(snackWidget * s, PyObject * ar
     if (!PyArg_ParseTuple(args, "i|i", &data, &isOn)) return NULL;
 
     newtCheckboxTreeSetEntryValue(s->co, I2P(data),
-				  isOn ? NEWT_CHECKBOXTREE_SELECTED :
-					 NEWT_CHECKBOXTREE_UNSELECTED);
+                                  isOn ? NEWT_CHECKBOXTREE_SELECTED :
+                                         NEWT_CHECKBOXTREE_UNSELECTED);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1166,40 +1166,40 @@ static PyObject * widgetCheckboxTreeGetEntryValue(snackWidget * s, PyObject * ar
 
     switch (selection) {
     case NEWT_CHECKBOXTREE_EXPANDED:
-	isOn = 1;
+        isOn = 1;
     case NEWT_CHECKBOXTREE_COLLAPSED:
-	isBranch = 1;
-	break;
+        isBranch = 1;
+        break;
     case NEWT_CHECKBOXTREE_UNSELECTED:
-	break;
+        break;
     default:
-	isOn = 1;
-	break;
+        isOn = 1;
+        break;
     }    
     return Py_BuildValue("(ii)", isBranch, isOn);
 }
 
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
-					      PyObject * args) {
+                                              PyObject * args) {
     void ** selection;
     int numselected;
     int i;
     PyObject * sel;
 
     if (!PyArg_ParseTuple(args, ""))
-	return NULL;
+        return NULL;
 
     selection = (void **) newtCheckboxTreeGetSelection(s->co, &numselected);
 
     sel = PyList_New(0);
     
     if (!selection) {
-	return sel;
+        return sel;
     }
 
     sel = PyList_New(0);
     for (i = 0; i < numselected; i++) {
-    	PyList_Append(sel, PyInt_FromLong((long) selection[i]));
+        PyList_Append(sel, PyInt_FromLong((long) selection[i]));
     }
     free(selection);
 
@@ -1226,7 +1226,7 @@ void init_snack(void) {
     PyDict_SetItemString(d, "ANCHOR_TOP", PyInt_FromLong(NEWT_ANCHOR_TOP));
     PyDict_SetItemString(d, "ANCHOR_RIGHT", PyInt_FromLong(NEWT_ANCHOR_RIGHT));
     PyDict_SetItemString(d, "ANCHOR_BOTTOM", 
-			 PyInt_FromLong(NEWT_ANCHOR_BOTTOM));
+                         PyInt_FromLong(NEWT_ANCHOR_BOTTOM));
     PyDict_SetItemString(d, "GRID_GROWX", PyInt_FromLong(NEWT_GRID_FLAG_GROWX));
     PyDict_SetItemString(d, "GRID_GROWY", PyInt_FromLong(NEWT_GRID_FLAG_GROWY));
 
