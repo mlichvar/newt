@@ -1,8 +1,8 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.8
+%define version 0.50.9
 Version: %{version}
-Release: 3
+Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Apr 28 2000 Jakub Jelinek <jakub@redhat.com>
+- see CHANGES
+
 * Mon Mar 13 2000 Matt Wilson <msw@redhat.com>
 - revert mblen patch, go back to our own wide char detection
 
