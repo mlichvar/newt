@@ -1013,7 +1013,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		key = newtGetKey();
 
 		if (key == NEWT_KEY_RESIZE) {
-		    /* newtResizeScreen(1); */
+		    newtResizeScreen(1);
 		    continue;
 		}
 

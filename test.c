@@ -154,10 +154,10 @@ int main(void) {
     printf("got string 2: %s\n", enr2);
     printf("got string 3: %s\n", enr3);
 
+    printf("\nSelected listbox items (%d):\n", numsel);
     if(selectedList) {
-	printf("\nSelected listbox items:\n");
 	for(i = 0; i < numsel; i++)
-	    puts(selectedList[i]);
+	    printf("#%d\n", (int) selectedList[i]);
     }
 
     return 0;

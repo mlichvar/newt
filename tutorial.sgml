@@ -8,7 +8,7 @@
 <firstname>Erik Troan, &lt;ewt@redhat.com&gt;</firstname>
 </author>
 
-<pubdate>v0.30, 13 May 1998</pubdate>
+<pubdate>v0.31, 2003-Jan-06</pubdate>
 
 <abstract>
 
@@ -35,7 +35,7 @@ makes it significantly easier to craft robust <literal remap="tt">newt</literal>
 tutorial documents <literal remap="tt">newt</literal> 0.30 --- older versions of <literal remap="tt">newt</literal> had
 annoying inconsistencies in it (which writing this tutorial pointed out),
 which were removed while this tutorial was written. The latest version of
-<literal remap="tt">newt</literal> is always available from <ulink url="ftp://ftp.redhat.com/pub/redhat/code/newt">ftp.redhat.com</ulink>.</para>
+<literal remap="tt">newt</literal> is always available from Red Hat.</para>
 
 <sect2><title>Background</title>
 

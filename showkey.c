@@ -2,7 +2,6 @@
 #include <slang.h>
 
 int main(void) {
-    char n = 0;
     int i;
     char * buf;
 
@@ -38,4 +37,5 @@ int main(void) {
     printf("\n\r");
 
     SLang_reset_tty();
+    return 0;
 }

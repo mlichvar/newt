@@ -17,7 +17,7 @@ PYTHONVERS = $(shell ls -d /usr/include/python* | sed "s|/usr/include/||g")
 WHIPTCLSO=
 #WHIPTCLSO=whiptcl.so
 
-PROGS = test whiptail $(WHIPTCLSO) testgrid testtree
+PROGS = test whiptail $(WHIPTCLSO) testgrid testtree showchars showkey
 TESTOBJS = test.o
 NDIALOGOBJS = whiptail.o dialogboxes.o
 WHIPTCLOBJS = whiptcl.o dialogboxes.o
@@ -59,6 +59,12 @@ testgrid:	testgrid.o $(LIBNEWT)
 
 testtree:	testtree.o $(LIBNEWT)
 	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
+
+showchars:	showchars.o $(LIBNEWT)
+	gcc -g -o showchars showchars.o $(LIBNEWT) $(LIBS)
+
+showkey:	showkey.o $(LIBNEWT)
+	gcc -g -o showkey showkey.o $(LIBNEWT) $(LIBS)
 
 _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 	for ver in $(PYTHONVERS) ; do \

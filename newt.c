@@ -37,7 +37,7 @@ static char * helplineStack[20];
 static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
-static int needResize;
+static int needResize = 0;
 static int cursorOn = 1;
 static int trashScreen = 0;
 
@@ -124,11 +124,10 @@ static const struct keymap keymap[] = {
 };
 static char keyPrefix = '\033';
 
-static const char *const version = // ident friendly
-    "$Version: Newt windowing library version " VERSION "$"
-    "$License: (C) 1996-2003 Red Hat, Inc. "
-	      "Licensed under the terms of the Lesser GNU Public License. "
-	      "Originally written by Erik Troan $";
+static const char ident[] = // ident friendly
+    "$Version: Newt windowing library v" VERSION " $"
+    "$Copyright: (C) 1996-2003 Red Hat, Inc. Written by Erik Troan $"
+    "$License: Lesser GNU Public License. $";
 
 static newtSuspendCallback suspendCallback = NULL;
 static void * suspendCallbackData = NULL;
@@ -170,9 +169,20 @@ int wstrlen(const char *str, int len) {
 	return nchars;
 }
 
+static int getkey() {
+    int c;
+
+    while ((c = SLang_getkey()) == '\xC') { /* if Ctrl-L redraw whole screen */
+        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_refresh();
+    }
+    return c;
+
+}
+
 void newtFlushInput(void) {
     while (SLang_input_pending(0)) {
-	SLang_getkey();
+	getkey();
     }
 }
 
@@ -201,34 +211,27 @@ void newtCls(void) {
     newtRefresh();
 }
 
-#if defined(THIS_DOESNT_WORK)
 void newtResizeScreen(int redraw) {
-    newtPushHelpLine("");
-
     SLtt_get_screen_size();
-    SLang_init_tty(0, 0, 0);
-
-    SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
-
-    /* I don't know why I need this */
-    SLsmg_refresh();
-
-    newtPopHelpLine();
-
-    if (redraw)
-	SLsmg_refresh();
+    SLsmg_reinit_smg();
+    if (redraw) {
+        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        newtRefresh();
+    }
 }
-#endif
 
 int newtInit(void) {
-    char * MonoValue, * MonoEnv = "NEWT_MONO", * lang;
+    char * MonoValue, * MonoEnv = "NEWT_MONO";
+    const char *lang;
 
-    lang = getenv ("LANG");
-    if (lang && !strcasecmp (lang, "ja_JP.eucJP"))
+    if ((lang = getenv("LC_ALL")) == NULL)
+        if ((lang = getenv("LC_CTYPE")) == NULL)
+            if ((lang = getenv("LANG")) == NULL)
+                lang = "";
+    if (strstr (lang, ".euc") != NULL)
 	trashScreen = 1;
 
-    /* use the version variable just to be sure it gets included */
-    strlen(version);
+    (void) strlen(ident);
 
     SLtt_get_terminfo();
     SLtt_get_screen_size();
@@ -270,6 +273,26 @@ int newtFinished(void) {
 }
 
 void newtSetColors(struct newtColors colors) {
+    if (!SLtt_Use_Ansi_Colors) {
+        int i;
+
+        for (i = 2; i < 25; i++)
+            SLtt_set_mono(i, NULL, 0);
+
+        SLtt_set_mono(NEWT_COLORSET_SELLISTBOX, NULL, SLTT_BOLD_MASK);
+
+        SLtt_set_mono(NEWT_COLORSET_ACTBUTTON, NULL, SLTT_REV_MASK);
+        SLtt_set_mono(NEWT_COLORSET_ACTCHECKBOX, NULL, SLTT_REV_MASK);
+        SLtt_set_mono(NEWT_COLORSET_ACTLISTBOX, NULL, SLTT_REV_MASK);
+        SLtt_set_mono(NEWT_COLORSET_ACTTEXTBOX, NULL, SLTT_REV_MASK);
+
+        SLtt_set_mono(NEWT_COLORSET_ACTSELLISTBOX, NULL, SLTT_REV_MASK | SLTT_BOLD_MASK);
+        
+        SLtt_set_mono(NEWT_COLORSET_DISENTRY, NULL, 0); // FIXME
+        SLtt_set_mono(NEWT_COLORSET_FULLSCALE, NULL, SLTT_ULINE_MASK | SLTT_REV_MASK);
+        SLtt_set_mono(NEWT_COLORSET_EMPTYSCALE, NULL, SLTT_ULINE_MASK);
+        return;
+    }
     SLtt_set_color(NEWT_COLORSET_ROOT, "", colors.rootFg, colors.rootBg);
     SLtt_set_color(NEWT_COLORSET_BORDER, "", colors.borderFg, colors.borderBg);
     SLtt_set_color(NEWT_COLORSET_WINDOW, "", colors.windowFg, colors.windowBg);
@@ -319,10 +342,12 @@ int newtGetKey(void) {
     const struct keymap * curr;
 
     do {
-	key = SLang_getkey();
+	key = getkey();
 	if (key == 0xFFFF) {
-	    if (needResize)
+	    if (needResize) {
+                needResize = 0;
 		return NEWT_KEY_RESIZE;
+            }
 
 	    /* ignore other signals */
 	    continue;
@@ -355,7 +380,7 @@ int newtGetKey(void) {
 
     *chptr++ = key;
     while (SLang_input_pending(5)) {
-	key = SLang_getkey();
+	key = getkey();
 	if (key == keyPrefix) {
 	    /* he hit unknown keys too many times -- start over */
 	    memset(buf, 0, sizeof(buf));
@@ -397,13 +422,13 @@ int newtGetKey(void) {
 void newtWaitForKey(void) {
     newtRefresh();
 
-    SLang_getkey();
+    getkey();
     newtClearKeyBuffer();
 }
 
 void newtClearKeyBuffer(void) {
     while (SLang_input_pending(1)) {
-	SLang_getkey();
+	getkey();
     }
 }
 

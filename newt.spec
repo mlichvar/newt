@@ -4,7 +4,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.52.0
 Version: %{version}
-Release: 1
+Release: 3
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -81,12 +81,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
-* Fri Jan  3 2003 Adrian Havill <havill@redhat.com> 0.52.0-1
+* Sun Jan  5 2003 Adrian Havill <havill@redhat.com> 0.52.0-3
 - cleaned up const qualifiers in interfaces
+- added Ctrl-L screen refresh
+- fixed segfault in test.c when listbox items are selected
+- accessibility: made newt useable with monochrome terms (#60931)
 - leave the symbols in the libs (#60400)
 - fixed grammar in tutorial (#63496)
-- removed fifty button limit (#59027)
-- error checking (curcomp exists) for formEvent, newtFormGetCurrent (#59027)
+- error checking (curcomp exists) for formEvent, newtFormGetCurrent,
+  removed fifty button limit (#59027)
 
 * Tue Dec 17 2002 Matt Wilson <msw@redhat.com> 0.51.2-1
 - fixed wstrlen() it was calculating wcwidth(first wide char in

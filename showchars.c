@@ -17,8 +17,6 @@ void printall(int offset) {
 }
 
 int main(void) {
-    char n = 0;
-
     SLtt_get_terminfo();
 
     SLtt_Use_Ansi_Colors = 1;
