@@ -52,7 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Aug 19 1998 Bill Nottingham <notting@redhat.com>
 - bugfixes for text reflow
-- added docs to devel
+- added docs
 
 * Fri May 01 1998 Cristian Gafton <gafton@redhat.com>
 - devel package moved to Development/Libraries
@@ -102,6 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr (-,root,root)
+%doc CHANGES COPYING
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
 /usr/lib/python1.5/snack.py
@@ -109,7 +110,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr (-,root,root)
-%doc CHANGES COPYING tutorial.sgml
+%doc tutorial.sgml
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
