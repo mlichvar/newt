@@ -47,6 +47,7 @@ int main(void) {
 
     newtDrawRootText(0, 0, "Newt test program");
     newtPushHelpLine(NULL);
+    newtDrawRootText(-50, 0, "More root text");
 
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
@@ -87,16 +88,17 @@ int main(void) {
     newtFormAddComponents(f, b1, b2, l1, l2, l3, e1, e2, e3, chklist, NULL);
     newtFormAddComponents(f, rsf, scale, NULL);
 
-    lb = newtListbox(45, 1, 4, NEWT_FLAG_MULTIPLE | NEWT_FLAG_DOBORDER);
-    newtListboxAddEntry(lb, "First", (void *) 1);
-    newtListboxAddEntry(lb, "Second", (void *) 2);
-    newtListboxAddEntry(lb, "Third", (void *) 3);
-    newtListboxAddEntry(lb, "Fourth", (void *) 4);
-    newtListboxAddEntry(lb, "Sixth", (void *) 6);
-    newtListboxAddEntry(lb, "Seventh", (void *) 7);
-    newtListboxAddEntry(lb, "Eighth", (void *) 8);
-    newtListboxAddEntry(lb, "Ninth", (void *) 9);
-    newtListboxAddEntry(lb, "Tenth", (void *) 10);
+    lb = newtListbox(45, 1, 4, NEWT_FLAG_MULTIPLE | NEWT_FLAG_BORDER | 
+				NEWT_FLAG_SCROLL);
+    newtListboxAppendEntry(lb, "First", (void *) 1);
+    newtListboxAppendEntry(lb, "Second", (void *) 2);
+    newtListboxAppendEntry(lb, "Third", (void *) 3);
+    newtListboxAppendEntry(lb, "Fourth", (void *) 4);
+    newtListboxAppendEntry(lb, "Sixth", (void *) 6);
+    newtListboxAppendEntry(lb, "Seventh", (void *) 7);
+    newtListboxAppendEntry(lb, "Eighth", (void *) 8);
+    newtListboxAppendEntry(lb, "Ninth", (void *) 9);
+    newtListboxAppendEntry(lb, "Tenth", (void *) 10);
 
     newtListboxInsertEntry(lb, "Fifth", (void *) 5, (void *) 4);
     newtListboxInsertEntry(lb, "Eleventh", (void *) 11, (void *) 10);
