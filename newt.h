@@ -20,6 +20,9 @@
 #define NEWT_COLORSET_ROOTTEXT		18
 #define NEWT_COLORSET_EMPTYSCALE	19
 #define NEWT_COLORSET_FULLSCALE		20
+#define NEWT_COLORSET_DISENTRY		21
+
+enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 
 struct newtColors {
     char * rootFg, * rootBg;
@@ -40,6 +43,7 @@ struct newtColors {
     char * helpLineFg, * helpLineBg;
     char * rootTextFg, * rootTextBg;
     char * emptyScale, * fullScale;
+    char * disabledEntryFg, * disabledEntryBg;
 };
 
 typedef struct newtComponent * newtComponent;
@@ -127,10 +131,12 @@ void newtFormAddHotKey(newtComponent co, int key);
 #define NEWT_ENTRY_SCROLL	(1 << 0)
 #define NEWT_ENTRY_HIDDEN	(1 << 1)
 #define NEWT_ENTRY_RETURNEXIT	(1 << 2)
+#define NEWT_ENTRY_DISABLED     (1 << 3)
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
 void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
+void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, long long amount);

@@ -63,7 +63,6 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     co->left = left;
     co->height = 1;
     co->width = width;
-    co->takesFocus = 1;
     co->callback = NULL;
 
     co->ops = &entryOps;
@@ -73,6 +72,11 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     en->firstChar = 0;
     en->bufUsed = 0;
     en->bufAlloced = width + 1;
+
+    if (!(en->flags & NEWT_ENTRY_DISABLED))
+	co->takesFocus = 1;
+    else
+	co->takesFocus = 0;
 
     if (initialValue && strlen(initialValue) > width) {
 	en->bufAlloced = strlen(initialValue) + 1;
@@ -98,10 +102,14 @@ static void entryDraw(newtComponent co) {
     int len;
 
     if (co->top == -1) return;
+
+    if (en->flags & NEWT_ENTRY_DISABLED) 
+	SLsmg_set_color(NEWT_COLORSET_DISENTRY);
+    else
+	SLsmg_set_color(NEWT_COLORSET_ENTRY);
  
     if (en->flags & NEWT_ENTRY_HIDDEN) {
 	newtGotorc(co->top, co->left);
-	SLsmg_set_color(COLORSET_ENTRY);
 	for (i = 0; i < co->width; i++)
 	    SLsmg_write_char('_');
 	newtGotorc(co->top, co->left);
@@ -110,7 +118,6 @@ static void entryDraw(newtComponent co) {
     }
 
     newtGotorc(co->top, co->left);
-    SLsmg_set_color(COLORSET_ENTRY);
 
     if (en->cursorPosition < en->firstChar) {
 	/* scroll to the left */
@@ -138,6 +145,22 @@ static void entryDraw(newtComponent co) {
 	newtGotorc(co->top, co->left);
     else
 	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
+}
+
+void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
+    struct entry * en = co->data;
+    int row, col;
+
+    en->flags = newtSetFlags(en->flags, flags, sense);
+
+    if (!(en->flags & NEWT_ENTRY_DISABLED))
+	co->takesFocus = 1;
+    else
+	co->takesFocus = 0;
+
+    newtGetrc(&row, &col);
+    entryDraw(co);
+    newtGotorc(row, col);
 }
 
 static void entryDestroy(newtComponent co) {
