@@ -460,8 +460,8 @@ def ButtonChoiceWindow(screen, title, text,
     return bb.buttonPressed(g.runOnce())
 
 def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
-		entryWidth = 20):
-    bb = ButtonBar(screen, [ 'Ok', 'Cancel' ]);
+		entryWidth = 20, buttons = [ 'Ok', 'Cancel' ]):
+    bb = ButtonBar(screen, buttons);
     t = TextboxReflowed(width, text)
 
     count = 0

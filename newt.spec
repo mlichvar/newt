@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50
 Version: %{version}
-Release: 7
+Release: 8
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Mon Aug 23 1999 Matt Wilson <msw@redhat.com>
+- added buttons argument to entrywindow
+
 * Thu Aug 12 1999 Bill Nottingham <notting@redhat.com>
 - multi-state checkboxtrees. Woohoo.
 
