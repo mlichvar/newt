@@ -12,6 +12,8 @@ VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
+PYTHONVERS = $(shell ls -d /usr/include/python* | sed "s|/usr/include/||g")
+
 WHIPTCLSO=
 #WHIPTCLSO=whiptcl.so
 
@@ -33,8 +35,6 @@ includedir = $(prefix)/include
 libdir = $(prefix)/lib
 bindir = $(prefix)/bin
 ARCHNAME = $(shell uname -m | sed 's/i.86/i386/')
-pythondir = $(prefix)/lib/python2.2
-pythonbindir = $(prefix)/lib/python2.2/lib-dynload
 
 #--------------------------------------
 
@@ -60,11 +60,14 @@ testgrid:	testgrid.o $(LIBNEWT)
 testtree:	testtree.o $(LIBNEWT)
 	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
 
-_snackmodule.so:   snackmodule.o $(LIBNEWTSH)
-	gcc --shared $(SHCFLAGS) -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
-
-snackmodule.o:   snackmodule.c
-	gcc -I/usr/include/python2.2 -fPIC $(CFLAGS) -c snackmodule.c
+_snackmodule.so:   snackmodule.c $(LIBNEWTSH)
+	for ver in $(PYTHONVERS) ; do \
+	    if [ ! -f "$$ver/_snackmodule.so" -o $(LIBNEWTSH) -nt "$$ver/_snackmodule.so" ]; then \
+	    	mkdir -p $$ver ;\
+	        gcc $(CFLAGS) -I/usr/include/$$ver -fPIC -c -o $$ver/snackmodule.o snackmodule.c ;\
+		gcc --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L . $(LIBNEWTSH) ;\
+	    fi ; \
+	done
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
@@ -114,10 +117,12 @@ install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	install -s -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
-	[ -n "$(WHIPTCLSO)" ] && install -s -m 755 whiptcl.so $(instroot)/$(libdir)
-	[ -d $(instroot)/$(pythonbindir) ] || install -m 755 -d $(instroot)/$(pythonbindir)
-	install -s -m 755 _snackmodule.so $(instroot)/$(pythonbindir)
-	install -m 755 snack.py $(instroot)/$(pythondir)
+	[ -n "$(WHIPTCLSO)" ] && install -s -m 755 whiptcl.so $(instroot)/$(libdir) || :
+	for ver in $(PYTHONVERS) ; do \
+	   [ -d $(instroot)/$(libdir)/$$ver/site-packages ] || install -m 755 -d $(instroot)/$(libdir)/$$ver/site-packages ;\
+	   install -s -m 755 $$ver/_snackmodule.so $(instroot)/$(libdir)/$$ver/site-packages ;\
+	   install -m 755 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
+	done
 
 configure:  configure.in
 	autoconf

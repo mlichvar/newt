@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.34
+%define version 0.50.35
 Version: %{version}
 Release: 1
 License: LGPL
@@ -71,8 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc CHANGES COPYING
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
-/usr/lib/python2.2/snack.py*
-/usr/lib/python2.2/lib-dynload/_snackmodule.so
+/usr/lib/python*/site-packages/*
 
 %files devel
 %defattr (-,root,root)
@@ -82,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Mon Mar 18 2002 Bill Nottingham <notting@redhat.com> 0.50.35-1
+- build for whatever version of python happens to be installed
+
 * Fri Sep 15 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.34-1
 - remove python2 subpackage
 - compile package for python 2.2
