@@ -72,7 +72,8 @@ static void listboxPlace(newtComponent co, int newLeft, int newTop) {
     co->left = newLeft;
 
     if (li->sb)
-	li->sb->ops->place(li->sb, co->left + co->width - 1, co->top);
+	li->sb->ops->place(li->sb, co->left + co->width - li->bdxAdjust - 1, 
+			   co->top);
 }
 
 newtComponent newtListbox(int left, int top, int height, int flags) {
@@ -105,20 +106,22 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
 	li->bdyAdjust = 1;
     }
 
+    co->height = height;
+    li->curHeight = co->height - (2 * li->bdyAdjust);
+
     if (height) {
 	li->grow = 0;
 	if (flags & NEWT_FLAG_SCROLL) {
-	    sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
-				       COLORSET_ACTLISTBOX);
+	    sb = newtVerticalScrollbar(left, top + li->bdyAdjust, 
+					li->curHeight, 
+					COLORSET_LISTBOX, COLORSET_ACTLISTBOX);
 	    li->sbAdjust = 3;
 	} else {
 	    sb = NULL;
 	}
-	co->height = height;
     } else {
 	li->grow = 1;
 	sb = NULL;
-	co->height = 2 * li->bdyAdjust;
     }
 
     li->sb = sb;
@@ -131,7 +134,6 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     co->callback = NULL;
 
     updateWidth(co, li, 5);
-    li->curHeight = co->height - (2 * li->bdyAdjust);
 
     return co;
 }
@@ -142,7 +144,7 @@ static inline void updateWidth(newtComponent co, struct listbox * li,
     co->width = li->curWidth + li->sbAdjust + 2 * li->bdxAdjust;
 
     if (li->sb)
-	li->sb->left = co->left + co->width - 1;
+	li->sb->left = co->left + co->width - li->bdxAdjust - 1;
 }
 
 void newtListboxSetCurrentByKey(newtComponent co, void * key) {
@@ -373,7 +375,7 @@ int newtListboxInsertEntry(newtComponent co, const char * text,
     item->isSelected = 0;
     
     if (li->sb)
-	li->sb->left = co->left + co->width - 1;
+	li->sb->left = co->left + co->width - li->bdxAdjust - 1;
     li->numItems++;
 
     listboxDraw(co);
@@ -483,9 +485,6 @@ static void listboxDraw(newtComponent co)
 
     if (!co->isMapped) return ;
 
-    if(li->sb)
-	li->sb->ops->draw(li->sb);
-
     if(li->flags & NEWT_FLAG_BORDER) {
       if(li->isActive)
 	  SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
@@ -494,6 +493,9 @@ static void listboxDraw(newtComponent co)
 
       newtDrawBox(co->left, co->top, co->width, co->height, 0);
     }
+
+    if(li->sb)
+	li->sb->ops->draw(li->sb);
 
     SLsmg_set_color(NEWT_COLORSET_LISTBOX);
     
