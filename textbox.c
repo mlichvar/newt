@@ -26,6 +26,7 @@ static struct componentOps textboxOps = {
     textboxDraw,
     textboxEvent,
     textboxDestroy,
+    NULL,
 } ;
 
 void newtTextboxSetHeight(newtComponent co, int height) {

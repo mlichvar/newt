@@ -18,6 +18,7 @@ static struct componentOps sbOps = {
     sbDraw,
     newtDefaultEventHandler,
     sbDestroy,
+    NULL,
 } ;
 
 void newtScrollbarSet(newtComponent co, int where, int total) {

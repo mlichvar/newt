@@ -8,7 +8,7 @@ endif
 VERSION = 0.10
 SONAME = 0.10
 
-PROGS = test whiptail whiptcl.so
+PROGS = test whiptail whiptcl.so testgrid
 TESTOBJS = test.o 
 NDIALOGOBJS = whiptail.o dialogboxes.o popt.o
 WHIPTCLOBJS = whiptcl.o dialogboxes.o popt.o
@@ -16,7 +16,7 @@ LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
-          scrollbar.o textbox.o scale.o
+          scrollbar.o textbox.o scale.o grid.o
 
 SHCFLAGS = -fPIC
 
@@ -42,6 +42,9 @@ all:	$(TARGET)
 
 test:	$(TESTOBJS) $(LIBNEWT)
 	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS)
+
+testgrid:	testgrid.o $(LIBNEWT)
+	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS)

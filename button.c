@@ -18,11 +18,13 @@ static void buttonDraw(newtComponent c);
 static void buttonDestroy(newtComponent co);
 static struct eventResult buttonEvent(newtComponent c,
 				      struct event ev);
+static void buttonPlace(newtComponent co);
 
 static struct componentOps buttonOps = {
     buttonDraw,
     buttonEvent,
     buttonDestroy,
+    buttonPlace,
 } ;
 
 static newtComponent createButton(int left, int row, const char * text, int compact) {
@@ -69,6 +71,13 @@ static void buttonDestroy(newtComponent co) {
     free(bu->text);
     free(bu);
     free(co);
+}
+
+static void buttonPlace(newtComponent co) {
+    struct button * bu = co->data;
+
+    newtGotorc(co->top, co->left);
+    bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
 }
 
 static void buttonDraw(newtComponent co) {

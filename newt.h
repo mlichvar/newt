@@ -219,6 +219,16 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_F11			NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
 
+typedef struct grid_s * newtGrid;
+enum newtGridElement { NEWT_GRID_EMPTY = 0,
+		       NEWT_GRID_COMPONENT, NEWT_GRID_SUBGRID };
+
+newtGrid newtCreateGrid(int cols, int rows);
+void newtGridSetField(newtGrid grid, int col, int row, 
+		      enum newtGridElement type, void * val);
+void newtGridPlace(newtGrid grid, int left, int top);
+void newtGridFree(newtGrid grid, int recurse);
+
 #ifdef __cplusplus
 } /* End of extern "C" { */
 #endif

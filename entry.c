@@ -27,6 +27,7 @@ static struct componentOps entryOps = {
     entryDraw,
     entryEvent,
     entryDestroy,
+    NULL,
 } ;
 
 void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {

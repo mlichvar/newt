@@ -64,6 +64,7 @@ struct componentOps {
     void (* draw)(newtComponent c);
     struct eventResult (* event)(newtComponent c, struct event ev);
     void (* destroy)(newtComponent c);
+    void (* place)(newtComponent c);
 } ;
 
 struct eventResult newtDefaultEventHandler(newtComponent c,

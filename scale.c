@@ -16,6 +16,7 @@ static struct componentOps scaleOps = {
     scaleDraw,
     newtDefaultEventHandler,
     NULL,
+    NULL,
 } ;
 
 newtComponent newtScale(int left, int top, int width, long long fullValue) {
