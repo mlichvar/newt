@@ -12,6 +12,8 @@
 #define COLORSET_ACTCHECKBOX	10
 #define COLORSET_ENTRY		11
 #define COLORSET_LABEL		12
+#define COLORSET_LISTBOX	13
+#define COLORSET_ACTLISTBOX	14
 
 void newtGotorc(int row, int col);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
