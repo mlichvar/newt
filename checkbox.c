@@ -16,6 +16,7 @@ struct checkbox {
     char value;
     int active, inactive;
     void * data;
+    int flags;
 };
 
 static void cbDrawIt(newtComponent c, int active);
@@ -32,14 +33,14 @@ static struct componentOps cbOps = {
 } ;
 
 newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem, void * data) {
+			      newtComponent prevItem, void * data, int flags) {
     newtComponent co;
     struct checkbox * li;
 
     co = newtRadiobutton(left, top, text, isDefault, prevItem);
     li = co->data;
     li->type = LISTITEM;
-
+    li->flags = flags & (NEWT_FLAG_RETURNEXIT);
     li->inactive = COLORSET_LISTBOX;
     li->active = COLORSET_ACTLISTBOX;
     li->data = data;
@@ -113,7 +114,7 @@ newtComponent newtCheckbox(int left, int top, char * text, char defValue,
     co = malloc(sizeof(*co));
     cb = malloc(sizeof(struct checkbox));
     co->data = cb;
-
+    cb->flags = 0;
     if (result)
 	cb->result = result;
     else
@@ -228,6 +229,13 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 		} else {
 		    er.result = ER_IGNORED;
 		}
+	    } else if(ev.u.key == NEWT_KEY_ENTER) {
+		if((cb->type == LISTITEM)
+		   && (cb->flags | NEWT_FLAG_RETURNEXIT)) {
+		    er.u.focus = co;
+		    er.result = ER_EXITFORM;
+		} else
+		    er.result = ER_IGNORED;
 	    } else {
 		er.result = ER_IGNORED;
 	    }
