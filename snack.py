@@ -477,7 +477,7 @@ class CheckboxTree(Widget):
 	curr = self.w.checkboxtreeGetCurrent()
 	return self.key2item[curr]
 
-    def __init__(self, height, width = None, scroll = 0, hide_checkbox = 0, unselectable = 0):
+    def __init__(self, height, scroll = 0, width = None, hide_checkbox = 0, unselectable = 0):
 	self.w = _snack.checkboxtree(height, scroll, hide_checkbox, unselectable)
 	self.key2item = {}
 	self.item2key = {}

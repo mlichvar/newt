@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.31
+%define version 0.50.32
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Aug 22 2001 Crutcher Dunnavant <crutcher@redhat.com> 0.50.32-1
+- re-ordered the width key of CheckboxTree.__init__; #52319
+
 * Wed Aug  8 2001 Crutcher Dunnavant <crutcher@redhat.com> 0.50.31-1
 - right anchor the internal Listbox of CListboxes, so that empty
 - scrollable CListboxes do not look like crape.
