@@ -26,12 +26,12 @@ slang library.
 
 %description devel
 The newt-devel package contains the header files and libraries
-necessary for developing applications which use newt.  Newt is
-a development library for text mode user interfaces.  Newt is
-based on the slang library.
+necessary for developing applications which use newt.  Newt is a
+development library for text mode user interfaces.  Newt is based on
+the slang library.
 
-Install newt-devel if you want to develop applications which will
-use newt.
+Install newt-devel if you want to develop applications which will use
+newt.
 
 %prep
 %setup
