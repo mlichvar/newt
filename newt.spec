@@ -37,11 +37,9 @@ rm -rf /usr/lib/libnewt*
 make install
 make install-sh
 
-%post
-/sbin/ldconfig
+%post -p /sbin/ldconfig
 
-%postun
-/sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %changelog
 
