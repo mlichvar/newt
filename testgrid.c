@@ -3,7 +3,6 @@
 #include <string.h>
 #include <signal.h>
 
-#include "grid.h"
 #include "newt.h"
 
 int main(void) {
@@ -23,10 +22,11 @@ int main(void) {
     f = newtForm(NULL, NULL, 0);
 
     grid = newtCreateGrid(2, 2);
-    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, b1);
-    newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, b2);
-    newtGridSetField(grid, 1, 0, NEWT_GRID_COMPONENT, b3);
-    newtGridSetField(grid, 1, 1, NEWT_GRID_COMPONENT, b4);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, b1, 0, 0, 0, 0, 
+			NEWT_ANCHOR_RIGHT, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, b2, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 1, 0, NEWT_GRID_COMPONENT, b3, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 1, 1, NEWT_GRID_COMPONENT, b4, 0, 0, 0, 0, 0, 0);
 
     newtGridPlace(grid, 1, 1);
 
