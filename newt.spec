@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50
 Version: %{version}
-Release: 10
+Release: 11
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Aug 27 1999 Matt Wilson <msw@redhat.com>
+- added hotkey assignment for gridforms, changed listbox.setcurrent to
+  take the item key
+
 * Wed Aug 25 1999 Matt Wilson <msw@redhat.com>
 - fixed snack callback function refcounts, as well as optional data args
 - fixed suspend callback ref counts
