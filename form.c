@@ -500,6 +500,10 @@ void newtComponentAddCallback(newtComponent co, newtCallback f, void * data) {
     co->callbackData = data;
 }
 
+void newtComponentTakesFocus(newtComponent co, int val) {
+    co->takesFocus = val;
+}
+
 void newtFormSetBackground(newtComponent co, int color) {
     struct form * form = co->data;
 
