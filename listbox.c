@@ -633,7 +633,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		  for(i = 0, item = li->boxItems; item != NULL &&
 			  i < li->currItem; i++, item = item->next);
 
-		  if (item->text && (toupper(*item->text) == toupper(ev.u.key))) {
+		  if (item && item->text && (toupper(*item->text) == toupper(ev.u.key))) {
 		      item = item->next;
 		      i++;
 		  } else { 
