@@ -27,6 +27,7 @@ struct listbox {
 		     to do things even when they are supposed to be for
 		     another button/whatever */
     struct items *boxItems;
+    int grow;
     int flags; /* flags for this listbox, right now just
 		  NEWT_LISTBOX_RETURNEXIT */
 };
@@ -60,11 +61,14 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->startShowItem = 0;
     li->flags = flags & (NEWT_LISTBOX_RETURNEXIT);
 
-    if (height) 
+    if (height) {
+	li->grow = 0;
 	sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
 				   COLORSET_ACTLISTBOX);
-    else
+    } else {
+	li->grow = 1;
 	sb = NULL;
+    }
 
     li->sb = sb;
     co->data = li;
@@ -95,8 +99,8 @@ void newtListboxSetCurrent(newtComponent co, int num) {
 	li->startShowItem = li->numItems - co->height;
     if(li->startShowItem < 0)
 	li->startShowItem = 0;
-
-    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
+    if(li->sb)
+	newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
     listboxDraw(co);
 }
 
@@ -173,9 +177,11 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
     if (li->sb)
 	li->sb->left = co->left + li->curWidth + 2;
 
+    if (li->grow)
+	co->height++;
+
     co->width = li->curWidth;
     li->numItems++;
-    listboxDraw(co);
 
     return li->numItems;
 }
@@ -354,7 +360,8 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		li->currItem--;
 		if(li->currItem < li->startShowItem)
 		    li->startShowItem = li->currItem;
-		newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
+		if(li->sb)
+		    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
 	    er.result = ER_SWALLOWED;
@@ -368,7 +375,8 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		    if(li->startShowItem + co->height > li->numItems)
 			li->startShowItem = li->numItems - co->height;
 		}
-		newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
+		if(li->sb)
+		    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
 	    er.result = ER_SWALLOWED;
