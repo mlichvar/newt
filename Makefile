@@ -48,10 +48,10 @@ testgrid:	testgrid.o $(LIBNEWT)
 	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
-	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS) -lpopt
+	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS) -L. -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -L. -lpopt -lm
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
