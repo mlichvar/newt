@@ -49,6 +49,10 @@ rm -rf $(RPM_BUILD_ROOT)
 
 %changelog
 
+* Wed Oct 08 1997 Erik Troan <ewt@redhat.com>
+
+- added newtWinTernary()
+
 * Tue Oct 07 1997 Erik Troan <ewt@redhat.com>
 
 - made Make/spec files use a buildroot
