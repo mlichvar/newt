@@ -50,6 +50,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Mon Feb 16 1998 Erik Troan <ewt@redhat.com>
+
+- added newtWinMenu()
+- many bug fixes in grid code
+
+* Wed Jan 21 1998 Erik Troan <ewt@redhat.com>
+
+- removed newtWinTernary()
+- made newtWinChoice() return codes consistent with newtWinTernary()
+
 * Fri Jan 16 1998 Erik Troan <ewt@redhat.com>
 
 - added changes from Bruce Perens
