@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.19
+%define version 0.50.20
 Version: %{version}
 Release: 3
 Copyright: LGPL
@@ -104,6 +104,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Feb 01 2001 Erik Troan <ewt@redhat.com>
+- gave up on separate CHANGES file
+- added newtCheckboxTreeSetCurrent() and snack binding
+
 * Mon Jan 22 2001 Than Ngo <than@redhat.com>
 - don't build newt-python2 sub package.
 

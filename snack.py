@@ -467,6 +467,9 @@ class CheckboxTree(Widget):
     def setEntry(self, item, text):
 	self.w.checkboxtreeSetEntry(self.item2key[item], text)
 
+    def setCurrent(self, item):
+	self.w.checkboxtreeSetCurrent(self.item2key[item])
+
     def setEntryValue(self, item, selected = 1):
 	self.w.checkboxtreeSetEntryValue(self.item2key[item], selected)
 

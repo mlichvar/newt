@@ -178,6 +178,7 @@ newtComponent newtCheckboxTree(int left, int top, int height, int flags);
 newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags);
 const void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
 const void * newtCheckboxTreeGetCurrent(newtComponent co);
+void newtCheckboxTreeSetCurrent(newtComponent co, void * item);
 const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum);
 /* last item is NEWT_ARG_LAST for all of these */
 int newtCheckboxTreeAddItem(newtComponent co, 

@@ -18,8 +18,6 @@ struct items {
 
 struct CheckboxTree {
     newtComponent sb;
-    int curWidth;	/* size of text w/o scrollbar or border*/
-    int curHeight;	/* size of text w/o border */
     struct items * itemlist;
     struct items ** flatList, ** currItem, ** firstItem;
     int flatCount;
@@ -712,3 +710,43 @@ void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data, char val
     ctDraw(co);
 }
 
+
+void newtCheckboxTreeSetCurrent(newtComponent co, void * data) {
+    struct CheckboxTree * ct = co->data;
+    int * path;
+    int i, j, itemsAfter;
+    struct items * treeTop, * item;
+
+    path = newtCheckboxTreeFindItem(co, data);
+    if (!path) return;
+
+    /* traverse the path and turn on all of the branches to this point */
+    for (i = 0, treeTop = ct->itemlist; path[i + 1] != NEWT_ARG_LAST; i++) {
+	for (j = 0, item = treeTop; j < path[i]; j++)
+	    item = item->next;
+
+	item->selected = 1;
+	treeTop = item->branch;
+    }
+
+    buildFlatList(co);
+	
+    item = findItem(ct->itemlist, data);
+
+    i = 0;
+    while (ct->flatList[i] != item) i++;
+
+    /* choose the top item */
+    j = i - (co->height / 2);
+
+    if ((j + co->height) > ct->flatCount) 
+	j = ct->flatCount - co->height;
+    
+    if (j < 0)
+	j = 0;
+
+    ct->firstItem = ct->flatList + j;
+    ct->currItem = ct->flatList + i;
+
+    ctDraw(co);
+}
