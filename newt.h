@@ -109,5 +109,7 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_HOME			NEWT_KEY_EXTRA_BASE + 8
 #define NEWT_KEY_END			NEWT_KEY_EXTRA_BASE + 9
 #define NEWT_KEY_UNTAB			NEWT_KEY_EXTRA_BASE + 10
+#define NEWT_KEY_PGUP			NEWT_KEY_EXTRA_BASE + 11
+#define NEWT_KEY_PGDN			NEWT_KEY_EXTRA_BASE + 12
 
 #endif /* H_NEWT */
