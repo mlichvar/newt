@@ -104,7 +104,7 @@ static char keyPrefix = '\033';
 static char * version = "Newt windowing library version " VERSION
 			" - (C) 1996 Red Hat Software. "
 		        "Redistributable under the term of the Library "
-		        "GNU Public Library. "
+		        "GNU Public License. "
 			"Written by Erik Troan\n";
 
 static newtSuspendCallback suspendCallback = NULL;
