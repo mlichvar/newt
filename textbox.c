@@ -16,9 +16,11 @@ struct textbox {
     int textWidth;
 };
 
-static void addLine(newtComponent co, const char * s, int len);
+static char * expandTabs(const char * text);
 static void textboxDraw(newtComponent co);
-static void addShortLine(newtComponent co, const char * s, int len);
+static void addLine(newtComponent co, const char * s, int len);
+static void doReflow(const char * text, char ** resultPtr, int width, 
+		     int * badness, int * heightPtr);
 static struct eventResult textboxEvent(newtComponent c,
 				      struct event ev);
 static void textboxDestroy(newtComponent co);
@@ -111,10 +113,38 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     return co;
 }
 
-static void doReflow(char * text, char ** resultPtr, int width, int * badness,
-		     int * heightPtr) {
+static char * expandTabs(const char * text) {
+    int bufAlloced = strlen(text) + 40;
+    char * buf, * dest;
+    const char * src;
+    int bufUsed = 0;
+    int i;
+
+    buf = malloc(bufAlloced + 1);
+    for (src = text, dest = buf; *src; src++) {
+	if ((bufUsed + 10) > bufAlloced) {
+	    bufAlloced += strlen(text) / 2;
+	    buf = realloc(buf, bufAlloced + 1);
+	    dest = buf + bufUsed;
+	}
+	if (*src == '\t') {
+	    i = 8 - (bufUsed & 8);
+	    memset(dest, ' ', i);
+	    dest += i, bufUsed += i;
+	} else {
+	    *dest++ = *src;
+	    bufUsed++;
+	}
+    }
+
+    *dest = '\0';
+    return buf;
+}
+
+static void doReflow(const char * text, char ** resultPtr, int width, 
+		     int * badness, int * heightPtr) {
     char * result = NULL;
-    char * chptr, * end;
+    const char * chptr, * end;
     int howbad = 0;
     int height = 0;
 
@@ -172,6 +202,9 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
     int i;
     char * result;
     int minbad, minbadwidth, howbad;
+    char * expandedText;
+
+    expandedText = expandTabs(text);
 
     if (flexDown || flexUp) {
 	min = width - flexDown;
@@ -181,7 +214,7 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 	minbadwidth = width;
 
 	for (i = min; i <= max; i++) {
-	    doReflow(text, NULL, i, &howbad, NULL);
+	    doReflow(expandedText, NULL, i, &howbad, NULL);
 
 	    if (minbad == -1 || howbad < minbad) {
 		minbad = howbad;
@@ -192,7 +225,8 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 	width = minbadwidth;
     }
 
-    doReflow(text, &result, width, NULL, actualHeight);
+    doReflow(expandedText, &result, width, NULL, actualHeight);
+    free(expandedText);
     if (actualWidth) *actualWidth = width;
     return result;
 }
@@ -200,74 +234,51 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 void newtTextboxSetText(newtComponent co, const char * text) {
     const char * start, * end;
     struct textbox * tb = co->data;
+    char * reflowed, * expanded;
+    int badness, height;
 
     if (tb->lines) {
 	free(tb->lines);
-	tb->numLines = 0;
+	tb->linesAlloced = tb->numLines = 0;
     }
 
-    tb->linesAlloced = 10;
-    tb->lines = malloc(sizeof(char *) * 10);
+    expanded = expandTabs(text);
 
-    start = text;
+    if (tb->doWrap) {
+	doReflow(expanded, &reflowed, tb->textWidth, &badness, &height);
+	free(expanded);
+	expanded = reflowed;
+    }
+
+    for (start = expanded; *start; start++)
+	if (*start == '\n') tb->linesAlloced++;
+
+    /* This ++ leaves room for an ending line w/o a \n */
+    tb->linesAlloced++;
+    tb->lines = malloc(sizeof(char *) * tb->linesAlloced);
+
+    start = expanded;
     while ((end = strchr(start, '\n'))) {
 	addLine(co, start, end - start);
 	start = end + 1;
     }
 
     if (*start)
-	addLine(co, start, -1);
+	addLine(co, start, strlen(start));
+
+    free(expanded);
 }
 
-static void addLine(newtComponent co, const char * s, int origlen) {
-    const char * start, * end;
-    int len;
+/* This assumes the buffer is allocated properly! */
+static void addLine(newtComponent co, const char * s, int len) {
     struct textbox * tb = co->data;
-
-    if (origlen < 0) origlen = strlen(s);
-    len = origlen;
-
-    if (!tb->doWrap || len <= tb->textWidth) {
-	addShortLine(co, s, len);
-    } else {
-	/* word wrap */
-
-	start = s;
-	while (len > tb->textWidth) {
-	    end = start + tb->textWidth - 1;
-	    while (end > start && !isspace(*end)) end--;
-
-	    if (end == start)
-		end = start + tb->textWidth - 1;
-
-	    addShortLine(co, start, end - start);
-	
-	    start = end + 1;
-	    while (isspace(*start) && *start) start++;
-
-	    len = origlen - (start - s);
-	}	
-
-	if (*start)
-	    addShortLine(co, start, len);
-    }
-}
-
-static void addShortLine(newtComponent co, const char * s, int len) {
-    struct textbox * tb = co->data;
-
-    if (tb->linesAlloced == tb->numLines) {
-	tb->linesAlloced += 10;
-	tb->lines = realloc(tb->lines, (sizeof(char *) * tb->linesAlloced));
-    }
 
     if (len > tb->textWidth) len = tb->textWidth;
 
     tb->lines[tb->numLines] = malloc(tb->textWidth + 1);
-    strncpy(tb->lines[tb->numLines], s, len);
-
-    while (len < tb->textWidth)  tb->lines[tb->numLines][len++] = ' ';
-    tb->lines[tb->numLines++][len] = '\0';
+    memset(tb->lines[tb->numLines], ' ', tb->textWidth); 
+    memcpy(tb->lines[tb->numLines], s, len);
+    tb->lines[tb->numLines++][tb->textWidth] = '\0';
 }
 
 static void textboxDraw(newtComponent c) {
@@ -306,6 +317,21 @@ static struct eventResult textboxEvent(newtComponent co,
 
 	  case NEWT_KEY_DOWN:
 	    if (tb->topLine < (tb->numLines - co->height)) tb->topLine++;
+	    textboxDraw(co);
+	    er.result = ER_SWALLOWED;
+	    break;
+
+	  case NEWT_KEY_PGDN:
+	    tb->topLine += co->height;
+	    if (tb->topLine > (tb->numLines - co->height))
+		tb->topLine = tb->numLines - co->height;
+	    textboxDraw(co);
+	    er.result = ER_SWALLOWED;
+	    break;
+
+	  case NEWT_KEY_PGUP:
+	    tb->topLine -= co->height;
+	    if (tb->topLine < 0) tb->topLine = 0;
 	    textboxDraw(co);
 	    er.result = ER_SWALLOWED;
 	    break;
