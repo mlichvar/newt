@@ -5,16 +5,20 @@
 #include "newt.h"
 #include "newt_pr.h"
 
+enum type { CHECK, RADIO, LISTITEM };
+
 struct checkbox {
     char * text;
     char * seq;
     char * result;
     newtComponent prevButton, lastButton;
-    char isRadio;
+    enum type type;
     char value;
+    int active, inactive;
 };
 
 static void cbDrawIt(newtComponent c, int active);
+static void makeActive(newtComponent co);
 
 static void cbDraw(newtComponent c);
 static void cbDestroy(newtComponent co);
@@ -25,6 +29,21 @@ static struct componentOps cbOps = {
     cbEvent,
     cbDestroy,
 } ;
+
+newtComponent newtListitem(int left, int top, char * text, int isDefault,
+			      newtComponent prevItem) {
+    newtComponent co;
+    struct checkbox * li;
+
+    co = newtRadiobutton(left, top, text, isDefault, prevItem);
+    li = co->data;
+    li->type = LISTITEM;
+
+    li->inactive = COLORSET_LISTBOX;
+    li->active = COLORSET_ACTLISTBOX;
+
+    return co;
+}
 
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton) {
@@ -40,7 +59,7 @@ newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 
     co = newtCheckbox(left, top, text, initialValue, " *", NULL);
     rb = co->data;
-    rb->isRadio = 1;
+    rb->type = RADIO;
 
     rb->prevButton = prevButton;
 
@@ -70,8 +89,10 @@ newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 
     cb->text = strdup(text);
     cb->seq = strdup(seq);
+    cb->type = CHECK;
+    cb->inactive = COLORSET_CHECKBOX;
+    cb->active = COLORSET_ACTCHECKBOX;
     defValue ? (*cb->result = defValue) : (*cb->result = cb->seq[0]);
-    cb->isRadio = 0;
 
     co->ops = &cbOps;
 
@@ -93,22 +114,35 @@ static void cbDrawIt(newtComponent c, int active) {
 
     if (c->top == -1) return;
 
-    SLsmg_set_color(COLORSET_CHECKBOX);
+    if (cb->type == LISTITEM && *cb->result != ' ')
+	SLsmg_set_color(cb->active);
+    else
+	SLsmg_set_color(cb->inactive);
 
     newtGotorc(c->top, c->left);
 
-    if (cb->isRadio) 
+    switch (cb->type) {
+      case RADIO:
 	SLsmg_write_string("( ) ");
-    else
+	break;
+
+      case CHECK:
 	SLsmg_write_string("[ ] ");
+	break;
+
+      default:
+	break;
+    }
 
     SLsmg_write_string(cb->text);
 
     if (active) 
-	SLsmg_set_color(COLORSET_ACTCHECKBOX);
+	SLsmg_set_color(cb->active);
 
-    newtGotorc(c->top, c->left + 1);
-    SLsmg_write_char(*cb->result);
+    if (cb->type != LISTITEM) {
+	newtGotorc(c->top, c->left + 1);
+	SLsmg_write_char(*cb->result);
+    }
 }
 
 static void cbDestroy(newtComponent co) {
@@ -121,15 +155,17 @@ static void cbDestroy(newtComponent co) {
 }
 
 struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
-    struct eventResult er;
     struct checkbox * cb = co->data;
-    struct checkbox * rb;
-    newtComponent curr;
+    struct eventResult er;
     char * cur;
 
     switch (ev.event) {
       case EV_FOCUS:
-	cbDrawIt(co, 1);
+	if (cb->type == LISTITEM)
+	    makeActive(co);
+	else 
+	    cbDrawIt(co, 1);
+	
 	er.result = ER_SWALLOWED;
 	break;
 
@@ -140,21 +176,9 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
 
       case EV_KEYPRESS:
 	if (ev.u.key == ' ' || ev.u.key == '\r') {
-	    if (cb->isRadio) {
-		/* find the one that's turned off */
-		curr = cb->lastButton;
-		rb = curr->data;
-		while (curr && rb->value == rb->seq[0]) {
-		    curr = rb->prevButton;
-		    if (curr) rb = curr->data;
-		}
-		if (curr) {
-		    rb->value = rb->seq[0];
-		    cbDrawIt(curr, 0);
-		} 
-		cb->value = cb->seq[1];
-		cbDrawIt(co, 1);
-	    } else {
+	    if (cb->type == RADIO) {
+		makeActive(co);
+	    } else if (cb->type == CHECK) {
 		cur = strchr(cb->seq, *cb->result);
 		if (!cur)
 		    *cb->result = *cb->seq;
@@ -167,6 +191,8 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
 		}
 		cbDrawIt(co, 1);
 		er.result = ER_SWALLOWED;
+	    } else {
+		er.result = ER_IGNORED;
 	    }
 	} else {
 	    er.result = ER_IGNORED;
@@ -174,4 +200,24 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
     }
 
    return er;
+}
+
+static void makeActive(newtComponent co) {
+    struct checkbox * cb = co->data;
+    struct checkbox * rb;
+    newtComponent curr;
+
+    /* find the one that's turned off */
+    curr = cb->lastButton;
+    rb = curr->data;
+    while (curr && rb->value == rb->seq[0]) {
+	curr = rb->prevButton;
+	if (curr) rb = curr->data;
+    }
+    if (curr) {
+	rb->value = rb->seq[0];
+	cbDrawIt(curr, 0);
+    } 
+    cb->value = cb->seq[1];
+    cbDrawIt(co, 1);
 }
