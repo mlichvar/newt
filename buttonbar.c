@@ -1,5 +1,6 @@
-#include "newt.h"
 #include <stdarg.h>
+
+#include "newt.h"
 
 newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...) {
     va_list args;
