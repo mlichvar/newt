@@ -17,9 +17,9 @@ struct checkbox {
     int active, inactive;
     const void * data;
     int flags;
+    int hasFocus;
 };
 
-static void cbDrawIt(newtComponent c, int active);
 static void makeActive(newtComponent co);
 
 static void cbDraw(newtComponent c);
@@ -80,6 +80,13 @@ char newtCheckboxGetValue(newtComponent co) {
     return cb->value;
 }
 
+void newtCheckboxSetValue(newtComponent co, char value) {
+    struct checkbox * cb = co->data;
+
+    *cb->result = value;
+    cbDraw(co);
+}
+
 newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 			   const char * seq, char * result) {
     newtComponent co;
@@ -99,6 +106,7 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
     cb->text = strdup(text);
     cb->seq = strdup(seq);
     cb->type = CHECK;
+    cb->hasFocus = 0;
     cb->inactive = COLORSET_CHECKBOX;
     cb->active = COLORSET_ACTCHECKBOX;
     defValue ? (*cb->result = defValue) : (*cb->result = cb->seq[0]);
@@ -116,13 +124,9 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 }
 
 static void cbDraw(newtComponent c) {
-    cbDrawIt(c, 0);
-}
-
-static void cbDrawIt(newtComponent c, int active) {
     struct checkbox * cb = c->data;
 
-    if (c->top == -1) return;
+    if (c->top == -1 || !c->isMapped) return;
 
     SLsmg_set_color(cb->inactive);
 
@@ -143,7 +147,7 @@ static void cbDrawIt(newtComponent c, int active) {
 
     SLsmg_write_string(cb->text);
 
-    if (active) 
+    if (cb->hasFocus) 
 	SLsmg_set_color(cb->active);
 
     newtGotorc(c->top, c->left + 1);
@@ -167,12 +171,14 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
 	  case EV_FOCUS:
-	    cbDrawIt(co, 1);
+	    cb->hasFocus = 1;
+	    cbDraw(co);
 	    er.result = ER_SWALLOWED;
 	    break;
 
 	  case EV_UNFOCUS:
-	    cbDrawIt(co, 0);
+	    cb->hasFocus = 0;
+	    cbDraw(co);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -191,8 +197,11 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 			else
 			    *cb->result = *cur;
 		    }
-		    cbDrawIt(co, 1);
+		    cbDraw(co);
 		    er.result = ER_SWALLOWED;
+
+		    if (co->callback)
+			co->callback(co, co->callbackData);
 		} else {
 		    er.result = ER_IGNORED;
 		}
@@ -205,9 +214,6 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 	}
     } else 
 	er.result = ER_IGNORED;
-
-    if (er.result == ER_SWALLOWED && co->callback)
-	co->callback(co, co->callbackData);
 
     return er;
 }
@@ -226,8 +232,11 @@ static void makeActive(newtComponent co) {
     }
     if (curr) {
 	rb->value = rb->seq[0];
-	cbDrawIt(curr, 0);
+	cbDraw(curr);
     } 
     cb->value = cb->seq[1];
-    cbDrawIt(co, 1);
+    cbDraw(co);
+
+    if (co->callback)
+	co->callback(co, co->callbackData);
 }

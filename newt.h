@@ -123,6 +123,7 @@ newtComponent newtButton(int left, int top, const char * text);
 newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 			   const char * seq, char * result);
 char newtCheckboxGetValue(newtComponent co);
+void newtCheckboxSetValue(newtComponent co, char value);
 newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
