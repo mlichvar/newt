@@ -589,7 +589,10 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 
 	  case NEWT_KEY_END:
 	    if(li->numItems <= 0) break;
-	    newtListboxSetCurrent(co, li->numItems - 1);
+	    li->startShowItem = li->numItems - li->curHeight - 1;
+	    if(li->startShowItem < 0)
+		li->startShowItem = 0;
+	    newtListboxRealSetCurrent(co, li->numItems - 1);
 	    er.result = ER_SWALLOWED;
 	    break;
 	  default:
