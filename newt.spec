@@ -1,6 +1,8 @@
+%define pythonver 2.2
+
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.0
+%define version 0.51.1
 Version: %{version}
 Release: 1
 License: LGPL
@@ -36,23 +38,21 @@ newt.
 
 
 %prep
-%setup
+%setup -q
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
 #./configure --with-gpm-support
-./configure 
-make
-make shared
+%configure 
+make %{?_smp_mflags} all shared
 chmod 0644 peanuts.py popcorn.py
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
-make instroot=$RPM_BUILD_ROOT install
-make instroot=$RPM_BUILD_ROOT install-sh
+%makeinstall
 
-python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.2",10,"/usr/lib/python2.2")'
+python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'%{_libdir}/python%{pythonver}",10,"%{_libdir}/python%{pythonver}")'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -69,18 +69,21 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr (-,root,root)
 %doc CHANGES COPYING
-/usr/lib/libnewt.so.*
-/usr/bin/whiptail
-/usr/lib/python*/site-packages/*
+%{_bindir}/whiptail
+%{_libdir}/libnewt.so.*
+%{_libdir}/python%{pythonver}/site-packages/*
 
 %files devel
 %defattr (-,root,root)
 %doc tutorial.sgml peanuts.py popcorn.py
-/usr/include/newt.h
-/usr/lib/libnewt.a
-/usr/lib/libnewt.so
+%{_includedir}/newt.h
+%{_libdir}/libnewt.a
+%{_libdir}/libnewt.so
 
 %changelog
+* Fri Dec 13 2002 Elliot Lee <sopwith@redhat.com> 0.51.1-1
+- Merge multilib changes
+
 * Thu Aug 15 2002 Bill Nottingham <notting@redhat.com> 0.51.0-1
 - changes for element width calculation for UTF-8
 - fix textwrap for UTF-8 in general
