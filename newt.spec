@@ -1,8 +1,8 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.7
+%define version 0.50.8
 Version: %{version}
-Release: 2
+Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Feb 22 2000 Preston Brown <pbrown@redhat.com>
+- fix critical bug in fkey 1-4 recognition on xterms
+
 * Wed Feb  9 2000 Matt Wilson <msw@redhat.com>
 - fixed snack widget setcallback function
 

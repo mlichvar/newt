@@ -92,10 +92,10 @@ static const struct keymap keymap[] = {
 	{ "\033[[D",		NEWT_KEY_F4,		NULL },
 	{ "\033[[E",		NEWT_KEY_F5,		NULL },
 
-	{ "\033OP",		NEWT_KEY_F2,		NULL },
+	{ "\033OP",		NEWT_KEY_F1,		NULL },
 	{ "\033OQ",		NEWT_KEY_F2,		NULL },
-	{ "\033OR",		NEWT_KEY_F2,		NULL },
-	{ "\033OS",		NEWT_KEY_F2,		NULL },
+	{ "\033OR",		NEWT_KEY_F3,		NULL },
+	{ "\033OS",		NEWT_KEY_F4,		NULL },
 
 	{ "\033[11~",		NEWT_KEY_F1,		NULL },
 	{ "\033[12~",		NEWT_KEY_F2,		NULL },
@@ -115,7 +115,7 @@ static const struct keymap keymap[] = {
 static char keyPrefix = '\033';
 
 static const char * version = "Newt windowing library version " VERSION
-			" - (C) 1996 Red Hat Software. "
+			" - (C) 1996-2000 Red Hat Software. "
 		        "Redistributable under the term of the Library "
 		        "GNU Public License. "
 			"Written by Erik Troan\n";
