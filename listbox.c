@@ -745,6 +745,8 @@ static void listboxDestroy(newtComponent co) {
 	item = nextitem;
     }
 
+    if (li->sb) li->sb->ops->destroy(li->sb);
+
     free(li);
     free(co);
 }
