@@ -64,7 +64,7 @@ void newtLabelSetText(newtComponent co, const char * text) {
 static void labelDraw(newtComponent co) {
     struct label * la = co->data;
 
-    if (co->top == -1) return;
+    if (co->isMapped == -1) return;
 
     SLsmg_set_color(COLORSET_LABEL);
 
