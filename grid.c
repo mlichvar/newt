@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "grid.h"
 #include "newt.h"
 #include "newt_pr.h"
 
@@ -12,6 +11,9 @@ struct gridField {
 	newtGrid grid;
 	newtComponent co;
     } u;
+    int padLeft, padTop, padRight, padBottom;
+    int anchor;
+    int flags;
 }; 
 
 struct grid_s {
@@ -39,7 +41,9 @@ newtGrid newtCreateGrid(int cols, int rows) {
 }
 
 void newtGridSetField(newtGrid grid, int col, int row, 
-		      enum newtGridElement type, void * val) {
+		      enum newtGridElement type, void * val, int padLeft,
+		      int padTop, int padRight, int padBottom, int anchor,
+		      int flags) {
     struct gridField * field = &grid->fields[col][row];
 
     if (field->type == NEWT_GRID_SUBGRID) 
@@ -47,6 +51,12 @@ void newtGridSetField(newtGrid grid, int col, int row,
 
     field->type = type;
     field->u.co = (void *) val;
+
+    field->padLeft = padLeft;
+    field->padRight = padRight;
+    field->padTop = padTop;
+    field->padBottom = padBottom;
+    field->anchor = anchor;
 
     grid->width = grid->height = -1;
 }
@@ -56,9 +66,9 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
     int row, col;
     int i, j;
     int minWidth, minHeight;
-    int colSpacing;
     int * widths, * heights;
     int thisLeft, thisTop;
+    int x, y, remx, remy;
 
     widths = alloca(sizeof(*widths) * grid->cols);
     memset(widths, 0, sizeof(*widths) * grid->cols);
@@ -78,6 +88,8 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	    } else {
 		j = field->u.co->width;
 	    }
+
+	    j += field->padLeft + field->padRight;
 
 	    i += j;
 	    if (j > widths[col]) widths[col] = j;
@@ -100,6 +112,8 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 		j = field->u.co->height;
 	    }
 
+	    j += field->padTop + field->padBottom;
+
 	    i += j;
 	    if (j > heights[col]) heights[col] = j;
 	}
@@ -107,15 +121,9 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	if (i > minHeight) minHeight = i;
     }
 
-    if (grid->width == -1) {
-	colSpacing = 1;
-    } else {
-	colSpacing = (grid->width - minWidth) / (grid->cols - 1);
-    }
-    minWidth += colSpacing * (grid->cols - 1);
-
-    if (minWidth < grid->width) grid->width = minWidth;		/* ack! */
-    if (minHeight < grid->height) grid->height = minHeight;	/* ditto! */
+    /* this catches the -1 case */
+    if (grid->width < minWidth) grid->width = minWidth;		/* ack! */
+    if (grid->height < minHeight) grid->height = minHeight;	/* ditto! */
 
     if (!set) return;
 
@@ -125,16 +133,41 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	thisLeft = left;
 	for (col = 0; col < grid->cols; col++) {
 	    field = &grid->fields[col][row];
+
+	    x = thisLeft + field->padLeft;
+	    remx = widths[col] - field->padLeft - field->padRight;
+	    y = thisTop + field->padTop;
+	    remy = heights[col] - field->padTop - field->padBottom;
+
 	    if (field->type == NEWT_GRID_SUBGRID) {
-		shuffleGrid(field->u.grid, thisLeft, thisTop, 1);
+		remx -= field->u.grid->width;
+		remy -= field->u.grid->height;
 	    } else {
-		field->u.co->top = thisTop;
-		field->u.co->left = thisLeft;
+		remx -= field->u.co->width;
+		remy -= field->u.co->height;
+	    }
+
+	    if (field->anchor & NEWT_ANCHOR_RIGHT)
+		x += remx;
+	    else if (!(field->anchor & NEWT_ANCHOR_LEFT))
+		x += (remx / 2);
+	 
+	    if (field->anchor & NEWT_ANCHOR_BOTTOM)
+		y += remx;
+	    else if (!(field->anchor & NEWT_ANCHOR_TOP))
+		y += (remy / 2);
+	 
+
+	    if (field->type == NEWT_GRID_SUBGRID) {
+		shuffleGrid(field->u.grid, x, y, 1);
+	    } else {
+		field->u.co->left = x;
+		field->u.co->top = y;
 		if (field->u.co->ops->place)
 		    field->u.co->ops->place(field->u.co);
 	    }
 
-	    thisLeft += widths[col] + colSpacing;
+	    thisLeft += widths[col];
 	}
 
 	thisTop += heights[row];
@@ -143,7 +176,6 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
 void newtGridPlace(newtGrid grid, int left, int top) {
     grid->width = grid->height = -1;
-
     shuffleGrid(grid, left, top, 1);
 }
 
