@@ -80,7 +80,7 @@ class Grid:
     def place(self, x, y):
 	return self.g.place(x, y)
 
-    def setField(self, col, row, what, padding = (0, 0, 0, 0),
+    def setField(self, what, col, row, padding = (0, 0, 0, 0),
 		 anchorLeft = 0, anchorTop = 0, anchorRight = 0,
 		 anchorBottom = 0, growx = 0, growy = 0):
 	anchorFlags = 0
@@ -135,4 +135,68 @@ class SnackScreen:
 # returns a tuple of the wrapped text, the actual width, and the actual height
 def reflow(text, width, flexDown = 5, flexUp = 5):
     return _snack.reflow(text, width, flexDown, flexUp)
+
+
+# combo widgets
+
+def RadioGroup(Widget):
+
+    def __init__(self):
+	self.group = None
+	self.buttonlist = []
+
+    def add(self, title, value, default = None):
+	if not self.group and default == None:
+	    # If the first element is not explicitly set to
+	    # not be the default, make it be the default
+	    default = 1
+	b = SingleRadioButton(title, self.group, default)
+	if not self.group: self.group = b
+	buttonlist.append((b, value))
+	return b
+
+    def getSelection(self):
+	for (b, value) in self.buttonlist:
+	    if b.selected: return value
+	
+
+# pack a ButtonBar with growx = 1
+
+def ButtonBar(Grid):
+
+    def __init__(self, screen, buttonlist):
+	self.list = []
+	self.item = 0
+	Grid.__init__(self, len(buttonlist), 1)
+	for (title, value) in buttonlist:
+	    b = Button(title)
+	    self.list.append(b, value))
+	    self.setField(b, self.item, 0, (0, 1, 0, 1))
+	    self.item = self.item + 1
+
+# FIXME: need to make it possible to find what button was pressed...
+
+
+def GridForm(Grid):
+
+    def __init__(self, screen, title, *args):
+	self.screen = screen
+	self.title = title
+	self.form = Form()
+	args = list(args)
+	args[:0] = self
+	apply(Grid.__init__, args)
+
+    def add(self, widget, col, row, padding = (0, 0, 0, 0),
+            anchorLeft = 0, anchorTop = 0, anchorRight = 0,
+            anchorBottom = 0, growx = 0, growy = 0):
+	self.setField(widget, col, row, padding, anchorLeft,
+		      anchorTop, anchorRight, anchorBottom,
+		      growx, growy);
+	self.form.add(widget)
+
+    def run(self):
+	self.screen.gridWrappedWindow(self.grid, title)
+	self.form.run()
+	self.screen.popWindow()
 

@@ -16,18 +16,18 @@ r1 = SingleRadioButton("Radio 1", None, 1)
 r2 = SingleRadioButton("Radio 2", r1)
 
 sg = Grid(2, 3)
-sg.setField(0, 0, b, anchorLeft = 1)
-sg.setField(1, 0, e, (1, 0, 0, 0), anchorLeft = 1, anchorTop = 1)
-sg.setField(0, 1, l, (0, 1, 0, 0), anchorLeft = 1)
-sg.setField(1, 1, cb, (1, 1, 0, 0), anchorLeft = 1)
-sg.setField(0, 2, r1, (0, 0, 0, 0), anchorLeft = 1)
-sg.setField(1, 2, r2, (1, 0, 0, 0), anchorLeft = 1)
+sg.setField(b, 0, 0, anchorLeft = 1)
+sg.setField(e, 1, 0, (1, 0, 0, 0), anchorLeft = 1, anchorTop = 1)
+sg.setField(l, 0, 1, (0, 1, 0, 0), anchorLeft = 1)
+sg.setField(cb, 1, 1, (1, 1, 0, 0), anchorLeft = 1)
+sg.setField(r1, 0, 2, (0, 0, 0, 0), anchorLeft = 1)
+sg.setField(r2, 1, 2, (1, 0, 0, 0), anchorLeft = 1)
 
 g = Grid(1, 3)
 
-g.setField(0, 0, t)
-g.setField(0, 1, li, (0, 1, 0, 1))
-g.setField(0, 2, sg)
+g.setField(t, 0, 0)
+g.setField(li, 0, 1, (0, 1, 0, 1))
+g.setField(sg, 0, 2)
 
 g.place(1, 1)
 
