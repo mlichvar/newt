@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.19
 Version: %{version}
-Release: 1
+Release: 3
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -97,9 +97,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
 
+%if 0
 %files python2
 %defattr (-,root,root)
 /usr/lib/python2.0
+%endif
 
 %changelog
 * Fri Dec 15 2000 Trond Eivind Glomsrød <teg@redhat.com>
