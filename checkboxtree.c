@@ -316,10 +316,13 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     ct->firstItem = NULL;
     ct->currItem = NULL;
     ct->flatList = NULL;
-	if (seq)
-	  ct->seq = strdup(seq);
-	else
-	  ct->seq = strdup(" *");
+
+    ct->flags = flags;
+
+    if (seq)
+	ct->seq = strdup(seq);
+    else
+	ct->seq = strdup(" *");
     if (flags & NEWT_FLAG_SCROLL) {
 	ct->sb = newtVerticalScrollbar(left, top, height,
 				       COLORSET_LISTBOX, COLORSET_ACTLISTBOX);
@@ -369,7 +372,7 @@ int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
 	case NEWT_FLAGS_TOGGLE:
 	    if (item->branch)
 	      item->selected = !item->selected;
-	    else {
+	    else if (!(ct->flags & NEWT_CHECKBOXTREE_UNSELECTABLE)) {
 		    item->selected++;
 		    if (item->selected==strlen(ct->seq))
 		      item->selected = 0;
@@ -444,13 +447,21 @@ static void ctDraw(newtComponent co) {
 	    else
 		SLsmg_write_string("<+> ");
 	} else {
-	    char tmp[5];
-	    snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
-	    SLsmg_write_string(tmp);
+	    if (ct->flags & NEWT_CHECKBOXTREE_HIDE_BOX) {
+		if ((*item)->selected)
+		    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+	    } else {
+	        char tmp[5];
+	        snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
+	        SLsmg_write_string(tmp);
+	    }
 	}
 
 	SLsmg_write_nstring((*item)->text, co->width - 4 - 
 					   (3 * (*item)->depth));
+
+	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
+
 	item++;
 	i++;
     }

@@ -55,7 +55,7 @@ static PyObject * setHelpCallback(PyObject * s, PyObject * args);
 static PyObject * reflowText(PyObject * s, PyObject * args);
 static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
-static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args);
+static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args, PyObject * kwargs);
 
 static PyMethodDef snackModuleMethods[] = {
     { "button", (PyCFunction) buttonWidget, METH_VARARGS, NULL },
@@ -88,7 +88,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "suspendcallback", setSuspendCallback, METH_VARARGS, NULL },
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
     { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
-    { "checkboxtree", (PyCFunction) checkboxTreeWidget, METH_VARARGS, NULL },
+    { "checkboxtree", (PyCFunction) checkboxTreeWidget, METH_VARARGS | METH_KEYWORDS, NULL },
     { NULL }
 } ;
 
@@ -225,7 +225,7 @@ static PyMethodDef widgetMethods[] = {
     { "checkboxtreeSetEntryValue", (PyCFunction) widgetCheckboxTreeSetEntryValue,
       METH_VARARGS, NULL },
     { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
-      METH_VARARGS, NULL },
+      METH_VARARGS, NULL },  
     { "entrySetFlags", (PyCFunction) widgetEntrySetFlags, METH_VARARGS, NULL },
     { "checkboxSetFlags", (PyCFunction) widgetCheckboxSetFlags, METH_VARARGS, NULL },
     { "checkboxSetValue", (PyCFunction) widgetCheckboxSetValue, METH_VARARGS, NULL },
@@ -1031,17 +1031,25 @@ static PyObject * widgetListboxClear(snackWidget * s, PyObject * args) {
 static void emptyDestructor(PyObject * s) {
 }
 
-static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args) {
+static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args, PyObject * kwargs) {
     int height;
     int scrollBar = 0;
+    int hide_checkbox = 0;
+    int unselectable = 0;
+    int flags;
     snackWidget * widget;
+    const char *kw[] = {"height", "scrollbar", "hide_checkbox", "unselectable", NULL};
     
-    if (!PyArg_ParseTuple(args, "i|i", &height, &scrollBar))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|iii", (char **) kw,
+		&height, &scrollBar, &hide_checkbox, &unselectable))
 	return NULL;
 
+    flags = (scrollBar ? NEWT_FLAG_SCROLL : 0) |
+	(hide_checkbox ? NEWT_CHECKBOXTREE_HIDE_BOX : 0) |    
+	(unselectable ? NEWT_CHECKBOXTREE_UNSELECTABLE : 0);
+
     widget = snackWidgetNew ();
-    widget->co = newtCheckboxTree(-1, -1, height,
-				  scrollBar ? NEWT_FLAG_SCROLL : 0);
+    widget->co = newtCheckboxTree(-1, -1, height, flags);
 
     widget->anint = 1;
 

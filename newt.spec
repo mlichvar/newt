@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.27
+%define version 0.50.28
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Jul 05 2001 Crutcher Dunnavant <crutcher@redhat.com>
+- added 'hide_checkbox' and 'unselectable' options to CheckboxTrees
+
 * Mon Jun 25 2001 Jeremy Katz <katzj@redhat.com>
 - ClistBox -> Clistbox for API consistency
 - fixup replace() method of Clistbox
