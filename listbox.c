@@ -629,8 +629,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    er.result = ER_SWALLOWED;
 	    break;
 	  default:
-	      if (isalpha(ev.u.key)) {
-
+              if (ev.u.key < NEWT_KEY_EXTRA_BASE && isalpha(ev.u.key)) {
 		  for(i = 0, item = li->boxItems; item != NULL &&
 			  i < li->currItem; i++, item = item->next);
 

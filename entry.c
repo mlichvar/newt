@@ -306,7 +306,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 
       default:
 	if ((key >= 0x20 && key <= 0x7e) || (key >= 0xa0 && key <= 0xff)) {
-	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed == co->width) {
+	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed >= co->width) {
 		SLtt_beep();
 		break;
 	    }
