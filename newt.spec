@@ -35,13 +35,13 @@ make
 make shared
 
 %install
-rm -rf $(RPM_BUILD_ROOT)
-mkdir -p $(RPM_BUILD_ROOT)
-make instroot=$(RPM_BUILD_ROOT) install
-make instroot=$(RPM_BUILD_ROOT) install-sh
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT
+make instroot=$RPM_BUILD_ROOT install
+make instroot=$RPM_BUILD_ROOT install-sh
 
 %clean
-rm -rf $(RPM_BUILD_ROOT)
+rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 
