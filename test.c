@@ -18,7 +18,7 @@ void main(void) {
     newtCls();
 
     newtDrawRootText(0, 0, "Newt test program");
-    newtPushHelpLine("Some help text");
+    newtPushHelpLine(NULL);
 
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
