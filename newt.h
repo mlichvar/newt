@@ -25,6 +25,7 @@ extern "C" {
 #define NEWT_COLORSET_EMPTYSCALE	19
 #define NEWT_COLORSET_FULLSCALE		20
 #define NEWT_COLORSET_DISENTRY		21
+#define NEWT_COLORSET_COMPACTBUTTON	22
 
 struct newtColors {
     char * rootFg, * rootBg;
@@ -46,16 +47,17 @@ struct newtColors {
     char * rootTextFg, * rootTextBg;
     char * emptyScale, * fullScale;
     char * disabledEntryFg, * disabledEntryBg;
+    char * compactButtonFg, * compactButtonBg;
 };
 
 enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 
-#define NEWT_FLAG_RETURNEXIT (1 << 0)
-#define NEWT_FLAG_HIDDEN (1 << 1)
-#define NEWT_FLAG_SCROLL (1 << 2)
-#define NEWT_FLAG_DISABLED (1 << 3)
-#define NEWT_FLAG_ALL NEWT_FLAG_RETURNEXIT|NEWT_FLAG_HIDDEN|\
-	NEWT_FLAG_SCROLL_NEWT_FLAG_DISABLED
+#define NEWT_FLAG_RETURNEXIT 	(1 << 0)
+#define NEWT_FLAG_HIDDEN 	(1 << 1)
+#define NEWT_FLAG_SCROLL 	(1 << 2)
+#define NEWT_FLAG_DISABLED 	(1 << 3)
+#define NEWT_FLAG_NOSCROLL 	(1 << 4)	/* for listboxes */
+
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
 #define NEWT_ENTRY_SCROLL	NEWT_FLAG_SCROLL
@@ -92,6 +94,7 @@ void newtDrawRootText(int row, int col, char * text);
 
 /* Components */
 
+newtComponent newtCompactButton(int left, int top, char * text);
 newtComponent newtButton(int left, int top, char * text);
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 			   char * seq, char * result);
@@ -126,6 +129,8 @@ void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
+void newtTextboxSetHeight(newtComponent co, int height);
+int newtTextboxGetNumLines(newtComponent co);
 
 #define NEWT_FORM_NOF12		(1 << 0)
 
