@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 #ifdef USE_GPM
 #include <ctype.h>
@@ -395,6 +396,8 @@ struct form {
     int numFds;
     struct fdInfo * fds;
     int maxFd;
+    int timer;    /* in milliseconds */
+    struct timeval lastTimeout;
 };
 
 static void gotoComponent(struct form * form, int newComp);
@@ -492,6 +495,12 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     }
 
     gotoComponent(form, new);
+}
+
+void newtFormSetTimer(newtComponent co, int millisecs) {
+    struct form * form = co->data;
+
+    form->timer = millisecs;
 }
 
 void newtFormSetHeight(newtComponent co, int height) {
@@ -864,6 +873,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     int key, i, max;
     int done = 0;
     fd_set readSet, writeSet;
+    struct timeval nextTimeout, now, timeout;
 #ifdef USE_GPM
     int x, y;
     Gpm_Connect conn;
@@ -887,6 +897,16 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     } else
 	gotoComponent(form, form->currComp);
 
+    /* Calculate when we next need to return with a timeout */
+    if (form->timer) {
+	if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
+	    gettimeofday(&form->lastTimeout, NULL);
+
+        nextTimeout.tv_sec = form->lastTimeout.tv_sec + (form->timer / 1000);
+	nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
+				(form->timer % 1000) * 1000;
+    }
+
     while (!done) {
 	newtRefresh();
 
@@ -909,9 +929,39 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		FD_SET(form->fds[i].fd, &writeSet);
 	}
 
-	i = select(max + 1, &readSet, &writeSet, NULL, NULL);
+	if (form->timer) {
+	    gettimeofday(&now, 0);
+
+	    if (now.tv_sec > nextTimeout.tv_sec) {
+		timeout.tv_sec = timeout.tv_usec = 0;
+	    } else if (now.tv_sec == nextTimeout.tv_sec) {
+		timeout.tv_sec = 0;
+		if (now.tv_usec > nextTimeout.tv_usec)
+		    timeout.tv_usec = 0;
+		else
+		    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
+	    } else if (now.tv_sec < nextTimeout.tv_sec) {
+		timeout.tv_sec = nextTimeout.tv_sec - now.tv_sec;
+		if (now.tv_usec > nextTimeout.tv_usec)
+		    timeout.tv_sec--,
+		    timeout.tv_usec = nextTimeout.tv_usec + 1000000 -
+					now.tv_usec;
+		else 
+		    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
+	    }
+	} else {
+	    timeout.tv_sec = timeout.tv_usec = 0;
+	}
+
+	i = select(max + 1, &readSet, &writeSet, NULL, 
+			form->timer ? &timeout : NULL);
 	if (i < 0) continue;	/* ?? What should we do here? */
 
+	if (i == 0) {
+	    done = 1;
+	    es->reason = NEWT_EXIT_TIMEOUT;
+	    gettimeofday(&form->lastTimeout, NULL);
+	} else
 #ifdef USE_GPM
 	if (gpm_fd > 0 && FD_ISSET(gpm_fd, &readSet)) {
 	    Gpm_GetEvent(&event);

@@ -30,7 +30,7 @@ void suspend(void * d) {
 
 int main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
-    newtComponent lb, t, rsf, answer;
+    newtComponent lb, t, rsf, answer, timeLabel;
     newtComponent cs[10];
     newtComponent f, chklist, e1;
     struct callbackInfo cbis[3];
@@ -39,6 +39,9 @@ int main(void) {
     void ** selectedList;
     int i, numsel;
     char buf[20];
+    const char * spinner = "-\\|/\\|/";
+    const char * spinState;
+    struct newtExitStruct es;
 
     newtInit();
     newtCls();
@@ -104,21 +107,30 @@ int main(void) {
     newtListboxInsertEntry(lb, "Eleventh", (void *) 11, (void *) 10);
     newtListboxDeleteEntry(lb, (void *) 11);
 
+    spinState = spinner;
+    timeLabel = newtLabel(45, 8, "Spinner: -");
+
     t = newtTextbox(45, 10, 17, 5, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
 
-    newtFormAddComponents(f, lb, t, NULL);
+    newtFormAddComponents(f, lb, timeLabel, t, NULL);
     newtRefresh();
+    newtFormSetTimer(f, 200);
 
     do {
-	answer = newtRunForm(f);
+	newtFormRun(f, &es);
 
-	if (answer == b2) {
+	if (es.reason == NEWT_EXIT_COMPONENT && es.u.co == b2) {
 	    newtScaleSet(scale, atoi(scaleVal));
 	    newtRefresh();
 	    answer = NULL;
+	} else if (es.reason == NEWT_EXIT_TIMEOUT) {
+	    spinState++;
+	    if (!*spinState) spinState = spinner;
+	    sprintf(buf, "Spinner: %c", *spinState);
+	    newtLabelSetText(timeLabel, buf);
 	}
-    } while (!answer);
+    } while (es.reason != NEWT_EXIT_COMPONENT);
 
     scaleVal = strdup(scaleVal);
     enr2 = strdup(enr2);

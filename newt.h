@@ -189,7 +189,8 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 		      int * actualWidth, int * actualHeight);
 
 struct newtExitStruct {
-    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY } reason;
+    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
+	   NEWT_EXIT_TIMEOUT } reason;
     union {
 	int key;
 	newtComponent co;
@@ -197,6 +198,7 @@ struct newtExitStruct {
 } ;
 
 newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
+void newtFormSetTimer(newtComponent form, int millisecs);
 void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
 void newtFormSetSize(newtComponent co);
 newtComponent newtFormGetCurrent(newtComponent co);
