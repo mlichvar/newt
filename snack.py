@@ -82,8 +82,8 @@ class Listbox(Widget):
     def current(self):
 	return self.key2item[self.w.listboxGetCurrent()]
 
-    def setCurrent(self, index):
-	self.w.listboxSetCurrent(index)
+    def setCurrent(self, item):
+	self.w.listboxSetCurrent(self.item2key[item])
 
     def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
 	self.w = _snack.listbox(height, scroll, returnExit)
@@ -372,6 +372,9 @@ class GridForm(Grid):
 	self.screen.popWindow()
 	return result
 
+    def addHotKey(self, keyname):
+	self.form.addHotKey(keyname)
+
     def create(self):
 	if not self.form_created:
 	    self.place(1,1)
@@ -437,6 +440,11 @@ def ListboxChoiceWindow(screen, title, text, items,
 	else:
 	    text = item
 	    key = count
+
+	if (count == default):
+	    default = key
+	elif (count == item):
+	    default = key
 
 	l.append(text, key)
 	count = count + 1

@@ -861,7 +861,7 @@ static PyObject * widgetListboxSet(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i", &index))
 	return NULL;
 
-    newtListboxSetCurrent(s->co, index);
+    newtListboxSetCurrentByKey(s->co, index);
 
     Py_INCREF(Py_None);
     return Py_None;
