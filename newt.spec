@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.15
+%define version 0.50.16
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -57,6 +57,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Aug 16 2000 Erik Troan <ewt@redhat.com>
+- fixed cursor disappearing in suspend
+- moved libnewt.so to main package from -devel
+
 * Thu Aug  3 2000 Matt Wilson <msw@redhat.com>
 - added setValue method for checkboxes in snack
 
@@ -227,10 +231,10 @@ of keys
 /usr/bin/whiptail
 /usr/lib/python1.5/snack.py
 /usr/lib/python1.5/lib-dynload/_snackmodule.so
+/usr/lib/libnewt.so
 
 %files devel
 %defattr (-,root,root)
 %doc tutorial.sgml
 /usr/include/newt.h
 /usr/lib/libnewt.a
-/usr/lib/libnewt.so
