@@ -1,6 +1,6 @@
 Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
-%define version 0.13
+%define version 0.20
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -87,3 +87,4 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
+/usr/lib/python1.4/%{RPM_OS}-%{RPM_ARCH}/_snackmodule.so

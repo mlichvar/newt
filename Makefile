@@ -26,6 +26,8 @@ prefix = /usr
 includedir = $(prefix)/include
 libdir = $(prefix)/lib
 bindir = $(prefix)/bin
+ARCHNAME = $(shell uname -m | sed 's/i.86/i386/')
+pythondir = $(prefix)/lib/python1.4/linux-$(ARCHNAME)
 
 #--------------------------------------
 
@@ -98,10 +100,12 @@ install: $(LIBNEWT) whiptail
 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
 	install -s -m 755 whiptail $(instroot)/$(bindir)
 
-install-sh: sharedlib whiptcl.so
+install-sh: sharedlib whiptcl.so _snackmodule.so
 	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
 	install -m 755 whiptcl.so $(instroot)/$(libdir)
+	[ -d $(instroot)/$(pythondir) ] || install -m 755 -d $(instroot)/$(pythondir)
+	install -m 755 _snackmodule.so $(instroot)/$(pythondir)
 
 archive: 
 	@cvs tag -F $(CVSTAG)
