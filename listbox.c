@@ -186,14 +186,21 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
     struct listbox * li = co->data;
     struct items *item, *t;
     int i;
+    if(num > li->numItems)
+	num = li->numItems;
 
     if (li->boxItems) {
-	for(i = 0, item = li->boxItems; item->next != NULL && i < num;
-	    item = item->next, i++);
-
-	t = item->next;
-	item = item->next = malloc(sizeof(struct items));
-	item->next = t;
+	if(num > 1) {
+	    for(i = 0, item = li->boxItems; item->next != NULL && i < num - 1;
+		item = item->next, i++);
+	    t = item->next;
+	    item = item->next = malloc(sizeof(struct items));
+	    item->next = t;
+	} else {
+	    t = li->boxItems;
+	    item = li->boxItems = malloc(sizeof(struct items));
+	    item->next = t;
+	}
     } else {
 	item = li->boxItems = malloc(sizeof(struct items));
 	item->next = NULL;
@@ -202,7 +209,7 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
     if (text && (strlen(text) > li->curWidth))
 	li->curWidth = strlen(text);
 
-    item->key = strdup(text); item->data = data;
+    item->key = strdup(text?text:"(null)"); item->data = data;
 
     if (li->sb)
 	li->sb->left = co->left + li->curWidth + 2;
@@ -219,10 +226,13 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
     int i, widest = 0, t;
     struct items *item, *item2;
 
+    if(num > li->numItems)
+	num = li->numItems;
+
     if (!li->boxItems)
 	return -1;
 
-    if (num <= 0) { 
+    if (num <= 1) { 
 	item = li->boxItems;
 	li->boxItems = item->next;
 
@@ -230,7 +240,7 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
 	item2 = li->boxItems;
 	widest = strlen(item2->key);
     } else {
-	for(i = 0, item = li->boxItems; item != NULL && i != li->currItem;
+	for(i = 0, item = li->boxItems; item != NULL && i < num - 1;
 	    i++, item = item->next) {
 	    if((t = strlen(item->key)) > widest) widest = t;
 	    item2 = item;
@@ -244,7 +254,8 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
     free(item->key);
     free(item);
     li->numItems--;
-    
+    if(li->currItem >= num)
+	li->currItem--;
     for (item = item2->next; item != NULL; item = item->next)
 	if((t = strlen(item->key)) > widest) widest = t;
 
