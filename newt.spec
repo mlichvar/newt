@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.22
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -105,6 +105,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Apr  3 2001 Matt Wilson <msw@redhat.com>
+- change from using SLsmg_touch_screen to SLsmg_touch_lines to prevent
+  excessive flashing due to screen clears when using touch_screen (more
+  Japanese handling)
+
 * Mon Apr  2 2001 Matt Wilson <msw@redhat.com>
 - redraw the screen in certain situations when LANG=ja_JP.eucJP to
   prevent corrupting kanji characters (#34362)
