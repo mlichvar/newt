@@ -104,6 +104,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Jan 22 2001 Than Ngo <than@redhat.com>
+- don't build newt-python2 sub package.
+
 * Fri Dec 15 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - use %%{_tmppath}
 - add python2 subpackage, with such support
