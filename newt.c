@@ -50,6 +50,8 @@ struct newtColors newtDefaultColorPalette = {
 	"lightgray", "black",			/* active textbox fg, bg */
 	"white", "blue",			/* help line */
 	"yellow", "blue",			/* root text */
+	"green",				/* scale full */
+	"red",					/* scale empty */
 };
 
 static struct keymap keymap[] = {
@@ -104,6 +106,17 @@ static char * version = "Newt windowing library version " VERSION
 
 void newtRefresh(void) {
     SLsmg_refresh();
+}
+
+void newtSuspend(void) {
+    SLsmg_suspend_smg();
+    SLang_reset_tty();
+}
+
+void newtResume(void) {
+    SLsmg_resume_smg ();
+    SLsmg_refresh();
+    SLang_init_tty(0, 0, 0);
 }
 
 void newtCls(void) {
@@ -182,6 +195,11 @@ void newtSetColors(struct newtColors colors) {
 			colors.helpLineBg);
     SLtt_set_color(NEWT_COLORSET_ROOTTEXT, "", colors.rootTextFg, 
 			colors.rootTextBg);
+
+    SLtt_set_color(NEWT_COLORSET_EMPTYSCALE, "", "black",
+			colors.emptyScale);
+    SLtt_set_color(NEWT_COLORSET_FULLSCALE, "", "black",
+			colors.fullScale);
 }
 
 int newtGetKey(void) {

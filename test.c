@@ -5,12 +5,12 @@
 #include "newt.h"
 
 void main(void) {
-    newtComponent b1, b2, r1, r2, r3, e1, e2, e3, l1, l2, l3;
-    newtComponent lb, t, rsf;
+    newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
+    newtComponent lb, t, rsf, answer;
     newtComponent cs[10];
-    newtComponent f, chklist;
+    newtComponent f, chklist, e1;
     char results[10];
-    char * enr1, * enr2, * enr3;
+    char * enr2, * enr3, * scaleVal;
     int i;
     char buf[20];
 
@@ -26,32 +26,34 @@ void main(void) {
     f = newtForm(NULL, NULL, 0);
     chklist = newtForm(NULL, NULL, 0);
 
-    b1 = newtButton(3, 1, "Push me");
-    b2 = newtButton(18, 1, "Not me");
-    r1 = newtRadiobutton(20, 6, "Choice 1", 0, NULL);
-    r2 = newtRadiobutton(20, 7, "Chc 2", 1, r1);
-    r3 = newtRadiobutton(20, 8, "Choice 3", 0, r2);
+    b1 = newtButton(3, 1, "Exit");
+    b2 = newtButton(18, 1, "Update");
+    r1 = newtRadiobutton(20, 10, "Choice 1", 0, NULL);
+    r2 = newtRadiobutton(20, 11, "Chc 2", 1, r1);
+    r3 = newtRadiobutton(20, 12, "Choice 3", 0, r2);
     rsf = newtForm(NULL, NULL, 0);
     newtFormAddComponents(rsf, r1, r2, r3, NULL);
     newtFormSetBackground(rsf, NEWT_COLORSET_CHECKBOX);
 
     for (i = 0; i < 10; i++) {
 	sprintf(buf, "Check %d", i);
-	cs[i] = newtCheckbox(3, 6 + i, buf, ' ', NULL, &results[i]);
+	cs[i] = newtCheckbox(3, 10 + i, buf, ' ', NULL, &results[i]);
 	newtFormAddComponent(chklist, cs[i]);
     }
 
-    l1 = newtLabel(3, 10, "Fixed:");
-    l2 = newtLabel(3, 11, "Scrolls:");
-    l3 = newtLabel(3, 12, "Hidden:");
-    e1 = newtEntry(12, 10, "", 20, &enr1, 0);
-    e2 = newtEntry(12, 11, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
-    e3 = newtEntry(12, 12, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
+    l1 = newtLabel(3, 6, "Scale:");
+    l2 = newtLabel(3, 7, "Scrolls:");
+    l3 = newtLabel(3, 8, "Hidden:");
+    e1 = newtEntry(12, 6, "", 20, &scaleVal, 0);
+    e2 = newtEntry(12, 7, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
+    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
+
+    scale = newtScale(3, 14, 32, 100);
 
     newtFormSetHeight(chklist, 3);
 
-    newtFormAddComponents(f, b1, b2, chklist, NULL);
-    newtFormAddComponents(f, rsf, l1, l2, l3, e1, e2, e3, NULL);
+    newtFormAddComponents(f, b1, b2, l1, l2, l3, e1, e2, e3, chklist, NULL);
+    newtFormAddComponents(f, rsf, scale, NULL);
 
     lb = newtListbox(45, 3, 4, 0);
     newtListboxAddEntry(lb, "First", NULL);
@@ -70,9 +72,17 @@ void main(void) {
 
     newtFormAddComponents(f, lb, t, NULL);
 
-    newtRunForm(f);
+    do {
+	answer = newtRunForm(f);
+	
+	if (answer == b2) {
+	    newtScaleSet(scale, atoi(scaleVal));
+	    newtRefresh();
+	    answer = NULL;
+	}
+    } while (!answer);
  
-    enr1 = strdup(enr1);
+    scaleVal = strdup(scaleVal);
     enr2 = strdup(enr2);
     enr3 = strdup(enr3);
 
@@ -82,7 +92,7 @@ void main(void) {
     newtPopWindow();
     newtFinished();
 
-    printf("got string 1: %s\n", enr1);
+    printf("got string 1: %s\n", scaleVal);
     printf("got string 2: %s\n", enr2);
     printf("got string 3: %s\n", enr3);
 }
