@@ -373,6 +373,27 @@ class GridForm(Grid):
 	self.screen.popWindow()
 	return result
 
+class CheckboxTree(Widget):
+    def append(self, text, item, selected):
+	key = self.w.checkboxtreeAppend(text, selected)
+	self.key2item[key] = item
+	self.item2key[item] = key
+
+    def __init__(self, height, scroll = 0):
+	self.w = _snack.checkboxtree(height, scroll)
+	self.key2item = {}
+	self.item2key = {}
+
+    def getSelection(self):
+        selection = []
+        i = 0
+        list = self.w.checkboxtreeGetSelection()
+        for key in list:
+            selection.append(self.key2item[key])
+            i = i + 1
+	return selection
+
+
 def ListboxChoiceWindow(screen, title, text, items, 
 			buttons = ('Ok', 'Cancel'), 
 			width = 40, scroll = 0, height = -1):
