@@ -83,9 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
 /usr/lib/whiptcl.so
+/usr/lib/python1.4/%{buildos}-%{buildarch}/_snackmodule.so
 
 %files devel
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
-/usr/lib/python1.4/%{buildos}-%{buildarch}/_snackmodule.so
