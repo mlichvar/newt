@@ -30,13 +30,12 @@ struct form {
     int numRows;
 };
 
-static void formDraw(newtComponent co);
 static void gotoComponent(struct form * form, int newComp);
 static struct eventResult formEvent(newtComponent co, struct event ev);
 static struct eventResult sendEvent(newtComponent comp, struct event ev);
 
 static struct componentOps formOps = {
-    formDraw,
+    newtDrawForm,
     formEvent,
     newtFormDestroy,
 } ;
@@ -163,7 +162,7 @@ void newtFormAddComponents(newtComponent co, ...) {
     va_end(ap);
 }
 
-static void formDraw(newtComponent co) {
+void newtDrawForm(newtComponent co) {
     struct form * form = co->data;
     struct element * el;
     int i;
@@ -284,7 +283,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
 	    if (form->vertOffset < 0) form->vertOffset = 0;
 
-	    formDraw(co);
+	    newtDrawForm(co);
 	}
 
 	gotoComponent(form, new);
@@ -323,7 +322,7 @@ newtComponent newtRunForm(newtComponent co) {
     int key;
 
     /* first, draw all of the components */
-    formDraw(co);
+    newtDrawForm(co);
 
     if (form->currComp == -1) {
 	gotoComponent(form, 0);

@@ -76,6 +76,7 @@ void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);
 newtComponent newtRunForm(newtComponent form);
+void newtDrawForm(newtComponent form);
 
 #define NEWT_ENTRY_SCROLL	(1 << 0)
 #define NEWT_ENTRY_HIDDEN	(1 << 1)
