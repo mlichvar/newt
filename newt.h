@@ -48,15 +48,21 @@ newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
 newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem);
+			      newtComponent prevItem, void * data);
+void newtListitemSet(newtComponent co, char * text);
+void * newtListitemGetData(newtComponent co);
 
 newtComponent newtLabel(int left, int top, char * text);
 newtComponent newtVerticalScrollbar(int left, int top, int height,
 				    int normalColorset, int thumbColorset);
 void newtScrollbarSet(newtComponent co, int where, int total);
 
+#define NEWT_LISTBOX_RETURNEXIT (1 << 0)
 newtComponent newtListbox(int left, int top, int height, int flags);
-void newtListboxAddEntry(newtComponent co, char * text);
+/* return the data passed to AddEntry */
+void * newtListboxGetCurrent(newtComponent co);
+void newtListboxAddEntry(newtComponent co, char * text, void * data);
+void newtListboxSetEntry(newtComponent co, int num, char * text);
 
 #define NEWT_TEXTBOX_WRAP	(1 << 0)
 #define NEWT_TEXTBOX_SCROLL	(1 << 1)
@@ -65,6 +71,7 @@ newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 
 newtComponent newtForm(newtComponent vertBar);
+newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);
@@ -72,6 +79,7 @@ newtComponent newtRunForm(newtComponent form);
 
 #define NEWT_ENTRY_SCROLL	(1 << 0)
 #define NEWT_ENTRY_HIDDEN	(1 << 1)
+#define NEWT_ENTRY_RETURNEXIT	(1 << 2)
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
