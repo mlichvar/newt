@@ -11,8 +11,8 @@ SONAME = 0.11
 
 PROGS = test whiptail whiptcl.so testgrid
 TESTOBJS = test.o 
-NDIALOGOBJS = whiptail.o dialogboxes.o popt.o
-WHIPTCLOBJS = whiptcl.o dialogboxes.o popt.o
+NDIALOGOBJS = whiptail.o dialogboxes.o 
+WHIPTCLOBJS = whiptcl.o dialogboxes.o
 LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
@@ -48,10 +48,10 @@ testgrid:	testgrid.o $(LIBNEWT)
 	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
-	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS)
+	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -lm
+	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
