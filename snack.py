@@ -183,9 +183,11 @@ class Form:
 	self.w.draw()
 	return None
 
-    def __init__(self):
+    def __init__(self, helpArg = None):
 	self.trans = {}
-	self.w = _snack.form()
+	self.w = _snack.form(helpArg)
+	# we do the reference count for the helpArg in python! gross
+	self.helpArg = helpArg
 
     def setCurrent (self, co):
         self.w.setcurrent (co.w)
@@ -244,6 +246,13 @@ class SnackScreen:
 
     def suspend(self):
 	_snack.suspend()
+
+    def doHelpCallback(self, arg):
+	self.helpCb(self, arg)
+
+    def helpCallback(self, cb):
+	self.helpCb = cb
+	return _snack.helpcallback(self.doHelpCallback)
 
     def suspendCallback(self, cb, data = None):
         if data:

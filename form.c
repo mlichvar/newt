@@ -398,12 +398,17 @@ struct form {
     int maxFd;
     int timer;    /* in milliseconds */
     struct timeval lastTimeout;
+    void * helpTag;
+    newtCallback helpCb;
 };
 
 static void gotoComponent(struct form * form, int newComp);
 static struct eventResult formEvent(newtComponent co, struct event ev);
 static struct eventResult sendEvent(newtComponent comp, struct event ev);
 static void formPlace(newtComponent co, int left, int top);
+
+/* Global, ick */
+static newtCallback helpCallback;
 
 /* this isn't static as grid.c tests against it to find forms */
 struct componentOps formOps = {
@@ -425,7 +430,7 @@ static inline int componentFits(newtComponent co, int compNum) {
     return 1;
 }
 
-newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
+newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     newtComponent co;
     struct form * form;
 
@@ -468,6 +473,9 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
 	form->vertBar = vertBar;
     else
 	form->vertBar = NULL;
+
+    form->helpTag = help;
+    form->helpCb = helpCallback;
 
     return co;
 }
@@ -1010,6 +1018,9 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		    }
 		}
 
+		if (key == NEWT_KEY_F1 && form->helpTag && form->helpCb)
+		    form->helpCb(co, form->helpTag);
+
 		if (!done) {
 		    ev.event = EV_KEYPRESS;
 		    ev.u.key = key;
@@ -1092,4 +1103,8 @@ void newtFormWatchFd(newtComponent co, int fd, int fdFlags) {
     form->fds[form->numFds].fd = fd;
     form->fds[form->numFds++].flags = fdFlags;
     if (form->maxFd < fd) form->maxFd = fd;
+}
+
+void newtSetHelpCallback(newtCallback cb) {
+    helpCallback = cb;
 }

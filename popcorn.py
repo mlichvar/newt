@@ -3,6 +3,9 @@
 from snack import *
 import sys
 
+def help(screen, text):
+    ButtonChoiceWindow(screen, "Help", text)
+
 t = TextboxReflowed(25, "Some text which needs to be wrapped at a good place.")
 li = Listbox(5, width = 20, returnExit = 1)
 li.append("First", "f")
@@ -48,6 +51,8 @@ e.setCallback(sys.exit, 1)
 
 screen = SnackScreen()
 
+screen.helpCallback(help)
+
 foo = EntryWindow(screen, 'Title', 'This is some text for the entry window',
 	    ['prompt', 'more', 'info'])
 
@@ -73,7 +78,7 @@ g.place(1, 1)
 
 screen.gridWrappedWindow(g, "title")
 
-f = Form()
+f = Form("This is some help")
 f.add(li)
 f.add(b)
 f.add(e)
@@ -82,8 +87,6 @@ f.add(cb)
 f.add(r1)
 f.add(r2)
 f.add(t)
-
-f.addHotKey("F1")
 
 res = f.run()
 

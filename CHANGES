@@ -1,3 +1,9 @@
+0.59 -> 0.50.10
+	- added support for help
+
+0.57 -> 0.59
+	- minor fixes
+
 0.55 -> 0.56
 	- added newtCheckboxTreeSetEntry(), newtCheckboxTreeGetEntryValue()
 	  and newtCheckboxTreeSetEntryValue()

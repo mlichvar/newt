@@ -118,6 +118,7 @@ void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);
 void newtSetSuspendCallback(newtSuspendCallback cb, void * data);
+void newtSetHelpCallback(newtCallback cb);
 void newtResume(void);
 void newtPushHelpLine(const char * text);
 void newtRedrawHelpLine(void);
@@ -208,7 +209,7 @@ struct newtExitStruct {
     } u;
 } ;
 
-newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
+newtComponent newtForm(newtComponent vertBar, void * helpTag, int flags);
 void newtFormSetTimer(newtComponent form, int millisecs);
 void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
 void newtFormSetSize(newtComponent co);

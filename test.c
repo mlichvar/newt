@@ -28,6 +28,10 @@ void suspend(void * d) {
     newtResume();
 }
 
+void helpCallback(newtComponent co, void * tag) {
+    newtWinMessage("Help", "Ok", tag);
+}
+
 int main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
     newtComponent lb, t, rsf, answer, timeLabel;
@@ -47,6 +51,7 @@ int main(void) {
     newtCls();
 
     newtSetSuspendCallback(suspend, NULL);
+    newtSetHelpCallback(helpCallback);
 
     newtDrawRootText(0, 0, "Newt test program");
     newtPushHelpLine(NULL);
@@ -55,7 +60,7 @@ int main(void) {
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
 
-    f = newtForm(NULL, NULL, 0);
+    f = newtForm(NULL, "This is some help text", 0);
     chklist = newtForm(NULL, NULL, 0);
 
     b1 = newtButton(3, 1, "Exit");

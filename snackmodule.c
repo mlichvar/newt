@@ -16,6 +16,7 @@ struct callbackStruct {
 };
 
 static struct callbackStruct suspend;
+static struct callbackStruct helpCallback;
 
 static void emptyDestructor(PyObject * s);
 
@@ -46,6 +47,7 @@ static PyObject * scaleWidget(PyObject * s, PyObject * args);
 static PyObject * scaleSet(snackWidget * s, PyObject * args);
 static PyObject * screenSize(PyObject * s, PyObject * args);
 static PyObject * setSuspendCallback(PyObject * s, PyObject * args);
+static PyObject * setHelpCallback(PyObject * s, PyObject * args);
 static PyObject * reflowText(PyObject * s, PyObject * args);
 static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
@@ -62,6 +64,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "form", (PyCFunction) formCreate, METH_VARARGS, NULL },
     { "grid", (PyCFunction) gridCreate, METH_VARARGS, NULL },
     { "gridwrappedwindow", gridWrappedWindow, METH_VARARGS, NULL },
+    { "helpcallback", setHelpCallback, METH_VARARGS, NULL },
     { "init", initScreen, METH_VARARGS, NULL },
     { "label", (PyCFunction) labelWidget, METH_VARARGS, NULL },
     { "listbox", (PyCFunction) listboxWidget, METH_VARARGS, NULL },
@@ -303,6 +306,17 @@ static PyObject * screenSize(PyObject * s, PyObject * args) {
     return Py_BuildValue("(ii)", width, height);
 }
 
+static void helpCallbackMarshall(newtComponent co, void * data) {
+    PyObject * args, * result;
+
+    args = Py_BuildValue("(O)", data);
+    result = PyEval_CallObject(helpCallback.cb, args);
+    Py_DECREF (args);
+    Py_XDECREF(result);
+
+    return;
+}
+
 static void suspendCallbackMarshall(void * data) {
     struct callbackStruct * scs = data;
     PyObject * args, * result;
@@ -353,6 +367,22 @@ static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
     Py_XINCREF (suspend.data);    
     
     newtSetSuspendCallback(suspendCallbackMarshall, &suspend);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * setHelpCallback(PyObject * s, PyObject * args) {
+    if (!PyArg_ParseTuple(args, "O", &helpCallback.cb))
+	return NULL;
+
+    /*if (helpCallback.cb) {
+	Py_DECREF (helpCallback.cb);
+    }*/
+
+    Py_INCREF (helpCallback.cb);
+
+    newtSetHelpCallback(helpCallbackMarshall);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -660,9 +690,15 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
 
 static snackForm * formCreate(PyObject * s, PyObject * args) {
     snackForm * form;
+    PyObject * help = Py_None;
+
+    if (!PyArg_ParseTuple(args, "|O", &help)) return NULL;
+
+    if (help == Py_None)
+	help = NULL;
 
     form = PyObject_NEW(snackForm, &snackFormType);
-    form->fo = newtForm(NULL, NULL, 0);
+    form->fo = newtForm(NULL, help, 0);
 
     return form;
 }
@@ -913,7 +949,7 @@ static PyObject * widgetListboxSet(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i", &index))
 	return NULL;
 
-    newtListboxSetCurrentByKey(s->co, index);
+    newtListboxSetCurrentByKey(s->co, (void *) index);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1046,7 +1082,7 @@ static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
     if (!PyArg_ParseTuple(args, ""))
 	return NULL;
 
-    selection = newtCheckboxTreeGetSelection(s->co, &numselected);
+    selection = (void **) newtCheckboxTreeGetSelection(s->co, &numselected);
 
     sel = PyList_New(0);
     
