@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.29
+%define version 0.50.30
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Jul 05 2001 Crutcher Dunnavant <crutcher@redhat.com>
+- padded hidden checkboxes on CheckboxTrees
+
 * Thu Jul 05 2001 Crutcher Dunnavant <crutcher@redhat.com>
 - taught CheckboxTrees about width. Whohoo! 2-D!!!
 

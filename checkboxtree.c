@@ -475,6 +475,7 @@ static void ctDraw(newtComponent co) {
 	    if (ct->flags & NEWT_CHECKBOXTREE_HIDE_BOX) {
 		if ((*item)->selected)
 		    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+	        SLsmg_write_string("    ");
 	    } else {
 	        char tmp[5];
 	        snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
