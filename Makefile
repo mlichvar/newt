@@ -1,16 +1,17 @@
-LIBS = -lslang -lm #-lefence
+LIBS = -lslang -lm -lc #-lefence
 
 CFLAGS = $(RPM_OPT_FLAGS) -Wall
 ifeq ($(RPM_OPT_FLAGS),)
-CFLAGS += -g
+CFLAGS += -g -O2
 endif
 
 VERSION = 0.9
-SONAME = 0
+SONAME = 0.9
 
-PROGS = test whiptail
+PROGS = test whiptail whiptcl.so
 TESTOBJS = test.o 
-NDIALOGOBJS = whiptail.o popt.o
+NDIALOGOBJS = whiptail.o dialogboxes.o popt.o
+WHIPTCLOBJS = whiptcl.o dialogboxes.o popt.o
 LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
@@ -44,6 +45,9 @@ test:	$(TESTOBJS) $(LIBNEWT)
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS)
+
+whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
+	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -lm
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
@@ -86,6 +90,7 @@ install: $(LIBNEWT)
 install-sh: sharedlib
 	install -m 755 $(LIBNEWTSH) $(libdir)
 	ln -sf $(LIBNEWTSH) $(libdir)/libnewt.so
+	install -m 755 whiptcl.so $(libdir)
 	/sbin/ldconfig
 
 archive: 

@@ -177,7 +177,7 @@ void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
-void newtScaleSet(newtComponent co, long long amount);
+void newtScaleSet(newtComponent co, unsigned long long amount);
 
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 

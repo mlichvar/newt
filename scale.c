@@ -40,7 +40,7 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     return co;
 }
 
-void newtScaleSet(newtComponent co, long long amount) {
+void newtScaleSet(newtComponent co, unsigned long long amount) {
     struct scale * sc = co->data;
     int newCharsSet;
 

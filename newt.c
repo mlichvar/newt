@@ -326,7 +326,7 @@ int newtOpenWindow(int left, int top, int width, int height,
     currentWindow->top = top;
     currentWindow->width = width;
     currentWindow->height = height;
-    currentWindow->title = strdup(title);
+    currentWindow->title = title ? strdup(title) : NULL;
 
     currentWindow->buffer = malloc(sizeof(short) * (width + 3) * (height + 3));
 
