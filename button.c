@@ -52,7 +52,7 @@ static newtComponent createButton(int left, int row, const char * text, int comp
     co->takesFocus = 1;
 
     newtGotorc(co->top, co->left);
-    bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
+    bu->bgColor = -1;
 
     return co;
 }
@@ -86,6 +86,9 @@ static void buttonDraw(newtComponent co) {
 
 static void buttonDrawIt(newtComponent co, int active, int pushed) {
     struct button * bu = co->data;
+
+    if (bu->bgColor == -1)
+	bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
 
     SLsmg_set_color(NEWT_COLORSET_BUTTON);
 

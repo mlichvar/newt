@@ -40,7 +40,7 @@ else
 TARGET=depend $(PROGS)
 endif
 
-all:	$(TARGET)
+all:	$(TARGET) _snackmodule.so
 
 test:	$(TESTOBJS) $(LIBNEWT)
 	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS)
@@ -48,11 +48,17 @@ test:	$(TESTOBJS) $(LIBNEWT)
 testgrid:	testgrid.o $(LIBNEWT)
 	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
+_snackmodule.so:   snackmodule.o $(LIBNEWTSH)
+	gcc --shared -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
+
+snackmodule.o:   snackmodule.c
+	gcc -I/usr/include/python1.4 -fPIC $(CFLAGS) -c snackmodule.c
+
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
-	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS) -lpopt
+	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
