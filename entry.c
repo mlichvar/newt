@@ -14,8 +14,6 @@ struct entry {
     int bufUsed;		/* amount of the buffer that's been used */
     int cursorPosition; 	/* cursor *in the string* on on screen */
     int firstChar;		/* first character position being shown */
-    void * callbackData;
-    newtCallback callback;
 };
 
 static void entryDraw(newtComponent co);
@@ -66,6 +64,7 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     co->height = 1;
     co->width = width;
     co->takesFocus = 1;
+    co->callback = NULL;
 
     co->ops = &entryOps;
 
@@ -74,7 +73,6 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     en->firstChar = 0;
     en->bufUsed = 0;
     en->bufAlloced = width + 1;
-    en->callback = NULL;
 
     if (initialValue && strlen(initialValue) > width) {
 	en->bufAlloced = strlen(initialValue) + 1;
@@ -91,13 +89,6 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     }
 
     return co;
-}
-
-void newtEntryAddCallback(newtComponent co, newtCallback f, void * data) {
-    struct entry * en = co->data;
-
-    en->callback = f;
-    en->callbackData = data;
 }
 
 static void entryDraw(newtComponent co) {
@@ -178,7 +169,7 @@ static struct eventResult entryEvent(struct newtComponent * co,
 	    /*SLtt_set_cursor_visibility(1);*/
 	    newtGotorc(0, 0);
 	    er.result = ER_SWALLOWED;
-	    if (en->callback) en->callback(co, en->callbackData);
+	    if (co->callback) co->callback(co, co->callbackData);
 	    break;
 
 	  case EV_KEYPRESS:
