@@ -5,7 +5,7 @@
 #include "newt.h"
 #include "newt_pr.h"
 
-enum type { CHECK, RADIO, LISTITEM };
+enum type { CHECK, RADIO };
 
 struct checkbox {
     char * text;
@@ -33,38 +33,6 @@ static struct componentOps cbOps = {
     newtDefaultPlaceHandler,
     newtDefaultMappedHandler,
 } ;
-
-newtComponent newtListitem(int left, int top, const char * text, int isDefault,
-			      newtComponent prevItem, const void * data, int flags) {
-    newtComponent co;
-    struct checkbox * li;
-
-    co = newtRadiobutton(left, top, text, isDefault, prevItem);
-    li = co->data;
-    li->type = LISTITEM;
-    li->flags = flags & (NEWT_FLAG_RETURNEXIT);
-    li->inactive = COLORSET_LISTBOX;
-    li->active = COLORSET_ACTLISTBOX;
-    li->data = data;
-
-    return co;
-}
-
-void * newtListitemGetData(newtComponent co) {
-    struct checkbox * rb = co->data;
-
-    return (void *)rb->data;
-}
-
-void newtListitemSet(newtComponent co, const char * text) {
-    struct checkbox * li = co->data;
-
-    free(li->text);
-    li->text = strdup(text);
-
-    if (strlen(text) + 4 > (unsigned int)co->width)
-	co->width = strlen(text) + 4;
-}
 
 newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton) {
@@ -156,10 +124,7 @@ static void cbDrawIt(newtComponent c, int active) {
 
     if (c->top == -1) return;
 
-    if (cb->type == LISTITEM && *cb->result != ' ')
-	SLsmg_set_color(cb->active);
-    else
-	SLsmg_set_color(cb->inactive);
+    SLsmg_set_color(cb->inactive);
 
     newtGotorc(c->top, c->left);
 
@@ -181,10 +146,8 @@ static void cbDrawIt(newtComponent c, int active) {
     if (active) 
 	SLsmg_set_color(cb->active);
 
-    if (cb->type != LISTITEM) {
-	newtGotorc(c->top, c->left + 1);
-	SLsmg_write_char(*cb->result);
-    }
+    newtGotorc(c->top, c->left + 1);
+    SLsmg_write_char(*cb->result);
 }
 
 static void cbDestroy(newtComponent co) {
@@ -204,11 +167,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
 	  case EV_FOCUS:
-	    if (cb->type == LISTITEM)
-		makeActive(co);
-	    else 
-		cbDrawIt(co, 1);
-	    
+	    cbDrawIt(co, 1);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -238,12 +197,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 		    er.result = ER_IGNORED;
 		}
 	    } else if(ev.u.key == NEWT_KEY_ENTER) {
-		if((cb->type == LISTITEM)
-		   && (cb->flags | NEWT_FLAG_RETURNEXIT)) {
-		    er.u.focus = co;
-		    er.result = ER_EXITFORM;
-		} else
-		    er.result = ER_IGNORED;
+		er.result = ER_IGNORED;
 	    } else {
 		er.result = ER_IGNORED;
 	    }
