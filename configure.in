@@ -13,10 +13,12 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+AC_CHECK_HEADERS(alloca.h)
+
 AC_ARG_WITH(gpm-support, [  --with-gpm-support         Compile with GPM support])
 
 if test "x$with_gpm_support" = "xyes"; then
-  AC_DEFINE(USE_GPM)
+  AC_DEFINE(USE_GPM, 1, [Define to 1 if GPM support is enabled])
 fi
 
 AC_OUTPUT(Makefile)
