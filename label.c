@@ -32,7 +32,7 @@ newtComponent newtLabel(int left, int top, const char * text) {
     co->ops = &labelOps;
 
     co->height = 1;
-    co->width = strlen(text);
+    co->width = wstrlen(text, -1);
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
@@ -55,7 +55,7 @@ void newtLabelSetText(newtComponent co, const char * text) {
 	free(la->text);
 	la->text = strdup(text);
 	la->length = newLength;
-	co->width = newLength;
+	co->width = wstrlen(text,-1);
     }
 
     labelDraw(co);

@@ -245,12 +245,13 @@ void newtGridGetSize(newtGrid grid, int * width, int * height) {
 }
 
 void newtGridWrappedWindow(newtGrid grid, char * title) {
-    int width, height, offset = 0;
+    int w, width, height, offset = 0;
 
     newtGridGetSize(grid, &width, &height);
-    if (width < strlen(title) + 2) {
-	offset = ((strlen(title) + 2) - width) / 2; 
-	width = strlen(title) + 2;
+    w = wstrlen(title,-1);
+    if (width < w + 2) {
+	offset = ((w + 2) - width) / 2; 
+	width = w + 2;
     }
     newtCenteredWindow(width + 2, height + 2, title);
     newtGridPlace(grid, 1 + offset, 1);

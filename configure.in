@@ -5,7 +5,7 @@ AC_CONFIG_HEADER(config.h)
 
 VERSION=$(awk '/^%define version/ {print $3}' $srcdir/newt.spec)
 
-VERSION=0.50.38
+VERSION=0.50.39
 SONAME=0.50
 AC_SUBST(VERSION)
 AC_SUBST(SONAME)

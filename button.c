@@ -30,6 +30,7 @@ static struct componentOps buttonOps = {
 static newtComponent createButton(int left, int row, const char * text, int compact) {
     newtComponent co;
     struct button * bu;
+    int width = wstrlen(text,-1);
 
     co = malloc(sizeof(*co));
     bu = malloc(sizeof(struct button));
@@ -41,10 +42,10 @@ static newtComponent createButton(int left, int row, const char * text, int comp
 
     if (bu->compact) {
 	co->height = 1;
-	co->width = strlen(text) + 3;
+	co->width = width + 3;
     } else {
 	co->height = 4;
-	co->width = strlen(text) + 5;
+	co->width = width + 5;
     }
 
     co->top = row;

@@ -1,7 +1,10 @@
+
 #include <ctype.h>
 #include <slang.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -9,6 +12,7 @@
 struct textbox {
     char ** lines;
     int numLines;
+    char *blankline;
     int linesAlloced;
     int doWrap;
     newtComponent sb;
@@ -101,6 +105,9 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     tb->lines = NULL;
     tb->topLine = 0;
     tb->textWidth = width;
+    tb->blankline = malloc(width+1);
+    memset(tb->blankline,' ',width);
+    tb->blankline[width] = '\0';
 
     if (flags & NEWT_FLAG_SCROLL) {
 	co->width += 2;
@@ -147,8 +154,6 @@ static char * expandTabs(const char * text) {
     return buf;
 }
 
-#define iseuckanji(c)   (0xa1 <= (unsigned char)(c&0xff) && (unsigned char)(c&0xff) <= 0xfe)
-
 static void doReflow(const char * text, char ** resultPtr, int width, 
 		     int * badness, int * heightPtr) {
     char * result = NULL;
@@ -156,73 +161,79 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     int i;
     int howbad = 0;
     int height = 0;
-    int kanji = 0;
+    wchar_t tmp;
+    mbstate_t ps;
 
     if (resultPtr) {
 	/* XXX I think this will work */
 	result = malloc(strlen(text) + (strlen(text) / width) + 2);
 	*result = '\0';
     }
-    
+	
+    memset(&ps,0,sizeof(mbstate_t));
     while (*text) {
-        kanji = 0;
 	end = strchr(text, '\n');
 	if (!end)
 	    end = text + strlen(text);
 
 	while (*text && text <= end) {
-	    if (end - text < width) {
+	    int len;
+		
+	    len = wstrlen(text, end - text);
+	    if (len < width) {
 		if (result) {
 		    strncat(result, text, end - text);
 		    strcat(result, "\n");
 		    height++;
 		}
 
-		if (end - text < (width / 2))
-		    howbad += ((width / 2) - (end - text)) / 2;
+		if (len < (width / 2)) {
+#ifdef DEBUG_WRAP		    
+		fprintf(stderr,"adding %d\n",((width / 2) - (len)) / 2);
+#endif					
+		    howbad += ((width / 2) - (len)) / 2;
+		}
 		text = end;
 		if (*text) text++;
 	    } else {
-	        chptr = text;
-	        kanji = 0;
-	        for ( i = 0; i < width - 1; i++ ) {
-		    if ( !iseuckanji(*chptr)) {
-			kanji = 0;
-		    } else if ( kanji == 1 ) {
-		        kanji = 2; 
-		    } else {
-		        kanji = 1;
-		    }
-		    chptr++;
-		}
-	        if (kanji == 0) {
-		    while (chptr > text && !isspace(*chptr)) chptr--;
-		    while (chptr > text && isspace(*chptr)) chptr--;
-		    chptr++;
-		}
-		
-		if (chptr-text == 1 && !isspace(*chptr))
-		  chptr = text + width - 1;
+		char *spcptr = NULL;
+	        int spc =0,w2, x;
 
-		if (chptr > text)
-		    howbad += width - (chptr - text) + 1;
+	        chptr = text;
+		w2 = 0;
+		for (i = 0; i < width - 1;) {
+			if ((x=mbrtowc(&tmp,chptr,end-chptr,&ps))<=0)
+				break;
+		        if (spc && !iswspace(tmp))
+				spc = 0;
+			else if (!spc && iswspace(tmp)) {
+				spc = 1;
+				spcptr = chptr;
+				w2 = i;
+			}
+			chptr += x;
+			x = wcwidth(tmp);
+			if (x>0)
+			    i+=x;
+		}
+		howbad += width - w2 + 1;
+#ifdef DEBUG_WRAP		    
+		fprintf(stderr,"adding %d\n",width - w2 + 1, chptr);
+#endif					
+		if (spcptr) chptr = spcptr;
 		if (result) {
-		  if (kanji == 1) {
-		    strncat(result, text, chptr - text + 1 );
-		    chptr++;
-		    kanji = 0;
-		  } else {
 		    strncat(result, text, chptr - text );
-		  }
 		    strcat(result, "\n");
 		    height++;
 		}
 
-	        if (isspace(*chptr))
-		    text = chptr + 1;
-		else
-		  text = chptr;
-		while (isspace(*text)) text++;
+		text = chptr;
+		while (1) {
+			if ((x=mbrtowc(&tmp,text,end-text,NULL))<=0)
+				break;
+			if (!iswspace(tmp)) break;
+			text += x;
+		}
 	    }
 	}
     }
@@ -230,6 +241,9 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     if (badness) *badness = howbad;
     if (resultPtr) *resultPtr = result;
     if (heightPtr) *heightPtr = height;
+#ifdef DEBUG_WRAP
+    fprintf(stderr, "width %d, badness %d, height %d\n",width, howbad, height);
+#endif
 }
 
 char * newtReflowText(char * text, int width, int flexDown, int flexUp,
@@ -311,12 +325,12 @@ void newtTextboxSetText(newtComponent co, const char * text) {
 static void addLine(newtComponent co, const char * s, int len) {
     struct textbox * tb = co->data;
 
-    if (len > tb->textWidth) len = tb->textWidth;
-
-    tb->lines[tb->numLines] = malloc(tb->textWidth + 1);
-    memset(tb->lines[tb->numLines], ' ', tb->textWidth); 
+    while (wstrlen(s,len) > tb->textWidth) {
+	    len--;
+    }
+    tb->lines[tb->numLines] = malloc(len + 1);
     memcpy(tb->lines[tb->numLines], s, len);
-    tb->lines[tb->numLines++][tb->textWidth] = '\0';
+    tb->lines[tb->numLines++][len] = '\0';
 }
 
 static void textboxDraw(newtComponent c) {
@@ -333,6 +347,8 @@ static void textboxDraw(newtComponent c) {
     SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
 
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
+	newtGotorc(c->top + i, c->left);
+	SLsmg_write_string(tb->blankline);
 	newtGotorc(c->top + i, c->left);
 	SLsmg_write_string(tb->lines[i + tb->topLine]);
     }
@@ -405,6 +421,7 @@ static void textboxDestroy(newtComponent co) {
     for (i = 0; i < tb->numLines; i++) 
 	free(tb->lines[i]);
     free(tb->lines);
+    free(tb->blankline);
     free(tb);
     free(co);
 }

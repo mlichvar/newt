@@ -90,8 +90,8 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     else
 	co->takesFocus = 0;
 
-    if (initialValue && strlen(initialValue) > (unsigned int)width) {
-	en->bufAlloced = strlen(initialValue) + 1;
+    if (initialValue && wstrlen(initialValue,-1) > (unsigned int)width) {
+	en->bufAlloced = wstrlen(initialValue,-1) + 1;
     }
     en->buf = malloc(en->bufAlloced);
     en->resultPtr = resultPtr;

@@ -169,7 +169,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
 			    int flags, int * indexes) {
     struct items * curList, * newNode, * item;
     struct items ** listPtr = NULL;
-    int i, index, numIndexes;
+    int i, index, numIndexes, width;
     struct CheckboxTree * ct = co->data;
 
     numIndexes = 0;
@@ -243,9 +243,10 @@ int newtCheckboxTreeAddArray(newtComponent co,
     item->depth = numIndexes - 1;
 
     i = 4 + (3 * item->depth);
+    width = wstrlen(text, -1);
 
-    if ((ct->userHasSetWidth == 0) && ((strlen(text) + i + ct->sbAdjust) > co->width)) {
-	updateWidth(co, ct, strlen(text) + i);
+    if ((ct->userHasSetWidth == 0) && ((width + i + ct->sbAdjust) > co->width)) {
+	updateWidth(co, ct, width + i);
     }
 
     return 0;
@@ -695,7 +696,7 @@ void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * 
 {
     struct CheckboxTree * ct;
     struct items * item;
-    int i;
+    int i, width;
 
     if (!co) return;
     ct = co->data;
@@ -707,8 +708,9 @@ void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * 
 
     i = 4 + (3 * item->depth);
 
-    if ((ct->userHasSetWidth == 0) && ((strlen(text) + i + ct->sbAdjust) > co->width)) {
-	updateWidth(co, ct, strlen(text) + i);
+    width = wstrlen(text, -1);
+    if ((ct->userHasSetWidth == 0) && ((width + i + ct->sbAdjust) > co->width)) {
+	updateWidth(co, ct, width + i);
     }
 
     ctDraw(co);

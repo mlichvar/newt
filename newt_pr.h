@@ -80,4 +80,6 @@ void newtDefaultMappedHandler(newtComponent c, int isMapped);
 struct eventResult newtDefaultEventHandler(newtComponent c,
 					   struct event ev);
 
+int wstrlen(const char *str, int len);
+
 #endif /* H_NEWT_PR */

@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -143,6 +144,29 @@ static void handleSigwinch(int signum) {
 
 static int getkeyInterruptHook(void) {
     return -1;
+}
+
+int wstrlen(const char *str, int len) {
+	mbstate_t ps;
+	wchar_t tmp;
+	int nchars = 0;
+	
+	if (!str) return 0;
+	if (!len) return 0;
+	if (len < 0) len = strlen(str);
+	memset(&ps,0,sizeof(mbstate_t));
+	while (len > 0) {
+		int x,y;
+		
+		x = mbrtowc(&tmp,str,len,&ps);
+		if (x >0) {
+			len -= x;
+			y = wcwidth(tmp);
+			if (y>0)
+			  nchars+=y;
+		} else break;
+	}
+	return nchars;
 }
 
 void newtFlushInput(void) {
@@ -429,7 +453,7 @@ int newtOpenWindow(int left, int top, int width, int height,
     SLsmg_draw_box(top - 1, left - 1, height + 2, width + 2);
 
     if (currentWindow->title) {
-	i = strlen(currentWindow->title) + 4;
+	i = wstrlen(currentWindow->title,-1) + 4;
 	i = ((width - i) / 2) + left;
 	SLsmg_gotorc(top - 1, i);
 	SLsmg_set_char_set(1);

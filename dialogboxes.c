@@ -8,6 +8,7 @@
 
 #include "dialogboxes.h"
 #include "newt.h"
+#include "newt_pr.h"
 #include "popt.h"
 
 /* globals -- ick */
@@ -193,10 +194,10 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	} else
 	    itemInfo[numItems].text = "";
 
-	if (strlen(itemInfo[numItems].text) > (unsigned int)maxTextWidth)
-	    maxTextWidth = strlen(itemInfo[numItems].text);
-	if (strlen(itemInfo[numItems].tag) > (unsigned int)maxTagWidth)
-	    maxTagWidth = strlen(itemInfo[numItems].tag);
+	if (wstrlen(itemInfo[numItems].text,-1) > (unsigned int)maxTextWidth)
+	    maxTextWidth = wstrlen(itemInfo[numItems].text,-1);
+	if (wstrlen(itemInfo[numItems].tag,-1) > (unsigned int)maxTagWidth)
+	    maxTagWidth = wstrlen(itemInfo[numItems].tag,-1);
 
 	numItems++;
     }
@@ -287,8 +288,8 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	else
 	    cbStates[numBoxes] = ' ';
 
-	if (strlen(cbInfo[numBoxes].tag) > (unsigned int)maxWidth)
-	    maxWidth = strlen(cbInfo[numBoxes].tag);
+	if (wstrlen(cbInfo[numBoxes].tag,-1) > (unsigned int)maxWidth)
+	    maxWidth = wstrlen(cbInfo[numBoxes].tag,-1);
 
 	numBoxes++;
     }
