@@ -23,7 +23,7 @@ static void * newtvwindow(char * title, char * button1, char * button2,
 	if (buf) free(buf);
 	buf = malloc(size);
 	i = vsnprintf(buf, size, message, args);
-    } while (i == size);
+    } while (i == size || i == -1);
 
     flowedText = newtReflowText(buf, 35, 5, 5, &width, &height);
     if (height > 6) {
