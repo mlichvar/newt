@@ -14,6 +14,8 @@ struct entry {
     int bufUsed;		/* amount of the buffer that's been used */
     int cursorPosition; 	/* cursor *in the string* on on screen */
     int firstChar;		/* first character position being shown */
+    newtEntryFilter filter;
+    void * filterData;
 };
 
 static void entryDraw(newtComponent co);
@@ -38,7 +40,7 @@ void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {
 	free(en->buf);
 	en->bufAlloced = strlen(value) + 1;
 	en->buf = malloc(en->bufAlloced);
-	*en->resultPtr = en->buf;
+	if (en->resultPtr) *en->resultPtr = en->buf;
     }
     memset(en->buf, 0, en->bufAlloced);		/* clear the buffer */
     strcpy(en->buf, value);
@@ -75,6 +77,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     en->firstChar = 0;
     en->bufUsed = 0;
     en->bufAlloced = width + 1;
+    en->filter = NULL;
 
     if (!(en->flags & NEWT_FLAG_DISABLED))
 	co->takesFocus = 1;
@@ -85,8 +88,8 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 	en->bufAlloced = strlen(initialValue) + 1;
     }
     en->buf = malloc(en->bufAlloced);
-    *resultPtr = en->buf;
     en->resultPtr = resultPtr;
+    if (en->resultPtr) *en->resultPtr = en->buf;
   
     memset(en->buf, 0, en->bufAlloced);
     if (initialValue) {
@@ -182,6 +185,7 @@ static struct eventResult entryEvent(newtComponent co,
 				     struct event ev) {
     struct entry * en = co->data;
     struct eventResult er;
+    int ch;
 
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
@@ -203,7 +207,10 @@ static struct eventResult entryEvent(newtComponent co,
 	    break;
 
 	  case EV_KEYPRESS:
-	    er = entryHandleKey(co, ev.u.key);
+	    ch = ev.u.key;
+	    if (en->filter)
+		ch = en->filter(co, en->filterData, ch, en->cursorPosition);
+	    if (ch) er = entryHandleKey(co, ch);
 	    break;
 	}
     } else
@@ -292,7 +299,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 	    if ((en->bufUsed + 1) == en->bufAlloced) {
 		en->bufAlloced += 20;
 		en->buf = realloc(en->buf, en->bufAlloced);
-		*en->resultPtr = en->buf;
+		if (en->resultPtr) *en->resultPtr = en->buf;
 		memset(en->buf + en->bufUsed + 1, 0, 20);
 	    }
 
@@ -327,4 +334,16 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
     entryDraw(co);
 
     return er;
+}
+
+char * newtEntryGetValue(newtComponent co) {
+    struct entry * en = co->data;
+
+    return en->buf;
+}
+
+void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data) {
+    struct entry * en = co->data;
+    en->filter = filter;
+    en->filterData = data;
 }
