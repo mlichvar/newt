@@ -22,7 +22,7 @@ class Checkbox(Widget):
 class SingleRadioButton(Widget):
 
     def selected(self):
-	return self.w.radiobuttonkey == self.w.radioValue;
+	return self.w.key == self.w.radioValue;
     
     def __init__(self, text, group, isOn = 0):
 	if group:
@@ -66,14 +66,23 @@ class Entry(Widget):
 
 class Form:
 
+    def addHotKey(self, keyname):
+	self.f.addhotkey(hotkeys[keyname])
+
     def add(self, widget):
-	return self.g.add(widget.w)
+	self.trans[widget.w.key] = widget
+	return self.f.add(widget.w)
 
     def run(self):
-	return self.g.run()
+	(what, which) = self.f.run()
+	if (what == _snack.FORM_EXIT_WIDGET):
+	    return self.trans[which]
+
+	return hotkeys[which]
 
     def __init__(self):
-	self.g = _snack.form()
+	self.trans = {}
+	self.f = _snack.form()
 
 class Grid:
 
@@ -170,7 +179,7 @@ def ButtonBar(Grid):
 	Grid.__init__(self, len(buttonlist), 1)
 	for (title, value) in buttonlist:
 	    b = Button(title)
-	    self.list.append(b, value))
+	    self.list.append(b, value)
 	    self.setField(b, self.item, 0, (0, 1, 0, 1))
 	    self.item = self.item + 1
 
@@ -200,3 +209,11 @@ def GridForm(Grid):
 	self.form.run()
 	self.screen.popWindow()
 
+hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3, 
+            "F4" : _snack.KEY_F4, "F5" : _snack.KEY_F5, "F6" : _snack.KEY_F6, 
+            "F7" : _snack.KEY_F7, "F8" : _snack.KEY_F8, "F9" : _snack.KEY_F9, 
+            "F10" : _snack.KEY_F10, "F11" : _snack.KEY_F11, 
+            "F12" : _snack.KEY_F12 }
+
+for n in hotkeys.keys():
+    hotkeys[hotkeys[n]] = n

@@ -98,10 +98,12 @@ struct snackForm_s {
 static PyObject * formGetAttr(PyObject * s, char * name);
 static PyObject * formAdd(snackForm * s, PyObject * args);
 static PyObject * formRun(snackForm * s, PyObject * args);
+static PyObject * formHotKey(snackForm * s, PyObject * args);
 
 static PyMethodDef formMethods[] = {
     { "add", (PyCFunction) formAdd, METH_VARARGS, NULL },
     { "run", (PyCFunction) formRun, METH_VARARGS, NULL },
+    { "addhotkey", (PyCFunction) formHotKey, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -483,7 +485,23 @@ static PyObject * formAdd(snackForm * s, PyObject * args) {
 }
 
 static PyObject * formRun(snackForm * s, PyObject * args) {
-    newtRunForm(s->fo);
+    struct newtExitStruct result;
+
+    newtFormRun(s->fo, &result);
+
+    if (result.reason == NEWT_EXIT_HOTKEY)
+	return Py_BuildValue("(si)", "hotkey", result.u.key);
+    else
+	return Py_BuildValue("(si)", "widget", result.u.co);
+}
+
+static PyObject * formHotKey(snackForm * s, PyObject * args) {
+    int key;
+
+    if (!PyArg_ParseTuple(args, "i", &key))
+	return NULL;
+
+    newtFormAddHotKey(s->fo, key);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -492,7 +510,7 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
 static PyObject * widgetGetAttr(PyObject * s, char * name) {
     snackWidget * w = (snackWidget *) s;
 
-    if (!strcmp(name, "radiobuttonkey")) {
+    if (!strcmp(name, "key")) {
 	return Py_BuildValue("i", w->co);
     } else if (!strcmp(name, "entryValue")) {
 	return Py_BuildValue("s", w->apointer);
@@ -563,4 +581,20 @@ void init_snack(void) {
 			 PyInt_FromLong(NEWT_ANCHOR_BOTTOM));
     PyDict_SetItemString(d, "GRID_GROWX", PyInt_FromLong(NEWT_GRID_FLAG_GROWX));
     PyDict_SetItemString(d, "GRID_GROWY", PyInt_FromLong(NEWT_GRID_FLAG_GROWY));
+
+    PyDict_SetItemString(d, "FORM_EXIT_HOTKEY", PyString_FromString("hotkey"));
+    PyDict_SetItemString(d, "FORM_EXIT_WIDGET", PyString_FromString("widget"));
+
+    PyDict_SetItemString(d, "KEY_F1", PyInt_FromLong(NEWT_KEY_F1));
+    PyDict_SetItemString(d, "KEY_F2", PyInt_FromLong(NEWT_KEY_F2));
+    PyDict_SetItemString(d, "KEY_F3", PyInt_FromLong(NEWT_KEY_F3));
+    PyDict_SetItemString(d, "KEY_F4", PyInt_FromLong(NEWT_KEY_F4));
+    PyDict_SetItemString(d, "KEY_F5", PyInt_FromLong(NEWT_KEY_F5));
+    PyDict_SetItemString(d, "KEY_F6", PyInt_FromLong(NEWT_KEY_F6));
+    PyDict_SetItemString(d, "KEY_F7", PyInt_FromLong(NEWT_KEY_F7));
+    PyDict_SetItemString(d, "KEY_F8", PyInt_FromLong(NEWT_KEY_F8));
+    PyDict_SetItemString(d, "KEY_F9", PyInt_FromLong(NEWT_KEY_F9));
+    PyDict_SetItemString(d, "KEY_F10", PyInt_FromLong(NEWT_KEY_F10));
+    PyDict_SetItemString(d, "KEY_F11", PyInt_FromLong(NEWT_KEY_F11));
+    PyDict_SetItemString(d, "KEY_F12", PyInt_FromLong(NEWT_KEY_F12));
 }

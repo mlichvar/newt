@@ -5,7 +5,7 @@ from snack import *
 screen = SnackScreen()
 
 t = Textbox(25, 1, "Some text")
-li = Listbox(5, width = 20)
+li = Listbox(5, width = 20, returnExit = 1)
 li.append("First")
 li.append("Second")
 b = Button("Button")
@@ -43,7 +43,9 @@ f.add(r1)
 f.add(r2)
 f.add(t)
 
-f.run()
+f.addHotKey("F1")
+
+res = f.run()
 
 screen.popWindow()
 
@@ -54,3 +56,4 @@ print "check", cb.value()
 print "r1", r1.selected()
 print "listbox", li.current()
 # returns a tuple of the wrapped text, the actual width, and the actual height
+print res
