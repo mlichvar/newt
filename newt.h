@@ -71,7 +71,9 @@ void newtListboxSetEntry(newtComponent co, int num, char * text);
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 
-newtComponent newtForm(newtComponent vertBar);
+#define NEWT_FORM_NOF12		(1 << 0)
+
+newtComponent newtForm(newtComponent vertBar, char * help, int flags);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormAddComponent(newtComponent form, newtComponent co);
@@ -111,5 +113,8 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_UNTAB			NEWT_KEY_EXTRA_BASE + 10
 #define NEWT_KEY_PGUP			NEWT_KEY_EXTRA_BASE + 11
 #define NEWT_KEY_PGDN			NEWT_KEY_EXTRA_BASE + 12
+
+#define NEWT_KEY_F1			NEWT_KEY_EXTRA_BASE + 101
+#define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
 
 #endif /* H_NEWT */
