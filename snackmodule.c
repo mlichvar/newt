@@ -383,7 +383,7 @@ static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
 
     widget = PyObject_NEW(snackWidget, &snackWidgetType);
     widget->co = newtListbox(-1, -1, height,
-				(doScroll ? 0 : NEWT_FLAG_NOSCROLL) |
+				(doScroll ? NEWT_FLAG_SCROLL : 0) |
 				(returnExit ? NEWT_FLAG_RETURNEXIT : 0));
     widget->anint = 1;
     
@@ -452,7 +452,7 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     widget->co = newtEntry(-1, -1, initial, width, (char **) &widget->apointer, 
 			   (isHidden ? NEWT_FLAG_HIDDEN : 0) |
 			   (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
-			   (!isScrolled ? NEWT_FLAG_NOSCROLL : 0));
+			   (isScrolled ? NEWT_FLAG_SCROLL : 0));
 
     return widget;
 }
