@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50
 Version: %{version}
-Release: 12
+Release: 13
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Sep 01 1999 Erik Troan <ewt@redhat.com>
+- added suspend/resume to snack
+
 * Tue Aug 31 1999 Matt Wilson <msw@redhat.com>
 - enable gpm support
 

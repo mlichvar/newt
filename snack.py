@@ -233,6 +233,12 @@ class SnackScreen:
     def finish(self):
 	return _snack.finish()
 
+    def resume(self):
+	_snack.resume()
+
+    def suspend(self):
+	_snack.suspend()
+
     def suspendCallback(self, cb, data = None):
         if data:
             return _snack.suspendcallback(cb, data)
@@ -427,7 +433,7 @@ class CheckboxTree(Widget):
 
 def ListboxChoiceWindow(screen, title, text, items, 
 			buttons = ('Ok', 'Cancel'), 
-			width = 40, scroll = 0, height = -1, default = 0):
+			width = 40, scroll = 0, height = -1, default = None):
     if (height == -1): height = len(items)
 
     bb = ButtonBar(screen, buttons)
@@ -449,7 +455,8 @@ def ListboxChoiceWindow(screen, title, text, items,
 	l.append(text, key)
 	count = count + 1
 
-    l.setCurrent (default)
+    if (default != None):
+	l.setCurrent (default)
 
     g = GridForm(screen, title, 1, 3)
     g.add(t, 0, 0)

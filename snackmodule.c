@@ -25,6 +25,9 @@ static snackWidget * checkboxWidget(PyObject * s, PyObject * args);
 static PyObject * choiceWindow(PyObject * s, PyObject * args);
 static snackWidget * entryWidget(PyObject * s, PyObject * args);
 static PyObject * drawRootText(PyObject * s, PyObject * args);
+static PyObject * doResume(PyObject * s, PyObject * args);
+static PyObject * doSuspend(PyObject * s, PyObject * args);
+static PyObject * doSuspend(PyObject * s, PyObject * args);
 static snackForm * formCreate(PyObject * s, PyObject * args);
 static snackGrid * gridCreate(PyObject * s, PyObject * args);
 static PyObject * gridWrappedWindow(PyObject * s, PyObject * args);
@@ -70,8 +73,10 @@ static PyMethodDef snackModuleMethods[] = {
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
     { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
     { "refresh", refreshScreen, METH_VARARGS, NULL },
+    { "resume", doResume, METH_VARARGS, NULL },
     { "scale", scaleWidget, METH_VARARGS, NULL },
     { "size", screenSize, METH_VARARGS, NULL },
+    { "suspend", doSuspend, METH_VARARGS, NULL },
     { "suspendcallback", setSuspendCallback, METH_VARARGS, NULL },
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
     { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
@@ -347,6 +352,20 @@ static PyObject * drawRootText(PyObject * s, PyObject * args) {
 	return NULL;
 
     newtDrawRootText(left, top, text);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * doSuspend(PyObject * s, PyObject * args) {
+    newtSuspend();
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * doResume(PyObject * s, PyObject * args) {
+    newtResume();
 
     Py_INCREF(Py_None);
     return Py_None;
