@@ -172,7 +172,7 @@ void newtListboxSetWidth(newtComponent co, int width) {
     co->width = width;
     li->curWidth = co->width - li->sbAdjust - 2 * li->bdxAdjust;
     li->userHasSetWidth = 1;
-    li->sb->left = co->width + co->left - 1;
+    if (li->sb) li->sb->left = co->width + co->left - 1;
     listboxDraw(co);
 }
 

@@ -24,11 +24,14 @@ static PyObject * gridWrappedWindow(PyObject * s, PyObject * args);
 static PyObject * finishScreen(PyObject * s, PyObject * args);
 static PyObject * initScreen(PyObject * s, PyObject * args);
 static snackWidget * labelWidget(PyObject * s, PyObject * args);
+static snackWidget * listboxWidget(PyObject * s, PyObject * args);
 static PyObject * messageWindow(PyObject * s, PyObject * args);
 static PyObject * openWindow(PyObject * s, PyObject * args);
 static PyObject * popWindow(PyObject * s, PyObject * args);
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args);
 static PyObject * refreshScreen(PyObject * s, PyObject * args);
+static PyObject * reflowText(PyObject * s, PyObject * args);
+static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
 
 static PyMethodDef snackModuleMethods[] = {
@@ -43,12 +46,15 @@ static PyMethodDef snackModuleMethods[] = {
     { "gridwrappedwindow", gridWrappedWindow, METH_VARARGS, NULL },
     { "init", initScreen, METH_VARARGS, NULL },
     { "label", (PyCFunction) labelWidget, METH_VARARGS, NULL },
+    { "listbox", (PyCFunction) listboxWidget, METH_VARARGS, NULL },
     { "message", messageWindow, METH_VARARGS, NULL },
     { "openwindow", openWindow, METH_VARARGS, NULL },
     { "popwindow", popWindow, METH_VARARGS, NULL },
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
+    { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
     { "refresh", refreshScreen, METH_VARARGS, NULL },
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
+    { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
     { NULL }
 } ;
 
@@ -121,13 +127,20 @@ struct snackWidget_s {
     newtComponent co;
     char achar;
     void * apointer;
+    int anint;
 } ;
 
 static PyObject * widgetGetAttr(PyObject * s, char * name);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
+    { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
+    { "listboxGetCurrent", (PyCFunction) widgetListboxGet, METH_VARARGS, NULL },
+    { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -166,6 +179,23 @@ static PyObject * refreshScreen(PyObject * s, PyObject * args) {
     newtRefresh();
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+static PyObject * reflowText(PyObject * s, PyObject * args) {
+    char * text, * new;
+    int width, minus = 5, plus = 5;
+    int realWidth, realHeight;
+    PyObject * tuple;
+
+    if (!PyArg_ParseTuple(args, "si|ii", &text, &width, &minus, &plus))
+	return NULL;
+
+    new = newtReflowText(text, width, minus, plus, &realWidth, &realHeight);
+
+    tuple = Py_BuildValue("(sii)", new, realWidth, realHeight);
+    free(new);
+
+    return tuple;
 }
 
 static PyObject * centeredWindow(PyObject * s, PyObject * args) {
@@ -283,6 +313,40 @@ static snackWidget * labelWidget(PyObject * s, PyObject * args) {
     return widget;
 }
 
+static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
+    snackWidget * widget;
+    int height;
+    int doScroll = 0, returnExit = 0 ;
+
+    if (!PyArg_ParseTuple(args, "i|ii", &height, &doScroll, &returnExit))
+	return NULL;
+
+    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget->co = newtListbox(-1, -1, height,
+				(doScroll ? 0 : NEWT_FLAG_NOSCROLL) |
+				(returnExit ? NEWT_FLAG_RETURNEXIT : 0));
+    widget->anint = 0;
+    
+    return widget;
+}
+
+static snackWidget * textWidget(PyObject * s, PyObject * args) {
+    char * text;
+    int width, height;
+    int scrollBar = 0;
+    snackWidget * widget;
+    
+    if (!PyArg_ParseTuple(args, "iis|i", &width, &height, &text, &scrollBar))
+	return NULL;
+
+    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget->co = newtTextbox(-1, -1, width, height,
+				scrollBar ? NEWT_FLAG_SCROLL : 0);
+    newtTextboxSetText(widget->co, text);
+    
+    return widget;
+}
+
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args) {
     snackWidget * widget, * group;
     char * text;
@@ -370,15 +434,26 @@ static PyObject * gridPlace(snackGrid * grid, PyObject * args) {
 
 static PyObject * gridSetField(snackGrid * grid, PyObject * args) {
     snackWidget * w;
+    snackGrid * g;
     int x, y;
     int pLeft = 0, pTop = 0, pRight = 0, pBottom = 0;
+    int anchorFlags = 0, growFlags = 0;
 
-    if (!PyArg_ParseTuple(args, "iiO!|(iiii)", &x, &y, &snackWidgetType, 
-				&w, &pLeft, &pTop, &pRight, &pBottom)) 
+    if (!PyArg_ParseTuple(args, "iiO|(iiii)ii", &x, &y, 
+				&w, &pLeft, &pTop, &pRight, &pBottom,
+				&anchorFlags, &growFlags)) 
 	return NULL;
 
-    newtGridSetField(grid->grid, x, y, NEWT_GRID_COMPONENT,
-		     w->co, pLeft, pTop, pRight, pBottom, 0, 0);
+    if (w->ob_type == &snackWidgetType) {
+	newtGridSetField(grid->grid, x, y, NEWT_GRID_COMPONENT,
+			 w->co, pLeft, pTop, pRight, pBottom, anchorFlags, 
+			 growFlags);
+    } else {
+	g = (snackGrid *) w;
+	newtGridSetField(grid->grid, x, y, NEWT_GRID_SUBGRID,
+			 g->grid, pLeft, pTop, pRight, pBottom, anchorFlags, 
+			 growFlags);
+    }
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -442,9 +517,50 @@ static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args) {
     return Py_None;
 }
 
+static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args) {
+    char * text;
+    
+    if (!PyArg_ParseTuple(args, "s", &text))
+	return NULL;
+
+    newtListboxAddEntry(s->co, text, (void *) s->anint);
+
+    return PyInt_FromLong(s->anint++);
+}
+
+static PyObject * widgetListboxGet(snackWidget * s, PyObject * args) {
+    if (!PyArg_ParseTuple(args, ""))
+	return NULL;
+
+    return PyInt_FromLong((long) newtListboxGetCurrent(s->co));
+}
+
+static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args) {
+    int width;
+
+    if (!PyArg_ParseTuple(args, "i", &width))
+	return NULL;
+
+    newtListboxSetWidth(s->co, width);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static void emptyDestructor(PyObject * s) {
 }
 
 void init_snack(void) {
-    Py_InitModule("_snack", snackModuleMethods);
+    PyObject * d, * m;
+
+    m = Py_InitModule("_snack", snackModuleMethods);
+    d = PyModule_GetDict(m);
+
+    PyDict_SetItemString(d, "ANCHOR_LEFT", PyInt_FromLong(NEWT_ANCHOR_LEFT));
+    PyDict_SetItemString(d, "ANCHOR_TOP", PyInt_FromLong(NEWT_ANCHOR_TOP));
+    PyDict_SetItemString(d, "ANCHOR_RIGHT", PyInt_FromLong(NEWT_ANCHOR_RIGHT));
+    PyDict_SetItemString(d, "ANCHOR_BOTTOM", 
+			 PyInt_FromLong(NEWT_ANCHOR_BOTTOM));
+    PyDict_SetItemString(d, "GRID_GROWX", PyInt_FromLong(NEWT_GRID_FLAG_GROWX));
+    PyDict_SetItemString(d, "GRID_GROWY", PyInt_FromLong(NEWT_GRID_FLAG_GROWY));
 }
