@@ -39,6 +39,8 @@ struct newtColors newtDefaultColorPalette = {
 	"green", "black",			/* active checkbox fg, bg */
 	"yellow", "red",			/* entry box fg, bg */
 	"blue", "lightgray",			/* label fg, bg */
+	"red", "lightgray",			/* listbox fg, bg */
+	"lightgray", "red",			/* active listbox fg, bg */
 };
 
 struct keymap keymap[] = {
@@ -56,6 +58,8 @@ struct keymap keymap[] = {
 	{ "\033[4~",		NEWT_KEY_END, 		"kH" },
 
 	{ "\033[3~",		NEWT_KEY_DELETE,	"kl" },
+
+	{ "\033\t",		NEWT_KEY_UNTAB,		NULL },
 
 	{ NULL, 	0, 			NULL },	/* LEAVE this one */
 };
@@ -112,6 +116,9 @@ void newtSetColors(struct newtColors colors) {
 			colors.actCheckboxBg);
     SLtt_set_color(COLORSET_ENTRY, "", colors.entryFg, colors.entryBg);
     SLtt_set_color(COLORSET_LABEL, "", colors.labelFg, colors.labelBg);
+    SLtt_set_color(COLORSET_LISTBOX, "", colors.listboxFg, colors.listboxBg);
+    SLtt_set_color(COLORSET_ACTLISTBOX, "", colors.actListboxFg, 
+					    colors.actListboxBg);
 }
 
 int newtGetKey(void) {
