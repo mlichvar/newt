@@ -240,7 +240,7 @@ void newtFormAddHotKey(newtComponent co, int key);
 typedef int (*newtEntryFilter)(newtComponent entry, void * data, int ch,
 			       int cursor);
 newtComponent newtEntry(int left, int top, const char * initialValue, int width,
-			char ** resultPtr, int flags);
+			const char ** resultPtr, int flags);
 void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
 void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
 char * newtEntryGetValue(newtComponent co);
@@ -356,7 +356,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 
 struct newtWinEntry {
     char * text;
-    char ** value;		/* may be initialized to set default */
+    const char ** value;		/* may be initialized to set default */
     int flags;
 };
 

@@ -131,15 +131,14 @@ int newtWinTernary(char * title, char * button1, char * button2,
     return 0;
 }
 
-/* only supports up to 50 buttons -- shucks! */
 int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown, 
 		int flexUp, int maxListHeight, char ** items, int * listItem,
 		char * button1, ...) {
     newtComponent textbox, listbox, result, form;
     va_list args;
-    newtComponent buttons[50];
+    newtComponent *buttons = NULL;
     newtGrid grid, buttonBar;
-    int numButtons;
+    size_t totalButtons = 0, numButtons = 0;
     int i, rc;
     int needScroll;
     char * buttonName;
@@ -159,15 +158,16 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 
     newtListboxSetCurrent(listbox, *listItem);
 
-    buttonName = button1, numButtons = 0;
     va_start(args, button1);
-    while (buttonName) {
-	buttons[numButtons] = newtButton(-1, -1, buttonName);
-	numButtons++;
-	buttonName = va_arg(args, char *);
-    }
+    for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
+       ++totalButtons;                                                        
+    va_end(args);                                                             
 
-    va_end(args);
+    buttons = (newtComponent *)alloca(sizeof(newtComponent*)*(totalButtons)); 
+    va_start(args, button1);                                                  
+    for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
+       buttons[numButtons++] = newtButton(-1, -1, buttonName);                
+    va_end(args);                                                             
 
     buttonBar = newtCreateGrid(numButtons, 1);
     for (i = 0; i < numButtons; i++) {
@@ -199,15 +199,14 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
     return rc;
 }
 
-/* only supports up to 50 buttons and entries -- shucks! */
 int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown, 
 		   int flexUp, int dataWidth, 
 		   struct newtWinEntry * items, char * button1, ...) {
-    newtComponent buttons[50], result, form, textw;
+    newtComponent *buttons, result, form, textw;
     newtGrid grid, buttonBar, subgrid;
     int numItems;
     int rc, i;
-    int numButtons;
+    size_t numButtons = 0, totalButtons = 0;
     char * buttonName;
     va_list args;
 
@@ -216,15 +215,17 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
 
     for (numItems = 0; items[numItems].text; numItems++); 
 
-    buttonName = button1, numButtons = 0;
+    buttonName = button1;
     va_start(args, button1);
-    while (buttonName) {
-	buttons[numButtons] = newtButton(-1, -1, buttonName);
-	numButtons++;
-	buttonName = va_arg(args, char *);
-    }
-
-    va_end(args);
+    for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
+       ++totalButtons;                                                        
+    va_end(args);                                                             
+ 
+    buttons = (newtComponent *)alloca(sizeof(newtComponent*)*(totalButtons)); 
+    va_start(args, button1);                                                  
+    for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
+       buttons[numButtons++] = newtButton(-1, -1, buttonName);                
+    va_end(args);                                                             
 
     buttonBar = newtCreateGrid(numButtons, 1);
     for (i = 0; i < numButtons; i++) {

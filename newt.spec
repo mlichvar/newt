@@ -2,7 +2,7 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.2
+%define version 0.52.0
 Version: %{version}
 Release: 1
 License: LGPL
@@ -44,7 +44,7 @@ newt.
 # gpm support seems to smash the stack w/ we use help in anaconda??
 #./configure --with-gpm-support
 %configure 
-make %{?_smp_mflags} all shared
+make %{?_smp_mflags} all
 chmod 0644 peanuts.py popcorn.py
 
 %install
@@ -81,6 +81,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Fri Jan  3 2003 Adrian Havill <havill@redhat.com> 0.52.0-1
+- cleaned up const qualifiers in interfaces
+- leave the symbols in the libs (#60400)
+- fixed grammar in tutorial (#63496)
+- removed fifty button limit (#59027)
+- error checking (curcomp exists) for formEvent, newtFormGetCurrent (#59027)
+
 * Tue Dec 17 2002 Matt Wilson <msw@redhat.com> 0.51.2-1
 - fixed wstrlen() it was calculating wcwidth(first wide char in
   string) * strlen(str) instead of the actual width of the whole

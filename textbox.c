@@ -196,7 +196,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 		text = end;
 		if (*text) text++;
 	    } else {
-		char *spcptr = NULL;
+		const char *spcptr = NULL;
 	        int spc =0,w2, x;
 
 	        chptr = text;

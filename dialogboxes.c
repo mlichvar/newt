@@ -129,9 +129,9 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 }
 
 int inputBox(const char * text, int height, int width, poptContext optCon, 
-		int flags, char ** result) {
+		int flags, const char ** result) {
     newtComponent form, entry, okay, cancel, answer, tb;
-    char * val;
+    const char * val;
     int rc = DLG_OKAY;
     int top;
 
@@ -157,7 +157,7 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 }
 
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, char ** result) {
+		int flags, const char ** result) {
     newtComponent form, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
@@ -241,7 +241,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 }
 
 int checkList(const char * text, int height, int width, poptContext optCon,
-		int useRadio, int flags, char *** selections) {
+		int useRadio, int flags, const char *** selections) {
     newtComponent form, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;

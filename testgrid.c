@@ -12,7 +12,7 @@ int main(void) {
     char * flowedText;
     int textWidth, textHeight, rc;
     char * menuContents[] = { "One", "Two", "Three", "Four", "Five", NULL };
-    char * entries[10];
+    const char * entries[10];
     struct newtWinEntry autoEntries[] = {
 	{ "An entry", entries + 0, 0 },
 	{ "Another entry", entries + 1, 0 },

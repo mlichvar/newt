@@ -48,8 +48,8 @@ int main(int argc, const char ** argv) {
     int flags = 0;
     int defaultNo = 0;
     int separateOutput = 0;
-    char * result;
-    char ** selections, ** next;
+    const char * result;
+    const char ** selections, ** next;
     char * title = NULL;
     char * backtitle = NULL;
     struct poptOption optionsTable[] = {

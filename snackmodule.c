@@ -727,7 +727,8 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
 			  &isHidden, &isPassword, &isScrolled, &returnExit)) return NULL;
 
     widget = snackWidgetNew ();
-    widget->co = newtEntry(-1, -1, initial, width, (char **) &widget->apointer, 
+    widget->co = newtEntry(-1, -1, initial, width,
+                           (const char **) &widget->apointer, 
 			   (isHidden ? NEWT_FLAG_HIDDEN : 0) |
 			   (isPassword ? NEWT_FLAG_PASSWORD : 0) |
 			   (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |

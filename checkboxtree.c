@@ -756,7 +756,7 @@ void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data, char val
 void newtCheckboxTreeSetCurrent(newtComponent co, void * data) {
     struct CheckboxTree * ct = co->data;
     int * path;
-    int i, j, itemsAfter;
+    int i, j;
     struct items * treeTop, * item;
 
     path = newtCheckboxTreeFindItem(co, data);

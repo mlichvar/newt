@@ -15,7 +15,7 @@
 struct entry {
     int flags;
     char * buf;
-    char ** resultPtr;
+    const char ** resultPtr;
     int bufAlloced;
     int bufUsed;		/* amount of the buffer that's been used */
     int cursorPosition; 	/* cursor *in the string* on on screen */
@@ -61,7 +61,7 @@ void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {
 } ;
 
 newtComponent newtEntry(int left, int top, const char * initialValue, int width,
-			char ** resultPtr, int flags) {
+			const char ** resultPtr, int flags) {
     newtComponent co;
     struct entry * en;
 

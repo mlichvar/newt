@@ -11,7 +11,7 @@ int main(void) {
     newtComponent button;
     newtComponent form;
     newtComponent answer;
-    void ** result, **ptr;
+    const void **result, **ptr;
     int numselected, i, j;
     int * list;
     

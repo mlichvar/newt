@@ -486,6 +486,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
 newtComponent newtFormGetCurrent(newtComponent co) {
     struct form * form = co->data;
 
+    if (form->currComp == -1) return 0;
     return form->elements[form->currComp].co;
 }
 
@@ -628,7 +629,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
     er.result = ER_IGNORED;
     if (!form->numComps) return er;
 
-    subco = form->elements[form->currComp].co;
+    if (form->currComp == -1) return er;
 
     switch (ev.when) {
       case EV_EARLY:

@@ -39,7 +39,7 @@ int main(void) {
     newtComponent f, chklist, e1;
     struct callbackInfo cbis[3];
     char results[10];
-    char * enr2, * enr3, * scaleVal;
+    const char * enr2, * enr3, *scaleVal;
     void ** selectedList;
     int i, numsel;
     char buf[20];
@@ -66,7 +66,7 @@ int main(void) {
     b1 = newtButton(3, 1, "Exit");
     b2 = newtButton(18, 1, "Update");
     r1 = newtRadiobutton(20, 10, "Choice 1", 0, NULL);
-    r2 = newtRadiobutton(20, 11, "Chc 2", 1, r1);
+    r2 = newtRadiobutton(20, 11, "Choice 2", 1, r1);
     r3 = newtRadiobutton(20, 12, "Choice 3", 0, r2);
     rsf = newtForm(NULL, NULL, 0);
     newtFormAddComponents(rsf, r1, r2, r3, NULL);
