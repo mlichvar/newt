@@ -1,6 +1,5 @@
 #include <ctype.h>
 #include <slang.h>
-#include <slkanji.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>

@@ -169,7 +169,6 @@ void newtCls(void) {
     newtRefresh();
 }
 
-#if defined(THIS_DOESNT_WORK)
 void newtResizeScreen(int redraw) {
     newtPushHelpLine("");
 
@@ -186,7 +185,6 @@ void newtResizeScreen(int redraw) {
     if (redraw)
 	SLsmg_refresh();
 }
-#endif
 
 int newtInit(void) {
     char * MonoValue, * MonoEnv = "NEWT_MONO";
