@@ -84,6 +84,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->curWidth = 5;
     co->ops = &listboxOps;
     co->takesFocus = 1;
+    co->callback = NULL;
 
     return co;
 }
@@ -108,6 +109,7 @@ void newtListboxSetCurrent(newtComponent co, int num) {
     if(li->sb)
 	newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
     listboxDraw(co);
+    if(co->callback) co->callback(co, co->callbackData);
 }
 
 
@@ -394,6 +396,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
+	    if(co->callback) co->callback(co, co->callbackData);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -409,6 +412,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		    newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		listboxDraw(co);
 	    }
+	    if(co->callback) co->callback(co, co->callbackData);
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -421,10 +425,12 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    newtListboxSetCurrent(co, li->currItem + co->height - 1);
 	    er.result = ER_SWALLOWED;
 	    break;
+
 	  case NEWT_KEY_HOME:
 	    newtListboxSetCurrent(co, 0);
 	    er.result = ER_SWALLOWED;
 	    break;
+
 	  case NEWT_KEY_END:
 	    newtListboxSetCurrent(co, li->numItems - 1);
 	    er.result = ER_SWALLOWED;
