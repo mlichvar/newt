@@ -62,6 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - bytecompile the snack python module
+- move the libnewt.so symlink to the devel package
 
 * Tue Aug 22 2000 Erik Troan <ewt@redhat.com>
 - fixed cursor disappearing in suspend (again)
@@ -244,10 +245,10 @@ of keys
 /usr/bin/whiptail
 /usr/lib/python1.5/snack.py*
 /usr/lib/python1.5/lib-dynload/_snackmodule.so
-/usr/lib/libnewt.so
 
 %files devel
 %defattr (-,root,root)
 %doc tutorial.sgml
 /usr/include/newt.h
 /usr/lib/libnewt.a
+/usr/lib/libnewt.so
