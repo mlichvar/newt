@@ -159,8 +159,8 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     int kanji = 0;
 
     if (resultPtr) {
-	/* worst case is a \n after every character */
-	result = malloc((strlen(text) * 2) + 1);
+	/* XXX I think this will work */
+	result = malloc(strlen(text) + (strlen(text) / width) + 2);
 	*result = '\0';
     }
     
@@ -226,8 +226,6 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    }
 	}
     }
-
-    result = realloc(result, strlen(result) + 1);
 
     if (badness) *badness = howbad;
     if (resultPtr) *resultPtr = result;
