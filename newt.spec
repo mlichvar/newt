@@ -1,6 +1,6 @@
 Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
-%define version 0.30
+%define version 0.40
 Version: %{version}
 Release: 3
 Copyright: LGPL
@@ -51,6 +51,11 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Jan  7 1999 Matt Wilson <msw@redhat.com>
+- Added GPM mouse support
+- Moved to autoconf to allow compiling without GPM support
+- Changed revision to 0.40
+
 * Wed Oct 21 1998 Bill Nottingham <notting@redhat.com>
 - built against slang-1.2.2
 

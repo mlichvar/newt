@@ -114,7 +114,7 @@ archive:
 	@rm -rf /tmp/newt-$(VERSION) /tmp/newt
 	@cd /tmp; cvs export -r$(CVSTAG) newt; mv newt newt-$(VERSION)
 	@cd /tmp/newt-$(VERSION); autoconf
-	@cd ..; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
+	@cd /tmp; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
 	@rm -rf /tmp/newt-$(VERSION)
 	@cp /tmp/newt-$(VERSION).tar.gz .
 	@rm -f /tmp/newt-$(VERSION).tar.gz
