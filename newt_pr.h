@@ -29,7 +29,8 @@ struct newtComponent {
     void * data;
 } ;
 
-enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM };
+enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM, ER_NEXTCOMP,
+			ER_PREVCOMP };
 struct eventResult {
     enum eventResultTypes result;
 }; 
