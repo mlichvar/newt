@@ -12,7 +12,7 @@ VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
-PYTHONVERS = $(shell ls -d /usr/include/python* | sed "s|/usr/include/||g")
+PYTHONVERS = $(shell ls /usr/include/python*/Python.h | sed "s|/usr/include/||g"| sed "s|/Python.h||g")
 
 WHIPTCLSO=
 #WHIPTCLSO=whiptcl.so
