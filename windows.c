@@ -13,6 +13,7 @@ static void * newtvwindow(char * title, char * button1, char * button2,
     char * buf = NULL;
     int size = 0;
     int i = 0;
+    int scroll = 0;
     int width, height;
     char * flowedText;
     newtGrid grid, buttonGrid;
@@ -31,7 +32,11 @@ static void * newtvwindow(char * title, char * button1, char * button2,
     }
     free(buf);
 
-    t = newtTextbox(-1, -1, width, height, NEWT_TEXTBOX_WRAP);
+    if (height > 12) {
+	height = 12;
+	scroll = NEWT_FLAG_SCROLL;
+    }
+    t = newtTextbox(-1, -1, width, height, NEWT_TEXTBOX_WRAP | scroll);
     newtTextboxSetText(t, flowedText);
     free(flowedText);
 
@@ -243,7 +248,7 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
     grid = newtCreateGrid(1, 3);
     form = newtForm(NULL, 0, 0);
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, textw, 
-		     0, 0, 0, 0, 0, 0);
+		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 
 		     0, 1, 0, 0, 0, 0);
     newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttonBar, 
