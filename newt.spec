@@ -2,7 +2,7 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.1
+%define version 0.51.2
 Version: %{version}
 Release: 1
 License: LGPL
