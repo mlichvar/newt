@@ -167,7 +167,7 @@ class SnackScreen:
 
     def __init__(self):
 	_snack.init()
-	size = _snack.size()
+	(self.width, self.height) = _snack.size()
 	self.pushHelpLine(None)
 
     def finish(self):
