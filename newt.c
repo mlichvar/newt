@@ -575,5 +575,10 @@ int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {
 
 void newtBell(void)
 {
-	SLtt_beep();
+    SLtt_beep();
+}
+
+void newtGetScreenSize(int * cols, int * rows) {
+    if (rows) *rows = SLtt_Screen_Rows;
+    if (cols) *cols = SLtt_Screen_Cols;
 }

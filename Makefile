@@ -6,7 +6,7 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g -O2
 endif
 
-VERSION = 0.12
+VERSION = 0.13
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = 0.11
 

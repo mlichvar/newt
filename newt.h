@@ -122,6 +122,7 @@ newtComponent newtListitem(int left, int top, const char * text, int isDefault,
 			      newtComponent prevItem, const void * data, int flags);
 void newtListitemSet(newtComponent co, const char * text);
 void * newtListitemGetData(newtComponent co);
+void newtGetScreenSize(int * cols, int * rows);
 
 newtComponent newtLabel(int left, int top, const char * text);
 void newtLabelSetText(newtComponent co, const char * text);
