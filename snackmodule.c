@@ -200,7 +200,7 @@ static PyObject * drawRootText(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "iis", &left, &top, &text))
 	return NULL;
 
-    newtDrawRootText(left, top, NULL);
+    newtDrawRootText(left, top, text);
 
     Py_INCREF(Py_None);
     return Py_None;
