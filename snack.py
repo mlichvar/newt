@@ -145,6 +145,10 @@ class Form:
 
 	return hotkeys[which]
 
+    def draw(self):
+	self.w.draw()
+	return None
+
     def __init__(self):
 	self.trans = {}
 	self.w = _snack.form()
@@ -329,21 +333,24 @@ class GridForm(Grid):
 	self.screen.popWindow()
 	return result
 
-    def run(self):
+    def create(self):
 	if not self.form_created:
 	    self.place(1,1)
 	    for child in self.childList:
 		self.form.add(child)
 	    self.screen.gridWrappedWindow(self, self.title)
 	    self.form_created = 1
+
+    def run(self):
+	self.create()
 	return self.form.run()
+
+    def draw(self):
+	self.create()
+	return self.form.draw()
 	
     def runPopup(self):
-	if not self.form_created:
-	    self.place(1,1)
-	    for child in self.childList:
-		self.form.add(child)
-	    self.form_created = 1
+	self.create()
 	self.screen.gridWrappedWindow(self, self.title)
 	result = self.form.run()
 	self.screen.popWindow()

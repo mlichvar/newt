@@ -105,11 +105,13 @@ struct snackForm_s {
 
 static PyObject * formGetAttr(PyObject * s, char * name);
 static PyObject * formAdd(snackForm * s, PyObject * args);
+static PyObject * formDraw(snackForm * s, PyObject * args);
 static PyObject * formRun(snackForm * s, PyObject * args);
 static PyObject * formHotKey(snackForm * s, PyObject * args);
 
 static PyMethodDef formMethods[] = {
     { "add", (PyCFunction) formAdd, METH_VARARGS, NULL },
+    { "draw", (PyCFunction) formDraw, METH_VARARGS, NULL },
     { "run", (PyCFunction) formRun, METH_VARARGS, NULL },
     { "addhotkey", (PyCFunction) formHotKey, METH_VARARGS, NULL },
     { NULL }
@@ -522,6 +524,13 @@ static PyObject * gridSetField(snackGrid * grid, PyObject * args) {
 
 static PyObject * formGetAttr(PyObject * s, char * name) {
     return Py_FindMethod(formMethods, s, name);
+}
+
+static PyObject * formDraw(snackForm * s, PyObject * args) {
+    newtDrawForm(s->fo);
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject * formAdd(snackForm * s, PyObject * args) {
