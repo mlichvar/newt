@@ -32,16 +32,20 @@ struct newtComponent {
     void * data;
 } ;
 
-enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM, ER_NEXTCOMP,
-			ER_PREVCOMP };
+enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM, ER_SETFOCUS };
 struct eventResult {
     enum eventResultTypes result;
+    union {
+	newtComponent focus;
+    } u;
 }; 
 
 enum eventTypes { EV_FOCUS, EV_UNFOCUS, EV_KEYPRESS };
+enum eventSequence { EV_EARLY, EV_NORMAL, EV_LATE };
 
 struct event {
     enum eventTypes event;
+    enum eventSequence when;
     union {
 	int key;
     } u;
