@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
+
 #define NEWT_COLORSET_ROOT 		2
 #define NEWT_COLORSET_BORDER 		3
 #define NEWT_COLORSET_WINDOW		4
@@ -151,6 +153,8 @@ newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 void newtTextboxSetHeight(newtComponent co, int height);
 int newtTextboxGetNumLines(newtComponent co);
+char * newtReflowText(char * text, int width, int flexDown, int flexUp,
+		      int * actualWidth, int * actualHeight);
 
 struct newtExitStruct {
     enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT } reason;
@@ -242,6 +246,17 @@ void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
 void newtGridWrappedWindow(newtGrid grid, char * title);
+
+/* automatically centered and shrink wrapped */
+void newtWinMessage(char * title, char * buttonText, char * text, ...);
+void newtWinMessagev(char * title, char * buttonText, char * text, 
+		     va_list argv);
+
+/* Returns 0 if button 1 is pressed, 1 if button2 is pressed, 2 if F12
+   is pressed. If button2 is NULL, this behaves like newtWinMessage */
+int newtWinChoice(char * title, char * button1, char * button2, 
+		   char * text, ...);
+
 
 #ifdef __cplusplus
 } /* End of extern "C" { */
