@@ -6,7 +6,7 @@
 
 void main(void) {
     newtComponent b1, b2, r1, r2, r3, e1, e2, e3, l1, l2, l3;
-    newtComponent lb;
+    newtComponent lb, t;
     newtComponent cs[10];
     newtComponent f, chklist;
     char results[10];
@@ -59,7 +59,10 @@ void main(void) {
     newtListboxAddEntry(lb, "Ninth  ");
     newtListboxAddEntry(lb, "Tenth  ");
 
-    newtFormAddComponent(f, lb);
+    t = newtTextbox(45, 10, 17, 5, NEWT_TEXTBOX_WRAP);
+    newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
+
+    newtFormAddComponents(f, lb, t, NULL);
 
     newtRunForm(f);
  
