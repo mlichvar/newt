@@ -30,6 +30,8 @@ struct form {
     newtComponent vertBar, exitComp;
     char * help;
     int numRows;
+    int * hotKeys;
+    int numHotKeys;
 };
 
 static void gotoComponent(struct form * form, int newComp);
@@ -77,6 +79,12 @@ newtComponent newtForm(newtComponent vertBar, char * help, int flags) {
     form->fixedHeight = 0;
     form->numRows = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
+
+    form->hotKeys = malloc(sizeof(int));
+    form->numHotKeys = 0;
+    if (!(form->flags & NEWT_FORM_NOF12)) {
+	newtFormAddHotKey(co, NEWT_KEY_F12);
+    }
 
     if (vertBar)
 	form->vertBar = vertBar;
@@ -235,10 +243,6 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		er.result = ER_SWALLOWED;
 		dir = -1;
 		wrap = 1;
-	    } else if (ev.u.key == NEWT_KEY_F12 && 
-		       !(form->flags & NEWT_FORM_NOF12)) {
-		er.result = ER_EXITFORM;
-		form->exitComp = co;
 	    }
 	}
 
@@ -381,10 +385,35 @@ void newtFormDestroy(newtComponent co) {
 }
 
 newtComponent newtRunForm(newtComponent co) {
+    struct newtExitStruct es;
+
+    newtFormRun(co, &es);
+    if (es.reason == NEWT_EXIT_HOTKEY) {
+	if (es.u.key == NEWT_KEY_F12) {
+	    es.reason = NEWT_EXIT_COMPONENT;
+	    es.u.co = co;
+	} else {
+	    return NULL;
+	}
+    }
+
+    return es.u.co;
+}
+
+void newtFormAddHotKey(newtComponent co, int key) {
+    struct form * form = co->data;
+
+    form->numHotKeys++;
+    form->hotKeys = realloc(form->hotKeys, sizeof(int) * form->numHotKeys);
+    form->hotKeys[form->numHotKeys - 1] = key;
+}
+
+void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct form * form = co->data;
     struct event ev;
     struct eventResult er;
-    int key;
+    int key, i;
+    int done = 0;
 
     /* first, draw all of the components */
     newtDrawForm(co);
@@ -394,19 +423,34 @@ newtComponent newtRunForm(newtComponent co) {
     } else
 	gotoComponent(form, form->currComp);
   
-    do {
+    while (!done) {
 	newtRefresh();
 	key = newtGetKey(); 
 
-	ev.event = EV_KEYPRESS;
-	ev.u.key = key;
+	for (i = 0; i < form->numHotKeys; i++) {
+	    if (form->hotKeys[i] == key) {
+		es->reason = NEWT_EXIT_HOTKEY;
+		es->u.key = key;
+		done = 1;
+		break;
+	    }
+	}
 
-	er = sendEvent(co, ev);
-    } while (er.result != ER_EXITFORM);
+	if (!done) {
+	    ev.event = EV_KEYPRESS;
+	    ev.u.key = key;
+
+	    er = sendEvent(co, ev);
+     
+	    if (er.result == ER_EXITFORM) {
+		done = 1;
+		es->reason = NEWT_EXIT_COMPONENT;
+		es->u.co = form->exitComp;
+	    } 
+	}
+    } 
 
     newtRefresh();
-
-    return form->exitComp;
 }
 
 static struct eventResult sendEvent(newtComponent co, struct event ev) {
@@ -444,3 +488,9 @@ static void gotoComponent(struct form * form, int newComp) {
 	sendEvent(form->elements[form->currComp].co, ev);
     }
 }
+
+void newtComponentAddCallback(newtComponent co, newtCallback f, void * data) {
+    co->callback = f;
+    co->callbackData = data;
+}
+
