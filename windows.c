@@ -31,18 +31,14 @@ static int newtvwindow(char * title, char * button1, char * button2,
     }
     free(buf);
 
-    b1 = newtButton(-1, -1, button1);
     t = newtTextbox(-1, -1, width, height, NEWT_TEXTBOX_WRAP);
     newtTextboxSetText(t, flowedText);
     free(flowedText);
 
     if (button2) {
-	b2 = newtButton(-1, -1, button2);
-	buttonGrid = newtCreateGrid(2, 1);
-	newtGridSetField(buttonGrid, 1, 0, NEWT_GRID_COMPONENT, b2, 
-			 1, 0, 0, 0, 0, 0);
+	buttonGrid = newtButtonBar(button1, &b1, button2, &b2, NULL);
     } else {
-	buttonGrid = newtCreateGrid(1, 1);
+	buttonGrid = newtButtonBar(button1, &b1, NULL);
     }
 
     newtGridSetField(buttonGrid, 0, 0, NEWT_GRID_COMPONENT, b1, 
