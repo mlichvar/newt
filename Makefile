@@ -1,4 +1,4 @@
-LIBS = -L. -lnewt -lslang -lm #-lefence
+LIBS = -lslang -lm #-lefence
 
 CFLAGS = $(RPM_OPT_FLAGS) -Wall
 ifeq ($(RPM_OPT_FLAGS),)
@@ -8,8 +8,9 @@ endif
 VERSION = 0.8
 SONAME = 0
 
-PROGS = test
-OBJS = test.o
+PROGS = test whiptail
+TESTOBJS = test.o 
+NDIALOGOBJS = whiptail.o popt.o
 LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
@@ -21,10 +22,11 @@ SHCFLAGS = -fPIC
 prefix = /usr
 includedir = $(prefix)/include
 libdir = $(prefix)/lib
+bindir = $(prefix)/bin
 
 #--------------------------------------
 
-SOURCES = $(subst .o,.c,$(OBJS) $(LIBOBJS)) 
+SOURCES = $(subst .o,.c,$(TESTOBJS) $(NDIALOGOBJS) $(LIBOBJS)) 
 
 SHAREDDIR = shared
 SHAREDOBJS = $(patsubst %,$(SHAREDDIR)/%, $(LIBOBJS))
@@ -37,8 +39,11 @@ endif
 
 all:	$(TARGET)
 
-test:	$(OBJS) $(LIBNEWT)
-	gcc -g -o test $(OBJS) $(LIBS)
+test:	$(TESTOBJS) $(LIBNEWT)
+	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS)
+
+whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
+	gcc -g -o whiptail $(NDIALOGOBJS) $(LIBNEWTSH) $(LIBS)
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
@@ -58,9 +63,9 @@ depend:
 shareddir:
 	mkdir -p shared
 
-shared: shareddir $(LIBNEWTSH)
+shared: $(LIBNEWTSH)
 
-$(LIBNEWTSH): $(SHAREDOBJS)
+$(LIBNEWTSH): shareddir $(SHAREDOBJS)
 	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS)
 
 $(SHAREDDIR)/%.o : %.c
@@ -75,6 +80,7 @@ install: $(LIBNEWT)
 	[ -d $(includedir) ] || install -m 755 -d $(includedir)
 	install -m 644 newt.h $(includedir)
 	install -m 644 $(LIBNEWT) $(libdir)
+	install -s -m 755 whiptail $(bindir)
 
 install-sh: shared
 	install -m 755 $(LIBNEWTSH) $(libdir)
