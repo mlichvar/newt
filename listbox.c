@@ -63,8 +63,11 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
 
     if (height) {
 	li->grow = 0;
-	sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
-				   COLORSET_ACTLISTBOX);
+	if (flags & NEWT_FLAG_NOSCROLL)
+	    sb = NULL;
+	else
+	    sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
+				       COLORSET_ACTLISTBOX);
     } else {
 	li->grow = 1;
 	sb = NULL;
