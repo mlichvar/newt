@@ -2,9 +2,8 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.51.6
-Version: %{version}
-Release: 2
+Version: 0.51.7
+Release: 1
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -83,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Fri Dec  5 2003 Jeremy Katz <katzj@redhat.com> 0.51.7-1
+- rebuild against new slang
+
 * Mon Nov 17 2003 Nalin Dahyabhai <nalin@redhat.com>
 - fix newtCheckboxGetValue not working if checkbox created with non-NULL result
 
