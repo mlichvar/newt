@@ -1,4 +1,4 @@
-#include <newt.h>
+#include "newt.h"
 #include <stdarg.h>
 
 newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...) {
