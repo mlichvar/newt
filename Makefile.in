@@ -75,7 +75,8 @@ whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
 	gcc -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
 
-$(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
+$(LIBNEWT): $(LIBOBJS)
+	ar rv $@ $^
 
 newt.o: newt.c Makefile
 	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -c -o $@ $<
