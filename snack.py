@@ -441,9 +441,9 @@ def ListboxChoiceWindow(screen, title, text, items,
 	    text = item
 	    key = count
 
-	if (count == default):
+	if (default == count):
 	    default = key
-	elif (count == item):
+	elif (default == item):
 	    default = key
 
 	l.append(text, key)
