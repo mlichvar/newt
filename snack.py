@@ -56,6 +56,13 @@ class Listbox(Widget):
 	del self.key2item[self.item2key[item]]
 	del self.item2key[item]
 
+    def replace(self, item):
+	key = self.w.listboxInsertItem(text, self.item2key[item])
+	self.w.listboxDeleteItem(self.item2key[item])
+	del self.key2item[self.item2key[item]]
+	self.item2key[item] = key
+	self.key2item[key] = item
+
     def current(self):
 	return self.key2item[self.w.listboxGetCurrent()]
 
