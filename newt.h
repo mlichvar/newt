@@ -169,6 +169,7 @@ struct newtExitStruct {
 } ;
 
 newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
+void newtFormSetSize(newtComponent co);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetBackground(newtComponent co, int color);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
@@ -245,6 +246,9 @@ enum newtGridElement { NEWT_GRID_EMPTY = 0,
 		       NEWT_GRID_COMPONENT, NEWT_GRID_SUBGRID };
 
 newtGrid newtCreateGrid(int cols, int rows);
+/* TYPE, what, TYPE, what, ..., NULL */
+newtGrid newtGridVStacked(enum newtGridElement type, void * what, ...);
+newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...);
 void newtGridSetField(newtGrid grid, int col, int row, 
 		      enum newtGridElement type, void * val, int padLeft,
 		      int padTop, int padRight, int padBottom, int anchor,
@@ -253,10 +257,12 @@ void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
 void newtGridWrappedWindow(newtGrid grid, char * title);
+void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top);
 void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
 				 int recurse);
 
 /* convienve */
+newtGrid newtButtonBarv(char * button1, newtComponent * b1comp, va_list args);
 newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...);
 
 /* automatically centered and shrink wrapped */
@@ -264,15 +270,21 @@ void newtWinMessage(char * title, char * buttonText, char * text, ...);
 void newtWinMessagev(char * title, char * buttonText, char * text, 
 		     va_list argv);
 
-/* Returns 0 if button 1 is pressed, 1 if button2 is pressed, 2 if F12
-   is pressed. If button2 is NULL, this behaves like newtWinMessage */
+/* having separate calls for these two seems silly, but having two separate
+   variable length-arg lists seems like a bad idea as well */
+
+/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2 */
 int newtWinChoice(char * title, char * button1, char * button2, 
 		   char * text, ...);
-
 /* Returns 0 if F12 was pressed, 1 for button1, 2 for button2, 
    3 for button3 */
 int newtWinTernary(char * title, char * button1, char * button2, 
 		   char * button3, char * message, ...);
+
+/* Returns the button number pressed, 0 on F12 */
+int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown, 
+		int flexUp, int maxListHeight, char ** items, int * listItem,
+		char * button1, ...);
 
 
 #ifdef __cplusplus
