@@ -22,7 +22,7 @@ void disableCallback(newtComponent co, void * data) {
     newtRefresh();
 }
 
-void suspend(void) {
+void suspend(void * d) {
     newtSuspend();
     raise(SIGTSTP);
     newtResume();
@@ -43,7 +43,7 @@ int main(void) {
     newtInit();
     newtCls();
 
-    newtSetSuspendCallback(suspend);
+    newtSetSuspendCallback(suspend, NULL);
 
     newtDrawRootText(0, 0, "Newt test program");
     newtPushHelpLine(NULL);

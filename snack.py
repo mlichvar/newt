@@ -100,6 +100,14 @@ class Label(Widget):
     def __init__(self, text):
 	self.w = _snack.label(text)
 
+class Scale(Widget):
+
+    def set(self, amount):
+	self.w.scaleSet(amount)
+
+    def __init__(self, width, total):
+	self.w = _snack.scale(width, total)
+
 class Entry(Widget):
 
     def value(self):
@@ -201,6 +209,9 @@ class SnackScreen:
 
     def finish(self):
 	return _snack.finish()
+
+    def suspendCallback(self, cb, data):
+	return _snack.suspendcallback(cb, data)
 
     def openWindow(self, left, top, width, height, title):
 	return _snack.openwindow(left, top, width, height, title)
@@ -437,4 +448,3 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
 	count = count + 1
 
     return (bb.buttonPressed(result), tuple(entryValues))
-   

@@ -116,9 +116,11 @@ static const char * version = "Newt windowing library version " VERSION
 			"Written by Erik Troan\n";
 
 static newtSuspendCallback suspendCallback = NULL;
+static void * suspendCallbackData = NULL;
 
-void newtSetSuspendCallback(newtSuspendCallback cb) {
+void newtSetSuspendCallback(newtSuspendCallback cb, void * data) {
     suspendCallback = cb;
+    suspendCallbackData = data;
 }
 
 static void handleSigwinch(int signum) {
@@ -280,7 +282,7 @@ int newtGetKey(void) {
 	}
 
 	if (key == NEWT_KEY_SUSPEND && suspendCallback)
-	    suspendCallback();
+	    suspendCallback(suspendCallbackData);
     } while (key == NEWT_KEY_SUSPEND);
 
     switch (key) {

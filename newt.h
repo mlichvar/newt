@@ -91,7 +91,7 @@ typedef struct newtComponent_struct * newtComponent;
 extern const struct newtColors newtDefaultColorPalette;
 
 typedef void (*newtCallback)(newtComponent, void *);
-typedef void (*newtSuspendCallback)(void);
+typedef void (*newtSuspendCallback)(void * data);
 
 int newtInit(void);
 int newtFinished(void);
@@ -108,7 +108,7 @@ void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);
-void newtSetSuspendCallback(newtSuspendCallback cb);
+void newtSetSuspendCallback(newtSuspendCallback cb, void * data);
 void newtResume(void);
 void newtPushHelpLine(const char * text);
 void newtRedrawHelpLine(void);

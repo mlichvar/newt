@@ -11,6 +11,10 @@ typedef struct snackWidget_s snackWidget;
 typedef struct snackGrid_s snackGrid;
 typedef struct snackForm_s snackForm;
 
+struct suspendCallbackStruct {
+    PyObject * cb, * data;
+};
+
 static void emptyDestructor(PyObject * s);
 
 static snackWidget * buttonWidget(PyObject * s, PyObject * args);
@@ -33,7 +37,10 @@ static PyObject * popWindow(PyObject * s, PyObject * args);
 static PyObject * pushHelpLine(PyObject * s, PyObject * args);
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args);
 static PyObject * refreshScreen(PyObject * s, PyObject * args);
+static PyObject * scaleWidget(PyObject * s, PyObject * args);
+static PyObject * scaleSet(snackWidget * s, PyObject * args);
 static PyObject * screenSize(PyObject * s, PyObject * args);
+static PyObject * setSuspendCallback(PyObject * s, PyObject * args);
 static PyObject * reflowText(PyObject * s, PyObject * args);
 static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
@@ -60,7 +67,9 @@ static PyMethodDef snackModuleMethods[] = {
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
     { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
     { "refresh", refreshScreen, METH_VARARGS, NULL },
+    { "scale", scaleWidget, METH_VARARGS, NULL },
     { "size", screenSize, METH_VARARGS, NULL },
+    { "suspendcallback", setSuspendCallback, METH_VARARGS, NULL },
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
     { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
     { NULL }
@@ -161,6 +170,7 @@ static PyMethodDef widgetMethods[] = {
     { "listboxGetCurrent", (PyCFunction) widgetListboxGet, METH_VARARGS, NULL },
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
+    { "scaleSet", (PyCFunction) scaleSet, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -205,6 +215,29 @@ static PyObject * refreshScreen(PyObject * s, PyObject * args) {
     return Py_None;
 }
 
+static PyObject * scaleWidget(PyObject * s, PyObject * args) {
+    snackWidget * widget;
+    int width, fullAmount;
+
+    if (!PyArg_ParseTuple(args, "ii", &width, &fullAmount)) return NULL;
+
+    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget->co = newtScale(-1, -1, width, fullAmount);
+
+    return (PyObject *) widget;
+}
+
+static PyObject * scaleSet(snackWidget * s, PyObject * args) {
+    int amount;
+
+    if (!PyArg_ParseTuple(args, "i", &amount)) return NULL;
+
+    newtScaleSet(s->co, amount);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject * screenSize(PyObject * s, PyObject * args) {
     int width, height;
 
@@ -214,6 +247,30 @@ static PyObject * screenSize(PyObject * s, PyObject * args) {
     newtGetScreenSize(&width, &height);
 
     return Py_BuildValue("(ii)", width, height);
+}
+
+static void suspendCallback(void * data) {
+    struct suspendCallbackStruct * scs = data;
+    PyObject * args, * result;
+
+    args = Py_BuildValue("(OO)", scs->data);
+    result = PyEval_CallObject(scs->cb, args);
+    Py_DECREF(args);
+    Py_DECREF(result);
+
+    return ;
+}
+
+static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
+    static struct suspendCallbackStruct scs;
+
+    if (!PyArg_ParseTuple(args, "OO", &scs.cb, &scs.data))
+	return NULL;
+
+    newtSetSuspendCallback(suspendCallback, &scs);
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject * drawRootText(PyObject * s, PyObject * args) {
