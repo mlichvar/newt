@@ -5,7 +5,7 @@ Version: %{version}
 Release: 1
 License: LGPL
 Group: System Environment/Libraries
-Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
+Source: newt-%{version}.tar.gz
 BuildRequires: python,python-devel,perl, slang-devel
 Requires: slang
 Provides: snack
