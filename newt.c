@@ -36,7 +36,7 @@ static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
 ;
 
-struct newtColors newtDefaultColorPalette = {
+const struct newtColors newtDefaultColorPalette = {
 	"white", "blue", 			/* root fg, bg */     
 	"black", "lightgray",			/* border fg, bg */
 	"black", "lightgray",			/* window fg, bg */
@@ -62,7 +62,7 @@ struct newtColors newtDefaultColorPalette = {
 	"black", "brown"			/* selected listbox */
 };
 
-static struct keymap keymap[] = {
+static const struct keymap keymap[] = {
 	{ "\033OA", 		NEWT_KEY_UP, 		"kh" },
 	{ "\033[A", 		NEWT_KEY_UP, 		"ku" },
 	{ "\033OB", 		NEWT_KEY_DOWN, 		"kd" },
@@ -262,7 +262,7 @@ void newtSetColors(struct newtColors colors) {
 int newtGetKey(void) {
     int key;
     char buf[10], * chptr = buf;
-    struct keymap * curr;
+    const struct keymap * curr;
 
     do {
 	key = SLang_getkey();

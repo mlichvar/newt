@@ -82,7 +82,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 
 typedef struct newtComponent_struct * newtComponent;
 
-extern struct newtColors newtDefaultColorPalette;
+extern const struct newtColors newtDefaultColorPalette;
 
 typedef void (*newtCallback)(newtComponent, void *);
 typedef void (*newtSuspendCallback)(void);
