@@ -4,11 +4,29 @@
 
 #include "newt.h"
 
+struct callbackInfo {
+    newtComponent en;
+    char * state;
+};
+
+void disableCallback(newtComponent co, void * data) {
+    struct callbackInfo * cbi = data;
+
+    if (*cbi->state == ' ') {
+	newtEntrySetFlags(cbi->en, NEWT_ENTRY_DISABLED, NEWT_FLAGS_RESET);
+    } else {
+	newtEntrySetFlags(cbi->en, NEWT_ENTRY_DISABLED, NEWT_FLAGS_SET);
+    }
+
+    newtRefresh();
+}
+
 void main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
     newtComponent lb, t, rsf, answer;
     newtComponent cs[10];
     newtComponent f, chklist, e1;
+    struct callbackInfo cbis[3];
     char results[10];
     char * enr2, * enr3, * scaleVal;
     int i;
@@ -47,6 +65,10 @@ void main(void) {
     e1 = newtEntry(12, 6, "", 20, &scaleVal, 0);
     e2 = newtEntry(12, 7, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
     e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
+
+    cbis[0].state = &results[0];
+    cbis[0].en = e1;
+    newtComponentAddCallback(cs[0], disableCallback, &cbis[0]);
 
     scale = newtScale(3, 14, 32, 100);
 
