@@ -160,6 +160,8 @@ static void formDraw(newtComponent co) {
     struct element * el;
     int i;
 
+    SLsmg_set_color(COLORSET_WINDOW);
+    newtClearBox(co->left, co->top, co->width, co->height);
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
 	/* the scrollbar *always* fits */
 	if (el->co == form->vertBar)
