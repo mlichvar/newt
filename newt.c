@@ -632,7 +632,7 @@ void newtRedrawHelpLine(void) {
     buf[SLtt_Screen_Cols] = '\0';
 
     if (currentHelpline) {
-	int len = strlen(*currentHelpline);
+	int len = wstrlen(*currentHelpline, -1);
 	if (SLtt_Screen_Cols < len)
 	    len = SLtt_Screen_Cols;
 	memcpy(buf, *currentHelpline, len);
