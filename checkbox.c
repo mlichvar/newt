@@ -4,6 +4,7 @@
 
 #include "newt.h"
 #include "newt_pr.h"
+#include "eawidth.h"
 
 enum type { CHECK, RADIO };
 
@@ -117,10 +118,11 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 
     co->callback = NULL;
     co->height = 1;
-    co->width = strlen(text) + 4;
+    co->width = get_east_asia_str_width (NULL, text, 0) + 4;
     co->top = top;
     co->left = left;
     co->takesFocus = 1;
+	co->isLabel = 0;
 
     return co;
 }

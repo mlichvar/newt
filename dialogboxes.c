@@ -9,6 +9,7 @@
 #include "dialogboxes.h"
 #include "newt.h"
 #include "popt.h"
+#include "eawidth.h"
 
 /* globals -- ick */
 static int buttonHeight = 1;
@@ -170,6 +171,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     int maxTagWidth = 0;
     int maxTextWidth = 0;
     int scrollFlag;
+	int w;
     struct {
 	const char * text;
 	const char * tag;
@@ -193,10 +195,10 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	} else
 	    itemInfo[numItems].text = "";
 
-	if (strlen(itemInfo[numItems].text) > (unsigned int)maxTextWidth)
-	    maxTextWidth = strlen(itemInfo[numItems].text);
-	if (strlen(itemInfo[numItems].tag) > (unsigned int)maxTagWidth)
-	    maxTagWidth = strlen(itemInfo[numItems].tag);
+	if ((w = get_east_asia_str_width (NULL, itemInfo[numItems].text, 0)) > (unsigned int)maxTextWidth)
+	    maxTextWidth = w;
+	if ((w = get_east_asia_str_width (NULL, itemInfo[numItems].tag, 0)) > (unsigned int)maxTagWidth)
+	    maxTagWidth = w;
 
 	numItems++;
     }
@@ -254,6 +256,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     char buf[80], format[20];
     int maxWidth = 0;
     int top;
+	int w;
     struct {
 	const char * text;
 	const char * tag;
@@ -287,8 +290,8 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	else
 	    cbStates[numBoxes] = ' ';
 
-	if (strlen(cbInfo[numBoxes].tag) > (unsigned int)maxWidth)
-	    maxWidth = strlen(cbInfo[numBoxes].tag);
+	if ((w = get_east_asia_str_width (NULL, cbInfo[numBoxes].tag, 0)) > (unsigned int)maxWidth)
+	    maxWidth = w;
 
 	numBoxes++;
     }

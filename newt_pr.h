@@ -33,6 +33,7 @@ struct newtComponent_struct {
     int top, left;
     int takesFocus;
     int isMapped;
+	int isLabel;
 
     struct componentOps * ops;
 

@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+#include <locale.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -189,6 +190,9 @@ void newtResizeScreen(int redraw) {
 
 int newtInit(void) {
     char * MonoValue, * MonoEnv = "NEWT_MONO";
+
+	/* initialize locale */
+	setlocale (LC_ALL, "");
 
     /* use the version variable just to be sure it gets included */
     strlen(version);

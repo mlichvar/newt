@@ -71,6 +71,7 @@ static void * newtvwindow(char * title, char * button1, char * button2,
  
     newtFormDestroy(f);
     newtPopWindow();
+    newtResizeScreen(1);
 
     if (answer == f)
 	return NULL;
@@ -89,6 +90,7 @@ int newtWinChoice(char * title, char * button1, char * button2,
 
     va_start(args, message);
     rc = newtvwindow(title, button1, button2, NULL, message, args);
+    newtResizeScreen(1);
     va_end(args);
 
     if (rc == button1)
@@ -110,6 +112,7 @@ void newtWinMessage(char * title, char * buttonText, char * text, ...) {
 void newtWinMessagev(char * title, char * buttonText, char * text, 
 		     va_list argv) {
     newtvwindow(title, buttonText, NULL, NULL, text, argv);
+    newtResizeScreen(1);
 }
 
 int newtWinTernary(char * title, char * button1, char * button2, 
@@ -119,6 +122,7 @@ int newtWinTernary(char * title, char * button1, char * button2,
 
     va_start(args, message);
     rc = newtvwindow(title, button1, button2, button3, message, args);
+    newtResizeScreen(1);
     va_end(args);
 
     if (rc == button1)
@@ -167,6 +171,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 	buttonName = va_arg(args, char *);
     }
 
+    newtResizeScreen(1);
     va_end(button1);
 
     buttonBar = newtCreateGrid(numButtons, 1);
@@ -196,6 +201,8 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
     newtFormDestroy(form);
     newtPopWindow();
 
+    newtResizeScreen(1);
+   
     return rc;
 }
 
@@ -271,5 +278,6 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
     newtFormDestroy(form);
     newtPopWindow();
 
+    newtResizeScreen(1);
     return rc;
 }

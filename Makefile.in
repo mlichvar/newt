@@ -12,8 +12,9 @@ VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
-PROGS = test whiptail whiptcl.so testgrid testtree
+PROGS = test test-j whiptail whiptcl.so testgrid testgrid-j testtree testtree-j
 TESTOBJS = test.o
+TESTJOBJS = test-j.o
 NDIALOGOBJS = whiptail.o dialogboxes.o
 WHIPTCLOBJS = whiptcl.o dialogboxes.o
 LIBNEWT = libnewt.a
@@ -21,7 +22,7 @@ LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
           scrollbar.o textbox.o scale.o grid.o windows.o buttonbar.o \
-	  checkboxtree.o
+	  checkboxtree.o eawidth.o
 
 SHCFLAGS = -fPIC
 
@@ -35,7 +36,7 @@ pythonbindir = $(prefix)/lib/python1.5/lib-dynload
 
 #--------------------------------------
 
-SOURCES = $(subst .o,.c,$(TESTOBJS) $(NDIALOGOBJS) $(LIBOBJS))
+SOURCES = $(subst .o,.c,$(TESTOBJS) $(TESTJOBJS) $(NDIALOGOBJS) $(LIBOBJS))
 
 SHAREDDIR = shared
 SHAREDOBJS = $(patsubst %,$(SHAREDDIR)/%, $(LIBOBJS))
@@ -51,11 +52,20 @@ all:	$(TARGET) _snackmodule.so
 test:	$(TESTOBJS) $(LIBNEWT)
 	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
 
+test-j: $(TESTJOBJS) $(LIBNEWT)
+	gcc -g -o test-j $(TESTJOBJS) $(LIBNEWT) $(LIBS) -static
+
 testgrid:	testgrid.o $(LIBNEWT)
 	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
+testgrid-j:	testgrid-j.o $(LIBNEWT)
+	gcc -g -o testgrid-j testgrid-j.o $(LIBNEWT) $(LIBS)
+
 testtree:	testtree.o $(LIBNEWT)
 	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
+
+testtree-j:	testtree-j.o $(LIBNEWT)
+	gcc -g -o testtree-j testtree-j.o $(LIBNEWT) $(LIBS)
 
 _snackmodule.so:   snackmodule.o $(LIBNEWTSH)
 	gcc --shared $(SHCFLAGS) -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)

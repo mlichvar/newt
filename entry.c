@@ -5,6 +5,7 @@
 
 #include "newt.h"
 #include "newt_pr.h"
+#include "eawidth.h"
 
 struct entry {
     int flags;
@@ -58,6 +59,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 			char ** resultPtr, int flags) {
     newtComponent co;
     struct entry * en;
+	int w;
 
     co = malloc(sizeof(*co));
     en = malloc(sizeof(struct entry));
@@ -69,6 +71,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     co->width = width;
     co->isMapped = 0;
     co->callback = NULL;
+	co->isLabel = 0;
 
     co->ops = &entryOps;
 
@@ -84,8 +87,8 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     else
 	co->takesFocus = 0;
 
-    if (initialValue && strlen(initialValue) > (unsigned int)width) {
-	en->bufAlloced = strlen(initialValue) + 1;
+    if (initialValue && (w = get_east_asia_str_width (NULL, initialValue, 0)) > (unsigned int)width) {
+	en->bufAlloced = w + 1;
     }
     en->buf = malloc(en->bufAlloced);
     en->resultPtr = resultPtr;

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/select.h>
 #include <sys/time.h>
+#include <string.h>
 
 #ifdef USE_GPM
 #include <ctype.h>
@@ -23,6 +24,12 @@
 
 #include "newt.h"
 #include "newt_pr.h"
+#include "eawidth.h"
+
+struct label {
+	char *text;
+	int length;
+};
 
 #ifdef USE_GPM
 /*....................................... The connection data structure */
@@ -442,6 +449,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     co->top = -1;
     co->left = -1;
     co->isMapped = 0;
+	co->isLabel = 0;
 
     co->takesFocus = 0;			/* we may have 0 components */
     co->ops = &formOps;
@@ -528,6 +536,8 @@ void newtFormSetWidth(newtComponent co, int width) {
 
 void newtFormAddComponent(newtComponent co, newtComponent newco) {
     struct form * form = co->data;
+	int i, j, k, l, xmap, ymap, x, y;
+	char *map, *s = NULL;
 
     co->takesFocus = 1;
 
@@ -546,6 +556,76 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 	form->currComp = form->numComps;
 
     form->numComps++;
+
+	/* check multibyte char broken */
+	/* create text map */
+	xmap = 0;
+	ymap = 0;
+	for ( i = 0; i < form->numComps; i++ ) {
+		if ((form->elements[i].co->top + form->elements[i].co->height) > ymap )
+			ymap = form->elements[i].co->top + form->elements[i].co->height;
+		if ((form->elements[i].co->left + form->elements[i].co->width) > xmap )
+			xmap = form->elements[i].co->left + form->elements[i].co->width;
+	}
+	map = (char *)calloc ((xmap+1) * (ymap+1), sizeof (char));
+
+#define MAP(x,y) *(map + ((x)*ymap + (y)))
+
+	/* create non-label components map */
+	for ( i = 0; i < form->numComps; i++ ) {
+		if ( form->elements[i].co->isLabel == 0 && form->elements[i].co->left >= 0 && form->elements[i].co->top >= 0 ) {
+			for ( x = 0; x < form->elements[i].co->width; x++ ) {
+				for ( y = 0; y < form->elements[i].co->height; y++ )
+					MAP (form->elements[i].co->left+x, form->elements[i].co->top+y) = 1;
+			}
+		}
+	}
+
+	/* check label overlap */
+	for ( i = 0; i < form->numComps; i++ ) {
+		if ( form->elements[i].co->isLabel != 0 ) {
+			y = form->elements[i].co->top;
+			l = form->elements[i].co->left;
+			if ( y >= 0 && l >= 0 ) {
+				for ( j = 0; j < form->elements[i].co->width; j++ ) {
+					if ( MAP (j+l, y) != 0 ) {
+						if ( MAP (j+l, y) != 1 ) {
+							/* if label is here, move label */
+							while ( MAP (form->elements[i].co->left, y) != 0 )
+								form->elements[i].co->left++;
+						} else {
+							/* if label is overlapping, cut label */
+							if ((j+l) == form->elements[i].co->left ) {
+								free (((struct label *)form->elements[i].co->data)->text);
+								((struct label *)form->elements[i].co->data)->text = malloc (1);
+								((struct label *)form->elements[i].co->data)->text[0] = 0;
+								((struct label *)form->elements[i].co->data)->length = 0;
+								form->elements[i].co->width = 0;
+							} else {
+								x = 0;
+								while (x < j) {
+									s = &((struct label *)form->elements[i].co->data)->text[x];
+									k = east_asia_mblen (NULL, s, strlen (s), 0);
+									if ( k <= 0 ) break;
+									else {
+										if ((x+k) < j ) x += k;
+										else break;
+									}
+								}
+								s = ((struct label *)form->elements[i].co->data)->text;
+								((struct label *)form->elements[i].co->data)->text = realloc(s, x+1);
+								((struct label *)form->elements[i].co->data)->text[x] = 0;
+								((struct label *)form->elements[i].co->data)->length = strlen (s);
+								form->elements[i].co->width = get_east_asia_str_width (NULL, s, 0);
+							}
+						}
+					} else
+						MAP (j+l, y) = 2;
+				}
+			}
+		}
+	}
+	free (map);
 }
 
 void newtFormAddComponents(newtComponent co, ...) {
@@ -802,6 +882,7 @@ void newtFormDestroy(newtComponent co) {
     free(form->elements);
     free(form);
     free(co);
+    newtResizeScreen(1);
 }
 
 newtComponent newtRunForm(newtComponent co) {
