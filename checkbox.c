@@ -159,47 +159,50 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
     struct eventResult er;
     char * cur;
 
-    switch (ev.event) {
-      case EV_FOCUS:
-	if (cb->type == LISTITEM)
-	    makeActive(co);
-	else 
-	    cbDrawIt(co, 1);
-	
-	er.result = ER_SWALLOWED;
-	break;
-
-      case EV_UNFOCUS:
-	cbDrawIt(co, 0);
-	er.result = ER_SWALLOWED;
-	break;
-
-      case EV_KEYPRESS:
-	if (ev.u.key == ' ' || ev.u.key == '\r') {
-	    if (cb->type == RADIO) {
+    if (ev.when == EV_NORMAL) {
+	switch (ev.event) {
+	  case EV_FOCUS:
+	    if (cb->type == LISTITEM)
 		makeActive(co);
-	    } else if (cb->type == CHECK) {
-		cur = strchr(cb->seq, *cb->result);
-		if (!cur)
-		    *cb->result = *cb->seq;
-		else {
-		    cur++;
-		    if (! *cur) 
-			*cb->result = *cb->seq;
-		    else
-			*cb->result = *cur;
-		}
+	    else 
 		cbDrawIt(co, 1);
-		er.result = ER_SWALLOWED;
+	    
+	    er.result = ER_SWALLOWED;
+	    break;
+
+	  case EV_UNFOCUS:
+	    cbDrawIt(co, 0);
+	    er.result = ER_SWALLOWED;
+	    break;
+
+	  case EV_KEYPRESS:
+	    if (ev.u.key == ' ' || ev.u.key == '\r') {
+		if (cb->type == RADIO) {
+		    makeActive(co);
+		} else if (cb->type == CHECK) {
+		    cur = strchr(cb->seq, *cb->result);
+		    if (!cur)
+			*cb->result = *cb->seq;
+		    else {
+			cur++;
+			if (! *cur) 
+			    *cb->result = *cb->seq;
+			else
+			    *cb->result = *cur;
+		    }
+		    cbDrawIt(co, 1);
+		    er.result = ER_SWALLOWED;
+		} else {
+		    er.result = ER_IGNORED;
+		}
 	    } else {
 		er.result = ER_IGNORED;
 	    }
-	} else {
-	    er.result = ER_IGNORED;
 	}
-    }
+    } else 
+	er.result = ER_IGNORED;
 
-   return er;
+    return er;
 }
 
 static void makeActive(newtComponent co) {

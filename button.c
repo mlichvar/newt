@@ -96,32 +96,35 @@ static struct eventResult buttonEvent(struct newtComponent * co,
 				      struct event ev) {
     struct eventResult er;
 
-    switch (ev.event) {
-      case EV_FOCUS:
-	buttonDrawIt(co, 1, 0);
-	er.result = ER_SWALLOWED;
-	break;
-
-      case EV_UNFOCUS:
-	buttonDrawIt(co, 0, 0);
-	er.result = ER_SWALLOWED;
-	break;
-
-      case EV_KEYPRESS:
-	if (ev.u.key == ' ' || ev.u.key == '\r') {
-	    /* look pushed */
-	    buttonDrawIt(co, 1, 1);
-	    newtRefresh();
-	    newtDelay(300000);
+    if (ev.when == EV_NORMAL) {
+	switch (ev.event) {
+	  case EV_FOCUS:
 	    buttonDrawIt(co, 1, 0);
-	    newtRefresh();
-	    newtDelay(300000);
+	    er.result = ER_SWALLOWED;
+	    break;
 
-	    er.result = ER_EXITFORM;
-	} else 
-	    er.result = ER_IGNORED;
-	break;
-    }
+	  case EV_UNFOCUS:
+	    buttonDrawIt(co, 0, 0);
+	    er.result = ER_SWALLOWED;
+	    break;
 
-   return er;
+	  case EV_KEYPRESS:
+	    if (ev.u.key == ' ' || ev.u.key == '\r') {
+		/* look pushed */
+		buttonDrawIt(co, 1, 1);
+		newtRefresh();
+		newtDelay(300000);
+		buttonDrawIt(co, 1, 0);
+		newtRefresh();
+		newtDelay(300000);
+
+		er.result = ER_EXITFORM;
+	    } else 
+		er.result = ER_IGNORED;
+	    break;
+	}
+    } else 
+	er.result = ER_IGNORED;
+
+    return er;
 }

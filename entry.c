@@ -126,23 +126,27 @@ static struct eventResult entryEvent(struct newtComponent * co,
     struct entry * en = co->data;
     struct eventResult er;
 
-    switch (ev.event) {
-      case EV_FOCUS:
-	/*SLtt_set_cursor_visibility(0);*/
-	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
-	er.result = ER_SWALLOWED;
-	break;
+    if (ev.when == EV_NORMAL) {
+	switch (ev.event) {
+	  case EV_FOCUS:
+	    /*SLtt_set_cursor_visibility(0);*/
+	    newtGotorc(co->top, co->left + 
+			        (en->cursorPosition - en->firstChar));
+	    er.result = ER_SWALLOWED;
+	    break;
 
-      case EV_UNFOCUS:
-	/*SLtt_set_cursor_visibility(1);*/
-	newtGotorc(0, 0);
-	er.result = ER_SWALLOWED;
-	break;
+	  case EV_UNFOCUS:
+	    /*SLtt_set_cursor_visibility(1);*/
+	    newtGotorc(0, 0);
+	    er.result = ER_SWALLOWED;
+	    break;
 
-      case EV_KEYPRESS:
-	er = entryHandleKey(co, ev.u.key);
-	break;
-    }
+	  case EV_KEYPRESS:
+	    er = entryHandleKey(co, ev.u.key);
+	    break;
+	}
+    } else
+	er.result = ER_IGNORED;
 
     return er;
 }
@@ -249,7 +253,7 @@ static struct eventResult entryHandleKey(struct newtComponent * co, int key) {
 	} else {
 	    er.result = ER_IGNORED;
 	}
-    }
+    } 
 
     entryDraw(co);
 
