@@ -28,6 +28,10 @@ struct Window * currentWindow = NULL;
 char * helplineStack[20];
 char ** currentHelpline = NULL;
 
+static char * defaultHelpLine = 
+"  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
+;
+
 struct newtColors newtDefaultColorPalette = {
 	"white", "blue", 			/* root fg, bg */     
 	"black", "lightgray",			/* border fg, bg */
@@ -98,8 +102,6 @@ static char * version = "Newt windowing library version " VERSION
 		        "GNU Public Library. "
 			"written by Erik Troan\n";
 
-static void newtDrawHelpline(void);
-
 void newtRefresh(void) {
     SLsmg_refresh();
 }
@@ -114,6 +116,7 @@ void newtCls(void) {
 
 int newtInit(void) {
     struct winsize ws;
+    char * MonoValue, * MonoEnv = "NEWT_MONO";
 
     /* use the version variable just to be sure it gets included */
     strlen(version);
@@ -125,7 +128,12 @@ int newtInit(void) {
 	SLtt_Screen_Cols = ws.ws_col;
     }
 
-    SLtt_Use_Ansi_Colors = 1;
+    MonoValue = getenv(MonoEnv);
+    if ( MonoValue == NULL ) {
+	SLtt_Use_Ansi_Colors = 1;
+    } else {
+	SLtt_Use_Ansi_Colors = 0;
+    }
 
     SLsmg_init_smg();
     SLang_init_tty(0, 0, 0);
@@ -411,7 +419,7 @@ struct eventResult newtDefaultEventHandler(struct newtComponent * c,
     return er;
 }
 
-static void newtDrawHelpline(void) {
+void newtRedrawHelpLine(void) {
     char * buf;
 
     SLsmg_set_color(NEWT_COLORSET_HELPLINE);
@@ -428,6 +436,9 @@ static void newtDrawHelpline(void) {
 }
 
 void newtPushHelpLine(char * text) {
+    if (!text)
+	text = defaultHelpLine;
+    
     if (currentHelpline)
 	(*(++currentHelpline)) = strdup(text);
     else {
@@ -435,7 +446,7 @@ void newtPushHelpLine(char * text) {
 	*currentHelpline = strdup(text);
     }
 
-    newtDrawHelpline();
+    newtRedrawHelpLine();
 }
 
 void newtPopHelpLine(void) {
@@ -447,11 +458,19 @@ void newtPopHelpLine(void) {
     else
 	currentHelpline--;
 
-    newtDrawHelpline();
+    newtRedrawHelpLine();
 }
 
 void newtDrawRootText(int row, int col, char * text) {
     SLsmg_set_color(NEWT_COLORSET_ROOTTEXT);
+
+    if (col < 0) {
+	col = SLtt_Screen_Cols + col;
+    }
+
+    if (row < 0) {
+	col = SLtt_Screen_Cols + col;
+    }
    
     SLsmg_gotorc(row, col);
     SLsmg_write_string(text);
