@@ -372,10 +372,14 @@ int messageBox(char * text, int height, int width, int type, int flags) {
 
     newtFormAddComponent(form, tb);
 
-    if (type == MSGBOX_MSG) {
+    switch ( type ) {
+    case MSGBOX_INFO:
+	break;
+    case MSGBOX_MSG:
 	yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, "Ok");
 	newtFormAddComponent(form, yes);
-    } else {
+	break;
+    default:
 	yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, "Yes");
 	no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
 			"No");
@@ -385,11 +389,20 @@ int messageBox(char * text, int height, int width, int type, int flags) {
 	    newtFormSetCurrent(form, no);
     }
 
-    newtRunForm(form);
-    answer = newtFormGetCurrent(form);
+    if ( type != MSGBOX_INFO ) {
+	newtRunForm(form);
 
-    if (answer == no)
-	return DLG_CANCEL;
+	answer = newtFormGetCurrent(form);
+
+	if (answer == no)
+	    return DLG_CANCEL;
+    }
+    else {
+	newtDrawForm(form);
+	newtRefresh();
+    }
+	
+
 
     return DLG_OKAY;
 }

@@ -10,8 +10,8 @@
 #include "dialogboxes.h"
 #include "newt.h"
 
-enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
-	    MODE_RADIOLIST, MODE_MENU, MODE_GAUGE };
+enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
+		MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE };
 
 #define OPT_MSGBOX 		1000
 #define OPT_CHECKLIST 		1001
@@ -21,6 +21,7 @@ enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
 #define OPT_MENU	 	1005
 #define OPT_RADIOLIST	 	1006
 #define OPT_GAUGE	 	1007
+#define OPT_INFOBOX	 	1008
 
 static void usage(void) {
     fprintf(stderr, "whiptail: bad parametrs (see man dialog(1) for details)\n");
@@ -60,6 +61,7 @@ int main(int argc, char ** argv) {
 	    { "fb", '\0', 0, 0, OPT_FULLBUTTONS },
 	    { "fullbuttons", '\0', 0, 0, OPT_FULLBUTTONS },
 	    { "gauge", '\0', 0, 0, OPT_GAUGE },
+	    { "infobox", '\0', 0, 0, OPT_INFOBOX },
 	    { "menu", '\0', 0, 0, OPT_MENU },
 	    { "msgbox", '\0', 0, 0, OPT_MSGBOX },
 	    { "nocancel", '\0', 0, &noCancel, 0 },
@@ -78,6 +80,11 @@ int main(int argc, char ** argv) {
 	optArg = poptGetOptArg(optCon);
 
 	switch (arg) {
+	  case OPT_INFOBOX:
+	    if (mode != MODE_NONE) usage();
+	    mode = MODE_INFOBOX;
+	    break;
+
 	  case OPT_MENU:
 	    if (mode != MODE_NONE) usage();
 	    mode = MODE_MENU;
@@ -161,6 +168,10 @@ int main(int argc, char ** argv) {
     switch (mode) {
       case MODE_MSGBOX:
 	rc = messageBox(text, height, width, MSGBOX_MSG, flags);
+	break;
+
+      case MODE_INFOBOX:
+	rc = messageBox(text, height, width, MSGBOX_INFO, flags);
 	break;
 
       case MODE_YESNO:

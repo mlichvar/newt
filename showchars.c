@@ -1,4 +1,4 @@
-#include <slang/slang.h>
+#include <slang.h>
 
 void printall(int offset) {
     int n = 0;

@@ -1,9 +1,9 @@
 LIBS = -lslang -lm #-lefence
 SHLIBS = -lslang -lm -lc
 
-CFLAGS = $(RPM_OPT_FLAGS) -Wall
+CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang
 ifeq ($(RPM_OPT_FLAGS),)
-CFLAGS += -g -O2
+CFLAGS += -g # -O2 -I/usr/include/slang
 endif
 
 VERSION = 0.21

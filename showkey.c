@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <slang/slang.h>
+#include <slang.h>
 
 int main(void) {
     char n = 0;

@@ -3,7 +3,7 @@
    and contributed to newt for use under the LGPL license.
    Copyright (C) 1996, 1997 Elliot Lee */
 
-#include <slang/slang.h>
+#include <slang.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

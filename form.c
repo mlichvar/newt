@@ -1,4 +1,4 @@
-#include <slang/slang.h>
+#include <slang.h>
 #include <stdarg.h>
 #include <stdlib.h>
 

@@ -5,6 +5,7 @@
 
 #define MSGBOX_MSG 0 
 #define MSGBOX_YESNO 1
+#define MSGBOX_INFO 2
 
 #define FLAG_NOITEM 		(1 << 0)
 #define FLAG_NOCANCEL 		(1 << 1)
