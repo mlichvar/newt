@@ -3,9 +3,9 @@ SHLIBS = -lslang -lm -lc
 
 GPM_SUPPORT=@gpm_support@
 
-CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang
+CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang -D_GNU_SOURCE
 ifeq ($(RPM_OPT_FLAGS),)
-CFLAGS += -g # -O2 -I/usr/include/slang
+CFLAGS += -g 
 endif
 
 VERSION = @VERSION@
