@@ -39,6 +39,22 @@ int newtTextboxGetNumLines(newtComponent co) {
     return (tb->numLines);
 }
 
+newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
+				  int flexDown, int flexUp, int flags) {
+    newtComponent co;
+    char * reflowedText;
+    int actWidth, actHeight;
+
+    reflowedText = newtReflowText(text, width, flexDown, flexUp,
+				  &actWidth, &actHeight);
+    
+    co = newtTextbox(-1, -1, actWidth, actHeight, NEWT_TEXTBOX_WRAP);
+    newtTextboxSetText(co, reflowedText);
+    free(reflowedText);
+
+    return co;
+}
+
 newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     newtComponent co;
     struct textbox * tb;
