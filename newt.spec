@@ -6,7 +6,7 @@ Release: 4
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python,python,perl
+BuildRequires: python,python-devel,perl
 Requires: slang
 Provides: snack
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{root}
