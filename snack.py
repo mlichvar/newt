@@ -329,7 +329,7 @@ class RadioBar(Grid):
 	Grid.__init__(self, 1, len(buttonlist))
 	for (title, value, default) in buttonlist:
 	    b = self.group.add(title, value, default)
-	    self.list.append(b, value)
+	    self.list.append((b, value))
 	    self.setField(b, 0, self.item, anchorLeft = 1)
 	    self.item = self.item + 1
 
@@ -357,7 +357,7 @@ class ButtonBar(Grid):
 		self.hotkeys[hotkey] = value
 
 	    b = Button(title)
-	    self.list.append(b, value)
+	    self.list.append((b, value))
 	    self.setField(b, self.item, 0, (1, 0, 1, 0))
 	    self.item = self.item + 1
 
