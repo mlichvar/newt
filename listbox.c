@@ -10,7 +10,6 @@ struct listbox {
     int numItems;
     int allocedItems;
     int flags;
-    int curr;
     newtComponent sb;
 };
 
@@ -33,7 +32,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
 
     li->allocedItems = 5;
     li->numItems = 0; 
-    li->flags = 0;
+    li->flags = flags;
     li->items = malloc(li->allocedItems * sizeof(*li->items));
 
     if (height) 
@@ -60,7 +59,34 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     return co;
 }
 
-void newtListboxAddEntry(newtComponent co, char * text) {
+void * newtListboxGetCurrent(newtComponent co) {
+    struct listbox * li = co->data;
+    newtComponent curr;
+    int i;
+
+    /* Having to do this linearly is really, really dumb */
+
+    curr = newtFormGetCurrent(li->form);
+    for (i = 0; i < li->numItems; i++) {
+	if (li->items[i] == curr) break;
+    }
+ 
+    if (li->items[i] == curr) 
+        return newtListitemGetData(li->items[i]);
+    else
+	return NULL;
+}
+
+void newtListboxSetEntry(newtComponent co, int num, char * text) {
+    struct listbox * li = co->data;
+
+    /* this won't increase the size of the listbox! */
+
+    newtListitemSet(li->items[num], text);
+    co->ops->draw(co);
+}
+
+void newtListboxAddEntry(newtComponent co, char * text, void * data) {
     struct listbox * li = co->data;
 
     if (li->numItems == li->allocedItems) {
@@ -72,11 +98,12 @@ void newtListboxAddEntry(newtComponent co, char * text) {
 	li->items[li->numItems] = newtListitem(co->left, 
 					       li->numItems + co->top, 
 					       text, 0,
-					       li->items[li->numItems - 1]);
+					       li->items[li->numItems - 1],
+					       data);
     else
 	li->items[li->numItems] = newtListitem(co->left, 
 					       li->numItems + co->top, 
-					       text, 0, NULL);
+					       text, 0, NULL, data);
 
     newtFormAddComponent(li->form, li->items[li->numItems]);
     li->numItems++;
@@ -96,6 +123,13 @@ static void listboxDraw(newtComponent co) {
 
 static struct eventResult listboxEvent(newtComponent co, struct event ev) {
     struct listbox * li = co->data;
+    struct eventResult er;
+
+    if ((li->flags & NEWT_LISTBOX_RETURNEXIT) && ev.when == EV_NORMAL && 
+	ev.event == EV_KEYPRESS && ev.u.key == '\r') {
+	er.result = ER_EXITFORM;
+	return er;
+    }
 
     return li->form->ops->event(li->form, ev);
 }
