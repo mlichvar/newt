@@ -25,8 +25,10 @@ struct form {
     int numComps;
     int currComp;
     int fixedHeight;
+    int flags;
     int vertOffset;
-    newtComponent vertBar;
+    newtComponent vertBar, exitComp;
+    char * help;
     int numRows;
 };
 
@@ -51,7 +53,7 @@ static inline int componentFits(newtComponent co, int compNum) {
     return 1;
 }
 
-newtComponent newtForm(newtComponent vertScrollbar) {
+newtComponent newtForm(newtComponent vertBar, char * help, int flags) {
     newtComponent co;
     struct form * form;
 
@@ -66,6 +68,8 @@ newtComponent newtForm(newtComponent vertScrollbar) {
     co->takesFocus = 1;
     co->ops = &formOps;
 
+    form->help = help;
+    form->flags = flags;
     form->numCompsAlloced = 5;
     form->numComps = 0;
     form->currComp = -1;
@@ -74,8 +78,8 @@ newtComponent newtForm(newtComponent vertScrollbar) {
     form->numRows = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
-    if (vertScrollbar)
-	form->vertBar = vertScrollbar;
+    if (vertBar)
+	form->vertBar = vertBar;
     else
 	form->vertBar = NULL; 
 
@@ -231,6 +235,10 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		er.result = ER_SWALLOWED;
 		dir = -1;
 		wrap = 1;
+	    } else if (ev.u.key == NEWT_KEY_F12 && 
+		       !(form->flags & NEWT_FORM_NOF12)) {
+		er.result = ER_EXITFORM;
+		form->exitComp = co;
 	    }
 	}
 
@@ -254,6 +262,10 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	    dir = 1;
 	    break;
 
+	  case ER_EXITFORM:
+	    form->exitComp = subco;
+	    break;
+
 	  default:
 	    break;
 	}
@@ -273,7 +285,6 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
 	      case NEWT_KEY_DOWN:
 	      case NEWT_KEY_RIGHT:
-	      case NEWT_KEY_ENTER:
 		er.result = ER_SWALLOWED;
 		dir = 1;
 		break;
@@ -395,8 +406,7 @@ newtComponent newtRunForm(newtComponent co) {
 
     newtRefresh();
 
-    return form->elements[form->currComp].co;
-
+    return form->exitComp;
 }
 
 static struct eventResult sendEvent(newtComponent co, struct event ev) {
