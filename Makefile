@@ -6,8 +6,12 @@ VERSION = 0.1
 PROGS = test
 OBJS = test.o
 LIBNEWT = libnewt.a
+LIBNEWTSH = libnewt.so.0.1
+LIBNEWTSONAME = libnewt.so.0
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
           scrollbar.o textbox.o
+
+SHCFLAGS = -fPIC
 
 prefix = /usr
 includedir = $(prefix)/include
@@ -16,6 +20,9 @@ libdir = $(prefix)/lib
 #--------------------------------------
 
 SOURCES = $(subst .o,.c,$(OBJS) $(LIBOBJS)) 
+
+SHAREDDIR = shared
+SHAREDOBJS = $(patsubst %,$(SHAREDDIR)/%, $(LIBOBJS))
 
 ifeq (.depend,$(wildcard .depend))
 TARGET=$(PROGS)
@@ -42,11 +49,31 @@ clean:
 depend:
 	$(CPP) $(CFLAGS) -M $(SOURCES) > .depend
 
-install:
+shareddir:
+	mkdir -p shared
+
+shared: shareddir $(LIBNEWTSH)
+
+$(LIBNEWTSH): $(SHAREDOBJS)
+	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS)
+
+$(SHAREDDIR)/%.o : %.c
+	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<
+
+$(SHAREDDIR)/newt.o: newt.c Makefile
+	$(CC) $(SHCFLAGS) $(CFLAGS) -DVERSION=\"$(VERSION)\" -c -o $@ $<
+
+
+install: $(LIBNEWT)
 	install -m 755 -o 0 -g 0 -d $(libdir)
 	install -m 755 -o 0 -g 0 -d $(includedir)
 	install -m 644 -o 0 -g 0 newt.h $(includedir)
 	install -m 644 -o 0 -g 0 $(LIBNEWT) $(libdir)
+
+install-sh: shared
+	install -m 755 -o 0 -g 0 $(LIBNEWTSH) $(libdir)
+	ln -s $(LIBNEWTSH) $(libdir)/libnewt.so
+	/sbin/ldconfig
 
 archive: 
 	@rm -rf /tmp/newt-$(VERSION)
