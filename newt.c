@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <slang.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +9,10 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 
 #include "newt.h"
 #include "newt_pr.h"
