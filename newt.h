@@ -139,6 +139,7 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
 void newtListboxClear(newtComponent co); /* removes all entries from listbox */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
+/* Returns an array of data pointers from items, last element is NULL */
 void **newtListboxGetSelection(newtComponent co, int *numitems);
 void newtListboxClearSelection(newtComponent co);
 void newtListboxSelectItem(newtComponent co, int item,
