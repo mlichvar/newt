@@ -2,7 +2,7 @@ Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
 %define version 0.40
 Version: %{version}
-Release: 3
+Release: 4
 Copyright: LGPL
 Group: Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Mon Feb  8 1999 Matt Wilson <msw@redhat.com>
+- made grid wrapped windows at least the size of their title bars
+
 * Fri Feb  5 1999 Matt Wilson <msw@redhat.com>
 - Function to set checkbox flags.  This will go away later when I have
   a generic flag setting function and signals to comps to go insensitive.
