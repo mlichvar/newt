@@ -265,9 +265,9 @@ void newtSetColors(struct newtColors colors) {
     SLtt_set_color(NEWT_COLORSET_ROOTTEXT, "", colors.rootTextFg,
 			colors.rootTextBg);
 
-    SLtt_set_color(NEWT_COLORSET_EMPTYSCALE, "", "black",
+    SLtt_set_color(NEWT_COLORSET_EMPTYSCALE, "", "white",
 			colors.emptyScale);
-    SLtt_set_color(NEWT_COLORSET_FULLSCALE, "", "black",
+    SLtt_set_color(NEWT_COLORSET_FULLSCALE, "", "white",
 			colors.fullScale);
     SLtt_set_color(NEWT_COLORSET_DISENTRY, "", colors.disabledEntryFg,
 			colors.disabledEntryBg);

@@ -8,6 +8,7 @@
 struct scale {
     long long fullValue;
     int charsSet;
+    unsigned int percentage;
 };
 
 static void scaleDraw(newtComponent co);
@@ -38,18 +39,23 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
 
     sc->fullValue = fullValue;
     sc->charsSet = 0;
+    sc->percentage = 0;
 
     return co;
 }
 
 void newtScaleSet(newtComponent co, unsigned long long amount) {
     struct scale * sc = co->data;
-    int newCharsSet;
+    int newPercentage;
 
-    newCharsSet = (amount * co->width) / sc->fullValue;
+    sc->charsSet = (amount * co->width) / sc->fullValue;
+    newPercentage = (amount * 100) / sc->fullValue;
+
+    if (newPercentage > 100)
+	newPercentage = 100;
     
-    if (newCharsSet != sc->charsSet) {
-	sc->charsSet = newCharsSet;
+    if (newPercentage != sc->percentage) {
+	sc->percentage = newPercentage;
 	scaleDraw(co);
     }
 }
@@ -57,16 +63,23 @@ void newtScaleSet(newtComponent co, unsigned long long amount) {
 static void scaleDraw(newtComponent co) {
     struct scale * sc = co->data;
     int i;
-
+    int xlabel = (co->width-4) /2;
+    char percent[10];
+    
     if (co->top == -1) return;
 
     newtGotorc(co->top, co->left);
 
-    SLsmg_set_color(NEWT_COLORSET_FULLSCALE);
-    for (i = 0; i < sc->charsSet; i++)
-	SLsmg_write_string(" ");
+    sprintf(percent, "%3d%%", sc->percentage);
 
-    SLsmg_set_color(NEWT_COLORSET_EMPTYSCALE);
-    for (i = 0; i < (co->width - sc->charsSet); i++)
-	SLsmg_write_string(" ");
+    SLsmg_set_color(NEWT_COLORSET_FULLSCALE);
+    
+    for (i = 0; i < co->width; i++) {
+        if (i == sc->charsSet)
+            SLsmg_set_color(NEWT_COLORSET_EMPTYSCALE);
+        if (i >= xlabel && i < xlabel+4)
+            SLsmg_write_char(percent[i-xlabel]);
+        else
+            SLsmg_write_char(' ');
+    }
 }
