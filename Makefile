@@ -1,4 +1,5 @@
-LIBS = -lslang -lm -lc #-lefence
+LIBS = -lslang -lm -lefence
+SHLIBS = -lslang -lm -lc
 
 CFLAGS = $(RPM_OPT_FLAGS) -Wall
 ifeq ($(RPM_OPT_FLAGS),)
@@ -16,7 +17,7 @@ LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
-          scrollbar.o textbox.o scale.o grid.o
+          scrollbar.o textbox.o scale.o grid.o windows.o
 
 SHCFLAGS = -fPIC
 
@@ -73,7 +74,7 @@ $(SHAREDDIR):
 sharedlib: $(LIBNEWTSH)
 
 $(LIBNEWTSH): $(SHAREDDIR) $(SHAREDOBJS)
-	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(LIBS)
+	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
 
 $(SHAREDDIR)/%.o : %.c
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<
