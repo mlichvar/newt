@@ -621,15 +621,17 @@ static PyObject * widgetTextboxText(snackWidget * s, PyObject * args) {
 static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
     int height;
-    int doScroll = 0, returnExit = 0 ;
+    int doScroll = 0, returnExit = 0, showCursor = 0 ;
 
-    if (!PyArg_ParseTuple(args, "i|ii", &height, &doScroll, &returnExit))
+    if (!PyArg_ParseTuple(args, "i|iii", &height, &doScroll, &returnExit, &showCursor))
 	return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtListbox(-1, -1, height,
-				(doScroll ? NEWT_FLAG_SCROLL : 0) |
-				(returnExit ? NEWT_FLAG_RETURNEXIT : 0));
+			     (doScroll ? NEWT_FLAG_SCROLL : 0) |
+			     (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
+			     (showCursor ? NEWT_FLAG_SHOWCURSOR : 0)
+			     );
     widget->anint = 1;
     
     return widget;

@@ -98,7 +98,7 @@ int main(void) {
     newtFormAddComponents(f, rsf, scale, NULL);
 
     lb = newtListbox(45, 1, 6, NEWT_FLAG_MULTIPLE | NEWT_FLAG_BORDER |
-				NEWT_FLAG_SCROLL);
+				NEWT_FLAG_SCROLL | NEWT_FLAG_SHOWCURSOR);
     newtListboxAppendEntry(lb, "First", (void *) 1);
     newtListboxAppendEntry(lb, "Second", (void *) 2);
     newtListboxAppendEntry(lb, "Third", (void *) 3);

@@ -100,7 +100,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->bdxAdjust = 0;
     li->bdyAdjust = 0;
     li->flags = flags & (NEWT_FLAG_RETURNEXIT | NEWT_FLAG_BORDER |
-			 NEWT_FLAG_MULTIPLE);
+			 NEWT_FLAG_MULTIPLE | NEWT_FLAG_SHOWCURSOR);
 
     if (li->flags & NEWT_FLAG_BORDER) {
 	li->bdxAdjust = 2;
@@ -524,7 +524,7 @@ static void listboxDraw(newtComponent co)
 	SLsmg_write_nstring(item->text, li->curWidth);
 
     }
-    newtGotorc(co->top + (li->currItem - li->startShowItem), co->left);
+    newtGotorc(co->top + (li->currItem - li->startShowItem) + 1, co->left + 1);
 }
 
 static struct eventResult listboxEvent(newtComponent co, struct event ev) {
@@ -668,12 +668,16 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
       case EV_FOCUS:
 	li->isActive = 1;
 	listboxDraw(co);
+	if(li->flags & NEWT_FLAG_SHOWCURSOR)
+	  newtCursorOn();
 	er.result = ER_SWALLOWED;
 	break;
 
       case EV_UNFOCUS:
 	li->isActive = 0;
 	listboxDraw(co);
+	if(li->flags & NEWT_FLAG_SHOWCURSOR)
+	  newtCursorOff();
 	er.result = ER_SWALLOWED;
 	break;
 

@@ -104,8 +104,8 @@ class Listbox(Widget):
         self.item2key = {}        
         self.w.listboxClear()
 
-    def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
-	self.w = _snack.listbox(height, scroll, returnExit)
+    def __init__(self, height, scroll = 0, returnExit = 0, width = 0, showCursor = 0):
+	self.w = _snack.listbox(height, scroll, returnExit, showCursor)
 	self.key2item = {}
 	self.item2key = {}
 	if (width):
