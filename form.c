@@ -1115,10 +1115,17 @@ void newtFormSetBackground(newtComponent co, int color) {
 
 void newtFormWatchFd(newtComponent co, int fd, int fdFlags) {
     struct form * form = co->data;
+    int i;
 
-    form->fds = realloc(form->fds, (form->numFds + 1) * sizeof(*form->fds));
-    form->fds[form->numFds].fd = fd;
-    form->fds[form->numFds++].flags = fdFlags;
+    for (i = 0; i < form->numFds; i++)
+      if (form->fds[i].fd == fd)
+	break;
+
+    if(i >= form->numFds)
+      form->fds = realloc(form->fds, (++form->numFds) * sizeof(*form->fds));
+
+    form->fds[i].fd = fd;
+    form->fds[i].flags = fdFlags;
     if (form->maxFd < fd) form->maxFd = fd;
 }
 
