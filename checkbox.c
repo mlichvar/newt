@@ -208,7 +208,7 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
 	    break;
 
 	  case EV_KEYPRESS:
-	    if (ev.u.key == ' ' || ev.u.key == '\r') {
+	    if (ev.u.key == ' ') {
 		if (cb->type == RADIO) {
 		    makeActive(co);
 		} else if (cb->type == CHECK) {
