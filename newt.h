@@ -34,38 +34,38 @@ extern "C" {
 #define NEWT_ARG_LAST                   -100000
 #define NEWT_ARG_APPEND                 -1
 
-struct newtColors {
-    char * rootFg, * rootBg;
-    char * borderFg, * borderBg;
-    char * windowFg, * windowBg;
-    char * shadowFg, * shadowBg;
-    char * titleFg, * titleBg;
-    char * buttonFg, * buttonBg;
-    char * actButtonFg, * actButtonBg;
-    char * checkboxFg, * checkboxBg;
-    char * actCheckboxFg, * actCheckboxBg;
-    char * entryFg, * entryBg;
-    char * labelFg, * labelBg;
-    char * listboxFg, * listboxBg;
-    char * actListboxFg, * actListboxBg;
-    char * textboxFg, * textboxBg;
-    char * actTextboxFg, * actTextboxBg;
-    char * helpLineFg, * helpLineBg;
-    char * rootTextFg, * rootTextBg;
-    char * emptyScale, * fullScale;
-    char * disabledEntryFg, * disabledEntryBg;
-    char * compactButtonFg, * compactButtonBg;
-    char * actSelListboxFg, * actSelListboxBg;
-    char * selListboxFg, * selListboxBg;
-};
+	struct newtColors {
+		char * rootFg, * rootBg;
+		char * borderFg, * borderBg;
+		char * windowFg, * windowBg;
+		char * shadowFg, * shadowBg;
+		char * titleFg, * titleBg;
+		char * buttonFg, * buttonBg;
+		char * actButtonFg, * actButtonBg;
+		char * checkboxFg, * checkboxBg;
+		char * actCheckboxFg, * actCheckboxBg;
+		char * entryFg, * entryBg;
+		char * labelFg, * labelBg;
+		char * listboxFg, * listboxBg;
+		char * actListboxFg, * actListboxBg;
+		char * textboxFg, * textboxBg;
+		char * actTextboxFg, * actTextboxBg;
+		char * helpLineFg, * helpLineBg;
+		char * rootTextFg, * rootTextBg;
+		char * emptyScale, * fullScale;
+		char * disabledEntryFg, * disabledEntryBg;
+		char * compactButtonFg, * compactButtonBg;
+		char * actSelListboxFg, * actSelListboxBg;
+		char * selListboxFg, * selListboxBg;
+	};
 
-enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
+	enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 
 #define NEWT_FLAG_RETURNEXIT    (1 << 0)
 #define NEWT_FLAG_HIDDEN        (1 << 1)
 #define NEWT_FLAG_SCROLL        (1 << 2)
 #define NEWT_FLAG_DISABLED      (1 << 3)
-/* OBSOLETE #define NEWT_FLAG_NOSCROLL  (1 << 4)        for listboxes */
+	/* OBSOLETE #define NEWT_FLAG_NOSCROLL  (1 << 4)        for listboxes */
 #define NEWT_FLAG_BORDER        (1 << 5)
 #define NEWT_FLAG_WRAP          (1 << 6)
 #define NEWT_FLAG_NOF12         (1 << 7)
@@ -86,7 +86,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define NEWT_CHECKBOXTREE_UNSELECTED    ' '
 #define NEWT_CHECKBOXTREE_SELECTED      '*'
 
-/* Backwards compatibility */
+	/* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
 #define NEWT_ENTRY_SCROLL       NEWT_FLAG_SCROLL
 #define NEWT_ENTRY_HIDDEN       NEWT_FLAG_HIDDEN
@@ -100,164 +100,177 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define newtListboxAddEntry     newtListboxAppendEntry
 
 
-typedef struct newtComponent_struct * newtComponent;
+	/**
+	   @brief An opaque component pointer
+	   
+	   The newtComponent type is used as an opaque pointer to arbitrary
+	   "component" (or widget) of the user interface. This component is
+	   polymorphic on operations defined in struct componentOps (draw, event,
+	   destroy, place and mapped). All others are monomorphic and defined
+	   via newt<Component>* functions (eg. newtTextboxSetText and alike).
 
-extern const struct newtColors newtDefaultColorPalette;
+	   Usually, newtComponent instances are created using constructors
+	   (like newtTextbox). The individual component implementations are
+	   documented in more detail in their constructors.
+	*/
+	typedef struct newtComponent_struct * newtComponent;
 
-typedef void (*newtCallback)(newtComponent, void *);
-typedef void (*newtSuspendCallback)(void * data);
+	extern const struct newtColors newtDefaultColorPalette;
 
-int newtInit(void);
-int newtFinished(void);
-void newtCls(void);
-void newtResizeScreen(int redraw);
-void newtWaitForKey(void);
-void newtClearKeyBuffer(void);
-void newtDelay(unsigned int usecs);
-/* top, left are *not* counting the border */
-int newtOpenWindow(unsigned int left,unsigned int top, 
-                   unsigned int width,unsigned  int height, 
-                  const char * title);
-int newtCenteredWindow(unsigned int width,unsigned int height, const char * title);
-void newtPopWindow(void);
-void newtSetColors(struct newtColors colors);
-void newtRefresh(void);
-void newtSuspend(void);
-void newtSetSuspendCallback(newtSuspendCallback cb, void * data);
-void newtSetHelpCallback(newtCallback cb);
-int  newtResume(void);
-void newtPushHelpLine(const char * text);
-void newtRedrawHelpLine(void);
-void newtPopHelpLine(void);
-void newtDrawRootText(int col, int row, const char * text);
-void newtBell(void);
-void newtCursorOff(void);
-void newtCursorOn(void);
+	typedef void (*newtCallback)(newtComponent, void *);
+	typedef void (*newtSuspendCallback)(void * data);
 
-/* Components */
+	int newtInit(void);
+	int newtFinished(void);
+	void newtCls(void);
+	void newtResizeScreen(int redraw);
+	void newtWaitForKey(void);
+	void newtClearKeyBuffer(void);
+	void newtDelay(unsigned int usecs);
+	/* top, left are *not* counting the border */
+	int newtOpenWindow(unsigned int left,unsigned int top, 
+					   unsigned int width,unsigned  int height, 
+					   const char * title);
+	int newtCenteredWindow(unsigned int width,unsigned int height, const char * title);
+	void newtPopWindow(void);
+	void newtSetColors(struct newtColors colors);
+	void newtRefresh(void);
+	void newtSuspend(void);
+	void newtSetSuspendCallback(newtSuspendCallback cb, void * data);
+	void newtSetHelpCallback(newtCallback cb);
+	int  newtResume(void);
+	void newtPushHelpLine(const char * text);
+	void newtRedrawHelpLine(void);
+	void newtPopHelpLine(void);
+	void newtDrawRootText(int col, int row, const char * text);
+	void newtBell(void);
+	void newtCursorOff(void);
+	void newtCursorOn(void);
 
-newtComponent newtCompactButton(int left, int top, const char * text);
-newtComponent newtButton(int left, int top, const char * text);
-newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
-                           const char * seq, char * result);
-char newtCheckboxGetValue(newtComponent co);
-void newtCheckboxSetValue(newtComponent co, char value);
-void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
+	/* Components */
+
+	newtComponent newtCompactButton(int left, int top, const char * text);
+	newtComponent newtButton(int left, int top, const char * text);
+	newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
+							   const char * seq, char * result);
+	char newtCheckboxGetValue(newtComponent co);
+	void newtCheckboxSetValue(newtComponent co, char value);
+	void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
     
-newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
-                              newtComponent prevButton);
-newtComponent newtRadioGetCurrent(newtComponent setMember);
-newtComponent newtListitem(int left, int top, const char * text, int isDefault,
-                              newtComponent prevItem, const void * data, int flags);
-void newtListitemSet(newtComponent co, const char * text);
-void * newtListitemGetData(newtComponent co);
-void newtGetScreenSize(int * cols, int * rows);
+	newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
+								  newtComponent prevButton);
+	newtComponent newtRadioGetCurrent(newtComponent setMember);
+	newtComponent newtListitem(int left, int top, const char * text, int isDefault,
+							   newtComponent prevItem, const void * data, int flags);
+	void newtListitemSet(newtComponent co, const char * text);
+	void * newtListitemGetData(newtComponent co);
+	void newtGetScreenSize(int * cols, int * rows);
 
-newtComponent newtLabel(int left, int top, const char * text);
-void newtLabelSetText(newtComponent co, const char * text);
-newtComponent newtVerticalScrollbar(int left, int top, int height,
-                                    int normalColorset, int thumbColorset);
-void newtScrollbarSet(newtComponent co, int where, int total);
+	newtComponent newtLabel(int left, int top, const char * text);
+	void newtLabelSetText(newtComponent co, const char * text);
+	newtComponent newtVerticalScrollbar(int left, int top, int height,
+										int normalColorset, int thumbColorset);
+	void newtScrollbarSet(newtComponent co, int where, int total);
 
-newtComponent newtListbox(int left, int top, int height, int flags);
-void * newtListboxGetCurrent(newtComponent co);
-void newtListboxSetCurrent(newtComponent co, int num);
-void newtListboxSetCurrentByKey(newtComponent co, void * key);
-void newtListboxSetEntry(newtComponent co, int num, const char * text);
-void newtListboxSetWidth(newtComponent co, int width);
-void newtListboxSetData(newtComponent co, int num, void * data);
-int newtListboxAppendEntry(newtComponent co, const char * text, 
-                           const void * data);
-/* Send the key to insert after, or NULL to insert at the top */
-int newtListboxInsertEntry(newtComponent co, const char * text, const void * data, void * key);
-int newtListboxDeleteEntry(newtComponent co, void * data);
-void newtListboxClear(newtComponent co); /* removes all entries from listbox */
-void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
-/* Returns an array of data pointers from items, last element is NULL */
-void **newtListboxGetSelection(newtComponent co, int *numitems);
-void newtListboxClearSelection(newtComponent co);
-void newtListboxSelectItem(newtComponent co, const void * key,
-        enum newtFlagsSense sense);
-/* Returns number of items currently in listbox. */
-int newtListboxItemCount(newtComponent co);
+	newtComponent newtListbox(int left, int top, int height, int flags);
+	void * newtListboxGetCurrent(newtComponent co);
+	void newtListboxSetCurrent(newtComponent co, int num);
+	void newtListboxSetCurrentByKey(newtComponent co, void * key);
+	void newtListboxSetEntry(newtComponent co, int num, const char * text);
+	void newtListboxSetWidth(newtComponent co, int width);
+	void newtListboxSetData(newtComponent co, int num, void * data);
+	int newtListboxAppendEntry(newtComponent co, const char * text, 
+							   const void * data);
+	/* Send the key to insert after, or NULL to insert at the top */
+	int newtListboxInsertEntry(newtComponent co, const char * text, const void * data, void * key);
+	int newtListboxDeleteEntry(newtComponent co, void * data);
+	void newtListboxClear(newtComponent co); /* removes all entries from listbox */
+	void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
+	/* Returns an array of data pointers from items, last element is NULL */
+	void **newtListboxGetSelection(newtComponent co, int *numitems);
+	void newtListboxClearSelection(newtComponent co);
+	void newtListboxSelectItem(newtComponent co, const void * key,
+							   enum newtFlagsSense sense);
+	/* Returns number of items currently in listbox. */
+	int newtListboxItemCount(newtComponent co);
 
-newtComponent newtCheckboxTree(int left, int top, int height, int flags);
-newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags);
-const void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
-const void * newtCheckboxTreeGetCurrent(newtComponent co);
-void newtCheckboxTreeSetCurrent(newtComponent co, void * item);
-const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum);
-/* last item is NEWT_ARG_LAST for all of these */
-int newtCheckboxTreeAddItem(newtComponent co, 
-                            const char * text, const void * data,
-                            int flags, int index, ...);
-int newtCheckboxTreeAddArray(newtComponent co, 
-                             const char * text, const void * data,
-                             int flags, int * indexes);
-int * newtCheckboxTreeFindItem(newtComponent co, void * data);
-void newtCheckboxTreeSetEntry(newtComponent co, const void * data,
-                              const char * text);
-void newtCheckboxTreeSetWidth(newtComponent co, int width);
-char newtCheckboxTreeGetEntryValue(newtComponent co, const void * data);
-void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data,
-                                   char value);
+	newtComponent newtCheckboxTree(int left, int top, int height, int flags);
+	newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags);
+	const void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
+	const void * newtCheckboxTreeGetCurrent(newtComponent co);
+	void newtCheckboxTreeSetCurrent(newtComponent co, void * item);
+	const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum);
+	/* last item is NEWT_ARG_LAST for all of these */
+	int newtCheckboxTreeAddItem(newtComponent co, 
+								const char * text, const void * data,
+								int flags, int index, ...);
+	int newtCheckboxTreeAddArray(newtComponent co, 
+								 const char * text, const void * data,
+								 int flags, int * indexes);
+	int * newtCheckboxTreeFindItem(newtComponent co, void * data);
+	void newtCheckboxTreeSetEntry(newtComponent co, const void * data,
+								  const char * text);
+	void newtCheckboxTreeSetWidth(newtComponent co, int width);
+	char newtCheckboxTreeGetEntryValue(newtComponent co, const void * data);
+	void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data,
+									   char value);
  
-newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
-                                  int flexDown, int flexUp, int flags);
-newtComponent newtTextbox(int left, int top, int width, int height, int flags);
-void newtTextboxSetText(newtComponent co, const char * text);
-void newtTextboxSetHeight(newtComponent co, int height);
-int newtTextboxGetNumLines(newtComponent co);
-char * newtReflowText(char * text, int width, int flexDown, int flexUp,
-                      int * actualWidth, int * actualHeight);
+	newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
+									  int flexDown, int flexUp, int flags);
+	newtComponent newtTextbox(int left, int top, int width, int height, int flags);
+	void newtTextboxSetText(newtComponent co, const char * text);
+	void newtTextboxSetHeight(newtComponent co, int height);
+	int newtTextboxGetNumLines(newtComponent co);
+	char * newtReflowText(char * text, int width, int flexDown, int flexUp,
+						  int * actualWidth, int * actualHeight);
 
-struct newtExitStruct {
-    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
-           NEWT_EXIT_TIMER } reason;
-    union {
-        int watch;
-        int key;
-        newtComponent co;
-    } u;
-} ;
+	struct newtExitStruct {
+		enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
+			   NEWT_EXIT_TIMER } reason;
+		union {
+			int watch;
+			int key;
+			newtComponent co;
+		} u;
+	} ;
 
-newtComponent newtForm(newtComponent vertBar, void * helpTag, int flags);
-void newtFormSetTimer(newtComponent form, int millisecs);
-void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
-void newtFormSetSize(newtComponent co);
-newtComponent newtFormGetCurrent(newtComponent co);
-void newtFormSetBackground(newtComponent co, int color);
-void newtFormSetCurrent(newtComponent co, newtComponent subco);
-void newtFormAddComponent(newtComponent form, newtComponent co);
-void newtFormAddComponents(newtComponent form, ...);
-void newtFormSetHeight(newtComponent co, int height);
-void newtFormSetWidth(newtComponent co, int width);
-newtComponent newtRunForm(newtComponent form);          /* obsolete */
-void newtFormRun(newtComponent co, struct newtExitStruct * es);
-void newtDrawForm(newtComponent form);
-void newtFormAddHotKey(newtComponent co, int key);
+	newtComponent newtForm(newtComponent vertBar, void * helpTag, int flags);
+	void newtFormSetTimer(newtComponent form, int millisecs);
+	void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
+	void newtFormSetSize(newtComponent co);
+	newtComponent newtFormGetCurrent(newtComponent co);
+	void newtFormSetBackground(newtComponent co, int color);
+	void newtFormSetCurrent(newtComponent co, newtComponent subco);
+	void newtFormAddComponent(newtComponent form, newtComponent co);
+	void newtFormAddComponents(newtComponent form, ...);
+	void newtFormSetHeight(newtComponent co, int height);
+	void newtFormSetWidth(newtComponent co, int width);
+	newtComponent newtRunForm(newtComponent form);          /* obsolete */
+	void newtFormRun(newtComponent co, struct newtExitStruct * es);
+	void newtDrawForm(newtComponent form);
+	void newtFormAddHotKey(newtComponent co, int key);
 
-typedef int (*newtEntryFilter)(newtComponent entry, void * data, int ch,
-                               int cursor);
-newtComponent newtEntry(int left, int top, const char * initialValue, int width,
-                        const char ** resultPtr, int flags);
-void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
-void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
-char * newtEntryGetValue(newtComponent co);
-void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
+	typedef int (*newtEntryFilter)(newtComponent entry, void * data, int ch,
+								   int cursor);
+	newtComponent newtEntry(int left, int top, const char * initialValue, int width,
+							const char ** resultPtr, int flags);
+	void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
+	void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
+	char * newtEntryGetValue(newtComponent co);
+	void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
-newtComponent newtScale(int left, int top, int width, long long fullValue);
-void newtScaleSet(newtComponent co, unsigned long long amount);
+	newtComponent newtScale(int left, int top, int width, long long fullValue);
+	void newtScaleSet(newtComponent co, unsigned long long amount);
 
-void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
-void newtComponentTakesFocus(newtComponent co, int val);
+	void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
+	void newtComponentTakesFocus(newtComponent co, int val);
 
-/* this also destroys all of the components (including other forms) on the 
-   form */
-void newtFormDestroy(newtComponent form);       
+	/* this also destroys all of the components (including other forms) on the 
+	   form */
+	void newtFormDestroy(newtComponent form);       
 
-/* Key codes */
+	/* Key codes */
 
 #define NEWT_KEY_TAB                    '\t'
 #define NEWT_KEY_ENTER                  '\r'
@@ -292,7 +305,7 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_F11                    NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12                    NEWT_KEY_EXTRA_BASE + 112
 
-/* not really a key, but newtGetKey returns it */
+	/* not really a key, but newtGetKey returns it */
 #define NEWT_KEY_RESIZE                 NEWT_KEY_EXTRA_BASE + 113
 
 #define NEWT_ANCHOR_LEFT                (1 << 0)
@@ -303,69 +316,69 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_GRID_FLAG_GROWX            (1 << 0)
 #define NEWT_GRID_FLAG_GROWY            (1 << 1)
 
-typedef struct grid_s * newtGrid;
-enum newtGridElement { NEWT_GRID_EMPTY = 0,
-                       NEWT_GRID_COMPONENT, NEWT_GRID_SUBGRID };
+	typedef struct grid_s * newtGrid;
+	enum newtGridElement { NEWT_GRID_EMPTY = 0,
+						   NEWT_GRID_COMPONENT, NEWT_GRID_SUBGRID };
 
-newtGrid newtCreateGrid(int cols, int rows);
-/* TYPE, what, TYPE, what, ..., NULL */
-newtGrid newtGridVStacked(enum newtGridElement type, void * what, ...);
-newtGrid newtGridVCloseStacked(enum newtGridElement type, void * what, ...);
-newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...);
-newtGrid newtGridHCloseStacked(enum newtGridElement type1, void * what1, ...);
-newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
-                             newtGrid buttons);
-newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
-                             newtGrid buttons);
-void newtGridSetField(newtGrid grid, int col, int row, 
-                      enum newtGridElement type, void * val, int padLeft,
-                      int padTop, int padRight, int padBottom, int anchor,
-                      int flags);
-void newtGridPlace(newtGrid grid, int left, int top);
+	newtGrid newtCreateGrid(int cols, int rows);
+	/* TYPE, what, TYPE, what, ..., NULL */
+	newtGrid newtGridVStacked(enum newtGridElement type, void * what, ...);
+	newtGrid newtGridVCloseStacked(enum newtGridElement type, void * what, ...);
+	newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...);
+	newtGrid newtGridHCloseStacked(enum newtGridElement type1, void * what1, ...);
+	newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
+								 newtGrid buttons);
+	newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
+								  newtGrid buttons);
+	void newtGridSetField(newtGrid grid, int col, int row, 
+						  enum newtGridElement type, void * val, int padLeft,
+						  int padTop, int padRight, int padBottom, int anchor,
+						  int flags);
+	void newtGridPlace(newtGrid grid, int left, int top);
 #define newtGridDestroy newtGridFree
-void newtGridFree(newtGrid grid, int recurse);
-void newtGridGetSize(newtGrid grid, int * width, int * height);
-void newtGridWrappedWindow(newtGrid grid, char * title);
-void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top);
-void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
-                                 int recurse);
+	void newtGridFree(newtGrid grid, int recurse);
+	void newtGridGetSize(newtGrid grid, int * width, int * height);
+	void newtGridWrappedWindow(newtGrid grid, char * title);
+	void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top);
+	void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
+									 int recurse);
 
-/* convienve */
-newtGrid newtButtonBarv(char * button1, newtComponent * b1comp, va_list args);
-newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...);
+	/* convienve */
+	newtGrid newtButtonBarv(char * button1, newtComponent * b1comp, va_list args);
+	newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...);
 
-/* automatically centered and shrink wrapped */
-void newtWinMessage(char * title, char * buttonText, char * text, ...);
-void newtWinMessagev(char * title, char * buttonText, char * text, 
-                     va_list argv);
+	/* automatically centered and shrink wrapped */
+	void newtWinMessage(char * title, char * buttonText, char * text, ...);
+	void newtWinMessagev(char * title, char * buttonText, char * text, 
+						 va_list argv);
 
-/* having separate calls for these two seems silly, but having two separate
-   variable length-arg lists seems like a bad idea as well */
+	/* having separate calls for these two seems silly, but having two separate
+	   variable length-arg lists seems like a bad idea as well */
 
-/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2 */
-int newtWinChoice(char * title, char * button1, char * button2, 
-                   char * text, ...);
-/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2, 
-   3 for button3 */
-int newtWinTernary(char * title, char * button1, char * button2, 
-                   char * button3, char * message, ...);
+	/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2 */
+	int newtWinChoice(char * title, char * button1, char * button2, 
+					  char * text, ...);
+	/* Returns 0 if F12 was pressed, 1 for button1, 2 for button2, 
+	   3 for button3 */
+	int newtWinTernary(char * title, char * button1, char * button2, 
+					   char * button3, char * message, ...);
 
-/* Returns the button number pressed, 0 on F12 */
-int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown, 
-                int flexUp, int maxListHeight, char ** items, int * listItem,
-                char * button1, ...);
+	/* Returns the button number pressed, 0 on F12 */
+	int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown, 
+					int flexUp, int maxListHeight, char ** items, int * listItem,
+					char * button1, ...);
 
-struct newtWinEntry {
-    char * text;
-    const char ** value;                /* may be initialized to set default */
-    int flags;
-};
+	struct newtWinEntry {
+		char * text;
+		const char ** value;                /* may be initialized to set default */
+		int flags;
+	};
 
-/* Returns the button number pressed, 0 on F12. The final values are
-   dynamically allocated, and need to be freed. */
-int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown, 
-                   int flexUp, int dataWidth, 
-                   struct newtWinEntry * items, char * button1, ...);
+	/* Returns the button number pressed, 0 on F12. The final values are
+	   dynamically allocated, and need to be freed. */
+	int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown, 
+					   int flexUp, int dataWidth, 
+					   struct newtWinEntry * items, char * button1, ...);
 
 #ifdef __cplusplus
 } /* End of extern "C" { */
