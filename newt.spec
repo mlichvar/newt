@@ -11,6 +11,7 @@ Requires: slang
 Summary: Developer's toolkit for newt windowing library
 Requires: slang-devel
 Group: Libraries
+Provides: snack
 BuildRoot: /var/tmp/newtroot
 
 %description
