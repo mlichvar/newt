@@ -90,6 +90,7 @@ typedef void (*newtSuspendCallback)(void);
 int newtInit(void);
 int newtFinished(void);
 void newtCls(void);
+void newtResizeScreen(int redraw);
 void newtWaitForKey(void);
 void newtClearKeyBuffer(void);
 void newtDelay(int usecs);
@@ -226,6 +227,9 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_F10			NEWT_KEY_EXTRA_BASE + 110
 #define NEWT_KEY_F11			NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
+
+/* not really a key, but newtGetKey returns it */
+#define NEWT_KEY_RESIZE			NEWT_KEY_EXTRA_BASE + 113
 
 #define NEWT_ANCHOR_LEFT		(1 << 0)
 #define NEWT_ANCHOR_RIGHT		(1 << 1)

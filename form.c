@@ -434,6 +434,11 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	newtRefresh();
 	key = newtGetKey(); 
 
+	if (key == NEWT_KEY_RESIZE) {
+	    /* newtResizeScreen(1); */
+	    continue;
+	}
+
 	for (i = 0; i < form->numHotKeys; i++) {
 	    if (form->hotKeys[i] == key) {
 		es->reason = NEWT_EXIT_HOTKEY;

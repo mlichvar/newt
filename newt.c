@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
+#include <sys/signal.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <termios.h>
@@ -30,6 +30,7 @@ static char * helplineStack[20];
 static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
+static int needResize;
 
 static const char * defaultHelpLine = 
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -117,6 +118,14 @@ void newtSetSuspendCallback(newtSuspendCallback cb) {
     suspendCallback = cb;
 }
 
+static void handleSigwinch(int signum) {
+    needResize = 1;
+}
+
+static int getkeyInterruptHook(void) {
+    return -1;
+}
+
 void newtFlushInput(void) {
     while (SLang_input_pending(0)) {
 	SLang_getkey();
@@ -146,19 +155,31 @@ void newtCls(void) {
     newtRefresh();
 }
 
+void newtResizeScreen(int redraw) {
+    newtPushHelpLine("");
+
+    SLtt_get_screen_size();
+    SLang_init_tty(0, 0, 0);
+
+    SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+
+    /* I don't know why I need this */
+    SLsmg_refresh();
+
+    newtPopHelpLine();
+
+    if (redraw)
+	SLsmg_refresh();
+}
+
 int newtInit(void) {
-    struct winsize ws;
     char * MonoValue, * MonoEnv = "NEWT_MONO";
 
     /* use the version variable just to be sure it gets included */
     strlen(version);
 
     SLtt_get_terminfo();
-
-    if (!ioctl(1, TIOCGWINSZ, &ws)) {
-	SLtt_Screen_Rows = ws.ws_row;
-	SLtt_Screen_Cols = ws.ws_col;
-    }
+    SLtt_get_screen_size();
 
     MonoValue = getenv(MonoEnv);
     if ( MonoValue == NULL ) {
@@ -174,6 +195,13 @@ int newtInit(void) {
     /*initKeymap();*/
 
     /*SLtt_set_cursor_visibility(0);*/
+
+    /*memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = handleSigwinch;
+    sigaction(SIGWINCH, &sa, NULL);*/
+
+    SLsignal_intr(SIGWINCH, handleSigwinch);
+    SLang_getkey_intr_hook = getkeyInterruptHook;
 
     return 0;
 }
@@ -238,6 +266,14 @@ int newtGetKey(void) {
 
     do {
 	key = SLang_getkey();
+	if (key == 0xFFFF) {
+	    if (needResize)
+		return NEWT_KEY_RESIZE;
+
+	    /* ignore other signals */
+	    continue;
+	}
+
 	if (key == NEWT_KEY_SUSPEND && suspendCallback)
 	    suspendCallback();
     } while (key == NEWT_KEY_SUSPEND);
