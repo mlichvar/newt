@@ -142,7 +142,7 @@ int newtGetKey(void) {
     memset(buf, 0, sizeof(buf));
 
     *chptr++ = key;
-    while (SLang_input_pending(1)) {
+    while (SLang_input_pending(5)) {
 	key = SLang_getkey();
 	*chptr++ = key;
 
