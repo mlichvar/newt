@@ -39,7 +39,7 @@ static int newtvwindow(char * title, char * button1, char * button2,
     if (button2) {
 	b2 = newtButton(-1, -1, button2);
 	buttonGrid = newtCreateGrid(2, 1);
-	newtGridSetField(buttonGrid, 1, 0, NEWT_GRID_COMPONENT, button2, 
+	newtGridSetField(buttonGrid, 1, 0, NEWT_GRID_COMPONENT, b2, 
 			 1, 0, 0, 0, 0, 0);
     } else {
 	buttonGrid = newtCreateGrid(1, 1);
@@ -56,6 +56,9 @@ static int newtvwindow(char * title, char * button1, char * button2,
 
     f = newtForm(NULL, NULL, 0);
     newtFormAddComponents(f, t, b1, NULL);
+
+    if (button2)
+	newtFormAddComponent(f, b2);
 
     answer = newtRunForm(f);
     newtGridFree(grid, 1);

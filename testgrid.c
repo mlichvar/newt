@@ -73,6 +73,7 @@ int main(void) {
     newtPopWindow();
 
     newtWinMessage("Simple", "Ok", "This is a simple message window");
+    newtWinChoice("Simple", "Ok", "Cancel", "This is a simple choice window");
 
     newtFinished();
 
