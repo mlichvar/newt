@@ -59,7 +59,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->currItem = 0;
     li->isActive = 0;
     li->startShowItem = 0;
-    li->flags = flags & (NEWT_LISTBOX_RETURNEXIT);
+    li->flags = flags & (NEWT_LISTBOX_RETURNEXIT|NEWT_FLAG_DOBORDER);
 
     if (height) {
 	li->grow = 0;
@@ -316,8 +316,17 @@ static void listboxDraw(newtComponent co)
     if(li->sb)
 	li->sb->ops->draw(li->sb);
 
-    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
+    if(li->flags & NEWT_FLAG_DOBORDER) {
+      if(li->isActive)
+	  SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+      else
+          SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
+      newtDrawBox(co->left-1, co->top-1, co->width+5, co->height+2, 0);
+    }
+
+    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
+    
     for(i = 0, item = li->boxItems; item != NULL && i < li->startShowItem;
 	i++, item = item->next);
 

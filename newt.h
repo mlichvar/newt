@@ -57,6 +57,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 #define NEWT_FLAG_SCROLL 	(1 << 2)
 #define NEWT_FLAG_DISABLED 	(1 << 3)
 #define NEWT_FLAG_NOSCROLL 	(1 << 4)	/* for listboxes */
+#define NEWT_FLAG_DOBORDER	(1 << 5)
 
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
