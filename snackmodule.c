@@ -180,6 +180,9 @@ static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeSetEntry(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeSetEntryValue(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeGetEntryValue(snackWidget * s, PyObject * args);
 static PyObject * widgetEntrySetFlags(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxSetFlags(snackWidget * s, PyObject * args);
 
@@ -198,6 +201,12 @@ static PyMethodDef widgetMethods[] = {
     { "checkboxtreeAddItem", (PyCFunction) widgetCheckboxTreeAddItem,
       METH_VARARGS, NULL },
     { "checkboxtreeGetCurrent", (PyCFunction) widgetCheckboxTreeGetCur,
+      METH_VARARGS, NULL },
+    { "checkboxtreeGetEntryValue", (PyCFunction) widgetCheckboxTreeGetEntryValue,
+      METH_VARARGS, NULL },
+    { "checkboxtreeSetEntry", (PyCFunction) widgetCheckboxTreeSetEntry,
+      METH_VARARGS, NULL },
+    { "checkboxtreeSetEntryValue", (PyCFunction) widgetCheckboxTreeSetEntryValue,
       METH_VARARGS, NULL },
     { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
       METH_VARARGS, NULL },
@@ -972,6 +981,59 @@ static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args) {
 	return NULL;
 
     return PyInt_FromLong((int) newtCheckboxTreeGetCurrent(s->co));
+}
+
+static PyObject * widgetCheckboxTreeSetEntry(snackWidget * s, PyObject * args) {
+    int data;
+    char *text;
+
+    if (!PyArg_ParseTuple(args, "is", &data, &text)) return NULL;
+
+    newtCheckboxTreeSetEntry(s->co, (void *)data, text);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * widgetCheckboxTreeSetEntryValue(snackWidget * s, PyObject * args) {
+    int data;
+    int isOn = 1;
+
+    if (!PyArg_ParseTuple(args, "i|i", &data, &isOn)) return NULL;
+
+    newtCheckboxTreeSetEntryValue(s->co, (void *)data,
+				  isOn ? NEWT_CHECKBOXTREE_SELECTED :
+					 NEWT_CHECKBOXTREE_UNSELECTED);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * widgetCheckboxTreeGetEntryValue(snackWidget * s, PyObject * args) {
+    int data;
+    int isOn = 0;
+    int isBranch = 0;
+    char selection;
+
+    if (!PyArg_ParseTuple(args, "i", &data)) return NULL;
+
+    selection = newtCheckboxTreeGetEntryValue(s->co, (void *)data);
+
+    if (selection == -1) return NULL;
+
+    switch (selection) {
+    case NEWT_CHECKBOXTREE_EXPANDED:
+	isOn = 1;
+    case NEWT_CHECKBOXTREE_COLLAPSED:
+	isBranch = 1;
+	break;
+    case NEWT_CHECKBOXTREE_UNSELECTED:
+	break;
+    default:
+	isOn = 1;
+	break;
+    }    
+    return Py_BuildValue("(ii)", isBranch, isOn);
 }
 
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,

@@ -78,8 +78,8 @@ static void buildFlatList(newtComponent co) {
 
     ct->flatList = malloc(sizeof(*ct->flatList) * (ct->flatCount+1));
     ct->flatCount = 0;
-    doBuildFlatList(ct, ct->itemlist);;
-	ct->flatList[ct->flatCount] = NULL;
+    doBuildFlatList(ct, ct->itemlist);
+    ct->flatList[ct->flatCount] = NULL;
 }
 
 int newtCheckboxTreeAddItem(newtComponent co, 
@@ -259,7 +259,7 @@ static struct items * findItem(struct items * items, const void * data) {
 static void listSelected(struct items * items, int * num, const void ** list, int seqindex) {
     while (items) {
 	    if ((seqindex ? items->selected==seqindex : items->selected) && !items->branch)
-	    list[(*num)++] = items->data;
+	    list[(*num)++] = (void *) items->data;
 	if (items->branch)
 	    listSelected(items->branch, num, list, seqindex);
 	items = items->next;
@@ -287,7 +287,7 @@ const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems,
 	    seqindex = 0;
     }
 
-	*numitems = countItems(ct->itemlist, (seqindex ? seqindex : COUNT_SELECTED));
+    *numitems = countItems(ct->itemlist, (seqindex ? seqindex : COUNT_SELECTED));
     if (!*numitems) return NULL;
     
     retval = malloc(*numitems * sizeof(void *));
@@ -307,6 +307,7 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
 
     co = malloc(sizeof(*co));
     ct = malloc(sizeof(struct CheckboxTree));
+    co->callback = NULL;
     co->data = ct;
     co->ops = &ctOps;
     co->takesFocus = 1;
@@ -388,12 +389,25 @@ int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
 	while (*ct->currItem != currItem) ct->currItem++;
 
     	ct->firstItem = ct->flatList;
-	while (*ct->firstItem != firstItem) ct->firstItem++;
+    	if (ct->flatCount > co->height) {
+		struct items ** last = ct->flatList + ct->flatCount - co->height;
+		while (*ct->firstItem != firstItem && ct->firstItem != last)
+		    ct->firstItem++;
+	}
     }
 
     return 0;
 }
 
+static void ctSetItems(struct items *item, int selected)
+{
+    for (; item; item = item->next) {
+	if (!item->branch)
+	    item->selected = selected;
+	else
+	    ctSetItems(item->branch, selected);
+    }
+}
 
 static void ctDraw(newtComponent co) {
     struct CheckboxTree * ct = co->data;
@@ -429,13 +443,9 @@ static void ctDraw(newtComponent co) {
 	    else
 		SLsmg_write_string("<+> ");
 	} else {
-	    if ((*item)->selected)  {
-		    char tmp[5];
-		    snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
-		SLsmg_write_string(tmp);
-	    }
-	    else
-		SLsmg_write_string("[ ] ");
+	    char tmp[5];
+	    snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
+	    SLsmg_write_string(tmp);
 	}
 
 	SLsmg_write_nstring((*item)->text, co->width - 4 - 
@@ -489,6 +499,7 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
     struct CheckboxTree * ct = co->data;
     struct eventResult er;
     struct items ** listEnd, ** lastItem;
+    int key, selnum = 1;
 
     er.result = ER_IGNORED;
 
@@ -498,38 +509,96 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 
     switch(ev.event) {
     case EV_KEYPRESS:
-	switch(ev.u.key) {
+	key = ev.u.key;
+	if (key == (char) key && key != ' ') {
+	    for (selnum = 0; ct->seq[selnum]; selnum++)
+	    if (key == ct->seq[selnum])
+		break;
+	    if (!ct->seq[selnum])
+		switch (key) {
+		case '-': selnum = 0; break;
+		case '+':
+		case '*': selnum = 1; break;
+		}
+	    if (ct->seq[selnum])
+		key = '*';
+	}
+	switch(key) {
 	case ' ':
 	case NEWT_KEY_ENTER:
-	    if (*ct->currItem) {
-		ctSetItem(co, *ct->currItem, NEWT_FLAGS_TOGGLE);
-		ctDraw(co);
-		er.result = ER_SWALLOWED;
-	    }
+	    ctSetItem(co, *ct->currItem, NEWT_FLAGS_TOGGLE);
+	    er.result = ER_SWALLOWED;
+	    if (!(*ct->currItem)->branch || (*ct->currItem)->selected)
+		key = NEWT_KEY_DOWN;
+	    else
+		key = '*';
 	    break;
+	case '*':
+	    if ((*ct->currItem)->branch) {
+		ctSetItems((*ct->currItem)->branch, selnum);
+		if (!(*ct->currItem)->selected)
+		    key = NEWT_KEY_DOWN;
+	    } else {
+		(*ct->currItem)->selected = selnum;
+		key = NEWT_KEY_DOWN;
+	    }
+	    er.result = ER_SWALLOWED;
+	    break;
+	}
+	switch (key) {
+	case '*':
+	    ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
+	    return er;
+	case NEWT_KEY_HOME:
+	    ct->currItem = ct->flatList;
+	    ct->firstItem = ct->flatList;
+	    ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
+	    er.result = ER_SWALLOWED;
+	    return er;
+	case NEWT_KEY_END:
+	    ct->currItem = ct->flatList + ct->flatCount - 1;
+	    if (ct->flatCount <= co->height)
+		ct->firstItem = ct->flatList;
+	    else
+		ct->firstItem = ct->flatList + ct->flatCount - co->height;
+	    ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
+	    er.result = ER_SWALLOWED;
+	    return er;
 	case NEWT_KEY_DOWN:
+	    if (ev.u.key != NEWT_KEY_DOWN) {
+		if(co->callback) co->callback(co, co->callbackData);
+		if (strlen(ct->seq) != 2) {
+		    ctDraw(co);
+		    return er;
+		}
+	    }
 	    if ((ct->currItem - ct->flatList + 1) < ct->flatCount) {
 		ct->currItem++;
-
-		er.result = ER_SWALLOWED;
 
 		if (ct->currItem - ct->firstItem >= co->height) 
 		    ct->firstItem++;
 
 		ctDraw(co);
-	    }
-	    break;
+	    } else if (ev.u.key != NEWT_KEY_DOWN)
+	        ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
+	    er.result = ER_SWALLOWED;
+	    return er;
 	case NEWT_KEY_UP:
 	    if (ct->currItem != ct->flatList) {
 		ct->currItem--;
-		er.result = ER_SWALLOWED;
 
 		if (ct->currItem < ct->firstItem)
 		    ct->firstItem = ct->currItem;
 		    
 		ctDraw(co);
 	    }
-	    break;
+	    er.result = ER_SWALLOWED;
+	    if(co->callback) co->callback(co, co->callbackData);
+	    return er;
 	case NEWT_KEY_PGUP:
 	    if (ct->firstItem - co->height < ct->flatList) {
 	    	ct->firstItem = ct->currItem = ct->flatList;
@@ -539,8 +608,9 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 	    }
 
 	    ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
 	    er.result = ER_SWALLOWED;
-	    break;
+	    return er;
 	case NEWT_KEY_PGDN:
 	    listEnd = ct->flatList + ct->flatCount - 1;
 	    lastItem = ct->firstItem + co->height - 1;
@@ -554,9 +624,12 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 	    }
 
 	    ctDraw(co);
+	    if(co->callback) co->callback(co, co->callbackData);
 	    er.result = ER_SWALLOWED;
-	    break;
+	    return er;
 	}
+	break;
+
     case EV_FOCUS:
 	ctDraw(co);
 	er.result = ER_SWALLOWED;
@@ -579,3 +652,63 @@ const void * newtCheckboxTreeGetCurrent(newtComponent co) {
     if (!ct->currItem) return NULL;
     return (*ct->currItem)->data;
 }
+
+void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * text)
+{
+    struct CheckboxTree * ct;
+    struct items * item;
+    int i;
+
+    if (!co) return;
+    ct = co->data;
+    item = findItem(ct->itemlist, data);
+    if (!item) return;
+
+    free(item->text);
+    item->text = strdup(text);
+
+    i = 4 + (3 * item->depth);
+
+    if ((strlen(text) + i + ct->pad) > co->width) {
+	co->width = strlen(text) + i + ct->pad;
+    }
+
+    ctDraw(co);
+}
+
+char newtCheckboxTreeGetEntryValue(newtComponent co, const void * data)
+{
+    struct CheckboxTree * ct;
+    struct items * item;
+
+    if (!co) return -1;
+    ct = co->data;
+    item = findItem(ct->itemlist, data);
+    if (!item) return -1;
+    if (item->branch)
+	return item->selected ? NEWT_CHECKBOXTREE_EXPANDED : NEWT_CHECKBOXTREE_COLLAPSED;
+    else
+	return ct->seq[item->selected];
+}
+
+void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data, char value)
+{
+    struct CheckboxTree * ct;
+    struct items * item;
+    int i;
+
+    if (!co) return;
+    ct = co->data;
+    item = findItem(ct->itemlist, data);
+    if (!item || item->branch) return;
+
+    for(i = 0; ct->seq[i]; i++)
+	if (value == ct->seq[i])
+	    break;
+
+    if (!ct->seq[i]) return;
+    item->selected = i;
+
+    ctDraw(co);
+}
+

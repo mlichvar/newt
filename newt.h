@@ -76,6 +76,11 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define NEWT_FD_READ		(1 << 0)
 #define NEWT_FD_WRITE		(1 << 1)
 
+#define NEWT_CHECKBOXTREE_COLLAPSED	'\0'
+#define NEWT_CHECKBOXTREE_EXPANDED	'\1'
+#define NEWT_CHECKBOXTREE_UNSELECTED	' '
+#define NEWT_CHECKBOXTREE_SELECTED	'*'
+
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
 #define NEWT_ENTRY_SCROLL	NEWT_FLAG_SCROLL
@@ -176,9 +181,14 @@ int newtCheckboxTreeAddItem(newtComponent co,
 			    const char * text, const void * data,
 			    int flags, int index, ...);
 int newtCheckboxTreeAddArray(newtComponent co, 
-			    const char * text, const void * data,
-			    int flags, int * indexes);
+			     const char * text, const void * data,
+			     int flags, int * indexes);
 int * newtCheckboxTreeFindItem(newtComponent co, void * data);
+void newtCheckboxTreeSetEntry(newtComponent co, const void * data,
+			      const char * text);
+char newtCheckboxTreeGetEntryValue(newtComponent co, const void * data);
+void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data,
+				   char value);
     
 newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
 				  int flexDown, int flexUp, int flags);

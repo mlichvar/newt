@@ -446,6 +446,14 @@ class CheckboxTree(Widget):
             selection.append(self.key2item[key])
 	return selection
 
+    def setEntry(self, item, text):
+	self.w.checkboxtreeSetEntry(self.item2key[item], text)
+
+    def setEntryValue(self, item, selected = 1):
+	self.w.checkboxtreeSetEntryValue(self.item2key[item], selected)
+
+    def getEntryValue(self, item):
+	return self.w.checkboxtreeGetEntryValue(self.item2key[item])
 
 def ListboxChoiceWindow(screen, title, text, items, 
 			buttons = ('Ok', 'Cancel'), 
