@@ -38,6 +38,7 @@ struct newtColors newtDefaultColorPalette = {
 	"black", "green",			/* checkbox fg, fg */
 	"green", "black",			/* active checkbox fg, bg */
 	"yellow", "red",			/* entry box fg, bg */
+	"blue", "lightgray",			/* label fg, bg */
 };
 
 struct keymap keymap[] = {
@@ -110,6 +111,7 @@ void newtSetColors(struct newtColors colors) {
     SLtt_set_color(COLORSET_ACTCHECKBOX, "", colors.actCheckboxFg, 
 			colors.actCheckboxBg);
     SLtt_set_color(COLORSET_ENTRY, "", colors.entryFg, colors.entryBg);
+    SLtt_set_color(COLORSET_LABEL, "", colors.labelFg, colors.labelBg);
 }
 
 int newtGetKey(void) {
@@ -331,4 +333,12 @@ void newtDelay(int usecs) {
     tv.tv_usec = usecs % 1000000;
 
     select(0, &set, &set, &set, &tv);
+}
+
+struct eventResult newtDefaultEventHandler(struct newtComponent * c, 
+					   struct event ev) {
+    struct eventResult er;
+
+    er.result = ER_IGNORED;
+    return er;
 }

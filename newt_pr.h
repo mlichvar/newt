@@ -11,6 +11,7 @@
 #define COLORSET_CHECKBOX	9
 #define COLORSET_ACTCHECKBOX	10
 #define COLORSET_ENTRY		11
+#define COLORSET_LABEL		12
 
 void newtGotorc(int row, int col);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
@@ -49,5 +50,8 @@ struct componentOps {
     struct eventResult (* event)(struct newtComponent * c, struct event ev);
     void (* destroy)(struct newtComponent * c);
 } ;
+
+struct eventResult newtDefaultEventHandler(struct newtComponent * c, 
+					   struct event ev);
 
 #endif /* H_NEWT_PR */
