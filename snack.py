@@ -100,9 +100,12 @@ class Textbox(Widget):
 
 class TextboxReflowed(Textbox):
 
-    def __init__(self, width, text, flexDown = 5, flexUp = 10):
+    def __init__(self, width, text, flexDown = 5, flexUp = 10, maxHeight = -1):
 	(newtext, width, height) = reflow(text, width, flexDown, flexUp)
-	Textbox.__init__(self, width, height, newtext, 0)
+        if maxHeight != -1 and height > maxHeight:
+            Textbox.__init__(self, width, maxHeight, newtext, 1)
+        else:
+            Textbox.__init__(self, width, height, newtext, 0)
 
 class Label(Widget):
 
@@ -449,7 +452,7 @@ def ButtonChoiceWindow(screen, title, text,
 		       buttons = [ 'Ok', 'Cancel' ], 
 		       width = 40):
     bb = ButtonBar(screen, buttons)
-    t = TextboxReflowed(width, text)
+    t = TextboxReflowed(width, text, maxHeight = screen.height - 12)
 
     g = GridForm(screen, title, 1, 2)
     g.add(t, 0, 0, padding = (0, 0, 0, 1))
