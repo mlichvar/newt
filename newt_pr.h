@@ -1,22 +1,6 @@
 #ifndef H_NEWT_PR
 #define H_NEWT_PR
 
-#define COLORSET_ROOT 		2
-#define COLORSET_BORDER 	3
-#define COLORSET_WINDOW		4
-#define COLORSET_SHADOW		5
-#define COLORSET_TITLE		6
-#define COLORSET_BUTTON		7
-#define COLORSET_ACTBUTTON	8
-#define COLORSET_CHECKBOX	9
-#define COLORSET_ACTCHECKBOX	10
-#define COLORSET_ENTRY		11
-#define COLORSET_LABEL		12
-#define COLORSET_LISTBOX	13
-#define COLORSET_ACTLISTBOX	14
-#define COLORSET_TEXTBOX	15
-#define COLORSET_ACTTEXTBOX	16
-
 void newtGotorc(int row, int col);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
 void newtClearBox(int left, int top, int width, int height);
