@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Mon Jan 17 2000 Erik Troan <ewt@redhat.com>
+- added numerous bug fixes (see CHANGES)
+
 * Mon Dec 20 1999 Matt Wilson <msw@redhat.com>
 - rebuild with fix for listbox from Nalin
 
