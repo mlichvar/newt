@@ -45,11 +45,14 @@ newtComponent newtListitem(int left, int top, char * text, int isDefault,
 			      newtComponent prevItem);
 
 newtComponent newtLabel(int left, int top, char * text);
+newtComponent newtVerticalScrollbar(int left, int top, int height,
+				    int normalColorset, int thumbColorset);
+void newtScrollbarSet(newtComponent co, int where, int total);
 
 newtComponent newtListbox(int left, int top, int height, int flags);
 void newtListboxAddEntry(newtComponent co, char * text);
 
-newtComponent newtForm(void);
+newtComponent newtForm(newtComponent vertBar);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);
