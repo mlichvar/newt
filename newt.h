@@ -125,6 +125,8 @@ void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
 void newtDrawRootText(int col, int row, const char * text);
 void newtBell(void);
+void newtCursorOff(void);
+void newtCursorOn(void);
 
 /* Components */
 

@@ -202,9 +202,8 @@ int newtInit(void) {
     SLang_init_tty(0, 0, 0);
 
     newtSetColors(newtDefaultColorPalette);
+    newtCursorOff();
     /*initKeymap();*/
-
-    /*SLtt_set_cursor_visibility(0);*/
 
     /*memset(&sa, 0, sizeof(sa));
     sa.sa_handler = handleSigwinch;
@@ -220,6 +219,7 @@ int newtInit(void) {
 
 int newtFinished(void) {
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
+    newtCursorOn();
     SLsmg_refresh();
     SLsmg_reset_smg();
     SLang_reset_tty();
@@ -654,4 +654,12 @@ void newtDefaultPlaceHandler(newtComponent c, int newLeft, int newTop) {
 
 void newtDefaultMappedHandler(newtComponent c, int isMapped) {
     c->isMapped = isMapped;
+}
+
+void newtCursorOff(void) {
+    SLtt_set_cursor_visibility (0);
+}
+
+void newtCursorOn(void) {
+    SLtt_set_cursor_visibility (1);
 }

@@ -190,7 +190,7 @@ static struct eventResult entryEvent(newtComponent co,
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
 	case EV_FOCUS:
-	    /*SLtt_set_cursor_visibility(0);*/
+	    newtCursorOn();
 	    if (en->flags & NEWT_FLAG_HIDDEN)
 		newtGotorc(co->top, co->left);
 	    else
@@ -200,7 +200,7 @@ static struct eventResult entryEvent(newtComponent co,
 	    break;
 
 	case EV_UNFOCUS:
-	    /*SLtt_set_cursor_visibility(1);*/
+	    newtCursorOff();
 	    newtGotorc(0, 0);
 	    er.result = ER_SWALLOWED;
 	    if (co->callback)

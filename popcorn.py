@@ -48,8 +48,6 @@ r2 = SingleRadioButton("Radio 2", r1)
 def something():
     print hello
 
-e.setCallback(sys.exit, 1)
-
 screen = SnackScreen()
 
 screen.helpCallback(help)
