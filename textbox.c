@@ -99,7 +99,7 @@ static void doReflow(char * text, char ** resultPtr, int width, int * badness,
 		}
 
 		if (end - text < (width / 2))
-		    howbad += (width / 2) - (end - text);
+		    howbad += ((width / 2) - (end - text)) / 2;
 		text = end;
 		if (*text) text++;
 	    } else {
