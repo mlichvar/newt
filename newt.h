@@ -135,6 +135,7 @@ void newtListboxSetData(newtComponent co, int num, void * data);
 int newtListboxAddEntry(newtComponent co, char * text, void * data);
 int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
+void newtListboxClear(newtComponent co); /* removes all entries from listbox */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 void **newtListboxGetSelection(newtComponent co);
 void newtListboxClearSelection(newtComponent co);

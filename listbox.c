@@ -241,6 +241,9 @@ void newtListboxSetData(newtComponent co, int num, void * data) {
 
 int newtListboxAddEntry(newtComponent co, char * text, void * data) {
     struct listbox * li = co->data;
+#if 1
+    newtListboxInsertEntry(co, text, data, li->numItems + 1);
+#else
     struct items *item;
 
     if(li->boxItems) {
@@ -270,6 +273,7 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
     listboxDraw(co);
     
     return li->numItems;
+#endif
 }
 
 
@@ -364,6 +368,23 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
     listboxDraw(co);
 
     return li->numItems;
+}
+
+void newtListboxClear(newtComponent co)
+{
+    struct listbox * li;
+    struct items *anitem, *nextitem;
+    if(co == NULL || (li = co->data) == NULL)
+	return;
+    for(anitem = li->boxItems; anitem != NULL; anitem = nextitem) {
+	nextitem = anitem->next;
+	free(anitem->key);
+	free(anitem);
+    }
+    li->numItems = li->numSelected = li->currItem = li->startShowItem = 0;
+    li->boxItems = NULL;
+    if(li->userHasSetWidth == 0)
+	li->curWidth = 0;
 }
 
 /* If you don't want to get back the text, pass in NULL for the ptr-ptr. Same
