@@ -76,9 +76,10 @@ static void buildFlatList(newtComponent co) {
     if (ct->flatList) free(ct->flatList);
     ct->flatCount = countItems(ct->itemlist, COUNT_EXPOSED);
 
-    ct->flatList = malloc(sizeof(*ct->flatList) * ct->flatCount);
+    ct->flatList = malloc(sizeof(*ct->flatList) * (ct->flatCount+1));
     ct->flatCount = 0;
     doBuildFlatList(ct, ct->itemlist);;
+	ct->flatList[ct->flatCount] = NULL;
 }
 
 int newtCheckboxTreeAddItem(newtComponent co, 
