@@ -5,9 +5,9 @@ from snack import *
 screen = SnackScreen()
 
 li = Listbox(height = 3, width = 20, returnExit = 1)
-li.append("First")
-li.append("Second")
-li.append("Third")
+li.append("First", 1)
+li.append("Second", 2)
+li.append("Third", 3)
 rb = RadioBar(screen, (("This", "this", 0),
 			("Default", "default", 1),
 			("That", "that", 0)))
@@ -22,6 +22,7 @@ result = g.run_once()
 
 screen.finish()
 
+print result
 print "listbox:", li.current()
 print "rb:", rb.getSelection()
 print "bb:", bb.buttonPressed(result)
