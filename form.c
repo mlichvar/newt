@@ -23,7 +23,7 @@ struct form {
     struct element * elements;
     int numComps;
     int currComp;
-    int fixedSize;
+    int fixedHeight;
     int vertOffset;
 };
 
@@ -68,17 +68,16 @@ newtComponent newtForm(void) {
     form->numComps = 0;
     form->currComp = -1;
     form->vertOffset = 0;
-    form->fixedSize = 0;
+    form->fixedHeight = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
     return co;
 }
 
-void newtFormSetSize(newtComponent co, int width, int height) {
+void newtFormSetHeight(newtComponent co, int height) {
     struct form * form = co->data;
 
-    form->fixedSize = 1;
-    co->width = width;
+    form->fixedHeight = 1;
     co->height = height;
 }
 
@@ -100,29 +99,28 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
     if (co->left == -1) {
 	co->left = newco->left;
 	co->top = newco->top;
-	if (!form->fixedSize) {
-	    co->width = newco->width;
+	co->width = newco->width;
+	if (!form->fixedHeight) {
 	    co->height = newco->height;
 	}
     } else {
 	if (co->left > newco->left) {
 	    delta = co->left - newco->left;
 	    co->left -= delta;
-	    if (!form->fixedSize)
-		co->width += delta;
+	    co->width += delta;
 	}
 
 	if (co->top > newco->top) {
 	    delta = co->top - newco->top;
 	    co->top -= delta;
-	    if (!form->fixedSize)
+	    if (!form->fixedHeight)
 		co->height += delta;
 	}
 
-	if (!form->fixedSize) {
-	    if ((co->left + co->width) < (newco->left + newco->width)) 
-		co->width = (newco->left + newco->width) - co->left;
+	if ((co->left + co->width) < (newco->left + newco->width)) 
+	    co->width = (newco->left + newco->width) - co->left;
 
+	if (!form->fixedHeight) {
 	    if ((co->top + co->height) < (newco->top + newco->height)) 
 		co->height = (newco->top + newco->height) - co->top;
 	}
@@ -160,7 +158,7 @@ static void formDraw(newtComponent co) {
 static struct eventResult formEvent(newtComponent co, struct event ev) {
     struct form * form = co->data;
     newtComponent subco = form->elements[form->currComp].co;
-    int new;
+    int new, wrap = 0;
     struct eventResult er;
     int dir = 0;
 
@@ -175,7 +173,11 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
       case EV_KEYPRESS:
 	if (ev.u.key == NEWT_KEY_TAB) {
 	    er.result = ER_NEXTCOMP;
-	} 
+	    wrap = 1;
+	} else if (ev.u.key == NEWT_KEY_UNTAB) {
+	    er.result = ER_PREVCOMP;
+	    wrap = 1;
+	}
 
 	if (er.result == ER_IGNORED) {
 	    /* let the current component handle the event */
@@ -213,7 +215,14 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	new = form->currComp;
 	do {
 	    new += dir;
-	    if (new < 0 || new >= form->numComps) return er;
+
+	    if (wrap) {
+		if (new < 0)
+		    new = form->numComps - 1;
+		else if (new >= form->numComps)
+		    new = 0;
+	    } else if (new < 0 || new >= form->numComps) 
+		return er;
 	} while (!form->elements[new].co->takesFocus);
 
 	/* make sure this component is visible */
