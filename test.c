@@ -20,8 +20,8 @@ void main(void) {
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
 
-    f = newtForm(NULL);
-    chklist = newtForm(NULL);
+    f = newtForm(NULL, NULL, 0);
+    chklist = newtForm(NULL, NULL, 0);
 
     b1 = newtButton(3, 1, "Push me");
     b2 = newtButton(18, 1, "Not me");
