@@ -2,9 +2,9 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.0
+%define version 0.51.3
 Version: %{version}
-Release: 3
+Release: 1
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -81,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
-* Sun Jan  5 2003 Adrian Havill <havill@redhat.com> 0.52.0-3
+* Sun Jan  5 2003 Adrian Havill <havill@redhat.com> 0.51.3-1
 - cleaned up const qualifiers in interfaces
 - added Ctrl-L screen refresh
 - fixed segfault in test.c when listbox items are selected
