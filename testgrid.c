@@ -9,6 +9,8 @@ int main(void) {
     newtComponent b1, b2, b3, b4;
     newtComponent answer, f, t;
     newtGrid grid, subgrid;
+    char * flowedText;
+    int textWidth, textHeight;
 
     newtInit();
     newtCls();
@@ -38,11 +40,17 @@ int main(void) {
 
     newtPopWindow();
 
-    t = newtTextbox(-1, -1, 40, 4, NEWT_FLAG_WRAP);
-    newtTextboxSetText(t, "This is a quite a bit of text. It is 40 "
-			  "columns long, so some wrapping should be "
-			  "done. Did you know that the quick, brown "
-			  "fox jumped over the lazy dog?");
+    flowedText = newtReflowText("This is a quite a bit of text. It is 40 "
+			  	"columns long, so some wrapping should be "
+			  	"done. Did you know that the quick, brown "
+			  	"fox jumped over the lazy dog?\n\n"
+				"In other news, it's pretty important that we "
+				"can properly force a line break.",
+				40, 5, 5, &textWidth, &textHeight);
+    t = newtTextbox(-1, -1, textWidth, textHeight, NEWT_FLAG_WRAP);
+    newtTextboxSetText(t, flowedText);
+    free(flowedText);
+
     
     b1 = newtButton(-1, -1, "Okay");
     b2 = newtButton(-1, -1, "Cancel");
@@ -61,6 +69,10 @@ int main(void) {
     f = newtForm(NULL, NULL, 0);
     newtFormAddComponents(f, b1, t, b2, NULL);
     answer = newtRunForm(f);
+
+    newtPopWindow();
+
+    newtWinMessage("Simple", "Ok", "This is a simple message window");
 
     newtFinished();
 
