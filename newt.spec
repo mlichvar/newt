@@ -6,7 +6,7 @@ Release: 3
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python,python2,perl
+BuildRequires: python,python,perl
 Requires: slang
 Provides: snack
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{root}
@@ -107,6 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Feb 01 2001 Erik Troan <ewt@redhat.com>
 - gave up on separate CHANGES file
 - added newtCheckboxTreeSetCurrent() and snack binding
+- don't require python2 anymore
 
 * Mon Jan 22 2001 Than Ngo <than@redhat.com>
 - don't build newt-python2 sub package.
