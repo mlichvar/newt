@@ -104,7 +104,6 @@ void newtWinMessage(char * title, char * buttonText, char * text, ...) {
 
     va_start(args, text);
     newtvwindow(title, buttonText, NULL, NULL, text, args);
-    newtResizeScreen(1);
     va_end(args);
 }
 
