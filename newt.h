@@ -53,6 +53,7 @@ void newtListitemSet(newtComponent co, char * text);
 void * newtListitemGetData(newtComponent co);
 
 newtComponent newtLabel(int left, int top, char * text);
+void newtLabelSetText(newtComponent co, char * text);
 newtComponent newtVerticalScrollbar(int left, int top, int height,
 				    int normalColorset, int thumbColorset);
 void newtScrollbarSet(newtComponent co, int where, int total);
@@ -73,14 +74,24 @@ void newtTextboxSetText(newtComponent co, const char * text);
 
 #define NEWT_FORM_NOF12		(1 << 0)
 
+struct newtExitStruct {
+    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT } reason;
+    union {
+	int key;
+	newtComponent co;
+    } u;
+} ;
+
 newtComponent newtForm(newtComponent vertBar, char * help, int flags);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);
-newtComponent newtRunForm(newtComponent form);
+newtComponent newtRunForm(newtComponent form);		/* obsolete */
+void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);
+void newtFormAddHotKey(newtComponent co, int key);
 
 #define NEWT_ENTRY_SCROLL	(1 << 0)
 #define NEWT_ENTRY_HIDDEN	(1 << 1)
@@ -89,7 +100,7 @@ void newtDrawForm(newtComponent form);
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
 void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
-void newtEntryAddCallback(newtComponent co, newtCallback f, void * data);
+void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 
 /* this also destroys all of the components (including other forms) on the 
    form */
@@ -115,6 +126,16 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_PGDN			NEWT_KEY_EXTRA_BASE + 12
 
 #define NEWT_KEY_F1			NEWT_KEY_EXTRA_BASE + 101
+#define NEWT_KEY_F2			NEWT_KEY_EXTRA_BASE + 102
+#define NEWT_KEY_F3			NEWT_KEY_EXTRA_BASE + 103
+#define NEWT_KEY_F4			NEWT_KEY_EXTRA_BASE + 104
+#define NEWT_KEY_F5			NEWT_KEY_EXTRA_BASE + 105
+#define NEWT_KEY_F6			NEWT_KEY_EXTRA_BASE + 106
+#define NEWT_KEY_F7			NEWT_KEY_EXTRA_BASE + 107
+#define NEWT_KEY_F8			NEWT_KEY_EXTRA_BASE + 108
+#define NEWT_KEY_F9			NEWT_KEY_EXTRA_BASE + 109
+#define NEWT_KEY_F10			NEWT_KEY_EXTRA_BASE + 110
+#define NEWT_KEY_F11			NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
 
 #endif /* H_NEWT */
