@@ -142,7 +142,7 @@ static void entryDraw(newtComponent co) {
     if (en->flags & NEWT_FLAG_PASSWORD) {
 	char *tmpptr, *p;
 
-	tmpptr = alloca(strlen(chptr+2));
+	tmpptr = alloca(strlen(chptr)+2));
 	strcpy(tmpptr, chptr);
 	for (p = tmpptr; *p; p++)
 	    *p = '*';
