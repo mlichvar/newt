@@ -371,12 +371,12 @@ class ButtonBar(Grid):
 	return None
 
 
-class GridForm(Grid):
+class GridFormHelp(Grid):
 
-    def __init__(self, screen, title, *args):
+    def __init__(self, screen, title, help, *args):
 	self.screen = screen
 	self.title = title
-	self.form = Form()
+	self.form = Form(help)
 	self.childList = []
 	self.form_created = 0
 	args = list(args)
@@ -428,6 +428,12 @@ class GridForm(Grid):
     def setCurrent (self, co):
         self.form.setCurrent (co)
 
+class GridForm(GridFormHelp):
+
+    def __init__(self, screen, title, *args):
+	myargs = (self, screen, title, None) + args
+	apply(GridFormHelp.__init__, myargs)
+
 class CheckboxTree(Widget):
     def append(self, text, item = None, selected = 0):
     	self.addItem(text, (snackArgs['append'], ), item, selected)
@@ -466,7 +472,8 @@ class CheckboxTree(Widget):
 
 def ListboxChoiceWindow(screen, title, text, items, 
 			buttons = ('Ok', 'Cancel'), 
-			width = 40, scroll = 0, height = -1, default = None):
+			width = 40, scroll = 0, height = -1, default = None,
+			help = None):
     if (height == -1): height = len(items)
 
     bb = ButtonBar(screen, buttons)
@@ -491,7 +498,7 @@ def ListboxChoiceWindow(screen, title, text, items,
     if (default != None):
 	l.setCurrent (default)
 
-    g = GridForm(screen, title, 1, 3)
+    g = GridFormHelp(screen, title, help, 1, 3)
     g.add(t, 0, 0)
     g.add(l, 0, 1, padding = (0, 1, 0, 1))
     g.add(bb, 0, 2, growx = 1)
@@ -502,17 +509,17 @@ def ListboxChoiceWindow(screen, title, text, items,
 
 def ButtonChoiceWindow(screen, title, text, 
 		       buttons = [ 'Ok', 'Cancel' ], 
-		       width = 40, x = None, y = None):
+		       width = 40, x = None, y = None, help = None):
     bb = ButtonBar(screen, buttons)
     t = TextboxReflowed(width, text, maxHeight = screen.height - 12)
 
-    g = GridForm(screen, title, 1, 2)
+    g = GridFormHelp(screen, title, help, 1, 2)
     g.add(t, 0, 0, padding = (0, 0, 0, 1))
     g.add(bb, 0, 1, growx = 1)
     return bb.buttonPressed(g.runOnce(x, y))
 
 def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
-		entryWidth = 20, buttons = [ 'Ok', 'Cancel' ]):
+		entryWidth = 20, buttons = [ 'Ok', 'Cancel' ], help = None):
     bb = ButtonBar(screen, buttons);
     t = TextboxReflowed(width, text)
 
@@ -535,7 +542,7 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
 	count = count + 1
 	entryList.append(e)
 
-    g = GridForm(screen, title, 1, 3)
+    g = GridFormHelp(screen, title, help, 1, 3)
 
     g.add(t, 0, 0, padding = (0, 0, 0, 1))
     g.add(sg, 0, 1, padding = (0, 0, 0, 1))
