@@ -449,6 +449,12 @@ void newtListboxClear(newtComponent co)
 	updateWidth(co, li, 5);
 }
 
+int newtListboxItemCount(newtComponent co)
+{
+    struct listbox *li = co->data;
+    return li->numItems;
+}
+
 /* If you don't want to get back the text, pass in NULL for the ptr-ptr. Same
    goes for the data. */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data) {

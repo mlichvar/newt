@@ -178,6 +178,8 @@ void **newtListboxGetSelection(newtComponent co, int *numitems);
 void newtListboxClearSelection(newtComponent co);
 void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense);
+/* Returns number of items currently in listbox. */
+int newtListboxItemCount(newtComponent co);
 
 newtComponent newtCheckboxTree(int left, int top, int height, int flags);
 newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags);
