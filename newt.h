@@ -181,6 +181,7 @@ newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, unsigned long long amount);
 
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
+void newtComponentTakesFocus(newtComponent co, int val);
 
 /* this also destroys all of the components (including other forms) on the 
    form */
@@ -219,13 +220,23 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_F11			NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
 
+#define NEWT_ANCHOR_LEFT		(1 << 0)
+#define NEWT_ANCHOR_RIGHT		(1 << 1)
+#define NEWT_ANCHOR_TOP			(1 << 2)
+#define NEWT_ANCHOR_BOTTOM		(1 << 3)
+
+#define NEWT_GRID_FLAG_GROWX		(1 << 0)
+#define NEWT_GRID_FLAG_GROWY		(1 << 1)
+
 typedef struct grid_s * newtGrid;
 enum newtGridElement { NEWT_GRID_EMPTY = 0,
 		       NEWT_GRID_COMPONENT, NEWT_GRID_SUBGRID };
 
 newtGrid newtCreateGrid(int cols, int rows);
 void newtGridSetField(newtGrid grid, int col, int row, 
-		      enum newtGridElement type, void * val);
+		      enum newtGridElement type, void * val, int padLeft,
+		      int padTop, int padRight, int padBottom, int anchor,
+		      int flags);
 void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
 
