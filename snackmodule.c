@@ -825,7 +825,6 @@ static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
     sel = PyList_New(0);
     for (i = 0; i < numselected; i++) {
     	PyList_Append(sel, PyInt_FromLong((int) selection[i]));
-	printf("got %d\n", selection[i]);
     }
     free(selection);
 
