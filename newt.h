@@ -15,6 +15,8 @@ struct newtColors {
     char * labelFg, * labelBg;
     char * listboxFg, * listboxBg;
     char * actListboxFg, * actListboxBg;
+    char * textboxFg, * textboxBg;
+    char * actTextboxFg, * actTextboxBg;
 };
 
 extern struct newtColors newtDefaultColorPalette;
@@ -51,6 +53,12 @@ void newtScrollbarSet(newtComponent co, int where, int total);
 
 newtComponent newtListbox(int left, int top, int height, int flags);
 void newtListboxAddEntry(newtComponent co, char * text);
+
+#define NEWT_TEXTBOX_WRAP	(1 << 0)
+#define NEWT_TEXTBOX_SCROLL	(1 << 1)
+
+newtComponent newtTextbox(int left, int top, int with, int height, int flags);
+void newtTextboxSetText(newtComponent co, const char * text);
 
 newtComponent newtForm(newtComponent vertBar);
 void newtFormAddComponent(newtComponent form, newtComponent co);

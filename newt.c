@@ -41,6 +41,8 @@ struct newtColors newtDefaultColorPalette = {
 	"blue", "lightgray",			/* label fg, bg */
 	"red", "lightgray",			/* listbox fg, bg */
 	"lightgray", "red",			/* active listbox fg, bg */
+	"red", "lightgray",			/* textbox fg, bg */
+	"lightgray", "red",			/* active textbox fg, bg */
 };
 
 static struct keymap keymap[] = {
@@ -128,6 +130,9 @@ void newtSetColors(struct newtColors colors) {
     SLtt_set_color(COLORSET_LISTBOX, "", colors.listboxFg, colors.listboxBg);
     SLtt_set_color(COLORSET_ACTLISTBOX, "", colors.actListboxFg, 
 					    colors.actListboxBg);
+    SLtt_set_color(COLORSET_TEXTBOX, "", colors.textboxFg, colors.textboxBg);
+    SLtt_set_color(COLORSET_ACTTEXTBOX, "", colors.actTextboxFg, 
+					    colors.actTextboxBg);
 }
 
 int newtGetKey(void) {
