@@ -48,16 +48,16 @@ void main(void) {
     newtFormAddComponents(f, r1, r2, r3, l1, l2, l3, e1, e2, e3, NULL);
 
     lb = newtListbox(45, 3, 4, 0);
-    newtListboxAddEntry(lb, "First  ");
-    newtListboxAddEntry(lb, "Second ");
-    newtListboxAddEntry(lb, "Third  ");
-    newtListboxAddEntry(lb, "Fourth ");
-    newtListboxAddEntry(lb, "Fifth  ");
-    newtListboxAddEntry(lb, "Sixth  ");
+    newtListboxAddEntry(lb, "First");
+    newtListboxAddEntry(lb, "Second");
+    newtListboxAddEntry(lb, "Third");
+    newtListboxAddEntry(lb, "Fourth");
+    newtListboxAddEntry(lb, "Fifth");
+    newtListboxAddEntry(lb, "Sixth");
     newtListboxAddEntry(lb, "Seventh");
-    newtListboxAddEntry(lb, "Eighth ");
-    newtListboxAddEntry(lb, "Ninth  ");
-    newtListboxAddEntry(lb, "Tenth  ");
+    newtListboxAddEntry(lb, "Eighth");
+    newtListboxAddEntry(lb, "Ninth");
+    newtListboxAddEntry(lb, "Tenth");
 
     t = newtTextbox(45, 10, 17, 5, NEWT_TEXTBOX_WRAP);
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
