@@ -17,7 +17,8 @@ static struct componentOps labelOps = {
     labelDraw,
     newtDefaultEventHandler,
     labelDestroy,
-    NULL,
+    newtDefaultPlaceHandler,
+    newtDefaultMappedHandler,
 } ;
 
 newtComponent newtLabel(int left, int top, const char * text) {

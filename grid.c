@@ -22,6 +22,9 @@ struct grid_s {
     struct gridField ** fields;
 };
 
+/* this is a bit of a hack */
+extern struct componentOps formOps[];
+
 newtGrid newtCreateGrid(int cols, int rows) {
     newtGrid grid;
 
@@ -101,6 +104,8 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 		    shuffleGrid(field->u.grid, left, top, 0);
 		j = field->u.grid->width;
 	    } else if (field->type == NEWT_GRID_COMPONENT) {
+		if (field->u.co->ops == formOps)
+		    newtFormSetSize(field->u.co);
 		j = field->u.co->width;
 	    } else 
 		j = 0;
@@ -193,10 +198,7 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
 		shuffleGrid(field->u.grid, x, y, 1);
 	    } else if (field->type == NEWT_GRID_COMPONENT) {
-		field->u.co->left = x;
-		field->u.co->top = y;
-		if (field->u.co->ops->place)
-		    field->u.co->ops->place(field->u.co);
+		field->u.co->ops->place(field->u.co, x, y);
 	    }
 
 	    thisLeft += widths[col];
@@ -250,7 +252,7 @@ void newtGridWrappedWindowAt(newtGrid grid, char * title, int left, int top) {
     int width, height;
 
     newtGridGetSize(grid, &width, &height);
-    newtOpenWindow(left, top, left + width, top + height, title);
+    newtOpenWindow(left, top, width + 2, height + 2, title);
     newtGridPlace(grid, 1, 1);
 }
 
@@ -271,7 +273,7 @@ void newtGridAddComponentsToForm(newtGrid grid, newtComponent form,
 
 /* this handles up to 50 items */
 static newtGrid stackem(int isVert, enum newtGridElement type1, void * what1,
-			va_list args) {
+			va_list args, int close) {
     struct item {
 	enum newtGridElement type;
 	void * what;
@@ -293,11 +295,35 @@ static newtGrid stackem(int isVert, enum newtGridElement type1, void * what1,
     for (i = 0; i < num; i++) {
 	newtGridSetField(grid, isVert ? 0 : i, isVert ? i : 0, 
 			 items[i].type, items[i].what,
-			 i ? (isVert ? 0 : 1) : 0,
-			 i ? (isVert ? 1 : 0) : 0, 0, 0, 0, 
-		         items[i].type == NEWT_GRID_SUBGRID ? 
-				NEWT_GRID_FLAG_GROWX : 0);
+			 close ? 0 : (i ? (isVert ? 0 : 1) : 0),
+			 close ? 0 : (i ? (isVert ? 1 : 0) : 0), 0, 0, 0, 0);
     }
+
+    return grid;
+}
+
+newtGrid newtGridHCloseStacked(enum newtGridElement type1, void * what1, ...) {
+    va_list args;
+    newtGrid grid;
+
+    va_start(args, what1);
+
+    grid = stackem(0, type1, what1, args, 1);
+
+    va_start(args, what1);
+
+    return grid;
+}
+
+newtGrid newtGridVCloseStacked(enum newtGridElement type1, void * what1, ...) {
+    va_list args;
+    newtGrid grid;
+
+    va_start(args, what1);
+
+    grid = stackem(1, type1, what1, args, 1);
+
+    va_start(args, what1);
 
     return grid;
 }
@@ -308,7 +334,7 @@ newtGrid newtGridVStacked(enum newtGridElement type1, void * what1, ...) {
 
     va_start(args, what1);
 
-    grid = stackem(1, type1, what1, args);
+    grid = stackem(1, type1, what1, args, 0);
 
     va_start(args, what1);
 
@@ -321,9 +347,39 @@ newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...) {
 
     va_start(args, what1);
 
-    grid = stackem(0, type1, what1, args);
+    grid = stackem(0, type1, what1, args, 0);
 
     va_start(args, what1);
+
+    return grid;
+}
+
+newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
+			     newtGrid buttons) {
+    newtGrid grid;
+
+    grid = newtCreateGrid(1, 3);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
+		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, middle,
+		     0, 1, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttons,
+		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
+
+    return grid;
+}
+
+newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
+			     newtGrid buttons) {
+    newtGrid grid;
+
+    grid = newtCreateGrid(1, 3);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
+		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, middle,
+		     0, 1, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttons,
+		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
 
     return grid;
 }

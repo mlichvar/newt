@@ -47,9 +47,10 @@ static void * newtvwindow(char * title, char * button1, char * button2,
     newtGridSetField(buttonGrid, 0, 0, NEWT_GRID_COMPONENT, b1, 
 		     0, 0, button2 ? 1 : 0, 0, 0, 0);
 
-    grid = newtGridVStacked(NEWT_GRID_COMPONENT, t,
-			    NEWT_GRID_SUBGRID, buttonGrid,
-			    NEWT_GRID_EMPTY);
+    grid = newtCreateGrid(1, 2);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, t, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, buttonGrid, 
+		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
     newtGridWrappedWindow(grid, title);
 
     f = newtForm(NULL, NULL, 0);
@@ -170,11 +171,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 			 i ? 1 : 0, 0, 0, 0, 0, 0);
     }
 
-    grid = newtGridVStacked(NEWT_GRID_COMPONENT, textbox,
-			    NEWT_GRID_COMPONENT, listbox,
-			    NEWT_GRID_SUBGRID, buttonBar,
-			    NEWT_GRID_EMPTY);
-
+    grid = newtGridSimpleWindow(textbox, listbox, buttonBar);
     newtGridWrappedWindow(grid, title);
 
     form = newtForm(NULL, 0, 0);

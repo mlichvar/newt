@@ -13,6 +13,7 @@ struct textbox {
     int doWrap;
     newtComponent sb;
     int topLine;
+    int textWidth;
 };
 
 static void addLine(newtComponent co, const char * s, int len);
@@ -21,13 +22,34 @@ static void addShortLine(newtComponent co, const char * s, int len);
 static struct eventResult textboxEvent(newtComponent c,
 				      struct event ev);
 static void textboxDestroy(newtComponent co);
+static void textboxPlace(newtComponent co, int newLeft, int newTop);
+static void textboxMapped(newtComponent co, int isMapped);
 
 static struct componentOps textboxOps = {
     textboxDraw,
     textboxEvent,
     textboxDestroy,
-    NULL,
+    textboxPlace,
+    textboxMapped,
 } ;
+
+static void textboxMapped(newtComponent co, int isMapped) {
+    struct textbox * tb = co->data;
+
+    co->isMapped = isMapped;
+    if (tb->sb)
+	tb->sb->ops->mapped(tb->sb, isMapped);
+}
+
+static void textboxPlace(newtComponent co, int newLeft, int newTop) {
+    struct textbox * tb = co->data;
+
+    co->top = newTop;
+    co->left = newLeft;
+
+    if (tb->sb)
+	tb->sb->ops->place(tb->sb, co->left + co->width - 1, co->top);
+}
 
 void newtTextboxSetHeight(newtComponent co, int height) {
     co->height = height;
@@ -69,19 +91,20 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
+    co->width = width;
 
     tb->doWrap = flags & NEWT_FLAG_WRAP;
     tb->numLines = 0;
     tb->linesAlloced = 0;
     tb->lines = NULL;
     tb->topLine = 0;
+    tb->textWidth = width;
 
     if (flags & NEWT_FLAG_SCROLL) {
-	co->width = width - 2;
-	tb->sb = newtVerticalScrollbar(co->left + co->width + 1, co->top, 
+	co->width += 2;
+	tb->sb = newtVerticalScrollbar(co->left + co->width - 1, co->top, 
 			   co->height, COLORSET_TEXTBOX, COLORSET_TEXTBOX);
     } else {
-	co->width = width;
 	tb->sb = NULL;
     }
 
@@ -204,18 +227,18 @@ static void addLine(newtComponent co, const char * s, int origlen) {
     if (origlen < 0) origlen = strlen(s);
     len = origlen;
 
-    if (!tb->doWrap || len <= co->width) {
+    if (!tb->doWrap || len <= tb->textWidth) {
 	addShortLine(co, s, len);
     } else {
 	/* word wrap */
 
 	start = s;
-	while (len > co->width) {
-	    end = start + co->width - 1;
+	while (len > tb->textWidth) {
+	    end = start + tb->textWidth - 1;
 	    while (end > start && !isspace(*end)) end--;
 
 	    if (end == start)
-		end = start + co->width - 1;
+		end = start + tb->textWidth - 1;
 
 	    addShortLine(co, start, end - start);
 	
@@ -238,12 +261,12 @@ static void addShortLine(newtComponent co, const char * s, int len) {
 	tb->lines = realloc(tb->lines, (sizeof(char *) * tb->linesAlloced));
     }
 
-    if (len > co->width) len = co->width;
+    if (len > tb->textWidth) len = tb->textWidth;
 
-    tb->lines[tb->numLines] = malloc(co->width + 1);
+    tb->lines[tb->numLines] = malloc(tb->textWidth + 1);
     strncpy(tb->lines[tb->numLines], s, len);
 
-    while (len < co->width)  tb->lines[tb->numLines][len++] = ' ';
+    while (len < tb->textWidth)  tb->lines[tb->numLines][len++] = ' ';
     tb->lines[tb->numLines++][len] = '\0';
 }
 

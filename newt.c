@@ -618,3 +618,12 @@ void newtGetScreenSize(int * cols, int * rows) {
     if (rows) *rows = SLtt_Screen_Rows;
     if (cols) *cols = SLtt_Screen_Cols;
 }
+
+void newtDefaultPlaceHandler(newtComponent c, int newLeft, int newTop) {
+    c->left = newLeft;
+    c->top = newTop;
+}
+
+void newtDefaultMappedHandler(newtComponent c, int isMapped) {
+    c->isMapped = isMapped;
+}

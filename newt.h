@@ -250,7 +250,13 @@ enum newtGridElement { NEWT_GRID_EMPTY = 0,
 newtGrid newtCreateGrid(int cols, int rows);
 /* TYPE, what, TYPE, what, ..., NULL */
 newtGrid newtGridVStacked(enum newtGridElement type, void * what, ...);
+newtGrid newtGridVCloseStacked(enum newtGridElement type, void * what, ...);
 newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...);
+newtGrid newtGridHCloseStacked(enum newtGridElement type1, void * what1, ...);
+newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
+			     newtGrid buttons);
+newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
+			     newtGrid buttons);
 void newtGridSetField(newtGrid grid, int col, int row, 
 		      enum newtGridElement type, void * val, int padLeft,
 		      int padTop, int padRight, int padBottom, int anchor,

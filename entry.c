@@ -27,7 +27,8 @@ static struct componentOps entryOps = {
     entryDraw,
     entryEvent,
     entryDestroy,
-    NULL,
+    newtDefaultPlaceHandler,
+    newtDefaultMappedHandler,
 } ;
 
 void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {
@@ -64,6 +65,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     co->left = left;
     co->height = 1;
     co->width = width;
+    co->isMapped = 0;
     co->callback = NULL;
 
     co->ops = &entryOps;
@@ -106,7 +108,7 @@ static void entryDraw(newtComponent co) {
     char * chptr;
     int len;
 
-    if (co->top == -1) return;
+    if (!co->isMapped) return;
 
     if (en->flags & NEWT_FLAG_DISABLED) 
 	SLsmg_set_color(NEWT_COLORSET_DISENTRY);

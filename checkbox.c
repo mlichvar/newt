@@ -30,7 +30,8 @@ static struct componentOps cbOps = {
     cbDraw,
     cbEvent,
     cbDestroy,
-    NULL,
+    newtDefaultPlaceHandler,
+    newtDefaultMappedHandler,
 } ;
 
 newtComponent newtListitem(int left, int top, const char * text, int isDefault,

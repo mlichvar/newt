@@ -39,11 +39,15 @@ struct form {
 static void gotoComponent(struct form * form, int newComp);
 static struct eventResult formEvent(newtComponent co, struct event ev);
 static struct eventResult sendEvent(newtComponent comp, struct event ev);
+static void formPlace(newtComponent co, int left, int top);
 
-static struct componentOps formOps = {
+/* this isn't static as grid.c tests against it to find forms */
+struct componentOps formOps = {
     newtDrawForm,
     formEvent,
     newtFormDestroy,
+    formPlace,
+    newtDefaultMappedHandler,
 } ;
 
 static inline int componentFits(newtComponent co, int compNum) {
@@ -70,7 +74,7 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     co->left = -1;
     co->isMapped = 0;
 
-    co->takesFocus = 1;
+    co->takesFocus = 0;			/* we may have 0 components */
     co->ops = &formOps;
 
     form->help = help;
@@ -140,6 +144,8 @@ void newtFormSetWidth(newtComponent co, int width) {
 void newtFormAddComponent(newtComponent co, newtComponent newco) {
     struct form * form = co->data;
 
+    co->takesFocus = 1;
+
     if (form->numCompsAlloced == form->numComps) {
 	form->numCompsAlloced += 5;
 	form->elements = realloc(form->elements, 
@@ -169,6 +175,27 @@ void newtFormAddComponents(newtComponent co, ...) {
     va_end(ap);
 }
 
+static void formPlace(newtComponent co, int left, int top) {
+    struct form * form = co->data;
+    int vertDelta, horizDelta;
+    struct element * el;
+    int i;
+
+    newtFormSetSize(co);
+
+    vertDelta = top - co->top;
+    horizDelta = left - co->left;
+    co->top = top;
+    co->left = left;
+
+    for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
+	el->co->top += vertDelta;
+	el->top += vertDelta;
+	el->co->left += horizDelta;
+	el->left += horizDelta;
+    }
+}
+
 void newtDrawForm(newtComponent co) {
     struct form * form = co->data;
     struct element * el;
@@ -179,17 +206,18 @@ void newtDrawForm(newtComponent co) {
     SLsmg_set_color(form->background);
     newtClearBox(co->left, co->top, co->width, co->height);
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-	/* the scrollbar *always* fits */
-	if (el->co == form->vertBar)
+	/* the scrollbar *always* fits somewhere */
+	if (el->co == form->vertBar) {
+	    el->co->ops->mapped(el->co, 1);
 	    el->co->ops->draw(el->co);
-	else {
+	} else {
 	    /* only draw it if it'll fit on the screen vertically */
 	    if (componentFits(co, i)) {
 		el->co->top = el->top - form->vertOffset;
-		el->co->isMapped = 1;
+		el->co->ops->mapped(el->co, 1);
 		el->co->ops->draw(el->co);
 	    } else {
-		el->co->top = -1;		/* tell it not to draw itself */
+		el->co->ops->mapped(el->co, 0);
 	    }
 	}
     }
@@ -208,6 +236,9 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
     int i, num;
 
     er.result = ER_IGNORED;
+    if (!form->numComps) return er;
+
+    subco = form->elements[form->currComp].co;
 
     switch (ev.when) {
       case EV_EARLY:
@@ -223,14 +254,16 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	    }
 	}
 
-	i = form->currComp;
-	num = 0;
-	while (er.result == ER_IGNORED && num != form->numComps ) {
-	    er = form->elements[i].co->ops->event(form->elements[i].co, ev);
+	if (form->numComps) {
+	    i = form->currComp;
+	    num = 0;
+	    while (er.result == ER_IGNORED && num != form->numComps ) {
+		er = form->elements[i].co->ops->event(form->elements[i].co, ev);
 
-	    num++;
-	    i++;
-	    if (i == form->numComps) i = 0;
+		num++;
+		i++;
+		if (i == form->numComps) i = 0;
+	    }
 	}
 
 	break;
@@ -394,8 +427,8 @@ void newtFormSetSize(newtComponent co) {
 
     form->beenSet = 1;
 
-    /* figure out how big we are -- we do this as late as possible (i.e. here)
-       to let grids delay there decisions as long as possible */
+    if (!form->numComps) return;
+
     co->width = 0;
     if (!form->fixedHeight) co->height = 0;
 

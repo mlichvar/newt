@@ -65,9 +65,12 @@ struct componentOps {
     void (* draw)(newtComponent c);
     struct eventResult (* event)(newtComponent c, struct event ev);
     void (* destroy)(newtComponent c);
-    void (* place)(newtComponent c);
+    void (* place)(newtComponent c, int newLeft, int newTop);
+    void (* mapped)(newtComponent c, int isMapped);
 } ;
 
+void newtDefaultPlaceHandler(newtComponent c, int newLeft, int newTop);
+void newtDefaultMappedHandler(newtComponent c, int isMapped);
 struct eventResult newtDefaultEventHandler(newtComponent c,
 					   struct event ev);
 

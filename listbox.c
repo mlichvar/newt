@@ -44,25 +44,35 @@ static void listboxDraw(newtComponent co);
 static void listboxDestroy(newtComponent co);
 static struct eventResult listboxEvent(newtComponent co, struct event ev);
 static void newtListboxRealSetCurrent(newtComponent co);
-static void listboxPlace(newtComponent co);
+static void listboxPlace(newtComponent co, int newLeft, int newTop);
 static inline void updateWidth(newtComponent co, struct listbox * li, 
 				int maxField);
+static void listboxMapped(newtComponent co, int isMapped);
 
 static struct componentOps listboxOps = {
     listboxDraw,
     listboxEvent,
     listboxDestroy,
     listboxPlace,
+    listboxMapped,
 };
 
-static void listboxPlace(newtComponent co) {
+static void listboxMapped(newtComponent co, int isMapped) {
     struct listbox * li = co->data;
 
-    if (li->sb) {
-	li->sb->top = co->top;
-	li->sb->left = co->left + co->width - 1;
-	if (li->sb->ops->place) li->sb->ops->place(li->sb);
-    }
+    co->isMapped = isMapped;
+    if (li->sb)
+	li->sb->ops->mapped(li->sb, isMapped);
+}
+
+static void listboxPlace(newtComponent co, int newLeft, int newTop) {
+    struct listbox * li = co->data;
+
+    co->top = newTop;
+    co->left = newLeft;
+
+    if (li->sb)
+	li->sb->ops->place(li->sb, co->left + co->width - 1, co->top);
 }
 
 newtComponent newtListbox(int left, int top, int height, int flags) {
