@@ -25,6 +25,9 @@ class Widget:
         else:
             self.w.setCallback(obj)
 
+    def __init__:
+	self.w = None
+
 class Button(Widget):
 
     def __init__(self, text):
