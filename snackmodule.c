@@ -93,7 +93,7 @@ static PyMethodDef snackModuleMethods[] = {
 } ;
 
 struct snackGrid_s {
-    PyObject_HEAD;
+    PyObject_HEAD
     newtGrid grid;
 } ;
 
@@ -125,7 +125,7 @@ static PyTypeObject snackGridType = {
 };
 
 struct snackForm_s {
-    PyObject_HEAD;
+    PyObject_HEAD
     newtComponent fo;
 } ;
 
@@ -167,7 +167,7 @@ static PyTypeObject snackFormType = {
 };
 
 struct snackWidget_s {
-    PyObject_HEAD;
+    PyObject_HEAD
     newtComponent co;
     char achar;
     void * apointer;
