@@ -59,6 +59,7 @@ void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtPushHelpLine(char * text);
+void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
 void newtDrawRootText(int row, int col, char * text);
 
