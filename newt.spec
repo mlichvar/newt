@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50
 Version: %{version}
-Release: 2
+Release: 3
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Aug  5 1999 Matt Wilson <msw@redhat.com>
+- added snack bindings for setting current listbox selection
+- added argument to set default selection in snack ListboxChoiceWindow
+
 * Mon Aug  2 1999 Matt Wilson <msw@redhat.com>
 - added checkboxtree
 - improved snack binding
