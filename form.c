@@ -246,6 +246,16 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	
       case EV_NORMAL:
 	er = subco->ops->event(subco, ev);
+	switch (er.result) {
+	  case ER_NEXTCOMP:
+	    er.result = ER_SWALLOWED;
+	    dir = 1;
+	    wrap = 0;
+	    break;
+
+	  default:
+	    break;
+	}
 	break;
 
       case EV_LATE:
