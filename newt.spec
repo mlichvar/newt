@@ -1,6 +1,6 @@
 Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
-%define version 0.21
+%define version 0.22
 Version: %{version}
 Release: 1
 Copyright: LGPL
