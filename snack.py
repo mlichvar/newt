@@ -616,7 +616,7 @@ class CListbox(Grid):
 			
 
 		self.listbox = Listbox(height, scroll, returnExit, width)
-		self.setField(self.listbox, 0, box_y)
+		self.setField(self.listbox, 0, box_y, anchorRight=1)
 
 	def colFormText(self, col_text, align = None):
 		i = 0
