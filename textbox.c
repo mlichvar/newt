@@ -28,6 +28,16 @@ static struct componentOps textboxOps = {
     textboxDestroy,
 } ;
 
+void newtTextboxSetHeight(newtComponent co, int height) {
+    co->height = height;
+}
+
+int newtTextboxGetNumLines(newtComponent co) {
+    struct textbox * tb = co->data;
+
+    return (tb->numLines);
+}
+
 newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     newtComponent co;
     struct textbox * tb;
