@@ -4,6 +4,7 @@
    Copyright Elliot Lee 1996 */
 
 #include <slang/slang.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -29,7 +30,7 @@ struct listbox {
     struct items *boxItems;
     int grow;
     int flags; /* flags for this listbox, right now just
-		  NEWT_LISTBOX_RETURNEXIT */
+		  NEWT_FLAG_RETURNEXIT */
 };
 
 static void listboxDraw(newtComponent co);
@@ -59,7 +60,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->currItem = 0;
     li->isActive = 0;
     li->startShowItem = 0;
-    li->flags = flags & (NEWT_LISTBOX_RETURNEXIT|NEWT_FLAG_DOBORDER);
+    li->flags = flags & (NEWT_FLAG_RETURNEXIT|NEWT_FLAG_DOBORDER);
 
     if (height) {
 	li->grow = 0;
@@ -238,8 +239,8 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
     if(num > li->numItems)
 	num = li->numItems;
 
-    if (!li->boxItems)
-	return -1;
+    if (li->boxItems == NULL || li->numItems <= 0)
+	return 0;
 
     if (num <= 1) { 
 	item = li->boxItems;
@@ -247,7 +248,7 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
 
 	/* Fix things up for the width-finding loop near the bottom */
 	item2 = li->boxItems;
-	widest = strlen(item2->key);
+	widest = strlen(item2?item2->key:"");
     } else {
 	for(i = 0, item = li->boxItems; item != NULL && i < num - 1;
 	    i++, item = item->next) {
@@ -265,7 +266,7 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
     li->numItems--;
     if(li->currItem >= num)
 	li->currItem--;
-    for (item = item2->next; item != NULL; item = item->next)
+    for (item = item2?item2->next:item2; item != NULL; item = item->next)
 	if((t = strlen(item->key)) > widest) widest = t;
 
     /* Adjust the listbox width */
@@ -363,7 +364,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 
 	switch(ev.u.key) {
 	  case NEWT_KEY_ENTER:
-	    if(li-> flags & NEWT_LISTBOX_RETURNEXIT)
+	    if(li-> flags & NEWT_FLAG_RETURNEXIT)
 		er.result = ER_EXITFORM;
 	    break;
 

@@ -53,13 +53,13 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     co->left = left;
     co->takesFocus = 0;
 
-    tb->doWrap = flags & NEWT_TEXTBOX_WRAP;
+    tb->doWrap = flags & NEWT_FLAG_WRAP;
     tb->numLines = 0;
     tb->linesAlloced = 0;
     tb->lines = NULL;
     tb->topLine = 0;
 
-    if (flags & NEWT_TEXTBOX_SCROLL) {
+    if (flags & NEWT_FLAG_SCROLL) {
 	co->width = width - 2;
 	tb->sb = newtVerticalScrollbar(co->left + co->width + 1, co->top, 
 			   co->height, COLORSET_TEXTBOX, COLORSET_TEXTBOX);

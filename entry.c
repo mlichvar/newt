@@ -73,7 +73,7 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     en->bufUsed = 0;
     en->bufAlloced = width + 1;
 
-    if (!(en->flags & NEWT_ENTRY_DISABLED))
+    if (!(en->flags & NEWT_FLAG_DISABLED))
 	co->takesFocus = 1;
     else
 	co->takesFocus = 0;
@@ -103,12 +103,12 @@ static void entryDraw(newtComponent co) {
 
     if (co->top == -1) return;
 
-    if (en->flags & NEWT_ENTRY_DISABLED) 
+    if (en->flags & NEWT_FLAG_DISABLED) 
 	SLsmg_set_color(NEWT_COLORSET_DISENTRY);
     else
 	SLsmg_set_color(NEWT_COLORSET_ENTRY);
  
-    if (en->flags & NEWT_ENTRY_HIDDEN) {
+    if (en->flags & NEWT_FLAG_HIDDEN) {
 	newtGotorc(co->top, co->left);
 	for (i = 0; i < co->width; i++)
 	    SLsmg_write_char('_');
@@ -141,7 +141,7 @@ static void entryDraw(newtComponent co) {
 	SLsmg_write_nstring(chptr, co->width);
     }
 
-    if (en->flags & NEWT_ENTRY_HIDDEN)
+    if (en->flags & NEWT_FLAG_HIDDEN)
 	newtGotorc(co->top, co->left);
     else
 	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
@@ -153,7 +153,7 @@ void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
 
     en->flags = newtSetFlags(en->flags, flags, sense);
 
-    if (!(en->flags & NEWT_ENTRY_DISABLED))
+    if (!(en->flags & NEWT_FLAG_DISABLED))
 	co->takesFocus = 1;
     else
 	co->takesFocus = 0;
@@ -180,7 +180,7 @@ static struct eventResult entryEvent(newtComponent co,
 	switch (ev.event) {
 	  case EV_FOCUS:
 	    /*SLtt_set_cursor_visibility(0);*/
-	    if (en->flags & NEWT_ENTRY_HIDDEN)
+	    if (en->flags & NEWT_FLAG_HIDDEN)
 		newtGotorc(co->top, co->left);
 	    else
 		newtGotorc(co->top, co->left + 
@@ -213,7 +213,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
     er.result = ER_SWALLOWED;
     switch (key) {
       case '\r':				/* Return */
-	if (en->flags & NEWT_ENTRY_RETURNEXIT) {
+	if (en->flags & NEWT_FLAG_RETURNEXIT) {
 	    er.result = ER_EXITFORM;
 	} else {
 	    er.result = ER_NEXTCOMP;
@@ -277,7 +277,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 
       default:
 	if ((key >= 0x20 && key <= 0x7e) || (key >= 0xa0 && key <= 0xff)) {
-	    if (!(en->flags & NEWT_ENTRY_SCROLL) && en->bufUsed == co->width) {
+	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed == co->width) {
 		SLtt_beep();
 		break;
 	    } 

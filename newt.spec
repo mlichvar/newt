@@ -45,6 +45,10 @@ make install-sh
 
 %changelog
 
+* Tue May 28 1997 Elliot Lee <sopwith@redhat.com> 0.8-2
+- Touchups on Makefile
+- Cleaned up NEWT_FLAGS_*
+
 * Tue Mar 18 1997 Erik Troan <ewt@redhat.com>
 
 - Cleaned up listbox

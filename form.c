@@ -84,7 +84,7 @@ newtComponent newtForm(newtComponent vertBar, char * help, int flags) {
     form->background = COLORSET_WINDOW;
     form->hotKeys = malloc(sizeof(int));
     form->numHotKeys = 0;
-    if (!(form->flags & NEWT_FORM_NOF12)) {
+    if (!(form->flags & NEWT_FLAG_NOF12)) {
 	newtFormAddHotKey(co, NEWT_KEY_F12);
     }
 

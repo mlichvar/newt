@@ -57,7 +57,7 @@ void addButtons(int height, int width, newtComponent form,
 newtComponent textbox(int maxHeight, int width, char * text, int flags, 
 			int * height) {
     newtComponent tb;
-    int sFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_TEXTBOX_SCROLL : 0;
+    int sFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
     int i;
     char * buf, * src, * dst;
 
@@ -72,7 +72,7 @@ newtComponent textbox(int maxHeight, int width, char * text, int flags,
     }
     *dst++ = '\0';
 
-    tb = newtTextbox(1, 0, width, maxHeight, NEWT_TEXTBOX_WRAP | sFlag);
+    tb = newtTextbox(1, 0, width, maxHeight, NEWT_FLAG_WRAP | sFlag);
     newtTextboxSetText(tb, buf);
 
     i = newtTextboxGetNumLines(tb);
@@ -383,12 +383,12 @@ int checkList(char * text, int height, int width, poptContext optCon,
 int messageBox(char * text, int height, int width, int type, int flags) {
     newtComponent form, yes, tb, answer;
     newtComponent no = NULL;
-    int tFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_TEXTBOX_SCROLL : 0;
+    int tFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
 
     form = newtForm(NULL, NULL, 0);
 
     tb = newtTextbox(1, 1, width - 2, height - 3 - buttonHeight, 
-			NEWT_TEXTBOX_WRAP | tFlag);
+			NEWT_FLAG_WRAP | tFlag);
     newtTextboxSetText(tb, text);
 
     newtFormAddComponent(form, tb);

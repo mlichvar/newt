@@ -14,9 +14,9 @@ void disableCallback(newtComponent co, void * data) {
     struct callbackInfo * cbi = data;
 
     if (*cbi->state == ' ') {
-	newtEntrySetFlags(cbi->en, NEWT_ENTRY_DISABLED, NEWT_FLAGS_RESET);
+	newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
     } else {
-	newtEntrySetFlags(cbi->en, NEWT_ENTRY_DISABLED, NEWT_FLAGS_SET);
+	newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
     }
 
     newtRefresh();
@@ -72,8 +72,8 @@ void main(void) {
     l2 = newtLabel(3, 7, "Scrolls:");
     l3 = newtLabel(3, 8, "Hidden:");
     e1 = newtEntry(12, 6, "", 20, &scaleVal, 0);
-    e2 = newtEntry(12, 7, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
-    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
+    e2 = newtEntry(12, 7, "Default", 20, &enr2, NEWT_FLAG_SCROLL);
+    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_FLAG_HIDDEN);
 
     cbis[0].state = &results[0];
     cbis[0].en = e1;
@@ -98,7 +98,7 @@ void main(void) {
     newtListboxAddEntry(lb, "Ninth", NULL);
     newtListboxAddEntry(lb, "Tenth", NULL);
 
-    t = newtTextbox(45, 10, 17, 5, NEWT_TEXTBOX_WRAP);
+    t = newtTextbox(45, 10, 17, 5, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
 
     newtFormAddComponents(f, lb, t, NULL);

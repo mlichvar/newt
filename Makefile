@@ -66,7 +66,7 @@ shareddir:
 shared: $(LIBNEWTSH)
 
 $(LIBNEWTSH): shareddir $(SHAREDOBJS)
-	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS)
+	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(LIBS)
 
 $(SHAREDDIR)/%.o : %.c
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<
@@ -76,6 +76,7 @@ $(SHAREDDIR)/newt.o: newt.c Makefile
 
 
 install: $(LIBNEWT)
+	[ -d $(bindir) ] || install -m 755 -d $(bindir)
 	[ -d $(libdir) ] || install -m 755 -d $(libdir)
 	[ -d $(includedir) ] || install -m 755 -d $(includedir)
 	install -m 644 newt.h $(includedir)

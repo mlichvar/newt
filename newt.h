@@ -58,6 +58,8 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 #define NEWT_FLAG_DISABLED 	(1 << 3)
 #define NEWT_FLAG_NOSCROLL 	(1 << 4)	/* for listboxes */
 #define NEWT_FLAG_DOBORDER	(1 << 5)
+#define NEWT_FLAG_WRAP		(1 << 6)
+#define NEWT_FLAG_NOF12		(1 << 7)
 
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
@@ -65,6 +67,10 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 #define NEWT_ENTRY_HIDDEN	NEWT_FLAG_HIDDEN
 #define NEWT_ENTRY_RETURNEXIT	NEWT_FLAG_RETURNEXIT
 #define NEWT_ENTRY_DISABLED	NEWT_FLAG_DISABLED
+
+#define NEWT_TEXTBOX_WRAP	NEWT_FLAG_WRAP
+#define NEWT_TEXTBOX_SCROLL	NEWT_FLAG_SCROLL
+#define NEWT_FORM_NOF12		NEWT_FLAG_NOF12
 
 typedef struct newtComponent_struct * newtComponent;
 
@@ -125,15 +131,10 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 
-#define NEWT_TEXTBOX_WRAP	(1 << 0)
-#define NEWT_TEXTBOX_SCROLL	(1 << 1)
-
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 void newtTextboxSetHeight(newtComponent co, int height);
 int newtTextboxGetNumLines(newtComponent co);
-
-#define NEWT_FORM_NOF12		(1 << 0)
 
 struct newtExitStruct {
     enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT } reason;
