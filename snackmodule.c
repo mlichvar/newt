@@ -444,7 +444,7 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     char * initial;
     int isHidden, isScrolled, returnExit;
 
-    if (!PyArg_ParseTuple(args, "isii", &width, &initial,
+    if (!PyArg_ParseTuple(args, "isiii", &width, &initial,
 			  &isHidden, &isScrolled, &returnExit)) return NULL;
 
     widget = PyObject_NEW(snackWidget, &snackWidgetType);
