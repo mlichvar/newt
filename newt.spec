@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Jan 20 2000 Erik Troan <ewt@redhat.com>
+- see CHANGES
+
 * Thu Jan 20 2000 Preston Brown <pbrown@redhat.com>
 - fix segfault in newtRadioGetCurrent
 

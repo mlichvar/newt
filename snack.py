@@ -267,7 +267,10 @@ class SnackScreen:
     def centeredWindow(self, width, height, title):
 	return _snack.centeredwindow(width, height, title)
 
-    def gridWrappedWindow(self, grid, title):
+    def gridWrappedWindow(self, grid, title, x = None, y = None):
+	if x and y:
+	    return _snack.gridwrappedwindow(grid.g, title, x, y)
+
 	return _snack.gridwrappedwindow(grid.g, title)
 
     def popWindow(self):
@@ -378,8 +381,8 @@ class GridForm(Grid):
 		      growx, growy);
 	self.childList.append(widget)
 
-    def runOnce(self):
-	result = self.run()
+    def runOnce(self, x = None, y = None):
+	result = self.run(x, y)
 	self.screen.popWindow()
 	return result
 
@@ -389,16 +392,16 @@ class GridForm(Grid):
     def setTimer(self, keyname):
 	self.form.setTimer(keyname)
 
-    def create(self):
+    def create(self, x = None, y = None):
 	if not self.form_created:
 	    self.place(1,1)
 	    for child in self.childList:
 		self.form.add(child)
-	    self.screen.gridWrappedWindow(self, self.title)
+	    self.screen.gridWrappedWindow(self, self.title, x, y)
 	    self.form_created = 1
 
-    def run(self):
-	self.create()
+    def run(self, x = None, y = None):
+	self.create(x, y)
 	return self.form.run()
 
     def draw(self):
@@ -425,6 +428,10 @@ class CheckboxTree(Widget):
 	key = self.w.checkboxtreeAddItem(text, path, selected)
 	self.key2item[key] = item
 	self.item2key[item] = key
+
+    def getCurrent(self):
+	curr = self.w.checkboxtreeGetCurrent()
+	return self.key2item[curr]
 
     def __init__(self, height, scroll = 0):
 	self.w = _snack.checkboxtree(height, scroll)
@@ -477,14 +484,14 @@ def ListboxChoiceWindow(screen, title, text, items,
 
 def ButtonChoiceWindow(screen, title, text, 
 		       buttons = [ 'Ok', 'Cancel' ], 
-		       width = 40):
+		       width = 40, x = None, y = None):
     bb = ButtonBar(screen, buttons)
     t = TextboxReflowed(width, text, maxHeight = screen.height - 12)
 
     g = GridForm(screen, title, 1, 2)
     g.add(t, 0, 0, padding = (0, 0, 0, 1))
     g.add(bb, 0, 1, growx = 1)
-    return bb.buttonPressed(g.runOnce())
+    return bb.buttonPressed(g.runOnce(x, y))
 
 def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
 		entryWidth = 20, buttons = [ 'Ok', 'Cancel' ]):

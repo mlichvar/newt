@@ -116,7 +116,12 @@ install-sh: sharedlib whiptcl.so _snackmodule.so
 	install -m 755 _snackmodule.so $(instroot)/$(pythonbindir)
 	install -m 755 snack.py $(instroot)/$(pythondir)
 
-archive:
+configure:  configure.in
+	autoconf
+	echo "You need to rerun ./configure before continuing"
+	exit 1
+
+archive:    configure
 	@cvs tag -F $(CVSTAG)
 	@rm -rf /tmp/newt-$(VERSION) /tmp/newt
 	@cd /tmp; cvs export -r$(CVSTAG) newt; mv newt newt-$(VERSION)

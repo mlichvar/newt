@@ -179,6 +179,7 @@ static PyObject * widgetListboxSet(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args);
 static PyObject * widgetEntrySetFlags(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxSetFlags(snackWidget * s, PyObject * args);
 
@@ -195,6 +196,8 @@ static PyMethodDef widgetMethods[] = {
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
     { "scaleSet", (PyCFunction) scaleSet, METH_VARARGS, NULL },
     { "checkboxtreeAddItem", (PyCFunction) widgetCheckboxTreeAddItem,
+      METH_VARARGS, NULL },
+    { "checkboxtreeGetCurrent", (PyCFunction) widgetCheckboxTreeGetCur,
       METH_VARARGS, NULL },
     { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
       METH_VARARGS, NULL },
@@ -427,11 +430,16 @@ static PyObject * centeredWindow(PyObject * s, PyObject * args) {
 static PyObject * gridWrappedWindow(PyObject * s, PyObject * args) {
     snackGrid * grid;
     char * title;
+    int x = -1, y = -1;
 
-    if (!PyArg_ParseTuple(args, "O!s", &snackGridType, &grid, &title))
+    if (!PyArg_ParseTuple(args, "O!s|ii", &snackGridType, &grid, &title, 
+			  &x, &y))
 	return NULL;
 
-    newtGridWrappedWindow(grid->grid, title);
+    if (y == -1)
+	newtGridWrappedWindow(grid->grid, title);
+    else
+	newtGridWrappedWindowAt(grid->grid, title, x, y);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -959,12 +967,22 @@ static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args) {
     return PyInt_FromLong(s->anint++);
 }
 
+static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args) {
+    if (!PyArg_ParseTuple(args, ""))
+	return NULL;
+
+    return PyInt_FromLong((int) newtCheckboxTreeGetCurrent(s->co));
+}
+
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
 					      PyObject * args) {
     void ** selection;
     int numselected;
     int i;
     PyObject * sel;
+
+    if (!PyArg_ParseTuple(args, ""))
+	return NULL;
 
     selection = newtCheckboxTreeGetSelection(s->co, &numselected);
 

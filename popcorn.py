@@ -11,7 +11,7 @@ li.insert("Another", "a", "f")
 li.delete("a")
 ct = CheckboxTree(5, scroll = 1)
 ct.append("Colors")
-ct.addItem("Red", (0, snackArgs['append']))
+ct.addItem("Red", (0, snackArgs['append']), "red item key")
 ct.addItem("Yellow", (0, snackArgs['append']))
 ct.addItem("Blue", (0, snackArgs['append']))
 ct.append("Flavors")
@@ -106,3 +106,5 @@ print res
 
 print foo
 print 'lbcw', lbcw
+print "ct selected", ct.getSelection()
+print "ct current", ct.getCurrent()

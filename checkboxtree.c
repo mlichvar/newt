@@ -256,7 +256,7 @@ static struct items * findItem(struct items * items, const void * data) {
     return NULL;
 }
 
-static void listSelected(struct items * items, int * num, void ** list, int seqindex) {
+static void listSelected(struct items * items, int * num, const void ** list, int seqindex) {
     while (items) {
 	    if ((seqindex ? items->selected==seqindex : items->selected) && !items->branch)
 	    list[(*num)++] = items->data;
@@ -266,15 +266,15 @@ static void listSelected(struct items * items, int * num, void ** list, int seqi
     }
 }
 
-void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems)
+const void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems)
 {
     return newtCheckboxTreeGetMultiSelection(co, numitems, 0);
 }
 
-void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum)
+const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum)
 {
     struct CheckboxTree * ct;
-    void **retval;
+    const void **retval;
     int seqindex=0;
 
     if(!co || !numitems) return NULL;
@@ -571,4 +571,11 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
     }
 
     return er;
+}
+
+const void * newtCheckboxTreeGetCurrent(newtComponent co) {
+    struct CheckboxTree * ct = co->data;
+
+    if (!ct->currItem) return NULL;
+    return (*ct->currItem)->data;
 }

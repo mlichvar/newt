@@ -1,3 +1,11 @@
+0.54 -> 0.55
+	- added newtCheckboxTreeGetCurrent() and snack bindings
+	- updated snack stuff to allow manual placement of grid
+	  wrapped windows
+
+0.53 -> 0.54
+	- fix segfault in newtRadioGetCurrent
+
 0.52 -> 0.53
 	- place cursor in checkboxtree's more carefully
 
