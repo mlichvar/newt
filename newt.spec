@@ -1,4 +1,4 @@
-%define pythonver 2.2
+%define pythonver 2.3
 
 Summary: A development library for text mode user interfaces.
 Name: newt
