@@ -1,7 +1,7 @@
 LIBS = -L. -lnewt -lslang -lm #-lefence
 CFLAGS = -g -Wall
 
-VERSION = 0.1
+VERSION = 0.2
 
 PROGS = test
 OBJS = test.o
@@ -44,7 +44,8 @@ veryclean: clean
 	rm -f .depend
 
 clean:
-	rm -f $(PROGS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core
+	rm -f $(PROGS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core $(LIBNEWTSH)  \
+		$(SHAREDOBJS)
 
 depend:
 	$(CPP) $(CFLAGS) -M $(SOURCES) > .depend
