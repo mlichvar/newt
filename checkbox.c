@@ -79,7 +79,7 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
 char newtCheckboxGetValue(newtComponent co) {
     struct checkbox * cb = co->data;
 
-    return cb->value;
+    return *cb->result;
 }
 
 void newtCheckboxSetValue(newtComponent co, char value) {

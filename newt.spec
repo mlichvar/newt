@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Mon Nov 17 2003 Nalin Dahyabhai <nalin@redhat.com>
+- fix newtCheckboxGetValue not working if checkbox created with non-NULL result
+
 * Thu Nov  6 2003 Jeremy Katz <katzj@redhat.com> 0.51.6-2
 - rebuild for python 2.3
 
