@@ -91,6 +91,8 @@ static void cbDraw(newtComponent c) {
 static void cbDrawIt(newtComponent c, int active) {
     struct checkbox * cb = c->data;
 
+    if (c->top == -1) return;
+
     SLsmg_set_color(COLORSET_CHECKBOX);
 
     newtGotorc(c->top, c->left);

@@ -72,6 +72,8 @@ static void entryDraw(newtComponent co) {
     int i;
     char * chptr;
     int len;
+
+    if (co->top == -1) return;
  
     if (en->flags & NEWT_ENTRY_HIDDEN) {
 	newtGotorc(co->top, co->left);
