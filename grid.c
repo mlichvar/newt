@@ -100,9 +100,10 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 		if (field->u.grid->width == -1) 
 		    shuffleGrid(field->u.grid, left, top, 0);
 		j = field->u.grid->width;
-	    } else {
+	    } else if (field->type == NEWT_GRID_COMPONENT){
 		j = field->u.co->width;
-	    }
+	    } else 
+		j = 0;
 
 	    j += field->padLeft + field->padRight;
 
@@ -123,9 +124,10 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 		if (field->u.grid->height == -1) 
 		    shuffleGrid(field->u.grid, 0, 0, 0);
 		j = field->u.grid->height;
-	    } else {
+	    } else if (field->type == NEWT_GRID_COMPONENT){
 		j = field->u.co->height;
-	    }
+	    } else 
+		j = 0;
 
 	    j += field->padTop + field->padBottom;
 
