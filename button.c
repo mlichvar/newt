@@ -50,6 +50,7 @@ static newtComponent createButton(int left, int row, const char * text, int comp
     co->top = row;
     co->left = left;
     co->takesFocus = 1;
+    co->isMapped = 0;
 
     newtGotorc(co->top, co->left);
     bu->bgColor = -1;
@@ -86,6 +87,8 @@ static void buttonDraw(newtComponent co) {
 
 static void buttonDrawIt(newtComponent co, int active, int pushed) {
     struct button * bu = co->data;
+
+    if (!co->isMapped) return;
 
     if (bu->bgColor == -1) {
 	newtGotorc(co->top, co->left);
