@@ -161,7 +161,11 @@ void **newtListboxGetSelection(newtComponent co, int *numitems);
 void newtListboxClearSelection(newtComponent co);
 void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense);
-
+newtComponent newtCheckboxTree(int left, int top, int height, int flags);
+void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
+int newtCheckboxTreeAppend(newtComponent co, int selected,
+			   const char * text,
+			   const void * data);
     
 newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
 				  int flexDown, int flexUp, int flags);

@@ -13,12 +13,18 @@ rb = RadioBar(screen, (("This", "this", 0),
 			("That", "that", 0)))
 bb = ButtonBar(screen, (("Ok", "ok"), ("Cancel", "cancel")))
 
-g = GridForm(screen, "My Test", 1, 3)
+ct = CheckboxTree(height = 5, scroll = 1)
+ct.append("Foo", 1, 1)
+ct.append("Bar", 2, 0)
+ct.append("Bang", 3, 1)
+
+g = GridForm(screen, "My Test", 1, 4)
 g.add(li, 0, 0)
 g.add(rb, 0, 1, (0, 1, 0, 1))
-g.add(bb, 0, 2, growx = 1)
+g.add(ct, 0, 2)
+g.add(bb, 0, 3, growx = 1)
 
-result = g.run_once()
+result = g.runOnce()
 
 screen.finish()
 
@@ -26,3 +32,4 @@ print result
 print "listbox:", li.current()
 print "rb:", rb.getSelection()
 print "bb:", bb.buttonPressed(result)
+print "checkboxtree:", ct.getSelection()

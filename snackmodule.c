@@ -44,6 +44,7 @@ static PyObject * setSuspendCallback(PyObject * s, PyObject * args);
 static PyObject * reflowText(PyObject * s, PyObject * args);
 static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
+static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args);
 
 static PyMethodDef snackModuleMethods[] = {
     { "button", (PyCFunction) buttonWidget, METH_VARARGS, NULL },
@@ -72,6 +73,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "suspendcallback", setSuspendCallback, METH_VARARGS, NULL },
     { "ternary", ternaryWindow, METH_VARARGS, NULL },
     { "textbox", (PyCFunction) textWidget, METH_VARARGS, NULL },
+    { "checkboxtree", (PyCFunction) checkboxTreeWidget, METH_VARARGS, NULL },
     { NULL }
 } ;
 
@@ -151,6 +153,44 @@ struct snackWidget_s {
     int anint;
 } ;
 
+typedef struct cbSelection_t {
+    PyObject_HEAD;
+    void ** selection;
+    int numselected;
+} cbSelection;
+
+static int selectionLength(PyObject * o);
+PyObject * selectionItem(PyObject * o, int n);
+
+static PySequenceMethods selectionAsSeq = {
+	selectionLength,		/* length */
+	0,				/* concat */
+	0,				/* repeat */
+	selectionItem,			/* item */
+	0,				/* slice */
+	0,				/* assign item */
+	0,				/* assign slice */
+};
+
+static void selectionDestructor(PyObject * s);
+
+static PyTypeObject cbTreeSelection = {
+        PyObject_HEAD_INIT(&PyType_Type)
+        0,                              /* ob_size */
+        "cbselection",                  /* tp_name */
+        sizeof(cbSelection),            /* tp_size */
+        0,                              /* tp_itemsize */
+        selectionDestructor,    	/* tp_dealloc */
+        0,                              /* tp_print */
+        0,    		                /* tp_getattr */
+        0,                              /* tp_setattr */
+        0,                              /* tp_compare */
+        0,                              /* tp_repr */
+        0,                              /* tp_as_number */
+        &selectionAsSeq,                 /* tp_as_sequence */
+        0,                		/* tp_as_mapping */
+};
+
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
 static PyObject * widgetGetAttr(PyObject * s, char * name);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
@@ -161,6 +201,9 @@ static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
+static PyObject * widgetCheckboxTreeAppend(snackWidget * s, PyObject * args);
+static cbSelection * widgetCheckboxTreeGetSel(snackWidget * s,
+					      PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
@@ -173,6 +216,10 @@ static PyMethodDef widgetMethods[] = {
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
     { "scaleSet", (PyCFunction) scaleSet, METH_VARARGS, NULL },
+    { "checkboxtreeAppend", (PyCFunction) widgetCheckboxTreeAppend,
+      METH_VARARGS, NULL },
+    { "checkboxtreeGetSelection", (PyCFunction) widgetCheckboxTreeGetSel,
+      METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -755,6 +802,78 @@ static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args) {
 }
 
 static void emptyDestructor(PyObject * s) {
+}
+
+static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args) {
+    int height;
+    int scrollBar = 0;
+    snackWidget * widget;
+    
+    if (!PyArg_ParseTuple(args, "i|i", &height, &scrollBar))
+	return NULL;
+
+    widget = PyObject_NEW(snackWidget, &snackWidgetType);
+    widget->co = newtCheckboxTree(-1, -1, height,
+				  scrollBar ? NEWT_FLAG_SCROLL : 0);
+
+    widget->anint = 1;
+
+    return widget;
+}
+
+static PyObject * widgetCheckboxTreeAppend(snackWidget * s, PyObject * args) {
+    char * text;
+    void * key;
+    int selected = 0;
+    
+    if (!PyArg_ParseTuple(args, "s|i", &text, &selected))
+	return NULL;
+
+    newtCheckboxTreeAppend(s->co, selected, text, (void *) s->anint);
+
+    return PyInt_FromLong(s->anint++);
+}
+
+static cbSelection * widgetCheckboxTreeGetSel(snackWidget * s,
+					      PyObject * args) {
+    void ** selection;
+    int numselected;
+    cbSelection * sel;
+
+    selection = newtCheckboxTreeGetSelection(s->co, &numselected);
+
+    sel = PyObject_NEW(cbSelection, &cbTreeSelection);
+    sel->selection = selection;
+    sel->numselected = numselected;
+    
+    return sel;
+}
+
+static int selectionLength(PyObject * o) {
+    cbSelection * sel = (void *) o;
+
+    return sel->numselected;
+}
+
+PyObject * selectionItem(PyObject * o, int n) {
+    cbSelection * sel = (void *) o;
+    void **result;
+
+    if (n > sel->numselected - 1 || sel->numselected == 0) {
+	PyErr_SetString(PyExc_IndexError, "index out of bounds");
+	return NULL;
+    }
+
+    result = sel->selection[n];
+    
+    return Py_BuildValue("i", (int) result);
+}
+
+static void selectionDestructor(PyObject * o) {
+    cbSelection * sel = (void *) o;
+
+    if (sel->selection != NULL)
+	free(sel->selection);
 }
 
 void init_snack(void) {
