@@ -97,22 +97,22 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->sbAdjust = 0;
     li->bdxAdjust = 0;
     li->bdyAdjust = 0;
-    li->flags = flags & (NEWT_FLAG_RETURNEXIT | NEWT_FLAG_DOBORDER | 
+    li->flags = flags & (NEWT_FLAG_RETURNEXIT | NEWT_FLAG_BORDER | 
 			 NEWT_FLAG_MULTIPLE);
 
-    if (li->flags & NEWT_FLAG_DOBORDER) {
+    if (li->flags & NEWT_FLAG_BORDER) {
 	li->bdxAdjust = 2;
 	li->bdyAdjust = 1;
     }
 
     if (height) {
 	li->grow = 0;
-	if (flags & NEWT_FLAG_NOSCROLL) {
-	    sb = NULL;
-	} else {
+	if (flags & NEWT_FLAG_SCROLL) {
 	    sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
 				       COLORSET_ACTLISTBOX);
 	    li->sbAdjust = 3;
+	} else {
+	    sb = NULL;
 	}
 	co->height = height;
     } else {
@@ -215,30 +215,34 @@ void * newtListboxGetCurrent(newtComponent co) {
 	return NULL;
 }
 
-void newtListboxSelectItem(newtComponent co, int item,
+void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense)
 {
     struct listbox * li = co->data;
     int i;
-    struct items *iitem;
+    struct items * item;
     
-    for(i = 0, iitem = li->boxItems; iitem != NULL && i < item;
-	i++, iitem = iitem->next);
+    item = li->boxItems, i = 0;
+    while (item && item->data != key)
+	item = item->next, i++;
 
-    if (iitem) {
-	if(iitem->isSelected && sense != NEWT_FLAGS_SET)
-	    li->numSelected--;
-	else if(!iitem->isSelected && sense != NEWT_FLAGS_RESET)
-	    li->numSelected++;
-	switch(sense) {
-		case NEWT_FLAGS_RESET:
-			iitem->isSelected = 0; break;
-		case NEWT_FLAGS_SET:
-			iitem->isSelected = 1; break;
-		case NEWT_FLAGS_TOGGLE:
-			iitem->isSelected = !iitem->isSelected;
-	}
+    if (!item) return;
+
+    if (item->isSelected)
+	li->numSelected--;
+
+    switch(sense) {
+	case NEWT_FLAGS_RESET:
+		item->isSelected = 0; break;
+	case NEWT_FLAGS_SET:
+		item->isSelected = 1; break;
+	case NEWT_FLAGS_TOGGLE:
+		item->isSelected = !item->isSelected;
     }
+
+    if (item->isSelected)
+	li->numSelected++;
+
     listboxDraw(co);
 }
 
@@ -276,7 +280,7 @@ void ** newtListboxGetSelection(newtComponent co, int *numitems)
     return retval;
 }
 
-void newtListboxSetText(newtComponent co, int num, const char * text) {
+void newtListboxSetEntry(newtComponent co, int num, const char * text) {
     struct listbox * li = co->data;
     int i;
     struct items *item;
@@ -298,10 +302,6 @@ void newtListboxSetText(newtComponent co, int num, const char * text) {
 	listboxDraw(co);
 }
 
-void newtListboxSetEntry(newtComponent co, int num, const char * text) {
-    newtListboxSetText(co, num, text);
-}
-
 void newtListboxSetData(newtComponent co, int num, void * data) {
     struct listbox * li = co->data;
     int i;
@@ -313,7 +313,7 @@ void newtListboxSetData(newtComponent co, int num, void * data) {
     item->data = data;
 }
 
-int newtListboxAddEntry(newtComponent co, const char * text,
+int newtListboxAppendEntry(newtComponent co, const char * text,
 	                const void * data) {
     struct listbox * li = co->data;
     struct items *item;
@@ -486,7 +486,7 @@ static void listboxDraw(newtComponent co)
     if(li->sb)
 	li->sb->ops->draw(li->sb);
 
-    if(li->flags & NEWT_FLAG_DOBORDER) {
+    if(li->flags & NEWT_FLAG_BORDER) {
       if(li->isActive)
 	  SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
       else
@@ -539,7 +539,8 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	switch(ev.u.key) {
 	  case ' ':
 	    if(!(li->flags & NEWT_FLAG_MULTIPLE)) break;
-	    newtListboxSelectItem(co, li->currItem, NEWT_FLAGS_TOGGLE);
+	    newtListboxSelectItem(co, li->boxItems[li->currItem].data, 
+				  NEWT_FLAGS_TOGGLE);
 	    er.result = ER_SWALLOWED;
 	    /* We don't break here, because it is cool to be able to
 	       hold space to select a bunch of items in a list at once */
