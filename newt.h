@@ -1,21 +1,23 @@
 #ifndef H_NEWT
 #define H_NEWT
 
-#define COLORSET_ROOT 		2
-#define COLORSET_BORDER 	3
-#define COLORSET_WINDOW		4
-#define COLORSET_SHADOW		5
-#define COLORSET_TITLE		6
-#define COLORSET_BUTTON		7
-#define COLORSET_ACTBUTTON	8
-#define COLORSET_CHECKBOX	9
-#define COLORSET_ACTCHECKBOX	10
-#define COLORSET_ENTRY		11
-#define COLORSET_LABEL		12
-#define COLORSET_LISTBOX	13
-#define COLORSET_ACTLISTBOX	14
-#define COLORSET_TEXTBOX	15
-#define COLORSET_ACTTEXTBOX	16
+#define NEWT_COLORSET_ROOT 		2
+#define NEWT_COLORSET_BORDER 		3
+#define NEWT_COLORSET_WINDOW		4
+#define NEWT_COLORSET_SHADOW		5
+#define NEWT_COLORSET_TITLE		6
+#define NEWT_COLORSET_BUTTON		7
+#define NEWT_COLORSET_ACTBUTTON		8
+#define NEWT_COLORSET_CHECKBOX		9
+#define NEWT_COLORSET_ACTCHECKBOX	10
+#define NEWT_COLORSET_ENTRY		11
+#define NEWT_COLORSET_LABEL		12
+#define NEWT_COLORSET_LISTBOX		13
+#define NEWT_COLORSET_ACTLISTBOX	14
+#define NEWT_COLORSET_TEXTBOX		15
+#define NEWT_COLORSET_ACTTEXTBOX	16
+#define NEWT_COLORSET_HELPLINE		17
+#define NEWT_COLORSET_ROOTTEXT		18
 
 struct newtColors {
     char * rootFg, * rootBg;
@@ -33,6 +35,8 @@ struct newtColors {
     char * actListboxFg, * actListboxBg;
     char * textboxFg, * textboxBg;
     char * actTextboxFg, * actTextboxBg;
+    char * helpLineFg, * helpLineBg;
+    char * rootTextFg, * rootTextBg;
 };
 
 typedef struct newtComponent * newtComponent;
@@ -54,6 +58,9 @@ int newtOpenWindow(int left, int top, int width, int height,
 void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
+void newtPushHelpLine(char * text);
+void newtPopHelpLine(void);
+void newtDrawRootText(int row, int col, char * text);
 
 /* Components */
 
