@@ -20,7 +20,8 @@ class Widget:
     def setCallback(self, obj, data = None):
         if data:
             self.w.setCallback(obj, data)
-        self.w.setCallback(obj)
+        else:
+            self.w.setCallback(obj)
 
 class Button(Widget):
 

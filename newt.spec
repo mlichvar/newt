@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.7
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Feb  9 2000 Matt Wilson <msw@redhat.com>
+- fixed snack widget setcallback function
+
 * Thu Feb 03 2000 Erik Troan <ewt@redhat.com>
 - strip shared libs
 
