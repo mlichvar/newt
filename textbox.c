@@ -185,7 +185,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	       len = 0;
 	       do {
 		  cl = mblen(chptr, MB_CUR_MAX * 4);
-		  if (cl == -1)
+		  if (cl <= 0)
 		    cl = 1;
 		  len += cl;
 		  chptr += cl;
