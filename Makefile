@@ -1,7 +1,7 @@
 LIBS = -L. -lnewt -lslang -lm #-lefence
 CFLAGS = -g -Wall
 
-VERSION = 0.3
+VERSION = 0.4
 SONAME = 0
 
 PROGS = test
