@@ -5,7 +5,7 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g
 endif
 
-VERSION = 0.7
+VERSION = 0.8
 SONAME = 0
 
 PROGS = test
