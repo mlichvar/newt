@@ -105,7 +105,7 @@ static char * version = "Newt windowing library version " VERSION
 			" - (C) 1996 Red Hat Software. "
 		        "Redistributable under the term of the Library "
 		        "GNU Public Library. "
-			"written by Erik Troan\n";
+			"Written by Erik Troan\n";
 
 void newtRefresh(void) {
     SLsmg_refresh();
@@ -284,7 +284,7 @@ void newtClearKeyBuffer(void) {
 int newtOpenWindow(int left, int top, int width, int height, 
 			  char * title) {
     int i, j, row, col;
-    int n = 0;
+    int n;
 
     if (!currentWindow) {
 	currentWindow = windowStack;
@@ -300,12 +300,13 @@ int newtOpenWindow(int left, int top, int width, int height,
     currentWindow->buffer = malloc(sizeof(short) * (width + 3) * (height + 3));
 
     row = top - 1;
+    col = left - 1;
+    n = 0;
     for (j = 0; j < height + 3; j++, row++) {
-	col = left - 1;
-	for (i = 0; i < width + 3; i++, col++) {
-	    SLsmg_gotorc(row, col);
-	    currentWindow->buffer[n++] = SLsmg_char_at();
-	}
+	SLsmg_gotorc(row, col);
+	SLsmg_read_raw(currentWindow->buffer + n,
+				currentWindow->width + 3);
+	n += currentWindow->width + 3;
     }
 
     SLsmg_set_color(NEWT_COLORSET_BORDER);
@@ -353,7 +354,7 @@ void newtPopWindow(void) {
     col = currentWindow->left - 1;
     for (j = 0; j < currentWindow->height + 3; j++, row++) {
 	SLsmg_gotorc(row, col);
-	SLsmg_write_color_chars(currentWindow->buffer + n,
+	SLsmg_write_raw(currentWindow->buffer + n,
 				currentWindow->width + 3);
 	n += currentWindow->width + 3;
     }
