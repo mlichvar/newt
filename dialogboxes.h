@@ -11,6 +11,7 @@
 #define FLAG_NOCANCEL 		(1 << 1)
 #define FLAG_SCROLL_TEXT 	(1 << 2)
 #define FLAG_DEFAULT_NO 	(1 << 3)
+#define FLAG_NOTAGS		(1 << 5)
 
 #define DLG_ERROR		-1
 #define DLG_OKAY		0

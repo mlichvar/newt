@@ -209,6 +209,10 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     if (numItems == 0)
 	return DLG_ERROR;
 
+    if (flags & FLAG_NOTAGS) {
+	    maxTagWidth = 0;
+    }
+
     form = newtForm(NULL, NULL, 0);
 
     tb = textbox(height - 4 - buttonHeight - listHeight, width - 2,
@@ -303,6 +307,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	numBoxes++;
     }
 
+	
     form = newtForm(NULL, NULL, 0);
 
     tb = textbox(height - 3 - buttonHeight - listHeight, width - 2,

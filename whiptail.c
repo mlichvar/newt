@@ -42,6 +42,7 @@ int main(int argc, const char ** argv) {
     int fd = -1;
     int needSpace = 0;
     int noCancel = 0;
+    int noTags = 0;
     int noItem = 0;
     int clear = 0;
     int scrollText = 0;
@@ -67,6 +68,7 @@ int main(int argc, const char ** argv) {
 	    { "msgbox", '\0', 0, 0, OPT_MSGBOX },
 	    { "nocancel", '\0', 0, &noCancel, 0 },
 	    { "noitem", '\0', 0, &noItem, 0 },
+	    { "notags", '\0', 0, &noTags, 0 },
 	    { "radiolist", '\0', 0, 0, OPT_RADIOLIST },
 	    { "scrolltext", '\0', 0, &scrollText, 0 },
 	    { "separate-output", '\0', 0, &separateOutput, 0 },
@@ -163,6 +165,7 @@ int main(int argc, const char ** argv) {
 
     if (noCancel) flags |= FLAG_NOCANCEL;
     if (noItem) flags |= FLAG_NOITEM;
+    if (noTags) flags |= FLAG_NOTAGS;
     if (scrollText) flags |= FLAG_SCROLL_TEXT;
     if (defaultNo) flags |= FLAG_DEFAULT_NO;
 
