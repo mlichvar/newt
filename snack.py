@@ -94,6 +94,9 @@ class TextboxReflowed(Textbox):
 
 class Label(Widget):
 
+    def setText(self, text):
+	self.w.labelText(text)
+
     def __init__(self, text):
 	self.w = _snack.label(text)
 

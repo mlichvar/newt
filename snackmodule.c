@@ -145,6 +145,7 @@ struct snackWidget_s {
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
 static PyObject * widgetGetAttr(PyObject * s, char * name);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
+static PyObject * widgetLabelText(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
@@ -153,6 +154,7 @@ static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
+    { "labelText", (PyCFunction) widgetLabelText, METH_VARARGS, NULL },
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
     { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
@@ -373,6 +375,17 @@ static snackWidget * labelWidget(PyObject * s, PyObject * args) {
     widget->co = newtLabel(-1, -1, label);
 
     return widget;
+}
+
+static PyObject * widgetLabelText(snackWidget * s, PyObject * args) {
+    char * label;
+
+    if (!PyArg_ParseTuple(args, "s", &label)) return NULL;
+
+    newtLabelSetText(s->co, label);
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
