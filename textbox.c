@@ -323,8 +323,10 @@ static struct eventResult textboxEvent(newtComponent co,
 
 	  case NEWT_KEY_PGDN:
 	    tb->topLine += co->height;
-	    if (tb->topLine > (tb->numLines - co->height))
+	    if (tb->topLine > (tb->numLines - co->height)) {
 		tb->topLine = tb->numLines - co->height;
+		if (tb->topLine < 0) tb->topLine = 0;
+	    }
 	    textboxDraw(co);
 	    er.result = ER_SWALLOWED;
 	    break;
