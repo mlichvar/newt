@@ -1,8 +1,8 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.1
+%define version 0.50.3
 Version: %{version}
-Release: 15
+Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
