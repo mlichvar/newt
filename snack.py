@@ -87,13 +87,13 @@ class Form:
 	self.w.addhotkey(hotkeys[keyname])
 
     def add(self, widget):
-	if widget.__dict__.has_key('w'):
+	if widget.__dict__.has_key('gridmembers'):
+	    for w in widget.gridmembers:
+		self.add(w)
+	elif widget.__dict__.has_key('w'):
 	    self.trans[widget.w.key] = widget
-	if widget.__dict__.has_key('w'):
 	    return self.w.add(widget.w)
-	elif widget.__dict__.has_key('g'):
-	    return self.w.add(widget.g)
-	return Null
+	return None
 
     def run(self):
 	(what, which) = self.w.run()
@@ -114,6 +114,7 @@ class Grid:
     def setField(self, what, col, row, padding = (0, 0, 0, 0),
 		 anchorLeft = 0, anchorTop = 0, anchorRight = 0,
 		 anchorBottom = 0, growx = 0, growy = 0):
+	self.gridmembers.append(what)
 	anchorFlags = 0
 	if (anchorLeft):
 	    anchorFlags = _snack.ANCHOR_LEFT
@@ -139,6 +140,7 @@ class Grid:
 
     def __init__(self, *args):
 	self.g = apply(_snack.grid, args)
+	self.gridmembers = []
 
 class SnackScreen:
 
@@ -173,22 +175,22 @@ def reflow(text, width, flexDown = 5, flexUp = 5):
 class RadioGroup(Widget):
 
     def __init__(self):
-	self.group = None
+	self.prev = None
 	self.buttonlist = []
 
     def add(self, title, value, default = None):
-	if not self.group and default == None:
+	if not self.prev and default == None:
 	    # If the first element is not explicitly set to
 	    # not be the default, make it be the default
 	    default = 1
-	b = SingleRadioButton(title, self.group, default)
-	if not self.group: self.group = b
+	b = SingleRadioButton(title, self.prev, default)
+	self.prev = b
 	self.buttonlist.append((b, value))
 	return b
 
     def getSelection(self):
 	for (b, value) in self.buttonlist:
-	    if b.selected: return value
+	    if b.selected(): return value
 	return None
 
 
@@ -202,7 +204,7 @@ class RadioBar(Grid):
 	for (title, value, default) in buttonlist:
 	    b = self.group.add(title, value, default)
 	    self.list.append(b, value)
-	    self.setField(b, 0, self.item)
+	    self.setField(b, 0, self.item, anchorLeft = 1)
 	    self.item = self.item + 1
 
     def getSelection(self):
