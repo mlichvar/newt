@@ -28,7 +28,7 @@ libdir = $(prefix)/lib
 bindir = $(prefix)/bin
 ARCHNAME = $(shell uname -m | sed 's/i.86/i386/')
 pythondir = $(prefix)/lib/python1.5
-pythonbindir = $(prefix)/lib/python1.4/linux-$(ARCHNAME)
+pythonbindir = $(prefix)/lib/python1.5/linux-$(ARCHNAME)
 
 #--------------------------------------
 
@@ -55,7 +55,7 @@ _snackmodule.so:   snackmodule.o $(LIBNEWTSH)
 	gcc --shared -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
 
 snackmodule.o:   snackmodule.c
-	gcc -I/usr/include/python1.4 -fPIC $(CFLAGS) -c snackmodule.c
+	gcc -I/usr/include/python1.5 -fPIC $(CFLAGS) -c snackmodule.c
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
