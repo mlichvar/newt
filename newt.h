@@ -80,6 +80,9 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define NEWT_TEXTBOX_SCROLL	NEWT_FLAG_SCROLL
 #define NEWT_FORM_NOF12		NEWT_FLAG_NOF12
 
+#define NEWT_FD_READ		(1 << 0)
+#define NEWT_FD_WRITE		(1 << 1)
+
 typedef struct newtComponent_struct * newtComponent;
 
 extern const struct newtColors newtDefaultColorPalette;
@@ -116,6 +119,7 @@ newtComponent newtCompactButton(int left, int top, const char * text);
 newtComponent newtButton(int left, int top, const char * text);
 newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 			   const char * seq, char * result);
+char newtCheckboxGetValue(newtComponent co);
 newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
@@ -163,7 +167,7 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 		      int * actualWidth, int * actualHeight);
 
 struct newtExitStruct {
-    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT } reason;
+    enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY } reason;
     union {
 	int key;
 	newtComponent co;
@@ -171,6 +175,7 @@ struct newtExitStruct {
 } ;
 
 newtComponent newtForm(newtComponent vertBar, const char * help, int flags);
+void newtFormWatchFd(newtComponent form, int fd, int fdFlags);
 void newtFormSetSize(newtComponent co);
 newtComponent newtFormGetCurrent(newtComponent co);
 void newtFormSetBackground(newtComponent co, int color);
@@ -184,10 +189,13 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);
 void newtFormAddHotKey(newtComponent co, int key);
 
+typedef int (*newtEntryFilter)(newtComponent entry, void * data, int ch,
+			       int cursor);
 newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 			char ** resultPtr, int flags);
 void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
-void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
+void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
+char * newtEntryGetValue(newtComponent co);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, unsigned long long amount);

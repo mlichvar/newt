@@ -1,6 +1,7 @@
 #include <slang.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <sys/select.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -19,6 +20,11 @@ struct element {
     newtComponent co;		/* into actual through vertOffset */
 };
 
+struct fdInfo {
+    int fd;
+    int flags;
+};
+
 struct form {
     int numCompsAlloced;
     struct element * elements;
@@ -34,6 +40,9 @@ struct form {
     int numHotKeys;
     int background;
     int beenSet;
+    int numFds;
+    struct fdInfo * fds;
+    int maxFd;
 };
 
 static void gotoComponent(struct form * form, int newComp);
@@ -85,6 +94,9 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     form->vertOffset = 0;
     form->fixedHeight = 0;
     form->numRows = 0;
+    form->numFds = 0;
+    form->maxFd = 0;
+    form->fds = NULL;
     form->beenSet = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
@@ -474,6 +486,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct eventResult er;
     int key, i;
     int done = 0;
+    fd_set readSet, writeSet;
 
     newtFormSetSize(co);
     /* draw all of the components */
@@ -486,33 +499,52 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
   
     while (!done) {
 	newtRefresh();
-	key = newtGetKey(); 
 
-	if (key == NEWT_KEY_RESIZE) {
-	    /* newtResizeScreen(1); */
-	    continue;
+	FD_ZERO(&readSet);
+	FD_ZERO(&writeSet);
+	FD_SET(0, &readSet);
+	for (i = 0; i < form->numFds; i++) {
+	    if (form->fds[i].flags & NEWT_FD_READ)
+		FD_SET(form->fds[i].fd, &readSet);
+	    if (form->fds[i].flags & NEWT_FD_WRITE)
+		FD_SET(form->fds[i].fd, &writeSet);
 	}
 
-	for (i = 0; i < form->numHotKeys; i++) {
-	    if (form->hotKeys[i] == key) {
-		es->reason = NEWT_EXIT_HOTKEY;
-		es->u.key = key;
-		done = 1;
-		break;
+	i = select(form->maxFd + 1, &readSet, &writeSet, NULL, NULL);
+	if (i < 0) continue;	/* ?? What should we do here? */
+
+	if (FD_ISSET(0, &readSet)) {
+	    key = newtGetKey(); 
+
+	    if (key == NEWT_KEY_RESIZE) {
+		/* newtResizeScreen(1); */
+		continue;
 	    }
-	}
 
-	if (!done) {
-	    ev.event = EV_KEYPRESS;
-	    ev.u.key = key;
+	    for (i = 0; i < form->numHotKeys; i++) {
+		if (form->hotKeys[i] == key) {
+		    es->reason = NEWT_EXIT_HOTKEY;
+		    es->u.key = key;
+		    done = 1;
+		    break;
+		}
+	    }
 
-	    er = sendEvent(co, ev);
-     
-	    if (er.result == ER_EXITFORM) {
-		done = 1;
-		es->reason = NEWT_EXIT_COMPONENT;
-		es->u.co = form->exitComp;
-	    } 
+	    if (!done) {
+		ev.event = EV_KEYPRESS;
+		ev.u.key = key;
+
+		er = sendEvent(co, ev);
+	 
+		if (er.result == ER_EXITFORM) {
+		    done = 1;
+		    es->reason = NEWT_EXIT_COMPONENT;
+		    es->u.co = form->exitComp;
+		} 
+	    }
+	} else {
+	    es->reason = NEWT_EXIT_FDREADY;
+	    done = 1;
 	}
     } 
 
@@ -568,4 +600,13 @@ void newtFormSetBackground(newtComponent co, int color) {
     struct form * form = co->data;
 
     form->background = color;
+}
+
+void newtFormWatchFd(newtComponent co, int fd, int fdFlags) {
+    struct form * form = co->data;
+
+    form->fds = realloc(form->fds, (form->numFds + 1) * sizeof(*form->fds));
+    form->fds[form->numFds].fd = fd;
+    form->fds[form->numFds++].flags = fdFlags;
+    if (form->maxFd < fd) form->maxFd = fd;
 }
