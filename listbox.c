@@ -275,8 +275,6 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 	co->width = li->curWidth;
     li->numItems++;
 
-    listboxDraw(co);
-    
     return li->numItems;
 }
 

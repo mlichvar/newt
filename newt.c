@@ -313,6 +313,7 @@ int newtOpenWindow(int left, int top, int width, int height,
 			  char * title) {
     int j, row, col;
     int n;
+    int i;
 
     newtFlushInput();
 
@@ -339,25 +340,6 @@ int newtOpenWindow(int left, int top, int width, int height,
 				currentWindow->width + 3);
 	n += currentWindow->width + 3;
     }
-
-    newtDrawCurrentWindow();
-
-    return 0;
-}
-
-/* XXX hack to allow newtDrawForm() to redraw the current window.
-   Need to find out what the real problem is */
-void newtDrawCurrentWindow(void)
-{
-    int i;
-    int top, left, height, width;
-
-    if(!currentWindow) return;
-
-    top = currentWindow->top;
-    left = currentWindow->left;
-    height = currentWindow->height;
-    width = currentWindow->width;
 
     SLsmg_set_color(NEWT_COLORSET_BORDER);
     SLsmg_draw_box(top - 1, left - 1, height + 2, width + 2);
@@ -390,6 +372,8 @@ void newtDrawCurrentWindow(void)
 	SLsmg_gotorc(i, left + width + 1);
 	SLsmg_write_string(" ");
     }
+
+    return 0;
 }
 
 void newtPopWindow(void) {
