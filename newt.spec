@@ -88,4 +88,4 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
-/usr/lib/python1.4/%{RPM_OS}-%{RPM_ARCH}/_snackmodule.so
+/usr/lib/python1.4/%{buildos}-%{buildarch}/_snackmodule.so
