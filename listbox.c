@@ -104,9 +104,11 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
 				       COLORSET_ACTLISTBOX);
 	    li->sbAdjust = 3;
 	}
+	co->height = height;
     } else {
 	li->grow = 1;
 	sb = NULL;
+	co->height = 2 * li->bdyAdjust;
     }
 
     li->sb = sb;
@@ -114,13 +116,12 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     co->isMapped = 0;
     co->left = left;
     co->top = top;
-    co->height = height;
     co->ops = &listboxOps;
     co->takesFocus = 1;
     co->callback = NULL;
 
     updateWidth(co, li, 5);
-    li->curHeight = height - (2 * li->bdyAdjust);
+    li->curHeight = co->height - (2 * li->bdyAdjust);
 
     return co;
 }
@@ -307,7 +308,7 @@ int newtListboxAddEntry(newtComponent co, const char * text,
     item->isSelected = 0;
     
     if (li->grow)
-	co->height++;
+	co->height++, li->curHeight++;
     li->numItems++;
 
     return li->numItems;

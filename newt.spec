@@ -4,7 +4,7 @@ Version: 0.11
 Release: 1
 Copyright: LGPL
 Group: Libraries
-Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-0.9.tar.gz
+Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-0.11.tar.gz
 Requires: slang
 %package devel
 Summary: Developer's toolkit for newt windowing library
