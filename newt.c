@@ -31,6 +31,7 @@ static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
 static int needResize;
+static int cursorOn = 1;
 
 static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -147,8 +148,10 @@ void newtRefresh(void) {
 }
 
 void newtSuspend(void) {
+    SLtt_set_cursor_visibility (1);
     SLsmg_suspend_smg();
     SLang_reset_tty();
+    SLtt_set_cursor_visibility (cursorOn);
 }
 
 void newtResume(void) {
@@ -657,9 +660,11 @@ void newtDefaultMappedHandler(newtComponent c, int isMapped) {
 }
 
 void newtCursorOff(void) {
-    SLtt_set_cursor_visibility (0);
+    cursorOn = 0;
+    SLtt_set_cursor_visibility (cursorOn);
 }
 
 void newtCursorOn(void) {
-    SLtt_set_cursor_visibility (1);
+    cursorOn = 1;
+    SLtt_set_cursor_visibility (cursorOn);
 }
