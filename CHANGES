@@ -1,3 +1,9 @@
+0.52 -> 0.53
+	- place cursor in checkboxtree's more carefully
+
+0.51 -> 0.52
+	- listbox bug fixes
+
 0.50 -> 0.51
 	- added newtFormSetTimer() (and test case, and python)
 	- checkboxtree's could improperly leave info from closed trees
