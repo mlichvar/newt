@@ -72,6 +72,89 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     return co;
 }
 
+static void doReflow(char * text, char ** resultPtr, int width, int * badness,
+		     int * heightPtr) {
+    char * result = NULL;
+    char * chptr, * end;
+    int howbad = 0;
+    int height = 0;
+
+    if (resultPtr) {
+	/* XXX I think this will work */
+	result = malloc(strlen(text) + (strlen(text) / width) + 2);
+	*result = '\0';
+    }
+    
+    while (*text) {
+	end = strchr(text, '\n');
+	if (!end)
+	    end = text + strlen(text);
+
+	while (*text && text <= end) {
+	    if (end - text < width) {
+		if (result) {
+		    strncat(result, text, end - text);
+		    strcat(result, "\n");
+		    height++;
+		}
+		text = end;
+		if (*text) text++;
+	    } else {
+		chptr = text + width - 1;
+		while (chptr > text && !isspace(*chptr)) chptr--;
+		while (isspace(*chptr)) chptr--;
+		chptr++;
+
+		if (chptr > text)
+		    howbad += width - (chptr - text) + 1;
+		if (result) {
+		    strncat(result, text, chptr - text);
+		    strcat(result, "\n");
+		    height++;
+		}
+
+		text = chptr + 1;
+		while (isspace(*text)) text++;
+	    }
+	}
+    }
+
+    if (badness) *badness = howbad;
+    if (resultPtr) *resultPtr = result;
+    if (heightPtr) *heightPtr = height;
+}
+
+char * newtReflowText(char * text, int width, int flexDown, int flexUp,
+		      int * actualWidth, int * actualHeight) {
+    int min, max;
+    int i;
+    char * result;
+    int minbad, minbadwidth, howbad;
+
+    if (flexDown || flexUp) {
+	min = width - flexDown;
+	max = width + flexUp;
+
+	minbad = -1;
+	minbadwidth = width;
+
+	for (i = min; i <= max; i++) {
+	    doReflow(text, NULL, i, &howbad, NULL);
+
+	    if (minbad == -1 || howbad < minbad) {
+		minbad = howbad;
+		minbadwidth = i;
+	    }
+ 	}
+
+	width = minbadwidth;
+    }
+
+    doReflow(text, &result, width, NULL, actualHeight);
+    if (actualWidth) *actualWidth = width;
+    return result;
+}
+
 void newtTextboxSetText(newtComponent co, const char * text) {
     const char * start, * end;
     struct textbox * tb = co->data;
