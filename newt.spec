@@ -2,7 +2,7 @@ Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
 %define version 0.30
 Version: %{version}
-Release: 2
+Release: 3
 Copyright: LGPL
 Group: Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Oct 21 1998 Bill Nottingham <notting@redhat.com>
+- built against slang-1.2.2
+
 * Wed Aug 19 1998 Bill Nottingham <notting@redhat.com>
 - bugfixes for text reflow
 - added docs
