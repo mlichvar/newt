@@ -156,10 +156,10 @@ static struct eventResult buttonEvent(newtComponent co,
 		    /* look pushed */
 		    buttonDrawIt(co, 1, 1);
 		    newtRefresh();
-		    newtDelay(300000);
+		    newtDelay(150000);
 		    buttonDrawIt(co, 1, 0);
 		    newtRefresh();
-		    newtDelay(300000);
+		    newtDelay(150000);
 		}
 
 		er.result = ER_EXITFORM;
