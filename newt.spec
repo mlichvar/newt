@@ -1,11 +1,12 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.17
+%define version 0.50.18
 Version: %{version}
 Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
+BuildRequires: python 
 Requires: slang
 Provides: snack
 
@@ -49,6 +50,8 @@ mkdir -p $RPM_BUILD_ROOT
 make instroot=$RPM_BUILD_ROOT install
 make instroot=$RPM_BUILD_ROOT install-sh
 
+python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python1.5",10,"/usr/lib/python1.5")'
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -57,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
+- bytecompile the snack python module
+
 * Tue Aug 22 2000 Erik Troan <ewt@redhat.com>
 - fixed cursor disappearing in suspend (again)
 
@@ -236,7 +242,7 @@ of keys
 %doc CHANGES COPYING
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
-/usr/lib/python1.5/snack.py
+/usr/lib/python1.5/snack.py*
 /usr/lib/python1.5/lib-dynload/_snackmodule.so
 /usr/lib/libnewt.so
 
