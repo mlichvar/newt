@@ -20,8 +20,8 @@ void main(void) {
     newtOpenWindow(2, 2, 30, 10, "first window");
     newtOpenWindow(10, 5, 65, 16, "window 2");
 
-    f = newtForm();
-    chklist = newtForm();
+    f = newtForm(NULL);
+    chklist = newtForm(NULL);
 
     b1 = newtButton(3, 1, "Push me");
     b2 = newtButton(18, 1, "Not me");
@@ -47,11 +47,17 @@ void main(void) {
     newtFormAddComponents(f, b1, b2, chklist, NULL);
     newtFormAddComponents(f, r1, r2, r3, l1, l2, l3, e1, e2, e3, NULL);
 
-    lb = newtListbox(45, 3, 2, 0);
-    newtListboxAddEntry(lb, "First ");
-    newtListboxAddEntry(lb, "Second");
-    newtListboxAddEntry(lb, "Third ");
-    newtListboxAddEntry(lb, "Fourth");
+    lb = newtListbox(45, 3, 4, 0);
+    newtListboxAddEntry(lb, "First  ");
+    newtListboxAddEntry(lb, "Second ");
+    newtListboxAddEntry(lb, "Third  ");
+    newtListboxAddEntry(lb, "Fourth ");
+    newtListboxAddEntry(lb, "Fifth  ");
+    newtListboxAddEntry(lb, "Sixth  ");
+    newtListboxAddEntry(lb, "Seventh");
+    newtListboxAddEntry(lb, "Eighth ");
+    newtListboxAddEntry(lb, "Ninth  ");
+    newtListboxAddEntry(lb, "Tenth  ");
 
     newtFormAddComponent(f, lb);
 
