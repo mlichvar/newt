@@ -43,7 +43,7 @@ struct newtColors newtDefaultColorPalette = {
 	"lightgray", "red",			/* active listbox fg, bg */
 };
 
-struct keymap keymap[] = {
+static struct keymap keymap[] = {
 	{ "\033OA", 		NEWT_KEY_UP, 		"kh" },
 	{ "\033[A", 		NEWT_KEY_UP, 		"ku" },
 	{ "\033OB", 		NEWT_KEY_DOWN, 		"kd" },
@@ -63,7 +63,13 @@ struct keymap keymap[] = {
 
 	{ NULL, 	0, 			NULL },	/* LEAVE this one */
 };
-char keyPrefix = '\033';
+static char keyPrefix = '\033';
+
+static char * version = "Newt windowing library version " VERSION
+			" - (C) 1996 Red Hat Software. "
+		        "Redistributable under the term of the Library "
+		        "GNU Public Library. "
+			"written by Erik Troan\n";
 
 void newtRefresh(void) {
     SLsmg_refresh();
@@ -78,6 +84,9 @@ void newtCls(void) {
 }
 
 int newtInit(void) {
+    /* use the version variable just to be sure it gets included */
+    strlen(version);
+
     SLtt_get_terminfo();
 
     SLtt_Use_Ansi_Colors = 1;
