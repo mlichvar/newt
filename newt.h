@@ -60,6 +60,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
 #define NEWT_FLAG_DOBORDER	(1 << 5)
 #define NEWT_FLAG_WRAP		(1 << 6)
 #define NEWT_FLAG_NOF12		(1 << 7)
+#define NEWT_FLAG_MULTIPLE      (1 << 8)
 
 /* Backwards compatibility */
 #define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT

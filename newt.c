@@ -338,6 +338,8 @@ int newtOpenWindow(int left, int top, int width, int height,
     return 0;
 }
 
+/* XXX hack to allow newtDrawForm() to redraw the current window.
+   Need to find out what the real problem is */
 void newtDrawCurrentWindow(void)
 {
     int i;

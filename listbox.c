@@ -15,13 +15,14 @@
 /* Linked list of items in the listbox */
 struct items {
     void *key, *data;
+    unsigned char isSelected;
     struct items *next;
 };
 
 /* Holds all the relevant information for this listbox */
 struct listbox {
     newtComponent sb; /* Scrollbar on right side of listbox */
-    int numItems, curWidth;
+    int numItems, curWidth, numSelected;
     int userHasSetWidth;
     int currItem, startShowItem; /* startShowItem is the first item displayed
 				   on the screen */
@@ -60,10 +61,11 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->boxItems = NULL;
     li->numItems = 0;
     li->currItem = 0;
+    li->numSelected = 0;
     li->isActive = 0;
     li->userHasSetWidth = 0;
     li->startShowItem = 0;
-    li->flags = flags & (NEWT_FLAG_RETURNEXIT|NEWT_FLAG_DOBORDER);
+    li->flags = flags & (NEWT_FLAG_RETURNEXIT|NEWT_FLAG_DOBORDER|NEWT_FLAG_MULTIPLE);
 
     if (height) {
 	li->grow = 0;
@@ -142,6 +144,27 @@ void * newtListboxGetCurrent(newtComponent co) {
 	return item->data;
     else
 	return NULL;
+}
+
+/* Free the returned array after use, but NOT the values in the array */
+void ** newtListboxGetSelected(newtComponent co)
+{
+    struct listbox * li;
+    int i;
+    void **retval;
+    struct items *item;
+
+    if(!co) return NULL;
+
+    li = co->data;
+    if(!li || !li->numSelected) return NULL;
+
+    retval = malloc(li->numSelected * sizeof(void *));
+    for(i = 0, item = li->boxItems; item != NULL;
+	item = item->next)
+	if(item->isSelected)
+	    retval[i++] = item->data;
+    return retval;
 }
 
 void newtListboxSetText(newtComponent co, int num, char * text) {
