@@ -174,10 +174,10 @@ void newtListboxSetCurrent(newtComponent co, int num)
 
     if (li->currItem < li->startShowItem)
 	li->startShowItem = li->currItem;
-    else if (li->currItem - li->startShowItem > co->height - 1)
-	li->startShowItem = li->currItem - co->height + 1;
-    if (li->startShowItem + co->height > li->numItems)
-	li->startShowItem = li->numItems - co->height;
+    else if (li->currItem - li->startShowItem > li->curHeight - 1)
+	li->startShowItem = li->currItem - li->curHeight + 1;
+    if (li->startShowItem + li->curHeight > li->numItems)
+	li->startShowItem = li->numItems - li->curHeight;
     if(li->startShowItem < 0)
 	li->startShowItem = 0;
 
@@ -629,6 +629,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	    er.result = ER_SWALLOWED;
 	    break;
 	  default:
+	      if (li->numItems <= 0) break;
               if (ev.u.key < NEWT_KEY_EXTRA_BASE && isalpha(ev.u.key)) {
 		  for(i = 0, item = li->boxItems; item != NULL &&
 			  i < li->currItem; i++, item = item->next);
