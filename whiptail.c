@@ -50,6 +50,8 @@ int main(int argc, const char ** argv) {
     int flags = 0;
     int defaultNo = 0;
     int separateOutput = 0;
+    int outputfd = 2;
+    FILE *output = stderr;
     const char * result;
     const char ** selections, ** next;
     char * title = NULL;
@@ -136,6 +138,12 @@ int main(int argc, const char ** argv) {
 	exit(1);
     }
 
+    output = fdopen (outputfd, "w");
+    if (output == NULL ) {
+        perror ("Cannot open output-fd\n");
+        exit (DLG_ERROR);
+    }
+
     if (mode == MODE_NONE) usage();
 
     if (!(text = poptGetArg(optCon))) usage();
@@ -184,18 +192,18 @@ int main(int argc, const char ** argv) {
 
       case MODE_INPUTBOX:
 	rc = inputBox(text, height, width, optCon, flags, &result);
-	if (!rc) fprintf(stderr, "%s", result);
+        if (rc == DLG_OKAY) fprintf(output, "%s", result);
 	break;
 
       case MODE_MENU:
 	rc = listBox(text, height, width, optCon, flags, &result);
-	if (!rc) fprintf(stderr, "%s", result);
+	if (rc == DLG_OKAY) fprintf(output, "%s", result);
 	break;
 
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
-	if (!rc) {
-	    fprintf(stderr, "%s", selections[0]);
+        if (rc == DLG_OKAY) {
+            fprintf(output, "%s", selections[0]);
 	    free(selections);
 	}
 	break;
@@ -206,11 +214,11 @@ int main(int argc, const char ** argv) {
 	if (!rc) {
 	    for (next = selections; *next; next++) {
 		if (!separateOutput) {
-		    if (needSpace) putc(' ', stderr);
-		    fprintf(stderr, "\"%s\"", *next);
+		    if (needSpace) putc(' ', output);
+		    fprintf(output, "\"%s\"", *next);
 		    needSpace = 1;
 		} else {
-		    fprintf(stderr, "%s\n", *next);
+		    fprintf(output, "%s\n", *next);
 		}
 	    }
 
