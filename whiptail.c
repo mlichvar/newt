@@ -28,6 +28,7 @@ enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
 #define FLAG_NOCANCEL 		(1 << 1)
 #define FLAG_SEPARATE_OUTPUT 	(1 << 2)
 #define FLAG_SCROLL_TEXT 	(1 << 3)
+#define FLAG_DEFAULT_NO 	(1 << 4)
 
 static void usage(void) {
     fprintf(stderr, "ndialog: bad parametrs (see man dialog(1) for details)\n");
@@ -154,7 +155,7 @@ int inputBox(char * text, int height, int width, poptContext optCon,
 		int flags) {
     newtComponent form, entry, okay, cancel, answer, tb;
     char * val;
-    int rc;
+    int rc = 0;
     int top;
 
     val = poptGetArg(optCon);
@@ -315,18 +316,18 @@ int checkList(char * text, int height, int width, poptContext optCon,
 
     form = newtForm(NULL, NULL, 0);
 
+    tb = textbox(height - 3 - buttonHeight - listHeight, width - 2,
+			text, flags, &top);
+
     if (listHeight < numBoxes) { 
 	sb = newtVerticalScrollbar(width - 4, 
-				   height - 2 - buttonHeight - listHeight,
+				   top + 1,
 				   listHeight, NEWT_COLORSET_CHECKBOX,
 				   NEWT_COLORSET_ACTCHECKBOX);
 	newtFormAddComponent(form, sb);
     }
     subform = newtForm(sb, NULL, 0);
     newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
-
-    tb = textbox(height - 4 - buttonHeight - listHeight, width - 2,
-			text, flags, &top);
 
     sprintf(format, "%%-%ds  %%s", maxWidth);
     for (i = 0; i < numBoxes; i++) {
@@ -400,9 +401,13 @@ int messageBox(char * text, int height, int width, int type, int flags) {
 	no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
 			"No");
 	newtFormAddComponents(form, yes, no, NULL);
+
+	if (flags & FLAG_DEFAULT_NO)
+	    newtFormSetCurrent(form, no);
     }
 
-    answer = newtRunForm(form);
+    newtRunForm(form);
+    answer = newtFormGetCurrent(form);
 
     if (answer == no)
 	return 1;
@@ -427,6 +432,7 @@ int main(int argc, char ** argv) {
     int scrollText = 0;
     int rc = 1;
     int flags = 0;
+    int defaultNo = 0;
     int separateOutput = 0;
     char * title = NULL;
     char * backtitle = NULL;
@@ -434,6 +440,7 @@ int main(int argc, char ** argv) {
 	    { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
 	    { "checklist", '\0', 0, 0, OPT_CHECKLIST },
 	    { "clear", '\0', 0, &clear, 0 },
+	    { "defaultno", '\0', 0, &defaultNo, 0 },
 	    { "inputbox", '\0', 0, 0, OPT_INPUTBOX },
 	    { "fb", '\0', 0, 0, OPT_FULLBUTTONS },
 	    { "fullbuttons", '\0', 0, 0, OPT_FULLBUTTONS },
@@ -536,6 +543,7 @@ int main(int argc, char ** argv) {
     if (noItem) flags |= FLAG_NOITEM;
     if (separateOutput) flags |= FLAG_SEPARATE_OUTPUT;
     if (scrollText) flags |= FLAG_SCROLL_TEXT;
+    if (defaultNo) flags |= FLAG_DEFAULT_NO;
 
     switch (mode) {
       case MODE_MSGBOX:
