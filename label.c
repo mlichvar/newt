@@ -7,6 +7,7 @@
 
 struct label {
     char * text;
+    int length;
 };
 
 static void labelDraw(newtComponent co);
@@ -34,9 +35,28 @@ newtComponent newtLabel(int left, int top, char * text) {
     co->left = left;
     co->takesFocus = 0;
 
+    la->length = strlen(text);
     la->text = strdup(text);
 
     return co;
+}
+
+void newtLabelSetText(newtComponent co, char * text) {
+    int newLength;
+    struct label * la = co->data;
+
+    newLength = strlen(text);
+    if (newLength <= la->length) {
+	memset(la->text, ' ', la->length);
+	memcpy(la->text, text, newLength);
+    } else {
+	free(la->text);
+	la->text = strdup(text);
+	la->length = newLength;
+	co->width = newLength;
+    }
+
+    labelDraw(co);
 }
 
 static void labelDraw(newtComponent co) {
