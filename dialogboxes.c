@@ -11,8 +11,8 @@
 #include "popt.h"
 
 /* globals -- ick */
-int buttonHeight = 1;
-newtComponent (*makeButton)(int left, int right, const char * text) = 
+static int buttonHeight = 1;
+static newtComponent (*makeButton)(int left, int right, const char * text) = 
 		newtCompactButton;
 
 static void addButtons(int height, int width, newtComponent form, 
