@@ -19,7 +19,7 @@
 
 struct Window {
     int height, width, top, left;
-    short * buffer;
+    SLsmg_Char_Type * buffer;
     char * title;
 };
 
@@ -402,7 +402,7 @@ int newtOpenWindow(int left, int top, int width, int height,
     currentWindow->height = height;
     currentWindow->title = title ? strdup(title) : NULL;
 
-    currentWindow->buffer = malloc(sizeof(short) * (width + 3) * (height + 3));
+    currentWindow->buffer = malloc(sizeof(SLsmg_Char_Type) * (width + 3) * (height + 3));
 
     row = top - 1;
     col = left - 1;
