@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.35
+%define version 0.50.36
 Version: %{version}
 Release: 1
 License: LGPL
@@ -81,6 +81,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Tue Jun 11 2002 Joe Orton <jorton@redhat.com> 0.50.36-1
+- add newtListboxGetItemCount() API call
+- include numeric percentage in scale widget appearace
+- add support for ESC key using NEWT_KEY_ESCAPE
+
 * Mon Mar 18 2002 Bill Nottingham <notting@redhat.com> 0.50.35-1
 - build for whatever version of python happens to be installed
 
