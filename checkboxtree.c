@@ -399,6 +399,7 @@ static void ctDraw(newtComponent co) {
     struct CheckboxTree * ct = co->data;
     struct items ** item; 
     int i, curr, j;
+    char * spaces;
 
     if (!co->isMapped) return ;
 
@@ -438,6 +439,20 @@ static void ctDraw(newtComponent co) {
 	SLsmg_write_nstring((*item)->text, co->width - 4 - 
 					   (3 * (*item)->depth));
 	item++;
+	i++;
+    }
+
+    /* There could be empty lines left (i.e. if the user closes an expanded
+       list which is the last thing in the tree, and whose elements are
+       displayed at the bottom of the screen */
+    if (i < co->height) {
+	spaces = alloca(co->width);
+	memset(spaces, ' ', co->width);
+	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
+    }
+    while (i < co->height) {
+	newtGotorc(co->top + i, co->left);
+	SLsmg_write_nstring(spaces, co->width);
 	i++;
     }
     

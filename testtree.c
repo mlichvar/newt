@@ -40,9 +40,18 @@ int main(void) {
     			    NEWT_ARG_APPEND, NEWT_ARG_LAST);
     newtCheckboxTreeAddItem(checktree, "number 11", (void *) 11, 0, 
     			    NEWT_ARG_APPEND, NEWT_ARG_LAST);
-    newtCheckboxTreeAddItem(checktree, "number 12", (void *) 12,
+    newtCheckboxTreeAddItem(checktree, "Donuts", (void *) 12,
     			    NEWT_FLAG_SELECTED,
     			    NEWT_ARG_APPEND, NEWT_ARG_LAST);
+    newtCheckboxTreeAddItem(checktree, "Bavarian Cream", (void *) 12,
+    			    NEWT_FLAG_SELECTED,
+    			    9, NEWT_ARG_APPEND, NEWT_ARG_LAST);
+    newtCheckboxTreeAddItem(checktree, "Honey dipped", (void *) 12,
+    			    NEWT_FLAG_SELECTED,
+    			    9, NEWT_ARG_APPEND, NEWT_ARG_LAST);
+    newtCheckboxTreeAddItem(checktree, "Jelly", (void *) 12,
+    			    NEWT_FLAG_SELECTED,
+    			    9, NEWT_ARG_APPEND, NEWT_ARG_LAST);
 
     newtCheckboxTreeAddItem(checktree, "Colors", (void *) 1, 0,
     			    0, NEWT_ARG_LAST);

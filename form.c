@@ -458,6 +458,8 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     form->background = COLORSET_WINDOW;
     form->hotKeys = malloc(sizeof(int));
     form->numHotKeys = 0;
+    form->timer = 0;
+    form->lastTimeout.tv_sec = form->lastTimeout.tv_usec = 0;
     if (!(form->flags & NEWT_FLAG_NOF12)) {
 	newtFormAddHotKey(co, NEWT_KEY_F12);
     }
@@ -501,6 +503,8 @@ void newtFormSetTimer(newtComponent co, int millisecs) {
     struct form * form = co->data;
 
     form->timer = millisecs;
+    form->lastTimeout.tv_usec = 0;
+    form->lastTimeout.tv_sec = 0;
 }
 
 void newtFormSetHeight(newtComponent co, int height) {
@@ -897,16 +901,6 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     } else
 	gotoComponent(form, form->currComp);
 
-    /* Calculate when we next need to return with a timeout */
-    if (form->timer) {
-	if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
-	    gettimeofday(&form->lastTimeout, NULL);
-
-        nextTimeout.tv_sec = form->lastTimeout.tv_sec + (form->timer / 1000);
-	nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
-				(form->timer % 1000) * 1000;
-    }
-
     while (!done) {
 	newtRefresh();
 
@@ -930,6 +924,16 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	}
 
 	if (form->timer) {
+	    /* Calculate when we next need to return with a timeout. Do
+	       this inside the loop in case a callback resets the timer. */
+	    if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
+		gettimeofday(&form->lastTimeout, NULL);
+
+	    nextTimeout.tv_sec = form->lastTimeout.tv_sec + 
+		    (form->timer / 1000);
+	    nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
+				    (form->timer % 1000) * 1000;
+
 	    gettimeofday(&now, 0);
 
 	    if (now.tv_sec > nextTimeout.tv_sec) {
@@ -959,7 +963,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 
 	if (i == 0) {
 	    done = 1;
-	    es->reason = NEWT_EXIT_TIMEOUT;
+	    es->reason = NEWT_EXIT_TIMER;
 	    gettimeofday(&form->lastTimeout, NULL);
 	} else
 #ifdef USE_GPM

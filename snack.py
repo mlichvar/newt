@@ -173,6 +173,8 @@ class Form:
 	(what, which) = self.w.run()
 	if (what == _snack.FORM_EXIT_WIDGET):
 	    return self.trans[which]
+	elif (what == _snack.FORM_EXIT_TIMER):
+	    return "TIMER"
 
 	return hotkeys[which]
 
@@ -186,6 +188,9 @@ class Form:
 
     def setCurrent (self, co):
         self.w.setcurrent (co.w)
+
+    def setTimer (self, timer):
+        self.w.settimer (timer)
 
 class Grid:
 
@@ -380,6 +385,9 @@ class GridForm(Grid):
 
     def addHotKey(self, keyname):
 	self.form.addHotKey(keyname)
+
+    def setTimer(self, keyname):
+	self.form.setTimer(keyname)
 
     def create(self):
 	if not self.form_created:

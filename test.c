@@ -124,7 +124,7 @@ int main(void) {
 	    newtScaleSet(scale, atoi(scaleVal));
 	    newtRefresh();
 	    answer = NULL;
-	} else if (es.reason == NEWT_EXIT_TIMEOUT) {
+	} else if (es.reason == NEWT_EXIT_TIMER) {
 	    spinState++;
 	    if (!*spinState) spinState = spinner;
 	    sprintf(buf, "Spinner: %c", *spinState);

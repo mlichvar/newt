@@ -1,5 +1,7 @@
 0.50 -> 0.51
 	- added newtFormSetTimer() (and test case, and python)
+	- checkboxtree's could improperly leave info from closed trees
+	  at the end of the display
 
 0.40 -> 0.50
 	- added CheckboxTree widget

@@ -190,7 +190,7 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 
 struct newtExitStruct {
     enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
-	   NEWT_EXIT_TIMEOUT } reason;
+	   NEWT_EXIT_TIMER } reason;
     union {
 	int key;
 	newtComponent co;

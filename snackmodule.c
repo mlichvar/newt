@@ -127,6 +127,7 @@ static PyObject * formDraw(snackForm * s, PyObject * args);
 static PyObject * formRun(snackForm * s, PyObject * args);
 static PyObject * formHotKey(snackForm * s, PyObject * args);
 static PyObject * formSetCurrent(snackForm * form, PyObject * args);
+static PyObject * formSetTimer(snackForm * form, PyObject * args);
 
 static PyMethodDef formMethods[] = {
     { "add", (PyCFunction) formAdd, METH_VARARGS, NULL },
@@ -134,6 +135,7 @@ static PyMethodDef formMethods[] = {
     { "run", (PyCFunction) formRun, METH_VARARGS, NULL },
     { "addhotkey", (PyCFunction) formHotKey, METH_VARARGS, NULL },
     { "setcurrent", (PyCFunction) formSetCurrent, METH_VARARGS, NULL },
+    { "settimer", (PyCFunction) formSetTimer, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -739,6 +741,8 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
 
     if (result.reason == NEWT_EXIT_HOTKEY)
 	return Py_BuildValue("(si)", "hotkey", result.u.key);
+    else if (result.reason == NEWT_EXIT_TIMER)
+	return Py_BuildValue("(si)", "timer", 0);
     else
 	return Py_BuildValue("(si)", "widget", result.u.co);
 }
@@ -750,6 +754,18 @@ static PyObject * formHotKey(snackForm * s, PyObject * args) {
 	return NULL;
 
     newtFormAddHotKey(s->fo, key);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * formSetTimer(snackForm * form, PyObject * args) {
+    int millisecs;
+
+    if (!PyArg_ParseTuple(args, "i", &millisecs))
+	return NULL;
+
+    newtFormSetTimer(form->fo, millisecs);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -983,6 +999,7 @@ void init_snack(void) {
 
     PyDict_SetItemString(d, "FORM_EXIT_HOTKEY", PyString_FromString("hotkey"));
     PyDict_SetItemString(d, "FORM_EXIT_WIDGET", PyString_FromString("widget"));
+    PyDict_SetItemString(d, "FORM_EXIT_TIMER", PyString_FromString("timer"));
 
     PyDict_SetItemString(d, "KEY_F1", PyInt_FromLong(NEWT_KEY_F1));
     PyDict_SetItemString(d, "KEY_F2", PyInt_FromLong(NEWT_KEY_F2));
