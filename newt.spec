@@ -1,12 +1,12 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.32
+%define version 0.50.33
 Version: %{version}
 Release: 1
-Copyright: LGPL
+License: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python,python-devel,perl
+BuildRequires: python,python-devel,perl, slang-devel
 Requires: slang
 Provides: snack
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -105,6 +105,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Aug 29 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.33-1
+- s/Copyright/License/
+- Add slang-devel to build dependencies (#49542)
+
 * Wed Aug 22 2001 Crutcher Dunnavant <crutcher@redhat.com> 0.50.32-1
 - re-ordered the width key of CheckboxTree.__init__; #52319
 
