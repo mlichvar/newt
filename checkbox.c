@@ -128,6 +128,7 @@ newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 
     co->ops = &cbOps;
 
+    co->callback = NULL;
     co->height = 1;
     co->width = strlen(text) + 4;
     co->top = top;
@@ -230,9 +231,13 @@ struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
 	    } else {
 		er.result = ER_IGNORED;
 	    }
+	    break;
 	}
     } else 
 	er.result = ER_IGNORED;
+
+    if (er.result == ER_SWALLOWED && co->callback)
+	co->callback(co, co->callbackData);
 
     return er;
 }
