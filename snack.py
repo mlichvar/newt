@@ -92,7 +92,7 @@ class Entry(Widget):
 	return self.w.entrySetValue(text)
 
     def __init__(self, width, text = "", hidden = 0, scroll = 1, 
-		 returnexit = 0):
+		 returnExit = 0):
 	self.w = _snack.entry(width, text, hidden, scroll, returnExit)
 
 
@@ -321,4 +321,13 @@ class GridForm(Grid):
 	    self.form_created = 1
 	return self.form.run()
 	
-
+    def run_popup(self):
+	if not self.form_created:
+	    self.place(1,1)
+	    for child in self.childList:
+		self.form.add(child)
+	    self.form_created = 1
+	self.screen.gridWrappedWindow(self, self.title)
+	result = self.form.run()
+	self.screen.popWindow()
+	return result
