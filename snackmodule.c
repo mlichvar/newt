@@ -18,6 +18,7 @@ static PyObject * centeredWindow(PyObject * s, PyObject * args);
 static snackWidget * checkboxWidget(PyObject * s, PyObject * args);
 static PyObject * choiceWindow(PyObject * s, PyObject * args);
 static snackWidget * entryWidget(PyObject * s, PyObject * args);
+static PyObject * drawRootText(PyObject * s, PyObject * args);
 static snackForm * formCreate(PyObject * s, PyObject * args);
 static snackGrid * gridCreate(PyObject * s, PyObject * args);
 static PyObject * gridWrappedWindow(PyObject * s, PyObject * args);
@@ -27,7 +28,9 @@ static snackWidget * labelWidget(PyObject * s, PyObject * args);
 static snackWidget * listboxWidget(PyObject * s, PyObject * args);
 static PyObject * messageWindow(PyObject * s, PyObject * args);
 static PyObject * openWindow(PyObject * s, PyObject * args);
+static PyObject * popHelpLine(PyObject * s, PyObject * args);
 static PyObject * popWindow(PyObject * s, PyObject * args);
+static PyObject * pushHelpLine(PyObject * s, PyObject * args);
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args);
 static PyObject * refreshScreen(PyObject * s, PyObject * args);
 static PyObject * reflowText(PyObject * s, PyObject * args);
@@ -39,6 +42,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "checkbox", (PyCFunction) checkboxWidget, METH_VARARGS, NULL },
     { "choice", choiceWindow, METH_VARARGS, NULL },
     { "centeredwindow", centeredWindow, METH_VARARGS, NULL },
+    { "drawroottext", drawRootText, METH_VARARGS, NULL },
     { "entry", (PyCFunction) entryWidget, METH_VARARGS, NULL },
     { "finish", finishScreen, METH_VARARGS, NULL },
     { "form", (PyCFunction) formCreate, METH_VARARGS, NULL },
@@ -49,7 +53,9 @@ static PyMethodDef snackModuleMethods[] = {
     { "listbox", (PyCFunction) listboxWidget, METH_VARARGS, NULL },
     { "message", messageWindow, METH_VARARGS, NULL },
     { "openwindow", openWindow, METH_VARARGS, NULL },
+    { "pophelpline", popHelpLine, METH_VARARGS, NULL },
     { "popwindow", popWindow, METH_VARARGS, NULL },
+    { "pushhelpline", pushHelpLine, METH_VARARGS, NULL },
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
     { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
     { "refresh", refreshScreen, METH_VARARGS, NULL },
@@ -183,6 +189,40 @@ static PyObject * finishScreen(PyObject * s, PyObject * args) {
 
 static PyObject * refreshScreen(PyObject * s, PyObject * args) {
     newtRefresh();
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * drawRootText(PyObject * s, PyObject * args) {
+    int left, top;
+    char * text;
+
+    if (!PyArg_ParseTuple(args, "iis", &left, &top, &text))
+	return NULL;
+
+    newtDrawRootText(left, top, NULL);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * popHelpLine(PyObject * s, PyObject * args) {
+    newtPopHelpLine();
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * pushHelpLine(PyObject * s, PyObject * args) {
+    char * text;
+
+    if (!PyArg_ParseTuple(args, "s", &text))
+	return NULL;
+
+    if (!strcmp(text, "*default*"))
+	newtPushHelpLine(NULL);
+    else
+	newtPushHelpLine(text);
+
     Py_INCREF(Py_None);
     return Py_None;
 }

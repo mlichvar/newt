@@ -164,12 +164,25 @@ class SnackScreen:
 
     def __init__(self):
 	_snack.init()
+	self.pushHelpLine(None)
 
     def finish(self):
 	return _snack.finish()
 
     def openWindow(self, left, top, width, height, title):
 	return _snack.openwindow(left, top, width, height, title)
+
+    def pushHelpLine(self, text):
+	if (not text):
+	    return _snack.pushhelpline("*default*")
+	else:
+	    return _snack.pushhelpline(text)
+
+    def popHelpLine(self):
+	return _snack.pophelpline()
+
+    def drawRootText(self, left, top, text):
+	return _snack.drawroottext(left, top, text)
 
     def centeredWindow(self, width, height, title):
 	return _snack.centeredwindow(width, height, title)
