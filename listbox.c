@@ -11,6 +11,7 @@ struct listbox {
     int allocedItems;
     int flags;
     int curr;
+    newtComponent sb;
 };
 
 static void listboxDraw(newtComponent co);
@@ -24,7 +25,7 @@ static struct componentOps listboxOps = {
 } ;
 
 newtComponent newtListbox(int left, int top, int height, int flags) {
-    newtComponent co;
+    newtComponent co, sb;
     struct listbox * li;
 
     co = malloc(sizeof(*co));
@@ -34,10 +35,19 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->numItems = 0; 
     li->flags = 0;
     li->items = malloc(li->allocedItems * sizeof(*li->items));
-    li->form = newtForm();
 
-    if (height)
+    if (height) 
+	sb = newtVerticalScrollbar(left, top, height, COLORSET_LISTBOX,
+				   COLORSET_ACTLISTBOX);
+    else
+	sb = NULL;
+    li->form = newtForm(sb);
+    li->sb = sb;
+
+    if (height) {
 	newtFormSetHeight(li->form, height);
+	newtFormAddComponent(li->form, sb);
+    }
 
     co->data = li;
     co->left = left;
@@ -68,14 +78,14 @@ void newtListboxAddEntry(newtComponent co, char * text) {
 					       li->numItems + co->top, 
 					       text, 0, NULL);
 
-    /*newtLabelColor(li->items[li->numItems], COLORSET_ACTLISTBOX,
-			COLORSET_LISTBOX);*/
-
     newtFormAddComponent(li->form, li->items[li->numItems]);
     li->numItems++;
 
     co->height = li->form->height;
     co->width = li->form->width;
+
+    if (li->sb)
+	li->sb->left = co->left + co->width;
 }
 
 static void listboxDraw(newtComponent co) {
