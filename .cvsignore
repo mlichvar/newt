@@ -1,0 +1,10 @@
+configure
+config.log
+config.cache
+config.h
+Makefile
+test
+testgrid
+whiptail
+libnewt*
+snack.pcy
