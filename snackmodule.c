@@ -136,13 +136,17 @@ static PyObject * widgetGetAttr(PyObject * s, char * name);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
+    { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
     { "listboxGetCurrent", (PyCFunction) widgetListboxGet, METH_VARARGS, NULL },
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
+    { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -327,7 +331,7 @@ static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     widget->co = newtListbox(-1, -1, height,
 				(doScroll ? 0 : NEWT_FLAG_NOSCROLL) |
 				(returnExit ? NEWT_FLAG_RETURNEXIT : 0));
-    widget->anint = 0;
+    widget->anint = 1;
     
     return widget;
 }
@@ -544,6 +548,30 @@ static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args) {
     newtListboxAddEntry(s->co, text, (void *) s->anint);
 
     return PyInt_FromLong(s->anint++);
+}
+
+static PyObject * widgetListboxIns(snackWidget * s, PyObject * args) {
+    char * text;
+    int key;
+    
+    if (!PyArg_ParseTuple(args, "si", &text, &key))
+	return NULL;
+
+    newtListboxInsertEntry(s->co, text, (void *) s->anint, (void *) key);
+
+    return PyInt_FromLong(s->anint++);
+}
+
+static PyObject * widgetListboxDel(snackWidget * s, PyObject * args) {
+    int key;
+    
+    if (!PyArg_ParseTuple(args, "i", &key))
+	return NULL;
+
+    newtListboxDeleteEntry(s->co, (void *) key);
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args) {

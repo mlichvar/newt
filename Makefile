@@ -6,9 +6,9 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g -O2
 endif
 
-VERSION = 0.13
+VERSION = 0.20
 CVSTAG = r$(subst .,-,$(VERSION))
-SONAME = 0.11
+SONAME = 0.20
 
 PROGS = test whiptail whiptcl.so testgrid
 TESTOBJS = test.o 

@@ -38,14 +38,32 @@ class SingleRadioButton(Widget):
 
 class Listbox(Widget):
 
-    def append(self, text):
-	return self.w.listboxAddItem(text)
+    def append(self, text, item):
+	key = self.w.listboxAddItem(text)
+	self.key2item[key] = item
+	self.item2key[item] = key
+	print "key", key, "item", item
+
+    def insert(self, text, item, before):
+	if (not before):
+	    key = self.w.listboxInsertItem(text, 0)
+	else:
+	    key = self.w.listboxInsertItem(text, self.item2key[before])
+	self.key2item[key] = item
+	self.item2key[item] = key
+
+    def delete(self, item):
+	self.w.listboxDeleteItem(self.item2key[item])
+	del self.key2item[self.item2key[item]]
+	del self.item2key[item]
 
     def current(self):
-	return self.w.listboxGetCurrent()
+	return self.key2item[self.w.listboxGetCurrent()]
 
     def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
 	self.w = _snack.listbox(height, scroll, returnExit)
+	self.key2item = {}
+	self.item2key = {}
 	if (width):
 	    self.w.listboxSetWidth(width)
 

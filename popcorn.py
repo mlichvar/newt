@@ -2,18 +2,20 @@
 
 from snack import *
 
-screen = SnackScreen()
-
 t = Textbox(25, 1, "Some text")
 li = Listbox(5, width = 20, returnExit = 1)
-li.append("First")
-li.append("Second")
+li.append("First", "f")
+li.append("Second", "s")
+li.insert("Another", "a", "f")
+li.delete("a")
 b = Button("Button")
 e = Entry(15, "Entry")
 l = Label("label")
 cb = Checkbox("checkbox")
 r1 = SingleRadioButton("Radio 1", None, 1)
 r2 = SingleRadioButton("Radio 2", r1)
+
+screen = SnackScreen()
 
 sg = Grid(2, 3)
 sg.setField(b, 0, 0, anchorLeft = 1)

@@ -88,16 +88,19 @@ int main(void) {
     newtFormAddComponents(f, rsf, scale, NULL);
 
     lb = newtListbox(45, 1, 4, NEWT_FLAG_MULTIPLE | NEWT_FLAG_DOBORDER);
-    newtListboxAddEntry(lb, "First", "First");
-    newtListboxAddEntry(lb, "Second", "Second");
-    newtListboxAddEntry(lb, "Third", "Third");
-    newtListboxAddEntry(lb, "Fourth", "Fourth");
-    newtListboxAddEntry(lb, "Fifth", "Fifth");
-    newtListboxAddEntry(lb, "Sixth", "Sixth");
-    newtListboxAddEntry(lb, "Seventh", "Seventh");
-    newtListboxAddEntry(lb, "Eighth", "Eighth");
-    newtListboxAddEntry(lb, "Ninth", "Ninth");
-    newtListboxAddEntry(lb, "Tenth", "Tenth");
+    newtListboxAddEntry(lb, "First", (void *) 1);
+    newtListboxAddEntry(lb, "Second", (void *) 2);
+    newtListboxAddEntry(lb, "Third", (void *) 3);
+    newtListboxAddEntry(lb, "Fourth", (void *) 4);
+    newtListboxAddEntry(lb, "Sixth", (void *) 6);
+    newtListboxAddEntry(lb, "Seventh", (void *) 7);
+    newtListboxAddEntry(lb, "Eighth", (void *) 8);
+    newtListboxAddEntry(lb, "Ninth", (void *) 9);
+    newtListboxAddEntry(lb, "Tenth", (void *) 10);
+
+    newtListboxInsertEntry(lb, "Fifth", (void *) 5, (void *) 4);
+    newtListboxInsertEntry(lb, "Eleventh", (void *) 11, (void *) 10);
+    newtListboxDeleteEntry(lb, (void *) 11);
 
     t = newtTextbox(45, 10, 17, 5, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");

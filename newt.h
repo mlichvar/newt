@@ -139,8 +139,9 @@ void newtListboxSetWidth(newtComponent co, int width);
 /* return the data passed to AddEntry */
 void newtListboxSetData(newtComponent co, int num, void * data);
 int newtListboxAddEntry(newtComponent co, const char * text, const void * data);
-int newtListboxInsertEntry(newtComponent co, const char * text, const void * data, int num);
-int newtListboxDeleteEntry(newtComponent co, int num);
+/* Send the key to insert after, or NULL to insert at the top */
+int newtListboxInsertEntry(newtComponent co, const char * text, const void * data, void * key);
+int newtListboxDeleteEntry(newtComponent co, void * data);
 void newtListboxClear(newtComponent co); /* removes all entries from listbox */
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 /* Returns an array of data pointers from items, last element is NULL */
