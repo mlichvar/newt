@@ -33,16 +33,16 @@ struct newtColors newtDefaultColorPalette = {
 	"black", "lightgray",			/* window fg, bg */
 	"white", "black",			/* shadow fg, bg */
 	"red", "lightgray",			/* title fg, bg */
-	"blue", "magenta",			/* button fg, bg */
-	"magenta", "blue",			/* active button fg, bg */
-	"black", "green",			/* checkbox fg, fg */
-	"green", "black",			/* active checkbox fg, bg */
-	"yellow", "red",			/* entry box fg, bg */
+	"lightgray", "red",			/* button fg, bg */
+	"red", "lightgray",			/* active button fg, bg */
+	"yellow", "blue",			/* checkbox fg, bg */
+	"blue", "yellow",			/* active checkbox fg, bg */
+	"yellow", "blue",			/* entry box fg, bg */
 	"blue", "lightgray",			/* label fg, bg */
-	"red", "lightgray",			/* listbox fg, bg */
-	"lightgray", "red",			/* active listbox fg, bg */
-	"red", "lightgray",			/* textbox fg, bg */
-	"lightgray", "red",			/* active textbox fg, bg */
+	"black", "lightgray",			/* listbox fg, bg */
+	"yellow", "blue",			/* active listbox fg, bg */
+	"black", "lightgray",			/* textbox fg, bg */
+	"lightgray", "black",			/* active textbox fg, bg */
 };
 
 static struct keymap keymap[] = {
@@ -62,6 +62,9 @@ static struct keymap keymap[] = {
 	{ "\033[3~",		NEWT_KEY_DELETE,	"kl" },
 
 	{ "\033\t",		NEWT_KEY_UNTAB,		NULL },
+
+	{ "\033[5~",		NEWT_KEY_PGUP,		NULL },
+	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
 
 	{ NULL, 	0, 			NULL },	/* LEAVE this one */
 };
