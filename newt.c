@@ -34,7 +34,7 @@ struct newtColors newtDefaultColorPalette = {
 	"lightgray", "red",			/* button fg, bg */
 	"red", "lightgray",			/* active button fg, bg */
 	"yellow", "blue",			/* checkbox fg, bg */
-	"blue", "yellow",			/* active checkbox fg, bg */
+	"blue", "brown",			/* active checkbox fg, bg */
 	"yellow", "blue",			/* entry box fg, bg */
 	"blue", "lightgray",			/* label fg, bg */
 	"black", "lightgray",			/* listbox fg, bg */
