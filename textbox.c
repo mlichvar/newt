@@ -18,7 +18,7 @@ struct textbox {
 static void addLine(newtComponent co, const char * s, int len);
 static void textboxDraw(newtComponent co);
 static void addShortLine(newtComponent co, const char * s, int len);
-static struct eventResult textboxEvent(struct newtComponent * c, 
+static struct eventResult textboxEvent(newtComponent c,
 				      struct event ev);
 static void textboxDestroy(newtComponent co);
 
@@ -151,7 +151,7 @@ static void textboxDraw(newtComponent c) {
     }
 }
 
-static struct eventResult textboxEvent(struct newtComponent * co, 
+static struct eventResult textboxEvent(newtComponent co, 
 				      struct event ev) {
     struct textbox * tb = co->data;
     struct eventResult er;

@@ -26,7 +26,7 @@ void newtClearBox(int left, int top, int width, int height);
 
 int newtGetKey(void);
 
-struct newtComponent {
+struct newtComponent_struct {
     /* common data */
     int height, width; 
     int top, left;
@@ -61,12 +61,12 @@ struct event {
 } ;
 
 struct componentOps {
-    void (* draw)(struct newtComponent * c);
-    struct eventResult (* event)(struct newtComponent * c, struct event ev);
-    void (* destroy)(struct newtComponent * c);
+    void (* draw)(newtComponent c);
+    struct eventResult (* event)(newtComponent c, struct event ev);
+    void (* destroy)(newtComponent c);
 } ;
 
-struct eventResult newtDefaultEventHandler(struct newtComponent * c, 
+struct eventResult newtDefaultEventHandler(newtComponent c,
 					   struct event ev);
 
 #endif /* H_NEWT_PR */

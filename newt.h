@@ -1,6 +1,10 @@
 #ifndef H_NEWT
 #define H_NEWT
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NEWT_COLORSET_ROOT 		2
 #define NEWT_COLORSET_BORDER 		3
 #define NEWT_COLORSET_WINDOW		4
@@ -46,7 +50,7 @@ struct newtColors {
     char * disabledEntryFg, * disabledEntryBg;
 };
 
-typedef struct newtComponent * newtComponent;
+typedef struct newtComponent_struct * newtComponent;
 
 extern struct newtColors newtDefaultColorPalette;
 
@@ -185,5 +189,9 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_F10			NEWT_KEY_EXTRA_BASE + 110
 #define NEWT_KEY_F11			NEWT_KEY_EXTRA_BASE + 111
 #define NEWT_KEY_F12			NEWT_KEY_EXTRA_BASE + 112
+
+#ifdef __cplusplus
+} /* End of extern "C" { */
+#endif
 
 #endif /* H_NEWT */

@@ -15,7 +15,7 @@ static void buttonDrawText(newtComponent co, int active, int pushed);
 
 static void buttonDraw(newtComponent c);
 static void buttonDestroy(newtComponent co);
-static struct eventResult buttonEvent(struct newtComponent * c, 
+static struct eventResult buttonEvent(newtComponent c,
 				      struct event ev);
 
 static struct componentOps buttonOps = {
@@ -93,7 +93,7 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
     SLsmg_write_char(' ');
 }
 
-static struct eventResult buttonEvent(struct newtComponent * co, 
+static struct eventResult buttonEvent(newtComponent co,
 				      struct event ev) {
     struct eventResult er;
 

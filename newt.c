@@ -454,7 +454,7 @@ void newtDelay(int usecs) {
     select(0, &set, &set, &set, &tv);
 }
 
-struct eventResult newtDefaultEventHandler(struct newtComponent * c, 
+struct eventResult newtDefaultEventHandler(newtComponent c,
 					   struct event ev) {
     struct eventResult er;
 

@@ -23,7 +23,7 @@ static void makeActive(newtComponent co);
 
 static void cbDraw(newtComponent c);
 static void cbDestroy(newtComponent co);
-struct eventResult cbEvent(struct newtComponent * co, struct event ev);
+struct eventResult cbEvent(newtComponent co, struct event ev);
 
 static struct componentOps cbOps = {
     cbDraw,
@@ -187,7 +187,7 @@ static void cbDestroy(newtComponent co) {
     free(co);
 }
 
-struct eventResult cbEvent(struct newtComponent * co, struct event ev) {
+struct eventResult cbEvent(newtComponent co, struct event ev) {
     struct checkbox * cb = co->data;
     struct eventResult er;
     char * cur;

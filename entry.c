@@ -18,10 +18,10 @@ struct entry {
 
 static void entryDraw(newtComponent co);
 static void entryDestroy(newtComponent co);
-static struct eventResult entryEvent(struct newtComponent * co, 
+static struct eventResult entryEvent(newtComponent co, 
 			             struct event ev);
 
-static struct eventResult entryHandleKey(struct newtComponent * co, int key);
+static struct eventResult entryHandleKey(newtComponent co, int key);
 
 static struct componentOps entryOps = {
     entryDraw,
@@ -171,7 +171,7 @@ static void entryDestroy(newtComponent co) {
     free(co);
 }
 
-static struct eventResult entryEvent(struct newtComponent * co, 
+static struct eventResult entryEvent(newtComponent co, 
 				     struct event ev) {
     struct entry * en = co->data;
     struct eventResult er;
@@ -205,7 +205,7 @@ static struct eventResult entryEvent(struct newtComponent * co,
     return er;
 }
 
-static struct eventResult entryHandleKey(struct newtComponent * co, int key) {
+static struct eventResult entryHandleKey(newtComponent co, int key) {
     struct entry * en = co->data;
     struct eventResult er;
     char * chptr, * insPoint;
