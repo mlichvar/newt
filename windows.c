@@ -167,7 +167,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 	buttonName = va_arg(args, char *);
     }
 
-    va_end(button1);
+    va_end(args);
 
     buttonBar = newtCreateGrid(numButtons, 1);
     for (i = 0; i < numButtons; i++) {
@@ -224,7 +224,7 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
 	buttonName = va_arg(args, char *);
     }
 
-    va_end(button1);
+    va_end(args);
 
     buttonBar = newtCreateGrid(numButtons, 1);
     for (i = 0; i < numButtons; i++) {
