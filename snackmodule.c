@@ -264,12 +264,13 @@ static void suspendCallback(void * data) {
     struct suspendCallbackStruct * scs = data;
     PyObject * args, * result;
 
-    args = Py_BuildValue("(OO)", scs->data);
+    args = Py_BuildValue("(O)", scs->data);
     result = PyEval_CallObject(scs->cb, args);
-    Py_DECREF(args);
-    Py_DECREF(result);
 
-    return ;
+    Py_DECREF(args);
+    Py_XDECREF(result);
+
+    return;
 }
 
 static PyObject * setSuspendCallback(PyObject * s, PyObject * args) {
