@@ -32,6 +32,7 @@ struct form {
     int numRows;
     int * hotKeys;
     int numHotKeys;
+    int background;
 };
 
 static void gotoComponent(struct form * form, int newComp);
@@ -80,6 +81,7 @@ newtComponent newtForm(newtComponent vertBar, char * help, int flags) {
     form->numRows = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
+    form->background = COLORSET_WINDOW;
     form->hotKeys = malloc(sizeof(int));
     form->numHotKeys = 0;
     if (!(form->flags & NEWT_FORM_NOF12)) {
@@ -200,7 +202,7 @@ void newtDrawForm(newtComponent co) {
     struct element * el;
     int i;
 
-    SLsmg_set_color(COLORSET_WINDOW);
+    SLsmg_set_color(form->background);
     newtClearBox(co->left, co->top, co->width, co->height);
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
 	/* the scrollbar *always* fits */
@@ -494,3 +496,8 @@ void newtComponentAddCallback(newtComponent co, newtCallback f, void * data) {
     co->callbackData = data;
 }
 
+void newtFormSetBackground(newtComponent co, int color) {
+    struct form * form = co->data;
+
+    form->background = color;
+}
