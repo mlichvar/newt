@@ -1,11 +1,11 @@
 #include <errno.h>
-#include <newt.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "errno.h"
+#include "newt.h"
 
 static int newtvwindow(char * title, char * button1, char * button2, 
 		   char * message, va_list args) {
