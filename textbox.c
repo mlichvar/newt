@@ -118,6 +118,7 @@ static char * expandTabs(const char * text) {
     char * buf, * dest;
     const char * src;
     int bufUsed = 0;
+    int linePos = 0;
     int i;
 
     buf = malloc(bufAlloced + 1);
@@ -128,10 +129,15 @@ static char * expandTabs(const char * text) {
 	    dest = buf + bufUsed;
 	}
 	if (*src == '\t') {
-	    i = 8 - (bufUsed & 8);
+	    i = 8 - (linePos & 8);
 	    memset(dest, ' ', i);
-	    dest += i, bufUsed += i;
+	    dest += i, bufUsed += i, linePos += i;
 	} else {
+	    if (*src == '\n')
+		linePos = 0;
+	    else
+		linePos++;
+
 	    *dest++ = *src;
 	    bufUsed++;
 	}
