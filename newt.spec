@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue May 15 2001 Michael Fulbright <msf@redhat.com>
+- added python binding for CompactButton()
+
 * Tue Apr  3 2001 Matt Wilson <msw@redhat.com>
 - change from using SLsmg_touch_screen to SLsmg_touch_lines to prevent
   excessive flashing due to screen clears when using touch_screen (more
