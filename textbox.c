@@ -97,6 +97,9 @@ static void doReflow(char * text, char ** resultPtr, int width, int * badness,
 		    strcat(result, "\n");
 		    height++;
 		}
+
+		if (end - text < (width / 2))
+		    howbad += (width / 2) - (end - text);
 		text = end;
 		if (*text) text++;
 	    } else {
