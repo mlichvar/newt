@@ -79,17 +79,17 @@ static void sbDraw(newtComponent co) {
     SLsmg_set_char_set(1);
     if (sb->arrows) {
 	newtGotorc(co->top, co->left);
- 	SLsmg_write_char('\x2d');
+	SLsmg_write_char(SLSMG_UARROW_CHAR);
 	for (i = 1; i < co->height - 1; i++) {
 	    newtGotorc(i + co->top, co->left);
-	    SLsmg_write_char('\x61');
+	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
 	}
 	newtGotorc(co->top + co->height - 1, co->left);
- 	SLsmg_write_char('\x2e');
+	SLsmg_write_char(SLSMG_DARROW_CHAR);
     } else {
 	for (i = 0; i < co->height; i++) {
 	    newtGotorc(i + co->top, co->left);
-	    SLsmg_write_char('\x61');
+	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
 	}
     }
 
@@ -100,7 +100,7 @@ static void sbDraw(newtComponent co) {
 
 static void sbDrawThumb(newtComponent co, int isOn) {
     struct scrollbar * sb = co->data;
-    char ch = isOn ? '#' : '\x61';
+    SLtt_Char_Type ch = isOn ? '#' : SLSMG_CKBRD_CHAR;
 
     if (!co->isMapped) return;
 
