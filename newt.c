@@ -120,15 +120,15 @@ static const struct keymap keymap[] = {
 	{ "\033[24~",		NEWT_KEY_F12,		NULL },
 	{ "\033",		NEWT_KEY_ESCAPE,	NULL },
 
-	{ NULL, 	0, 			NULL },	/* LEAVE this one */
+	{ 0 },	/* LEAVE this one */
 };
 static char keyPrefix = '\033';
 
-static const char * version = "Newt windowing library version " VERSION
-			" - (C) 1996-2000 Red Hat Software. "
-		        "Redistributable under the term of the Library "
-		        "GNU Public License. "
-			"Written by Erik Troan\n";
+static const char *const version = // ident friendly
+    "$Version: Newt windowing library version " VERSION "$"
+    "$License: (C) 1996-2003 Red Hat, Inc. "
+	      "Licensed under the terms of the Lesser GNU Public License. "
+	      "Originally written by Erik Troan $";
 
 static newtSuspendCallback suspendCallback = NULL;
 static void * suspendCallbackData = NULL;
