@@ -590,6 +590,7 @@ void newtDrawForm(newtComponent co) {
 
     SLsmg_set_color(form->background);
     newtClearBox(co->left, co->top, co->width, co->height);
+
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
 	/* the scrollbar *always* fits somewhere */
 	if (el->co == form->vertBar) {

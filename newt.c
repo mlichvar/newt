@@ -32,6 +32,7 @@ static char ** currentHelpline = NULL;
 static int cursorRow, cursorCol;
 static int needResize;
 static int cursorOn = 1;
+static int trashScreen = 0;
 
 static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -188,7 +189,11 @@ void newtResizeScreen(int redraw) {
 #endif
 
 int newtInit(void) {
-    char * MonoValue, * MonoEnv = "NEWT_MONO";
+    char * MonoValue, * MonoEnv = "NEWT_MONO", * lang;
+
+    lang = getenv ("LANG");
+    if (lang && !strcasecmp (lang, "ja_JP.eucJP"))
+	trashScreen = 1;
 
     /* use the version variable just to be sure it gets included */
     strlen(version);
@@ -411,6 +416,8 @@ int newtOpenWindow(int left, int top, int width, int height,
 	n += currentWindow->width + 3;
     }
 
+    newtTrashScreen();
+
     SLsmg_set_color(NEWT_COLORSET_BORDER);
     SLsmg_draw_box(top - 1, left - 1, height + 2, width + 2);
 
@@ -489,6 +496,8 @@ void newtPopWindow(void) {
 	currentWindow--;
 
     SLsmg_set_char_set(0);
+
+    newtTrashScreen();
 
     newtRefresh();
 }
@@ -686,3 +695,9 @@ void newtCursorOn(void) {
     cursorOn = 1;
     SLtt_set_cursor_visibility (cursorOn);
 }
+
+void newtTrashScreen(void) {
+    if (trashScreen)
+	SLsmg_touch_screen();
+}
+     

@@ -26,6 +26,7 @@ void newtDrawBox(int left, int top, int width, int height, int shadow);
 void newtClearBox(int left, int top, int width, int height);
 
 int newtGetKey(void);
+void newtTrashScreen(void);
 
 struct newtComponent_struct {
     /* common data */

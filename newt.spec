@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.21
+%define version 0.50.22
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,17 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Apr  2 2001 Matt Wilson <msw@redhat.com>
+- redraw the screen in certain situations when LANG=ja_JP.eucJP to
+  prevent corrupting kanji characters
+
+* Mon Apr  2 2001 Elloit Lee <sopwith@redhat.com>
+- Allow python scripts to watch file handles
+- Fix 64-bit warnings in snackmodule
+- Misc snack.py cleanups
+- Add NEWT_FD_EXCEPT to allow watching for fd exceptions
+- In newtExitStruct, return the first file descriptor that an event occurred on 
+
 * Fri Mar 30 2001 Matt Wilson <msw@redhat.com>
 - don't blow the stack if we push a help line that is longer than the
   curret number of columns

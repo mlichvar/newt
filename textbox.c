@@ -329,7 +329,9 @@ static void textboxDraw(newtComponent c) {
     }
 
     SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
-   
+
+    newtTrashScreen();
+
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);
 	SLsmg_write_string(tb->lines[i + tb->topLine]);

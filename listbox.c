@@ -486,6 +486,8 @@ static void listboxDraw(newtComponent co)
 
     if (!co->isMapped) return ;
 
+    newtTrashScreen();
+    
     if(li->flags & NEWT_FLAG_BORDER) {
       if(li->isActive)
 	  SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);

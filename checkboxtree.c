@@ -424,6 +424,9 @@ static void ctDraw(newtComponent co) {
     item = ct->firstItem;
     
     i = 0;
+
+    newtTrashScreen();
+    
     while (*item && i < co->height) {
 	newtGotorc(co->top + i, co->left);
 	if (*item == *ct->currItem) {
