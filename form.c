@@ -32,6 +32,7 @@ struct form {
 static void formDraw(newtComponent co);
 static void gotoComponent(struct form * form, int newComp);
 static struct eventResult formEvent(newtComponent co, struct event ev);
+static struct eventResult sendEvent(newtComponent comp, struct event ev);
 
 static struct componentOps formOps = {
     formDraw,
@@ -182,57 +183,65 @@ static void formDraw(newtComponent co) {
 static struct eventResult formEvent(newtComponent co, struct event ev) {
     struct form * form = co->data;
     newtComponent subco = form->elements[form->currComp].co;
-    int new, wrap = 0;
+    int new, wrap;
     struct eventResult er;
     int dir = 0;
+    int i, num;
 
     er.result = ER_IGNORED;
 
-    switch (ev.event) {
-      case EV_FOCUS:
-      case EV_UNFOCUS:
-	er = subco->ops->event(subco, ev);
-	break;
-     
-      case EV_KEYPRESS:
-	if (ev.u.key == NEWT_KEY_TAB) {
-	    er.result = ER_NEXTCOMP;
-	    wrap = 1;
-	} else if (ev.u.key == NEWT_KEY_UNTAB) {
-	    er.result = ER_PREVCOMP;
-	    wrap = 1;
-	}
-
-	if (er.result == ER_IGNORED) {
-	    /* let the current component handle the event */
-	    er = subco->ops->event(subco, ev);
-	}
-
-	if (er.result == ER_IGNORED) {
-	    /* handle default events */
-	    if (er.result == ER_IGNORED) {
-		switch (ev.u.key) {
-		  case NEWT_KEY_UP:
-		  case NEWT_KEY_LEFT:
-		  case NEWT_KEY_BKSPC:
-		    er.result = ER_PREVCOMP;
-		    break;
-
-		  case NEWT_KEY_DOWN:
-		  case NEWT_KEY_RIGHT:
-		  case NEWT_KEY_ENTER:
-		    er.result = ER_NEXTCOMP;
-		    break;
-		}
+    switch (ev.when) {
+      case EV_EARLY:
+	if (ev.event == EV_KEYPRESS) {
+	    if (ev.u.key == NEWT_KEY_TAB) {
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		wrap = 1;
+	    } else if (ev.u.key == NEWT_KEY_UNTAB) {
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		wrap = 1;
 	    }
 	}
-    }
 
-    /* we try and do previous/next actions ourselves if possible */
-    if (er.result == ER_PREVCOMP) {
-	dir = -1;
-    } else if (er.result == ER_NEXTCOMP) {
-	dir = 1;
+	i = form->currComp;
+	num = 0;
+	while (er.result == ER_IGNORED && num != form->numComps ) {
+	    er = form->elements[i].co->ops->event(form->elements[i].co, ev);
+
+	    num++;
+	    i++;
+	    if (i == form->numComps) i = 0;
+	}
+
+	break;
+	
+      case EV_NORMAL:
+	er = subco->ops->event(subco, ev);
+	break;
+
+      case EV_LATE:
+	er = subco->ops->event(subco, ev);
+	
+	if (er.result == ER_IGNORED) {
+	    switch (ev.u.key) {
+	      case NEWT_KEY_UP:
+	      case NEWT_KEY_LEFT:
+	      case NEWT_KEY_BKSPC:
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		wrap = 0;
+		break;
+
+	      case NEWT_KEY_DOWN:
+	      case NEWT_KEY_RIGHT:
+	      case NEWT_KEY_ENTER:
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		wrap = 0;
+		break;
+	    }
+	}
     }
 
     if (dir) {
@@ -317,9 +326,8 @@ newtComponent newtRunForm(newtComponent co) {
 
 	ev.event = EV_KEYPRESS;
 	ev.u.key = key;
-	er = formEvent(co, ev);
 
-	/* EV_NEXTCOMP and EV_PREVCOMP should cause wrapping */
+	er = sendEvent(co, ev);
     } while (er.result != ER_EXITFORM);
 
     newtRefresh();
@@ -328,22 +336,38 @@ newtComponent newtRunForm(newtComponent co) {
 
 }
 
+static struct eventResult sendEvent(newtComponent co, struct event ev) {
+    struct eventResult er;
+
+    ev.when = EV_EARLY;
+    er = co->ops->event(co, ev);
+
+    if (er.result == ER_IGNORED) {
+	ev.when = EV_NORMAL;
+	er = co->ops->event(co, ev);
+    }
+
+    if (er.result == ER_IGNORED) {
+	ev.when = EV_LATE;
+	er = co->ops->event(co, ev);
+    }
+
+    return er;
+}
+
 static void gotoComponent(struct form * form, int newComp) {
-    newtComponent co;
     struct event ev;
 
     if (form->currComp != -1) {
 	ev.event = EV_UNFOCUS;
-	co = form->elements[form->currComp].co;
-	co->ops->event(co, ev);
+	sendEvent(form->elements[form->currComp].co, ev);
     }
 
     form->currComp = newComp;
-   
     
     if (form->currComp != -1) {
 	ev.event = EV_FOCUS;
-	co = form->elements[form->currComp].co;
-	co->ops->event(co, ev);
+	ev.when = EV_NORMAL;
+	sendEvent(form->elements[form->currComp].co, ev);
     }
 }
