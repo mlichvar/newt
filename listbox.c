@@ -36,6 +36,7 @@ struct listbox {
     int grow;
     int flags; /* flags for this listbox, right now just
 		  NEWT_FLAG_RETURNEXIT */
+    int beenDisplayed;
 };
 
 static void listboxDraw(newtComponent co);
@@ -79,6 +80,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->numSelected = 0;
     li->isActive = 0;
     li->userHasSetWidth = 0;
+    li->beenDisplayed = 0;
     li->startShowItem = 0;
     li->flags = flags & (NEWT_FLAG_RETURNEXIT|NEWT_FLAG_DOBORDER|NEWT_FLAG_MULTIPLE);
 
@@ -138,7 +140,7 @@ newtListboxRealSetCurrent(newtComponent co)
     struct listbox * li = co->data;
     if(li->sb)
 	newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
     if(co->callback) co->callback(co, co->callbackData);
 }
 
@@ -149,7 +151,7 @@ void newtListboxSetWidth(newtComponent co , int width) {
     li->curWidth = co->width - li->sbAdjust;
     li->userHasSetWidth = 1;
     li->sb->left = co->width + co->left - 1;
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
 }
 
 void * newtListboxGetCurrent(newtComponent co) {
@@ -190,7 +192,7 @@ void newtListboxSelectItem(newtComponent co, int item,
 			iitem->isSelected = !iitem->isSelected;
 	}
     }
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
 }
 
 void newtListboxClearSelection(newtComponent co)
@@ -202,7 +204,7 @@ void newtListboxClearSelection(newtComponent co)
 	item = item->next)
 	item->isSelected = 0;
     li->numSelected = 0;
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
 }
 
 /* Free the returned array after use, but NOT the values in the array */
@@ -250,7 +252,7 @@ void newtListboxSetText(newtComponent co, int num, const char * text) {
     }
 
     if (num >= li->startShowItem && num <= li->startShowItem + co->height)
-	listboxDraw(co);
+	if (li->beenDisplayed) listboxDraw(co);
 }
 
 void newtListboxSetEntry(newtComponent co, int num, const char * text) {
@@ -339,7 +341,7 @@ int newtListboxInsertEntry(newtComponent co, const char * text,
 	co->width = li->curWidth + li->sbAdjust;
     li->numItems++;
 
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
 
     return li->numItems;
 }
@@ -390,7 +392,7 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
 		li->sb->left = co->left + co->width - 1;
     }
 
-    listboxDraw(co);
+    if (li->beenDisplayed) listboxDraw(co);
 
     return li->numItems;
 }
@@ -448,6 +450,8 @@ static void listboxDraw(newtComponent co)
     struct listbox * li = co->data;
     struct items *item;
     int i, j;
+
+    li->beenDisplayed = 1;
 
     if(li->sb)
 	li->sb->ops->draw(li->sb);
