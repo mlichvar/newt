@@ -25,7 +25,7 @@ static int newtvwindow(char * title, char * button1, char * button2,
     } while (i == size);
 
     flowedText = newtReflowText(buf, 35, 5, 5, &width, &height);
-    if (height > 10) {
+    if (height > 6) {
 	free(flowedText);
 	flowedText = newtReflowText(buf, 60, 5, 5, &width, &height);
     }
