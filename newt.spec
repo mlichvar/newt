@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.26
+%define version 0.50.27
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Jun 25 2001 Jeremy Katz <katzj@redhat.com>
+- ClistBox -> Clistbox for API consistency
+- fixup replace() method of Clistbox
+
 * Fri Jun 8 2001 Jeremy Katz <katzj@redhat.com>
 - few bugfixes to the CListBox
 

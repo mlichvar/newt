@@ -589,7 +589,7 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
 
     return (bb.buttonPressed(result), tuple(entryValues))
 
-class CListBox(Grid):
+class CListbox(Grid):
 	def __init__(self, height, cols, col_widths, scroll = 0, returnExit = 0,
 			width = 0, col_pad = 1, col_text_align = None,
 			col_labels = None, col_label_align = None):
@@ -668,7 +668,7 @@ class CListBox(Grid):
 		if col_text_align == None:
 			col_text_align = self.col_text_align
 		text = self.colFormText(col_text, col_text_align)
-		self.listbox.replace(text, item, before)
+		self.listbox.replace(text, item)
 
 	def current(self):
 		return self.listbox.current()
