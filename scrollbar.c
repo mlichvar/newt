@@ -64,7 +64,7 @@ static void sbDraw(newtComponent co) {
     SLsmg_set_char_set(1);
     for (i = 0; i < co->height; i++) {
 	newtGotorc(i + co->top, co->left);
-	SLsmg_write_char('\150');
+	SLsmg_write_char('\x61');
     }
 
     SLsmg_set_char_set(0);
@@ -74,16 +74,17 @@ static void sbDraw(newtComponent co) {
 
 static void sbDrawThumb(newtComponent co, int isOn) {
     struct scrollbar * sb = co->data;
+    char ch = isOn ? '#' : '\x61';
 
     newtGotorc(sb->curr + co->top, co->left);
     SLsmg_set_char_set(1);
 
-    if (isOn)
+    /*if (isOn)
 	SLsmg_set_color(sb->csThumb);
-    else
+    else*/
 	SLsmg_set_color(sb->cs);
 
-    SLsmg_write_char('\150');
+    SLsmg_write_char(ch);
     SLsmg_set_char_set(0);
 }
 
