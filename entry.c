@@ -32,7 +32,7 @@ static struct componentOps entryOps = {
 void newtEntrySet(newtComponent co, char * value, int cursorAtEnd) {
     struct entry * en = co->data;
 
-    if ((strlen(value) + 1) > en->bufAlloced) {
+    if ((strlen(value) + 1) > (unsigned int)en->bufAlloced) {
 	free(en->buf);
 	en->bufAlloced = strlen(value) + 1;
 	en->buf = malloc(en->bufAlloced);
@@ -78,7 +78,7 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     else
 	co->takesFocus = 0;
 
-    if (initialValue && strlen(initialValue) > width) {
+    if (initialValue && strlen(initialValue) > (unsigned int)width) {
 	en->bufAlloced = strlen(initialValue) + 1;
     }
     en->buf = malloc(en->bufAlloced);

@@ -28,7 +28,7 @@ void suspend(void) {
     newtResume();
 }
 
-void main(void) {
+int main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
     newtComponent lb, t, rsf, answer;
     newtComponent cs[10];
@@ -136,4 +136,6 @@ void main(void) {
 	for(i = 0; i < numsel; i++)
 	    puts(selectedList[i]);
     }
+
+    return 0;
 }

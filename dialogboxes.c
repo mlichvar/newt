@@ -190,9 +190,9 @@ int listBox(char * text, int height, int width, poptContext optCon,
 	} else
 	    itemInfo[numItems].text = "";
 
-	if (strlen(itemInfo[numItems].text) > maxTextWidth)
+	if (strlen(itemInfo[numItems].text) > (unsigned int)maxTextWidth)
 	    maxTextWidth = strlen(itemInfo[numItems].text);
-	if (strlen(itemInfo[numItems].tag) > maxTagWidth)
+	if (strlen(itemInfo[numItems].tag) > (unsigned int)maxTagWidth)
 	    maxTagWidth = strlen(itemInfo[numItems].tag);
 
 	numItems++;
@@ -283,7 +283,7 @@ int checkList(char * text, int height, int width, poptContext optCon,
 	else
 	    cbStates[numBoxes] = ' ';
 
-	if (strlen(cbInfo[numBoxes].tag) > maxWidth)
+	if (strlen(cbInfo[numBoxes].tag) > (unsigned int)maxWidth)
 	    maxWidth = strlen(cbInfo[numBoxes].tag);
 
 	numBoxes++;

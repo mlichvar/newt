@@ -327,7 +327,7 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
 int newtListboxDeleteEntry(newtComponent co, int num) {
     struct listbox * li = co->data;
     int i, widest = 0, t;
-    struct items *item, *item2;
+    struct items *item, *item2 = NULL;
 
     if(num > li->numItems)
 	num = li->numItems;

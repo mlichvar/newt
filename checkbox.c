@@ -60,7 +60,7 @@ void newtListitemSet(newtComponent co, char * text) {
     free(li->text);
     li->text = strdup(text);
 
-    if (strlen(text) + 4 > co->width)
+    if (strlen(text) + 4 > (unsigned int)co->width)
 	co->width = strlen(text) + 4;
 }
 
