@@ -15,6 +15,11 @@ cb = Checkbox("checkbox")
 r1 = SingleRadioButton("Radio 1", None, 1)
 r2 = SingleRadioButton("Radio 2", r1)
 
+def something():
+    print hello
+
+e.setCallback(lambda: sys.exit(1))
+
 screen = SnackScreen()
 
 sg = Grid(2, 3)

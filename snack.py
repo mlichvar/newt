@@ -7,7 +7,9 @@
 import _snack
 
 class Widget:
-    pass
+
+    def setCallback(self, obj):
+	self.w.setCallback(obj)
 
 class Button(Widget):
 

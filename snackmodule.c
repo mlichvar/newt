@@ -140,6 +140,7 @@ struct snackWidget_s {
     int anint;
 } ;
 
+static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
 static PyObject * widgetGetAttr(PyObject * s, char * name);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
@@ -149,6 +150,7 @@ static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
+    { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
     { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
@@ -174,6 +176,10 @@ static PyTypeObject snackWidgetType = {
         0,                              /* tp_as_sequence */
         0,                		/* tp_as_mapping */
 };
+
+static void callbackEntry(newtComponent co, void * arg) {
+    PyEval_CallObject(arg, arg);
+}
 
 static PyObject * initScreen(PyObject * s, PyObject * args) {
     newtInit();
@@ -579,6 +585,18 @@ static PyObject * widgetGetAttr(PyObject * s, char * name) {
     }
 
     return Py_FindMethod(widgetMethods, s, name);
+}
+
+static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
+    PyObject * object;
+
+    if (!PyArg_ParseTuple(args, "O", &object))
+	return NULL;
+
+    newtComponentAddCallback(s->co, callbackEntry, object);
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args) {
