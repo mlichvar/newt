@@ -85,6 +85,7 @@ newtComponent newtEntry(int left, int top, char * initialValue, int width,
     if (initialValue) {
 	strcpy(en->buf, initialValue);
 	en->bufUsed = strlen(initialValue);
+	en->cursorPosition = en->bufUsed;
     }
 
     return co;
@@ -189,6 +190,12 @@ static struct eventResult entryHandleKey(struct newtComponent * co, int key) {
 
     er.result = ER_SWALLOWED;
     switch (key) {
+      case '\r':				/* Return */
+	if (en->flags & NEWT_ENTRY_RETURNEXIT) {
+	    er.result = ER_EXITFORM;
+	}
+	break;
+
       case '\001':				/* ^A */
       case NEWT_KEY_HOME:
 	en->cursorPosition = 0;
