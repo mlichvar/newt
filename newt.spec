@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.20
 Version: %{version}
-Release: 3
+Release: 4
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -61,6 +61,7 @@ make instroot=$RPM_BUILD_ROOT install-sh
 
 python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python1.5",10,"/usr/lib/python1.5")'
 
+%if 0
 # cheat... build python2 stuff here
 make clean
 perl -pi -e "s/python1.5/python2.0/g" *
@@ -68,7 +69,7 @@ perl -pi -e "s/python1.5/python2.0/g" *
 make instroot=$RPM_BUILD_ROOT install
 make instroot=$RPM_BUILD_ROOT install-sh
 python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.0",10,"/usr/lib/python2.0")'
-
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -104,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun Feb 11 2001 Than Ngo <than@redhat.com>
+- disable building new-python2 sub package again
+
 * Thu Feb 01 2001 Erik Troan <ewt@redhat.com>
 - gave up on separate CHANGES file
 - added newtCheckboxTreeSetCurrent() and snack binding
