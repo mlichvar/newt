@@ -6,6 +6,7 @@
 
 void main(void) {
     newtComponent b1, b2, r1, r2, r3, e1, e2, e3, l1, l2, l3;
+    newtComponent lb;
     newtComponent cs[10];
     newtComponent f, chklist;
     char results[10];
@@ -16,8 +17,8 @@ void main(void) {
     newtInit();
     newtCls();
 
-    newtOpenWindow(2, 5, 30, 10, "first window");
-    newtOpenWindow(20, 10, 40, 13, "window 2");
+    newtOpenWindow(2, 2, 30, 10, "first window");
+    newtOpenWindow(10, 5, 65, 16, "window 2");
 
     f = newtForm();
     chklist = newtForm();
@@ -41,10 +42,18 @@ void main(void) {
     e2 = newtEntry(12, 11, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
     e3 = newtEntry(12, 12, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
 
-    newtFormSetSize(chklist, 13, 3);
+    newtFormSetHeight(chklist, 3);
 
     newtFormAddComponents(f, b1, b2, chklist, NULL);
     newtFormAddComponents(f, r1, r2, r3, l1, l2, l3, e1, e2, e3, NULL);
+
+    lb = newtListbox(45, 3, 2, 0);
+    newtListboxAddEntry(lb, "First ");
+    newtListboxAddEntry(lb, "Second");
+    newtListboxAddEntry(lb, "Third ");
+    newtListboxAddEntry(lb, "Fourth");
+
+    newtFormAddComponent(f, lb);
 
     newtRunForm(f);
  
