@@ -54,7 +54,7 @@ veryclean: clean
 	rm -f .depend
 
 clean:
-	rm -f $(PROGS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core $(LIBNEWTSH)  \
+	rm -f $(PROGS) $(NDIALOGOBJS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core $(LIBNEWTSH)  \
 		$(SHAREDOBJS) *.so*
 
 depend:
