@@ -71,13 +71,13 @@ $(SHAREDDIR)/newt.o: newt.c Makefile
 
 
 install: $(LIBNEWT)
-	install -m 755 -o 0 -g 0 -d $(libdir)
-	install -m 755 -o 0 -g 0 -d $(includedir)
-	install -m 644 -o 0 -g 0 newt.h $(includedir)
-	install -m 644 -o 0 -g 0 $(LIBNEWT) $(libdir)
+	[ -d $(libdir) ] || install -m 755 -d $(libdir)
+	[ -d $(includedir) ] || install -m 755 -d $(includedir)
+	install -m 644 newt.h $(includedir)
+	install -m 644 $(LIBNEWT) $(libdir)
 
 install-sh: shared
-	install -m 755 -o 0 -g 0 $(LIBNEWTSH) $(libdir)
+	install -m 755 $(LIBNEWTSH) $(libdir)
 	ln -sf $(LIBNEWTSH) $(libdir)/libnewt.so
 	/sbin/ldconfig
 
