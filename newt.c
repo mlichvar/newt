@@ -9,10 +9,6 @@
 #include "newt.h"
 #include "newt_pr.h"
 
-/* this function will be in a future version of slang - I'll just prototype
-   it myself for now XXX */
-void SLsmg_write_color_chars (unsigned short *s, unsigned int len);
-
 struct Window {
     int height, width, top, left;
     short * buffer;
@@ -67,6 +63,16 @@ static struct keymap keymap[] = {
 	{ "\033[6~",		NEWT_KEY_PGDN,		NULL },
 
 	{ "\033[11~",		NEWT_KEY_F1,		NULL },
+	{ "\033[12~",		NEWT_KEY_F2,		NULL },
+	{ "\033[13~",		NEWT_KEY_F3,		NULL },
+	{ "\033[14~",		NEWT_KEY_F4,		NULL },
+	{ "\033[15~",		NEWT_KEY_F5,		NULL },
+	{ "\033[17~",		NEWT_KEY_F6,		NULL },
+	{ "\033[18~",		NEWT_KEY_F7,		NULL },
+	{ "\033[19~",		NEWT_KEY_F8,		NULL },
+	{ "\033[20~",		NEWT_KEY_F9,		NULL },
+	{ "\033[21~",		NEWT_KEY_F10,		NULL },
+	{ "\033[23~",		NEWT_KEY_F11,		NULL },
 	{ "\033[24~",		NEWT_KEY_F12,		NULL },
 
 	{ NULL, 	0, 			NULL },	/* LEAVE this one */

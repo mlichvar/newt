@@ -31,6 +31,9 @@ struct newtComponent {
 
     struct componentOps * ops;
 
+    newtCallback callback;
+    void * callbackData;
+
     void * data;
 } ;
 
