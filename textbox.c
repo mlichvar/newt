@@ -72,7 +72,7 @@ newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
     reflowedText = newtReflowText(text, width, flexDown, flexUp,
 				  &actWidth, &actHeight);
     
-    co = newtTextbox(-1, -1, actWidth, actHeight, NEWT_TEXTBOX_WRAP);
+    co = newtTextbox(left, top, actWidth, actHeight, NEWT_FLAG_WRAP);
     newtTextboxSetText(co, reflowedText);
     free(reflowedText);
 
