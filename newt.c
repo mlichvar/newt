@@ -77,6 +77,7 @@ static const struct keymap keymap[] = {
 	{ "\033[4~",		NEWT_KEY_END, 		"kH" },
 
 	{ "\033[3~",		NEWT_KEY_DELETE,	"kl" },
+	{ "\033[2~", 		NEWT_KEY_INSERT,	NULL },
 
 	{ "\033\t",		NEWT_KEY_UNTAB,		NULL },
 
