@@ -136,7 +136,7 @@ int main(void) {
 	    sprintf(buf, "Spinner: %c", *spinState);
 	    newtLabelSetText(timeLabel, buf);
 	}
-    } while (es.reason != NEWT_EXIT_COMPONENT);
+    } while (es.reason != NEWT_EXIT_COMPONENT || es.u.co == b2);
 
     scaleVal = strdup(scaleVal);
     enr2 = strdup(enr2);
