@@ -166,15 +166,21 @@ static struct eventResult buttonEvent(newtComponent co,
 		er.result = ER_IGNORED;
 	    break;
 	  case EV_MOUSE:
-	    if (!bu->compact) {
-		buttonDrawIt(co, 1, 1);
-		newtRefresh();
-		newtDelay(150000);
-		buttonDrawIt(co, 1, 0);
-		newtRefresh();
-		newtDelay(150000);
-	    }
-	    er.result = ER_EXITFORM;
+	      if (ev.u.mouse.type == MOUSE_BUTTON_DOWN &&
+		  co->top <= ev.u.mouse.y &&
+		  co->top + co->height - !bu->compact > ev.u.mouse.y &&
+		  co->left <= ev.u.mouse.x &&
+		  co->left + co->width - !bu->compact > ev.u.mouse.x) {
+		  if (!bu->compact) {
+		      buttonDrawIt(co, 1, 1);
+		      newtRefresh();
+		      newtDelay(150000);
+		      buttonDrawIt(co, 1, 0);
+		      newtRefresh();
+		      newtDelay(150000);
+		  }
+		  er.result = ER_EXITFORM;
+	      }
 	    break;
 	}
     } else

@@ -1,5 +1,7 @@
-LIBS = -lslang -lm @LIBS@ #-lefence
-SHLIBS = -lslang -lm -lc @LIBS@
+LIBS = -lslang -lm #-lefence
+SHLIBS = -lslang -lm -lc
+
+GPM_SUPPORT=@gpm_support@
 
 CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang
 ifeq ($(RPM_OPT_FLAGS),)

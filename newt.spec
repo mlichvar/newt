@@ -2,7 +2,7 @@ Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
 %define version 0.40
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -33,7 +33,7 @@ widgets and stackable windows.
 %setup
 
 %build
-./configure
+./configure --enable-gpm-support
 make
 make shared
 
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Tue Jan 19 1999 Matt Wilson <msw@redhat.com>
+- Stopped using libgpm, internalized all gpm calls.  Still need some cleanups.
+
 * Thu Jan  7 1999 Matt Wilson <msw@redhat.com>
 - Added GPM mouse support
 - Moved to autoconf to allow compiling without GPM support

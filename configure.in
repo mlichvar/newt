@@ -8,15 +8,11 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+AC_ARG_WITH(gpm-support, [  --with-gpm-support         Compile with GPM support])
 
-AC_ARG_WITH(gpm,
-[  --without-gpm                Compile without GPM support],
-AC_MSG_RESULT([Compiling without GPM support]),
-dnl Checks for GPM library.
-AC_CHECK_LIB(gpm, Gpm_Repeat)
-)
-
-AC_SUBST(gpm_libs)
+if test "x$with_gpm_support" = "xyes"; then
+  AC_DEFINE(USE_GPM)
+fi
 
 AC_OUTPUT(Makefile)
 

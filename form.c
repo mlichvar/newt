@@ -5,12 +5,358 @@
 #include <stdlib.h>
 #include <sys/select.h>
 
-#ifdef HAVE_LIBGPM
-#include <gpm.h>
+#ifdef USE_GPM
+#include <ctype.h>
+#include <sys/time.h>      /* timeval */
+#include <sys/types.h>     /* socket() */
+#include <sys/socket.h>    /* socket() */
+#include <sys/un.h>        /* struct sockaddr_un */
+#include <sys/fcntl.h>     /* O_RDONLY */
+#include <sys/stat.h>      /* stat() */
+#include <termios.h>       /* winsize */
+#include <unistd.h>
+#include <sys/kd.h>        /* KDGETMODE */
+#include <signal.h>
+#include <stdio.h>
 #endif
 
 #include "newt.h"
 #include "newt_pr.h"
+
+#ifdef USE_GPM
+/*....................................... The connection data structure */
+
+typedef struct Gpm_Connect {
+  unsigned short eventMask, defaultMask;
+  unsigned short minMod, maxMod;
+  int pid;
+  int vc;
+}              Gpm_Connect;
+
+/*....................................... Stack struct */
+typedef struct Gpm_Stst {
+  Gpm_Connect info;
+  struct Gpm_Stst *next;
+} Gpm_Stst;
+
+enum Gpm_Etype {
+  GPM_MOVE=1,
+  GPM_DRAG=2,   /* exactly one of the bare ones is active at a time */
+  GPM_DOWN=4,
+  GPM_UP=  8,
+
+#define GPM_BARE_EVENTS(type) ((type)&(0x0f|GPM_ENTER|GPM_LEAVE))
+
+  GPM_SINGLE=16,            /* at most one in three is set */
+  GPM_DOUBLE=32,
+  GPM_TRIPLE=64,            /* WARNING: I depend on the values */
+
+  GPM_MFLAG=128,            /* motion during click? */
+  GPM_HARD=256,             /* if set in the defaultMask, force an already
+                   used event to pass over to another handler */
+
+  GPM_ENTER=512,            /* enter event, user in Roi's */
+  GPM_LEAVE=1024            /* leave event, used in Roi's */
+};
+
+/*....................................... The reported event */
+
+enum Gpm_Margin {GPM_TOP=1, GPM_BOT=2, GPM_LFT=4, GPM_RGT=8};
+
+typedef struct Gpm_Event {
+  unsigned char buttons, modifiers;  /* try to be a multiple of 4 */
+  unsigned short vc;
+  short dx, dy, x, y;
+  enum Gpm_Etype type;
+  int clicks;
+  enum Gpm_Margin margin;
+}              Gpm_Event;
+
+static int Gpm_Open(Gpm_Connect *conn, int flag);
+static int Gpm_Close(void);
+
+static int gpm_fd=-1;
+static int gpm_flag=0;
+static int gpm_tried=0;
+Gpm_Stst *gpm_stack=NULL;
+static struct sigaction gpm_saved_suspend_hook;
+static struct sigaction gpm_saved_winch_hook;
+
+#define GPM_XTERM_ON
+#define GPM_XTERM_OFF
+#define GPM_NODE_DEV "/dev/gpmctl"
+#define GPM_NODE_CTL GPM_NODE_DEV
+
+static inline int putdata(int where,  Gpm_Connect *what)
+{
+  if (write(where,what,sizeof(Gpm_Connect))!=sizeof(Gpm_Connect))
+    {
+      return -1;
+    }
+  return 0;
+}
+
+static void gpm_winch_hook (int signum)
+{
+  if (SIG_IGN != gpm_saved_winch_hook.sa_handler &&
+      SIG_DFL != gpm_saved_winch_hook.sa_handler) {
+    gpm_saved_winch_hook.sa_handler(signum);
+  } /*if*/
+}
+
+static void gpm_suspend_hook (int signum)
+{
+  Gpm_Connect gpm_connect;
+  sigset_t old_sigset;
+  sigset_t new_sigset;
+  struct sigaction sa;
+  int success;
+
+  sigemptyset (&new_sigset);
+  sigaddset (&new_sigset, SIGTSTP);
+  sigprocmask (SIG_BLOCK, &new_sigset, &old_sigset);
+
+  /* Open a completely transparent gpm connection */
+  gpm_connect.eventMask = 0;
+  gpm_connect.defaultMask = ~0;
+  gpm_connect.minMod = ~0;
+  gpm_connect.maxMod = 0;
+  /* cannot do this under xterm, tough */
+  success = (Gpm_Open (&gpm_connect, 0) >= 0);
+
+  /* take the default action, whatever it is (probably a stop :) */
+  sigprocmask (SIG_SETMASK, &old_sigset, 0);
+  sigaction (SIGTSTP, &gpm_saved_suspend_hook, 0);
+  kill (getpid (), SIGTSTP);
+
+  /* in bardo here */
+
+  /* Reincarnation. Prepare for another death early. */
+  sigemptyset(&sa.sa_mask);
+  sa.sa_handler = gpm_suspend_hook;
+  sa.sa_flags = SA_NOMASK;
+  sigaction (SIGTSTP, &sa, 0);
+
+  /* Pop the gpm stack by closing the useless connection */
+  /* but do it only when we know we opened one.. */
+  if (success) {
+    Gpm_Close ();
+  } /*if*/
+}
+
+static int Gpm_Open(Gpm_Connect *conn, int flag)
+{
+  char tty[32];
+  char *term;
+  int i;
+  struct sockaddr_un addr;
+  Gpm_Stst *new;
+  char* sock_name = 0;
+
+  /*....................................... First of all, check xterm */
+
+  if ((term=(char *)getenv("TERM")) && !strncmp(term,"xterm",5))
+    {
+      if (gpm_tried) return gpm_fd; /* no stack */
+      gpm_fd=-2;
+      GPM_XTERM_ON;
+      gpm_flag=1;
+      return gpm_fd;
+    }
+  /*....................................... No xterm, go on */
+
+
+  /*
+   * So I chose to use the current tty, instead of /dev/console, which
+   * has permission problems. (I am fool, and my console is
+   * readable/writeable by everybody.
+   *
+   * However, making this piece of code work has been a real hassle.
+   */
+
+  if (!gpm_flag && gpm_tried) return -1;
+  gpm_tried=1; /* do or die */
+
+  new=malloc(sizeof(Gpm_Stst));
+  if (!new) return -1;
+
+  new->next=gpm_stack;
+  gpm_stack=new;
+
+  conn->pid=getpid(); /* fill obvious values */
+
+  if (new->next)
+    conn->vc=new->next->info.vc; /* inherit */
+  else
+    {
+      conn->vc=0;                 /* default handler */
+      if (flag>0)
+        {  /* forced vc number */
+          conn->vc=flag;
+          sprintf(tty,"/dev/tty%i",flag);
+        }
+      else if (flag==0)  /* use your current vc */
+        {
+          char *t = ttyname(0); /* stdin */
+          if (!t) t = ttyname(1); /* stdout */
+          if (!t) goto err;
+          strcpy(tty,t);
+          if (strncmp(tty,"/dev/tty",8) || !isdigit(tty[8]))
+            goto err;
+          conn->vc=atoi(tty+8);
+        }
+      else /* a default handler -- use console */
+        sprintf(tty,"/dev/tty0");
+
+    }
+
+  new->info=*conn;
+
+  /*....................................... Connect to the control socket */
+
+  if (!(gpm_flag++))
+    {
+
+      if ( (gpm_fd=socket(AF_UNIX,SOCK_STREAM,0))<0 )
+        {
+          goto err;
+        }
+
+      bzero((char *)&addr,sizeof(addr));
+      addr.sun_family=AF_UNIX;
+      if (!(sock_name = tempnam (0, "gpm"))) {
+        goto err;
+      } /*if*/
+      strncpy (addr.sun_path, sock_name, sizeof (addr.sun_path));
+      if (bind (gpm_fd, (struct sockaddr*)&addr,
+                sizeof (addr.sun_family) + strlen (addr.sun_path))==-1) {
+        goto err;
+      } /*if*/
+
+      bzero((char *)&addr,sizeof(addr));
+      addr.sun_family=AF_UNIX;
+      strcpy(addr.sun_path, GPM_NODE_CTL);
+      i=sizeof(addr.sun_family)+strlen(GPM_NODE_CTL);
+
+      if ( connect(gpm_fd,(struct sockaddr *)(&addr),i)<0 )
+        {
+          struct stat stbuf;
+
+          /*
+           * Well, try to open a chr device called /dev/gpmctl. This should
+           * be forward-compatible with a kernel server
+           */
+          close(gpm_fd); /* the socket */
+          if ((gpm_fd=open(GPM_NODE_DEV,O_RDWR))==-1) {
+            goto err;
+          } /*if*/
+          if (fstat(gpm_fd,&stbuf)==-1 || (stbuf.st_mode&S_IFMT)!=S_IFCHR)
+            goto err;
+        }
+    }
+  /*....................................... Put your data */
+
+  if (putdata(gpm_fd,conn)!=-1)
+    {
+      /* itz Wed Dec 16 23:22:16 PST 1998 use sigaction, the old
+         code caused a signal loop under XEmacs */
+      struct sigaction sa;
+      sigemptyset(&sa.sa_mask);
+
+#if (defined(SIGWINCH))
+      /* And the winch hook .. */
+      sa.sa_handler = gpm_winch_hook;
+      sa.sa_flags = 0;
+      sigaction(SIGWINCH, &sa, &gpm_saved_winch_hook);
+#endif
+
+#if (defined(SIGTSTP))
+      if (gpm_flag == 1) {
+        /* Install suspend hook */
+        sa.sa_handler = SIG_IGN;
+        sigaction(SIGTSTP, &sa, &gpm_saved_suspend_hook);
+
+        /* if signal was originally ignored, job control is not supported */
+        if (gpm_saved_suspend_hook.sa_handler != SIG_IGN) {
+          sa.sa_flags = SA_NOMASK;
+          sa.sa_handler = gpm_suspend_hook;
+          sigaction(SIGTSTP, &sa, 0);
+        } /*if*/
+      } /*if*/
+#endif
+
+    } /*if*/
+  return gpm_fd;
+
+  /*....................................... Error: free all memory */
+ err:
+  do
+    {
+      new=gpm_stack->next;
+      free(gpm_stack);
+      gpm_stack=new;
+    }
+  while(gpm_stack);
+  if (gpm_fd>=0) close(gpm_fd);
+  if (sock_name) {
+    unlink(sock_name);
+    free(sock_name);
+    sock_name = 0;
+  } /*if*/
+  gpm_flag=0;
+  return -1;
+}
+
+/*-------------------------------------------------------------------*/
+static int Gpm_Close(void)
+{
+  Gpm_Stst *next;
+
+  gpm_tried=0; /* reset the error flag for next time */
+  if (gpm_fd==-2) /* xterm */
+    GPM_XTERM_OFF;
+  else            /* linux */
+    {
+      if (!gpm_flag) return 0;
+      next=gpm_stack->next;
+      free(gpm_stack);
+      gpm_stack=next;
+      if (next)
+        putdata(gpm_fd,&(next->info));
+
+      if (--gpm_flag) return -1;
+    }
+
+  if (gpm_fd>=0) close(gpm_fd);
+  gpm_fd=-1;
+#ifdef SIGTSTP
+  sigaction(SIGTSTP, &gpm_saved_suspend_hook, 0);
+#endif
+#ifdef SIGWINCH
+  sigaction(SIGWINCH, &gpm_saved_winch_hook, 0);
+#endif
+  return 0;
+}
+
+/*-------------------------------------------------------------------*/
+static int Gpm_GetEvent(Gpm_Event *event)
+{
+  int count;
+
+  if (!gpm_flag) return 0;
+
+  if ((count=read(gpm_fd,event,sizeof(Gpm_Event)))!=sizeof(Gpm_Event))
+    {
+      if (count==0)
+        {
+          Gpm_Close();
+          return 0;
+        }
+      return -1;
+    }
+  return 1;
+}
+#endif
 
 /****************************************************************************
     These forms handle vertical scrolling of components with a height of 1
@@ -509,7 +855,6 @@ void newtFormSetSize(newtComponent co) {
     }
 }
 
-
 void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct form * form = co->data;
     struct event ev;
@@ -517,7 +862,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     int key, i, max;
     int done = 0;
     fd_set readSet, writeSet;
-#ifdef HAVE_LIBGPM
+#ifdef USE_GPM
     int x, y;
     Gpm_Connect conn;
     Gpm_Event event;
@@ -546,9 +891,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
 	FD_SET(0, &readSet);
-#ifdef HAVE_LIBGPM
-	if (gpm_visiblepointer) GPM_DRAWPOINTER(&event);
-
+#ifdef USE_GPM
 	if (gpm_fd > 0) {
 	    FD_SET(gpm_fd, &readSet);
 	}
@@ -567,7 +910,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	i = select(max + 1, &readSet, &writeSet, NULL, NULL);
 	if (i < 0) continue;	/* ?? What should we do here? */
 
-#ifdef HAVE_LIBGPM
+#ifdef USE_GPM
 	if (gpm_fd > 0 && FD_ISSET(gpm_fd, &readSet)) {
 	    Gpm_GetEvent(&event);
 
@@ -630,7 +973,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	}
     }
     newtRefresh();
-#ifdef HAVE_LIBGPM
+#ifdef USE_GPM
     Gpm_Close();
 #endif
 }
