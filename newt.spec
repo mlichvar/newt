@@ -107,7 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Apr  2 2001 Matt Wilson <msw@redhat.com>
 - redraw the screen in certain situations when LANG=ja_JP.eucJP to
-  prevent corrupting kanji characters
+  prevent corrupting kanji characters (#34362)
 
 * Mon Apr  2 2001 Elloit Lee <sopwith@redhat.com>
 - Allow python scripts to watch file handles
