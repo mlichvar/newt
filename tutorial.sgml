@@ -44,7 +44,7 @@ which were removed while this tutorial was written. The latest version of
 Red Hat Linux. As this install code runs in an environment with limited
 resources (most importantly limited filesystem space), <literal remap="tt">newt</literal>'s size
 was immediately an issue. To help minimize its size, the following design
-decisions were made early in it's implementation:
+decisions were made early in its implementation:
 </para>
 
 <itemizedlist>
@@ -241,10 +241,10 @@ int newtFinished(void);
 </screen>
 
 
-<literal remap="tt">newtFinished()</literal> restores the terminal to it's appearance when
+<literal remap="tt">newtFinished()</literal> restores the terminal to its appearance when
 <literal remap="tt">newtInit()</literal> was called (if possible -- on some terminals the cursor will
 be moved to the bottom, but it won't be possible to remember the original
-terminal contents) and places the terminal in it's original input state.
+terminal contents) and places the terminal in its original input state.
 If this function isn't called, the terminal will probably need to be
 reset with the <literal remap="tt">reset</literal> command before it can be used easily.</para></sect2>
 
@@ -362,7 +362,7 @@ void newtResume(void);
 </screen>
 
 
-<literal remap="tt">newtSuspend()</literal> tells <literal remap="tt">newt</literal> to return the terminal to it's initial
+<literal remap="tt">newtSuspend()</literal> tells <literal remap="tt">newt</literal> to return the terminal to its initial
 state. Once this is done, the application can suspend itself (by
 sending itself a <literal remap="tt">SIGTSTP</literal>, fork a child program, or do whatever
 else it likes. When it wants to resume using the <literal remap="tt">newt</literal> interface,
@@ -468,7 +468,7 @@ int main(void) {
 <para>
 While most <literal remap="tt">newt</literal> applications do use windows, <literal remap="tt">newt</literal>'s window
 support is actually extremely limited. Windows must be destroyed in the
-opposite order they were created, and only the topmost window may be
+opposite of the order they were created, and only the topmost window may be
 active. Corollaries to this are:
 
 
@@ -494,8 +494,8 @@ unsuitable for some tasks.
 <sect2><title>Creating Windows</title>
 
 <para>
-There are two main ways of opening <literal remap="tt">newt</literal> windows; with or without
-explicit sizings. When grids (which will be introduced later is this
+There are two main ways of opening <literal remap="tt">newt</literal> windows: with or without
+explicit sizings. When grids (which will be introduced later in this
 tutorial) are used, a window may be made to just fit the grid. When
 grids are not used, explicit sizing must be given.
 
@@ -552,7 +552,7 @@ and continue appropriately.
 All <literal remap="tt">newt</literal> components are stored in a common data type, a
 <literal remap="tt">newtComponent</literal> (some of the particulars of <literal remap="tt">newtComponent</literal>s have
 already been mentioned. While this makes it easy for programmers to pass
-components around, it does force them to make sure they use they don't pass
+components around, it does force them to make sure they don't pass
 entry boxes to routines expecting push buttons, as the compiler can't
 ensure that for them.
 
@@ -627,7 +627,7 @@ completely.
 Notice that this function doesn't fit in with <literal remap="tt">newt</literal>'s normal
 naming convention. It is an older interface which will not work for all
 forms. It was left in <literal remap="tt">newt</literal> only for legacy applications. It is a
-simpler interface then the new <literal remap="tt">newtFormRun()</literal> though, and is still used
+simpler interface than the new <literal remap="tt">newtFormRun()</literal> though, and is still used
 quite often as a result.
 
 When an application is done with a form, it destroys the form and
@@ -822,11 +822,11 @@ box. This can provide a nice shortcut for users.</para>
 </variablelist>
 
 
-After an entry box has been created, it's contents can be set by
+After an entry box has been created, its contents can be set by
 <literal remap="tt">newtEntrySet()</literal>. After the entry box itself, the new string to place
 in the entry box is passed. The final parameter, <literal remap="tt">cursorAtEnd</literal>, controls
 where the cursor will appear in the entry box. If it is zero, the cursor
-remains at it's present location; a nonzero value moves the cursor to the
+remains at its present location; a nonzero value moves the cursor to the
 end of the entry box's new value.
 
 While the simplest way to find the value of an entry box is by using a
@@ -834,7 +834,7 @@ While the simplest way to find the value of an entry box is by using a
 <literal remap="tt">newtEntryGetValue()</literal> returns a pointer to the string which the entry
 box currently contains. The returned pointer may not be valid once the
 user further modifies the entry box, and will not be valid after the 
-entry box has been destroyed, so be sure to save it's value in a more
+entry box has been destroyed, so be sure to save its value in a more
 permanent location if necessary.
 
 Entry boxes allow applications to filter characters as they are entered.
@@ -953,7 +953,7 @@ the text which is displayed to the right of the area which is checked.  The
 sequence which the checkbox should go through (<literal remap="tt">defValue</literal> must be
 in <literal remap="tt">seq</literal>. <literal remap="tt">seq</literal> may be <literal remap="tt">NULL</literal>, in which case <literal remap="tt">" *"</literal> is used.
 The final parameter, <literal remap="tt">result</literal>, should point to a character which the
-checkbox should always record it's current value in. If <literal remap="tt">result</literal> is
+checkbox should always record its current value in. If <literal remap="tt">result</literal> is
 <literal remap="tt">NULL</literal>, <literal remap="tt">newtCheckboxGetValue()</literal> must be used to get the current
 value of the checkbox.
 
@@ -1328,7 +1328,7 @@ For lists which only allow a single selection, <literal remap="tt">newtListboxGe
 should be used to find out which listbox item is currently selected. It
 returns the key of the currently selected item.
 
-Normally, a listbox is as wide as it's widest element, plus space for a
+Normally, a listbox is as wide as its widest element, plus space for a
 scrollbar if the listbox is supposed to have one. To make the listbox
 any larger then that, use <literal remap="tt">newtListboxSetWidth()</literal>, which overrides the
 natural list of the listbox. Once the width has been set, it's fixed. The
