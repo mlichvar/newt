@@ -24,7 +24,7 @@ void newtScrollbarSet(newtComponent co, int where, int total) {
     struct scrollbar * sb = co->data;
     int new;
 
-    new = (where * (co->height - 1)) / total;
+    new = (where * (co->height - 1)) / (total ? total : 1);
     if (new != sb->curr) {
 	sbDrawThumb(co, 0);
 	sb->curr = new;
