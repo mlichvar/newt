@@ -99,7 +99,7 @@ int newtCheckboxTreeAddItem(newtComponent co,
 
     va_end(argList);
 
-    indexes = alloca(sizeof(*indexes) * numIndexes);
+    indexes = alloca(sizeof(*indexes) * (numIndexes + 1));
     va_start(argList, index);
     numIndexes = 0;
     i = index;
@@ -160,8 +160,12 @@ int newtCheckboxTreeAddArray(newtComponent co,
     int i, index, numIndexes;
     struct CheckboxTree * ct = co->data;
 
+    printf("here\n");
+
     numIndexes = 0;
     while (indexes[numIndexes] != NEWT_ARG_LAST) numIndexes++;
+
+    printf("there\n");
 
     if (!ct->itemlist) {
 	if (numIndexes > 1) return -1;
@@ -206,6 +210,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
 	    item->next = malloc(sizeof(*curList->prev));
 	    item->next->prev = item;
 	    item = item->next;
+	    item->next = NULL;
 	} else { 
 	    newNode = malloc(sizeof(*newNode));
 	    newNode->prev = item->prev;
