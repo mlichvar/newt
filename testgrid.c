@@ -43,11 +43,11 @@ int main(void) {
     newtFormAddComponents(f, b1, b2, b3, b4, NULL);
 
     newtGridWrappedWindow(grid, "first window");
+    newtGridFree(grid, 1);
 
     answer = newtRunForm(f);
 	
     newtFormDestroy(f);
-
     newtPopWindow();
 
     flowedText = newtReflowText("This is a quite a bit of text. It is 40 "
@@ -75,12 +75,14 @@ int main(void) {
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 0, 0, 0, 0, 0,
 			NEWT_GRID_FLAG_GROWX);
     newtGridWrappedWindow(grid, "another example");
+    newtGridDestroy(grid, 1);
 
     f = newtForm(NULL, NULL, 0);
     newtFormAddComponents(f, b1, t, b2, NULL);
     answer = newtRunForm(f);
 
     newtPopWindow();
+    newtFormDestroy(f);
 
     newtWinMessage("Simple", "Ok", "This is a simple message window");
     newtWinChoice("Simple", "Ok", "Cancel", "This is a simple choice window");
