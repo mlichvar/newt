@@ -8,6 +8,7 @@
 struct button {
     char * text;
     char bgColor;
+    int compact;
 };
 
 static void buttonDrawIt(newtComponent co, int active, int pushed);
@@ -24,7 +25,7 @@ static struct componentOps buttonOps = {
     buttonDestroy,
 } ;
 
-newtComponent newtButton(int left, int row, char * text) {
+static newtComponent createButton(int left, int row, char * text, int compact) {
     newtComponent co;
     struct button * bu;
 
@@ -33,10 +34,17 @@ newtComponent newtButton(int left, int row, char * text) {
     co->data = bu;
 
     bu->text = strdup(text);
+    bu->compact = compact;
     co->ops = &buttonOps;
 
-    co->height = 4;
-    co->width = strlen(text) + 5;
+    if (bu->compact) {
+	co->height = 1;
+	co->width = strlen(text) + 3;
+    } else {
+	co->height = 4;
+	co->width = strlen(text) + 5;
+    }
+
     co->top = row;
     co->left = left;
     co->takesFocus = 1;
@@ -45,6 +53,14 @@ newtComponent newtButton(int left, int row, char * text) {
     bu->bgColor = (SLsmg_char_at() >> 8) & 0xFF;
 
     return co;
+}
+
+newtComponent newtCompactButton(int left, int row, char * text) {
+    return createButton(left, row, text, 1);
+}
+
+newtComponent newtButton(int left, int row, char * text) {
+    return createButton(left, row, text, 0);
 }
 
 static void buttonDestroy(newtComponent co) {
@@ -62,19 +78,31 @@ static void buttonDraw(newtComponent co) {
 static void buttonDrawIt(newtComponent co, int active, int pushed) {
     struct button * bu = co->data;
 
-    SLsmg_set_color(COLORSET_BUTTON);
-    if (pushed) {
-	SLsmg_set_color(COLORSET_BUTTON);
-	newtDrawBox(co->left + 1, co->top + 1, co->width - 1, 3, 0);
+    SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
-	SLsmg_set_color(bu->bgColor);
-	newtClearBox(co->left, co->top, co->width, 1);
-	newtClearBox(co->left, co->top, 1, co->height);
+    if (bu->compact) {
+	if (active) 
+	    SLsmg_set_color(NEWT_COLORSET_COMPACTBUTTON);
+	else
+	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
+	newtGotorc(co->top+ pushed, co->left + 1 + pushed);
+	SLsmg_write_char('<');
+	SLsmg_write_string(bu->text);
+	SLsmg_write_char('>');
     } else {
-	newtDrawBox(co->left, co->top, co->width - 1, 3, 1);
-    }
+	if (pushed) {
+	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
+	    newtDrawBox(co->left + 1, co->top + 1, co->width - 1, 3, 0);
 
-    buttonDrawText(co, active, pushed);
+	    SLsmg_set_color(bu->bgColor);
+	    newtClearBox(co->left, co->top, co->width, 1);
+	    newtClearBox(co->left, co->top, 1, co->height);
+	} else {
+	    newtDrawBox(co->left, co->top, co->width - 1, 3, 1);
+	}
+
+	buttonDrawText(co, active, pushed);
+    }
 }
 
 static void buttonDrawText(newtComponent co, int active, int pushed) {
@@ -83,9 +111,9 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
     if (pushed) pushed = 1;
 
     if (active)
-	SLsmg_set_color(COLORSET_ACTBUTTON);
+	SLsmg_set_color(NEWT_COLORSET_ACTBUTTON);
     else
-	SLsmg_set_color(COLORSET_BUTTON);
+	SLsmg_set_color(NEWT_COLORSET_BUTTON);
 
     newtGotorc(co->top + 1 + pushed, co->left + 1 + pushed);
     SLsmg_write_char(' ');
@@ -96,6 +124,7 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
 static struct eventResult buttonEvent(newtComponent co,
 				      struct event ev) {
     struct eventResult er;
+    struct button * bu = co->data;
 
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
@@ -111,13 +140,15 @@ static struct eventResult buttonEvent(newtComponent co,
 
 	  case EV_KEYPRESS:
 	    if (ev.u.key == ' ' || ev.u.key == '\r') {
-		/* look pushed */
-		buttonDrawIt(co, 1, 1);
-		newtRefresh();
-		newtDelay(300000);
-		buttonDrawIt(co, 1, 0);
-		newtRefresh();
-		newtDelay(300000);
+		if (!bu->compact) {
+		    /* look pushed */
+		    buttonDrawIt(co, 1, 1);
+		    newtRefresh();
+		    newtDelay(300000);
+		    buttonDrawIt(co, 1, 0);
+		    newtRefresh();
+		    newtDelay(300000);
+		}
 
 		er.result = ER_EXITFORM;
 	    } else 
