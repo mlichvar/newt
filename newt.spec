@@ -4,7 +4,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.51.3
 Version: %{version}
-Release: 1
+Release: 2
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -52,6 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 %makeinstall
 
+/sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
+
 python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'%{_libdir}/python%{pythonver}",10,"%{_libdir}/python%{pythonver}")'
 
 %clean
@@ -81,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Tue Feb 04 2003 Florian La Roche <Florian.LaRoche@redhat.de>
+- add symlink to shared lib
+
 * Sun Jan  5 2003 Adrian Havill <havill@redhat.com> 0.51.3-1
 - cleaned up const qualifiers in interfaces
 - added Ctrl-L screen refresh
