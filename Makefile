@@ -50,7 +50,7 @@ veryclean: clean
 
 clean:
 	rm -f $(PROGS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core $(LIBNEWTSH)  \
-		$(SHAREDOBJS)
+		$(SHAREDOBJS) *.so*
 
 depend:
 	$(CPP) $(CFLAGS) -M $(SOURCES) > .depend
