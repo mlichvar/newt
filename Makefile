@@ -27,7 +27,7 @@ includedir = $(prefix)/include
 libdir = $(prefix)/lib
 bindir = $(prefix)/bin
 ARCHNAME = $(shell uname -m | sed 's/i.86/i386/')
-pythondir = $(prefix)/lib/python1.4
+pythondir = $(prefix)/lib/python1.5
 pythonbindir = $(prefix)/lib/python1.4/linux-$(ARCHNAME)
 
 #--------------------------------------
