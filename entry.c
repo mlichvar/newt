@@ -193,6 +193,8 @@ static struct eventResult entryHandleKey(struct newtComponent * co, int key) {
       case '\r':				/* Return */
 	if (en->flags & NEWT_ENTRY_RETURNEXIT) {
 	    er.result = ER_EXITFORM;
+	} else {
+	    er.result = ER_NEXTCOMP;
 	}
 	break;
 
