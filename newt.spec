@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.40
 Version: %{version}
-Release: 5
+Release: 6
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Feb 27 1999 Matt Wilson <msw@redhat.com>
+- fixed support for navigating listboxes with alphabetical keypresses
+
 * Thu Feb 25 1999 Matt Wilson <msw@redhat.com>
 - updated descriptions
 - added support for navigating listboxes with alphabetical keypresses
