@@ -93,7 +93,7 @@ class Entry(Widget):
 
     def __init__(self, width, text = "", hidden = 0, scroll = 1, 
 		 returnexit = 0):
-	self.w = _snack.entry(width, text, hidden, scroll, returnexit)
+	self.w = _snack.entry(width, text, hidden, scroll, returnExit)
 
 
 # Form uses hotkeys
