@@ -27,13 +27,23 @@ static struct componentOps buttonOps = {
     newtDefaultMappedHandler,
 } ;
 
+/* 
+ * return NULL on malloc error.
+ *  FIXME: all createButton calls should check for error
+ */
 static newtComponent createButton(int left, int row, const char * text, int compact) {
     newtComponent co;
     struct button * bu;
     int width = wstrlen(text,-1);
 
     co = malloc(sizeof(*co));
+    if (co == NULL) 
+	return NULL;
     bu = malloc(sizeof(struct button));
+    if (bu == NULL)  {
+	free (co);
+	return NULL;
+    }
     co->data = bu;
 
     bu->text = strdup(text);
@@ -56,6 +66,7 @@ static newtComponent createButton(int left, int row, const char * text, int comp
     newtGotorc(co->top, co->left);
 
     return co;
+
 }
 
 newtComponent newtCompactButton(int left, int row, const char * text) {

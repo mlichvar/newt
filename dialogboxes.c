@@ -11,6 +11,9 @@
 #include "newt_pr.h"
 #include "popt.h"
 
+#define MAXBUF    200
+#define MAXFORMAT 20
+
 /* globals -- ick */
 static int buttonHeight = 1;
 static newtComponent (*makeButton)(int left, int right, const char * text) = 
@@ -167,7 +170,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     int allocedItems = 5;
     int i, top;
     int rc = DLG_OKAY;
-    char buf[80], format[20];
+    char buf[MAXBUF], format[MAXFORMAT];
     int maxTagWidth = 0;
     int maxTextWidth = 0;
     int scrollFlag;
@@ -176,6 +179,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	const char * tag;
     } * itemInfo = malloc(allocedItems * sizeof(*itemInfo));
 
+    if (itemInfo == NULL) return DLG_ERROR;
     if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
     listHeight = strtoul(arg, &end, 10);
     if (*end) return DLG_ERROR;
@@ -184,6 +188,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	if (allocedItems == numItems) {
 	    allocedItems += 5;
 	    itemInfo = realloc(itemInfo, sizeof(*itemInfo) * allocedItems);
+	    if (itemInfo == NULL) return DLG_ERROR;
 	}
 
 	itemInfo[numItems].tag = arg;
@@ -201,6 +206,8 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 
 	numItems++;
     }
+    if (numItems == 0)
+	return DLG_ERROR;
 
     form = newtForm(NULL, NULL, 0);
 
@@ -220,9 +227,9 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 			  top + 1, listHeight, 
 			    NEWT_FLAG_RETURNEXIT | scrollFlag);
 
-    sprintf(format, "%%-%ds  %%s", maxTagWidth);
+    snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxTagWidth);
     for (i = 0; i < numItems; i++) {
-	sprintf(buf, format, itemInfo[i].tag, itemInfo[i].text);
+	snprintf(buf, MAXBUF, format, itemInfo[i].tag, itemInfo[i].text);
 	newtListboxAddEntry(listBox, buf, (void *) i);
     }
 
@@ -262,6 +269,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     } * cbInfo = malloc(allocedBoxes * sizeof(*cbInfo));
     char * cbStates = malloc(allocedBoxes * sizeof(cbStates));
 
+    if ( (cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
     if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
     listHeight = strtoul(arg, &end, 10);
     if (*end) return DLG_ERROR;
@@ -271,6 +279,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	    allocedBoxes += 5;
 	    cbInfo = realloc(cbInfo, sizeof(*cbInfo) * allocedBoxes);
 	    cbStates = realloc(cbStates, sizeof(*cbStates) * allocedBoxes);
+	    if ((cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
 	}
 
 	cbInfo[numBoxes].tag = arg;
@@ -309,9 +318,9 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     subform = newtForm(sb, NULL, 0);
     newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
 
-    sprintf(format, "%%-%ds  %%s", maxWidth);
+    snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxWidth);
     for (i = 0; i < numBoxes; i++) {
-	sprintf(buf, format, cbInfo[i].tag, cbInfo[i].text);
+	snprintf(buf, MAXBUF, format, cbInfo[i].tag, cbInfo[i].text);
 
 	if (useRadio)
 	    cbInfo[i].comp = newtRadiobutton(4, top + 1 + i, buf,
@@ -340,6 +349,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	for (i = 0; i < numBoxes; i++) 
 	    if (cbInfo[i].comp == answer) {
 		*selections = malloc(sizeof(char *) * 2);
+	 	if (*selections == NULL) return DLG_ERROR;
 		(*selections)[0] = cbInfo[i].tag;
 		(*selections)[1] = NULL;
 		break;
@@ -351,6 +361,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	}
 
 	*selections = malloc(sizeof(char *) * (numSelected + 1));
+	if (*selections == NULL) return DLG_ERROR;
 
 	numSelected = 0;
 	for (i = 0; i < numBoxes; i++) {

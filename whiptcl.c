@@ -53,7 +53,7 @@ static int wtInit(ClientData clientData, Tcl_Interp * interp, int argc,
 }
 
 static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
-                  char ** argv) {
+                  const char ** argv) {
     enum mode mode = MODE_NONE;
     poptContext optCon;
     int arg;
@@ -69,8 +69,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
     int rc = 0;
     int flags = 0;
     int defaultNo = 0;
-    char * result;
-    char ** selections, ** next;
+    const char * result;
+    const char ** selections, ** next;
     char * title = NULL;
     struct poptOption optionsTable[] = {
 	    { "checklist", '\0', 0, 0, OPT_CHECKLIST },
@@ -229,6 +229,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 
       case MODE_NONE:
 	/* this can't happen */
+        break;
     }
 
     newtPopWindow();
@@ -290,7 +291,7 @@ static char * setFullButtons(ClientData data, Tcl_Interp * interp,
 int Whiptcl_Init(Tcl_Interp * interp) {
     Tcl_CreateCommand(interp, "whiptcl_finish", wtFinish, NULL, NULL);
     Tcl_CreateCommand(interp, "whiptcl_init", wtInit, NULL, NULL);
-    Tcl_CreateCommand(interp, "whiptcl_cmd", wtCmd, NULL, NULL);
+    Tcl_CreateCommand(interp, "whiptcl_cmd", (Tcl_CmdProc *) wtCmd, NULL, NULL);
 
     return TCL_OK;
 }

@@ -197,10 +197,10 @@ void newtSuspend(void) {
     SLtt_set_cursor_visibility (cursorOn);
 }
 
-void newtResume(void) {
+int newtResume(void) {
     SLsmg_resume_smg ();
     SLsmg_refresh();
-    SLang_init_tty(0, 0, 0);
+    return SLang_init_tty(0, 0, 0);
 }
 
 void newtCls(void) {
@@ -223,6 +223,7 @@ void newtResizeScreen(int redraw) {
 int newtInit(void) {
     char * MonoValue, * MonoEnv = "NEWT_MONO";
     const char *lang;
+    int ret;
 
     if ((lang = getenv("LC_ALL")) == NULL)
         if ((lang = getenv("LC_CTYPE")) == NULL)
@@ -243,8 +244,10 @@ int newtInit(void) {
 	SLtt_Use_Ansi_Colors = 0;
     }
 
-    SLsmg_init_smg();
-    SLang_init_tty(0, 0, 0);
+    if ((ret = SLsmg_init_smg()) < 0)
+	return ret;
+    if ((ret = SLang_init_tty(0, 0, 0)) < 0)
+	return ret;
 
     newtSetColors(newtDefaultColorPalette);
     newtCursorOff();
@@ -256,8 +259,6 @@ int newtInit(void) {
 
     SLsignal_intr(SIGWINCH, handleSigwinch);
     SLang_getkey_intr_hook = getkeyInterruptHook;
-
-
 
     return 0;
 }
@@ -432,7 +433,7 @@ void newtClearKeyBuffer(void) {
     }
 }
 
-int newtOpenWindow(int left, int top, int width, int height,
+int newtOpenWindow(unsigned left, unsigned top, unsigned width, unsigned height,
 			  const char * title) {
     int j, row, col;
     int n;
@@ -510,8 +511,8 @@ int newtOpenWindow(int left, int top, int width, int height,
     return 0;
 }
 
-int newtCenteredWindow(int width, int height, const char * title) {
-    int top, left;
+int newtCenteredWindow(unsigned width, unsigned height, const char * title) {
+    unsigned top, left;
 
     top = (SLtt_Screen_Rows - height) / 2;
 
@@ -628,7 +629,7 @@ static void initKeymap(void) {
 }
 #endif
 
-void newtDelay(int usecs) {
+void newtDelay(unsigned usecs) {
     fd_set set;
     struct timeval tv;
 

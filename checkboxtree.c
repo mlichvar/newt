@@ -81,6 +81,8 @@ static void doBuildFlatList(struct CheckboxTree * ct, struct items * item) {
     }
 }
 
+/* FIXME: Check what happens on malloc failure.
+ */
 static void buildFlatList(newtComponent co) {
     struct CheckboxTree * ct = co->data;
 
@@ -167,7 +169,7 @@ int * newtCheckboxTreeFindItem(newtComponent co, void * data) {
 int newtCheckboxTreeAddArray(newtComponent co, 
 			    const char * text, const void * data,
 			    int flags, int * indexes) {
-    struct items * curList, * newNode, * item;
+    struct items * curList, * newNode, * item = NULL;
     struct items ** listPtr = NULL;
     int i, index, numIndexes, width;
     struct CheckboxTree * ct = co->data;
@@ -178,7 +180,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
     if (!ct->itemlist) {
 	if (numIndexes > 1) return -1;
 
-    	ct->itemlist = malloc(sizeof(*ct->itemlist));
+    	ct->itemlist = malloc(sizeof(*ct->itemlist)); // FIXME: Error check?
     	item = ct->itemlist;
 	item->prev = NULL;
 	item->next = NULL;
@@ -215,12 +217,12 @@ int newtCheckboxTreeAddArray(newtComponent co,
 	} else if (!item) {			/* append to end */
 	    item = curList;
 	    while (item->next) item = item->next;
-	    item->next = malloc(sizeof(*curList->prev));
+	    item->next = malloc(sizeof(*curList->prev)); // FIXME Error check
 	    item->next->prev = item;
 	    item = item->next;
 	    item->next = NULL;
 	} else { 
-	    newNode = malloc(sizeof(*newNode));
+	    newNode = malloc(sizeof(*newNode)); // FIXME Error check ? 
 	    newNode->prev = item->prev;
 	    newNode->next = item;
 
@@ -441,7 +443,7 @@ static void ctDraw(newtComponent co) {
     struct items ** item; 
     int i, j;
     char * spaces;
-    int currRow;
+    int currRow = 0;
 
     if (!co->isMapped) return ;
 

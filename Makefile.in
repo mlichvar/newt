@@ -1,12 +1,9 @@
-LIBS = -lslang -lm #-lefence
-SHLIBS = -lslang -lm -lc
+LIBS = -lslang -lm -ldl #-lefence
+SHLIBS = -lslang -lm -dl -lc
 
 GPM_SUPPORT=@gpm_support@
 
-CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang -D_GNU_SOURCE
-ifeq ($(RPM_OPT_FLAGS),)
-CFLAGS += -g 
-endif
+CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang -D_GNU_SOURCE -g -O2 -DUTF8
 
 VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
@@ -52,34 +49,39 @@ endif
 all:	$(TARGET) _snackmodule.so
 
 test:	$(TESTOBJS) $(LIBNEWT)
-	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
+	$(CC) -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
 
 testgrid:	testgrid.o $(LIBNEWT)
-	gcc -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
+	$(CC) -g -o testgrid testgrid.o $(LIBNEWT) $(LIBS)
 
 testtree:	testtree.o $(LIBNEWT)
-	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
+	$(CC) -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
 
 showchars:	showchars.o $(LIBNEWT)
-	gcc -g -o showchars showchars.o $(LIBNEWT) $(LIBS)
+	$(CC) -g -o showchars showchars.o $(LIBNEWT) $(LIBS)
 
 showkey:	showkey.o $(LIBNEWT)
-	gcc -g -o showkey showkey.o $(LIBNEWT) $(LIBS)
+	$(CC) -g -o showkey showkey.o $(LIBNEWT) $(LIBS)
 
 _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 	for ver in $(PYTHONVERS) ; do \
 	    if [ ! -f "$$ver/_snackmodule.so" -o $(LIBNEWTSH) -nt "$$ver/_snackmodule.so" ]; then \
 	    	mkdir -p $$ver ;\
-	        gcc $(CFLAGS) -I/usr/include/$$ver -fPIC -c -o $$ver/snackmodule.o snackmodule.c ;\
-		gcc --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L . $(LIBNEWTSH) ;\
+	        $(CC) $(CFLAGS) -I/usr/include/$$ver -fPIC -c -o $$ver/snackmodule.o snackmodule.c ;\
+		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L . $(LIBNEWTSH) ;\
 	    fi ; \
 	done
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
-	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
+	$(CC) -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
 	gcc -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+
+# Ensure dialogboxes is compiled -fPIC
+dialogboxes.o: dialogboxes.c
+	$(CC) $(CFLAGS) $(SHCFLAGS) -c dialogboxes.c
+                                                                                
 
 $(LIBNEWT): $(LIBOBJS)
 	ar rv $@ $^
@@ -103,7 +105,7 @@ $(SHAREDDIR):
 sharedlib: $(LIBNEWTSH)
 
 $(LIBNEWTSH): $(SHAREDDIR) $(SHAREDOBJS)
-	gcc -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
+	$(CC) -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
 
 $(SHAREDDIR)/%.o : %.c
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<

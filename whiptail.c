@@ -24,8 +24,9 @@ enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
 #define OPT_INFOBOX	 	1008
 
 static void usage(void) {
-    fprintf(stderr, "whiptail: bad parameters (see man dialog(1) for details)\n");
-    exit(1);
+    newtFinished(); 
+    fprintf(stderr, "whiptail: bad parameters (see man whiptail(1) for details)\n");
+    exit(DLG_ERROR);
 }
 
 int main(int argc, const char ** argv) {

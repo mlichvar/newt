@@ -89,6 +89,10 @@ void newtCheckboxSetValue(newtComponent co, char value) {
     cbDraw(co);
 }
 
+/* 
+ * returns NULL on error.
+ * FIXME: Check all calls.
+ */
 newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 			   const char * seq, char * result) {
     newtComponent co;
@@ -97,7 +101,13 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
     if (!seq) seq = " *";
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+   	return NULL;
     cb = malloc(sizeof(struct checkbox));
+    if (cb == NULL) {
+	free(co);
+	return NULL;
+    }
     co->data = cb;
     cb->flags = 0;
     if (result)

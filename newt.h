@@ -113,18 +113,19 @@ void newtCls(void);
 void newtResizeScreen(int redraw);
 void newtWaitForKey(void);
 void newtClearKeyBuffer(void);
-void newtDelay(int usecs);
+void newtDelay(unsigned int usecs);
 /* top, left are *not* counting the border */
-int newtOpenWindow(int left, int top, int width, int height, 
-			  const char * title);
-int newtCenteredWindow(int width, int height, const char * title);
+int newtOpenWindow(unsigned int left,unsigned int top, 
+		   unsigned int width,unsigned  int height, 
+ 		  const char * title);
+int newtCenteredWindow(unsigned int width,unsigned int height, const char * title);
 void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);
 void newtSetSuspendCallback(newtSuspendCallback cb, void * data);
 void newtSetHelpCallback(newtCallback cb);
-void newtResume(void);
+int  newtResume(void);
 void newtPushHelpLine(const char * text);
 void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
