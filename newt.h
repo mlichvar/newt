@@ -105,6 +105,7 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);
+void newtFormSetWidth(newtComponent co, int width);
 newtComponent newtRunForm(newtComponent form);		/* obsolete */
 void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);

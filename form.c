@@ -130,6 +130,10 @@ void newtFormSetHeight(newtComponent co, int height) {
     co->height = height;
 }
 
+void newtFormSetWidth(newtComponent co, int width) {
+    co->width = width;
+}
+
 void newtFormAddComponent(newtComponent co, newtComponent newco) {
     struct form * form = co->data;
     int delta;
