@@ -47,6 +47,7 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     sb->csThumb = thumbColorset;
 
     co->ops = &sbOps;
+    co->isMapped = 0;
     co->left = left;
     co->top = top;
     co->height = height;
@@ -59,6 +60,8 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
 static void sbDraw(newtComponent co) {
     struct scrollbar * sb = co->data;
     int i;
+
+    if (!co->isMapped) return;
 
     SLsmg_set_color(sb->cs);
 
@@ -76,6 +79,8 @@ static void sbDraw(newtComponent co) {
 static void sbDrawThumb(newtComponent co, int isOn) {
     struct scrollbar * sb = co->data;
     char ch = isOn ? '#' : '\x61';
+
+    if (!co->isMapped) return;
 
     newtGotorc(sb->curr + co->top, co->left);
     SLsmg_set_char_set(1);
