@@ -91,6 +91,10 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 	strcpy(en->buf, initialValue);
 	en->bufUsed = strlen(initialValue);
 	en->cursorPosition = en->bufUsed;
+    } else {
+	*en->buf = '\0';
+	en->bufUsed = 0;
+	en->cursorPosition = 0;
     }
 
     return co;
