@@ -102,6 +102,8 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     if (!componentFits(co, new)) {
 	gotoComponent(form, -1);
 	form->vertOffset = form->elements[new].top - co->top - 1;
+	if (form->vertOffset > (form->numRows - co->height))
+	    form->vertOffset = form->numRows - co->height;
     }
 
     gotoComponent(form, new);
@@ -211,9 +213,9 @@ void newtDrawForm(newtComponent co) {
 static struct eventResult formEvent(newtComponent co, struct event ev) {
     struct form * form = co->data;
     newtComponent subco = form->elements[form->currComp].co;
-    int new, wrap;
+    int new, wrap = 0;
     struct eventResult er;
-    int dir = 0;
+    int dir = 0, page = 0;
     int i, num;
 
     er.result = ER_IGNORED;
@@ -250,7 +252,6 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	  case ER_NEXTCOMP:
 	    er.result = ER_SWALLOWED;
 	    dir = 1;
-	    wrap = 0;
 	    break;
 
 	  default:
@@ -268,7 +269,6 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	      case NEWT_KEY_BKSPC:
 		er.result = ER_SWALLOWED;
 		dir = -1;
-		wrap = 0;
 		break;
 
 	      case NEWT_KEY_DOWN:
@@ -276,7 +276,18 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	      case NEWT_KEY_ENTER:
 		er.result = ER_SWALLOWED;
 		dir = 1;
-		wrap = 0;
+		break;
+
+	     case NEWT_KEY_PGUP:
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		page = 1;
+		break;
+		
+	     case NEWT_KEY_PGDN:
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		page = 1;
 		break;
 	    }
 	}
@@ -284,17 +295,29 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
     if (dir) {
 	new = form->currComp;
-	do {
-	    new += dir;
 
-	    if (wrap) {
-		if (new < 0)
-		    new = form->numComps - 1;
-		else if (new >= form->numComps)
-		    new = 0;
-	    } else if (new < 0 || new >= form->numComps) 
-		return er;
-	} while (!form->elements[new].co->takesFocus);
+	if (page) {
+	    new += dir * co->height;
+	    if (new < 0)
+		new = 0;
+	    else if (new >= form->numComps)
+		new = (form->numComps - 1);
+
+	    while (!form->elements[new].co->takesFocus)
+		new = new - dir;
+	} else {
+	    do {
+		new += dir;
+
+		if (wrap) {
+		    if (new < 0)
+			new = form->numComps - 1;
+		    else if (new >= form->numComps)
+			new = 0;
+		} else if (new < 0 || new >= form->numComps) 
+		    return er;
+	    } while (!form->elements[new].co->takesFocus);
+	}
 
 	/* make sure this component is visible */
 	if (!componentFits(co, new)) {
@@ -311,6 +334,8 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	    }
 
 	    if (form->vertOffset < 0) form->vertOffset = 0;
+	    if (form->vertOffset > (form->numRows - co->height))
+		form->vertOffset = form->numRows - co->height;
 
 	    newtDrawForm(co);
 	}
