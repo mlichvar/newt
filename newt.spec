@@ -43,6 +43,7 @@ newt.
 ./configure 
 make
 make shared
+chmod 0644 peanuts.py popcorn.py
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -74,7 +75,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr (-,root,root)
-%doc tutorial.sgml
+%doc tutorial.sgml peanuts.py popcorn.py
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
@@ -83,6 +84,8 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - bytecompile the snack python module
 - move the libnewt.so symlink to the devel package
+- include popcorn.py and peanuts.py in the devel package,
+  so we have some documentation of the snack module
 
 * Tue Aug 22 2000 Erik Troan <ewt@redhat.com>
 - fixed cursor disappearing in suspend (again)
