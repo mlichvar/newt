@@ -650,7 +650,10 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 		      li->currItem = i;
 		      if(li->currItem < li->startShowItem ||
 			 li->currItem > li->startShowItem)
-			  li->startShowItem = li->currItem;
+			  li->startShowItem =
+			      li->currItem > li->numItems - li->curHeight ?
+			      li->startShowItem = li->numItems - li->curHeight :
+			      li->currItem;
 		      if(li->sb)
 			  newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
 		      newtListboxRealSetCurrent(co);
