@@ -15,8 +15,8 @@
 *****************************************************************************/
 
 struct element {
-    int top, left;		/* actual, not virtual */
-    newtComponent co;
+    int top, left;		/* Actual, not virtual. These are translated */
+    newtComponent co;		/* into actual through vertOffset */
 };
 
 struct form {
@@ -33,6 +33,7 @@ struct form {
     int * hotKeys;
     int numHotKeys;
     int background;
+    int beenSet;
 };
 
 static void gotoComponent(struct form * form, int newComp);
@@ -67,6 +68,7 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     co->height = 0;
     co->top = -1;
     co->left = -1;
+    co->isMapped = 0;
 
     co->takesFocus = 1;
     co->ops = &formOps;
@@ -79,6 +81,7 @@ newtComponent newtForm(newtComponent vertBar, const char * help, int flags) {
     form->vertOffset = 0;
     form->fixedHeight = 0;
     form->numRows = 0;
+    form->beenSet = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
     form->background = COLORSET_WINDOW;
@@ -113,7 +116,7 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     if (form->elements[i].co != subco) return;
     new = i;
 
-    if (!componentFits(co, new)) {
+    if (co->isMapped && !componentFits(co, new)) {
 	gotoComponent(form, -1);
 	form->vertOffset = form->elements[new].top - co->top - 1;
 	if (form->vertOffset > (form->numRows - co->height))
@@ -170,6 +173,8 @@ void newtDrawForm(newtComponent co) {
     struct form * form = co->data;
     struct element * el;
     int i;
+
+    newtFormSetSize(co);
 
     SLsmg_set_color(form->background);
     newtClearBox(co->left, co->top, co->width, co->height);
@@ -380,15 +385,20 @@ void newtFormAddHotKey(newtComponent co, int key) {
     form->hotKeys[form->numHotKeys - 1] = key;
 }
 
-static void newtFormSetSize(newtComponent co) {
+void newtFormSetSize(newtComponent co) {
     struct form * form = co->data;
     int delta, i;
     struct element * el;
 
+    if (form->beenSet) return;
+
+    form->beenSet = 1;
+
     /* figure out how big we are -- we do this as late as possible (i.e. here)
        to let grids delay there decisions as long as possible */
     co->width = 0;
-    co->height = 0;
+    if (!form->fixedHeight) co->height = 0;
+
     co->top = form->elements[0].co->top;
     co->left = form->elements[0].co->left;
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
