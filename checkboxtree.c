@@ -398,8 +398,9 @@ int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
 static void ctDraw(newtComponent co) {
     struct CheckboxTree * ct = co->data;
     struct items ** item; 
-    int i, curr, j;
+    int i, j;
     char * spaces;
+    int currRow;
 
     if (!co->isMapped) return ;
 
@@ -415,6 +416,7 @@ static void ctDraw(newtComponent co) {
 	newtGotorc(co->top + i, co->left);
 	if (*item == *ct->currItem) {
 	    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+	    currRow = co->top + i;
 	} else
 	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
@@ -462,7 +464,7 @@ static void ctDraw(newtComponent co) {
 	ct->sb->ops->draw(ct->sb);
     }
 
-    newtGotorc(co->top + curr, co->left + 1);
+    newtGotorc(currRow, co->left + 1);
 }
 
 static void ctDestroy(newtComponent co) {
