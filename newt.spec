@@ -1,4 +1,4 @@
-Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
+Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.40
 Version: %{version}
@@ -10,24 +10,28 @@ Requires: slang
 Provides: snack
 
 %package devel
-Summary: Developer's toolkit for newt windowing library
+Summary: Newt windowing toolkit development files.
 Requires: slang-devel
 Group: Development/Libraries
 BuildRoot: /var/tmp/newtroot
 
 %description
-Newt is a windowing toolkit for text mode built from the slang library. It
-allows color text mode applications to easily use stackable windows, push
-buttons, check boxes, radio buttons, lists, entry fields, labels, and
-displayable text. Scrollbars are supported, and forms may be nested to
-provide extra functionality. This pacakge contains the shared library
-for programs that have been built with newt as well as a /usr/bin/dialog
-replacement called whiptail.
+Newt is a programming library for color text mode, widget based user
+interfaces.  Newt can be used to add stacked windows, entry widgets,
+checkboxes, radio buttons, labels, plain text fields, scrollbars,
+etc., to text mode user interfaces.  This package also contains the
+shared library needed by programs built with newt, as well as a
+/usr/bin/dialog replacement called whiptail.  Newt is based on the
+slang library.
 
 %description devel
-These are the header files and libraries for developing applications which
-use newt. Newt is a windowing toolkit for text mode, which provides many
-widgets and stackable windows.
+The newt-devel package contains the header files and libraries
+necessary for developing applications which use newt.  Newt is
+a development library for text mode user interfaces.  Newt is
+based on the slang library.
+
+Install newt-devel if you want to develop applications which will
+use newt.
 
 %prep
 %setup
