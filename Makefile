@@ -8,7 +8,7 @@ endif
 
 VERSION = 0.22
 CVSTAG = r$(subst .,-,$(VERSION))
-SONAME = 0.22
+SONAME = 0.20
 
 PROGS = test whiptail whiptcl.so testgrid
 TESTOBJS = test.o 
