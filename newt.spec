@@ -37,7 +37,9 @@ newt.
 %setup
 
 %build
-./configure --with-gpm-support
+# gpm support seems to smash the stack w/ we use help in anaconda??
+#./configure --with-gpm-support
+./configure 
 make
 make shared
 
