@@ -2,7 +2,7 @@ Summary: A development library for text mode user interfaces.
 Name: newt
 %define version 0.50.1
 Version: %{version}
-Release: 14
+Release: 15
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Mon Dec 20 1999 Matt Wilson <msw@redhat.com>
+- rebuild with fix for listbox from Nalin
+
 * Wed Oct 20 1999 Matt Wilson <msw@redhat.com>
 - added patch to correctly wrap euc kanji
 
