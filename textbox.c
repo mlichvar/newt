@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <slang/slang.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "newt.h"
 #include "newt_pr.h"
