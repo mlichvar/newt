@@ -25,6 +25,8 @@ struct form {
     int currComp;
     int fixedHeight;
     int vertOffset;
+    newtComponent vertBar;
+    int numRows;
 };
 
 static void formDraw(newtComponent co);
@@ -48,7 +50,7 @@ static inline int componentFits(newtComponent co, int compNum) {
     return 1;
 }
 
-newtComponent newtForm(void) {
+newtComponent newtForm(newtComponent vertScrollbar) {
     newtComponent co;
     struct form * form;
 
@@ -63,13 +65,18 @@ newtComponent newtForm(void) {
     co->takesFocus = 1;
     co->ops = &formOps;
 
-    form = malloc(sizeof(*form));
     form->numCompsAlloced = 5;
     form->numComps = 0;
     form->currComp = -1;
     form->vertOffset = 0;
     form->fixedHeight = 0;
+    form->numRows = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
+
+    if (vertScrollbar)
+	form->vertBar = vertScrollbar;
+    else
+	form->vertBar = NULL; 
 
     return co;
 }
@@ -94,7 +101,15 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
     form->elements[form->numComps].left = newco->left;
     form->elements[form->numComps].top = newco->top;
     form->elements[form->numComps].co = newco;
+
+    if (newco->takesFocus && form->currComp == -1)
+	form->currComp = form->numComps;
+
     form->numComps++;
+
+    if ((newco->top + newco->height - co->top) > form->numRows) {
+	form->numRows = newco->top + newco->height - co->top;
+    }
 
     if (co->left == -1) {
 	co->left = newco->left;
@@ -145,14 +160,23 @@ static void formDraw(newtComponent co) {
     int i;
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-	/* only draw it if it'll fit on the screen vertically */
-	if (componentFits(co, i)) {
-	    el->co->top = el->top - form->vertOffset;
+	/* the scrollbar *always* fits */
+	if (el->co == form->vertBar)
 	    el->co->ops->draw(el->co);
-	} else {
-	    el->co->top = -1;		/* tell it not to draw itself */
+	else {
+	    /* only draw it if it'll fit on the screen vertically */
+	    if (componentFits(co, i)) {
+		el->co->top = el->top - form->vertOffset;
+		el->co->ops->draw(el->co);
+	    } else {
+		el->co->top = -1;		/* tell it not to draw itself */
+	    }
 	}
     }
+
+    if (form->vertBar)
+	newtScrollbarSet(form->vertBar, form->vertOffset, 
+			 form->numRows - co->height);
 }
 
 static struct eventResult formEvent(newtComponent co, struct event ev) {
@@ -253,9 +277,9 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
 /* this also destroys all of the components on the form */
 void newtFormDestroy(newtComponent co) {
-    int i;
     newtComponent subco;
     struct form * form = co->data;
+    int i;
 
     /* first, destroy all of the components */
     for (i = 0; i < form->numComps; i++) {
@@ -282,9 +306,9 @@ newtComponent newtRunForm(newtComponent co) {
     /* first, draw all of the components */
     formDraw(co);
 
-    if (form->currComp == -1)
+    if (form->currComp == -1) {
 	gotoComponent(form, 0);
-    else
+    } else
 	gotoComponent(form, form->currComp);
   
     do {
