@@ -216,6 +216,7 @@ void newtDrawForm(newtComponent co) {
 	    /* only draw it if it'll fit on the screen vertically */
 	    if (componentFits(co, i)) {
 		el->co->top = el->top - form->vertOffset;
+		el->co->isMapped = 1;
 		el->co->ops->draw(el->co);
 	    } else {
 		el->co->top = -1;		/* tell it not to draw itself */

@@ -87,7 +87,7 @@ int main(void) {
     newtFormAddComponents(f, b1, b2, l1, l2, l3, e1, e2, e3, chklist, NULL);
     newtFormAddComponents(f, rsf, scale, NULL);
 
-    lb = newtListbox(45, 3, 4, NEWT_FLAG_MULTIPLE);
+    lb = newtListbox(45, 1, 4, NEWT_FLAG_MULTIPLE | NEWT_FLAG_DOBORDER);
     newtListboxAddEntry(lb, "First", "First");
     newtListboxAddEntry(lb, "Second", "Second");
     newtListboxAddEntry(lb, "Third", "Third");
