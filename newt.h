@@ -26,8 +26,6 @@ extern "C" {
 #define NEWT_COLORSET_FULLSCALE		20
 #define NEWT_COLORSET_DISENTRY		21
 
-enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
-
 struct newtColors {
     char * rootFg, * rootBg;
     char * borderFg, * borderBg;
@@ -49,6 +47,21 @@ struct newtColors {
     char * emptyScale, * fullScale;
     char * disabledEntryFg, * disabledEntryBg;
 };
+
+enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
+
+#define NEWT_FLAG_RETURNEXIT (1 << 0)
+#define NEWT_FLAG_HIDDEN (1 << 1)
+#define NEWT_FLAG_SCROLL (1 << 2)
+#define NEWT_FLAG_DISABLED (1 << 3)
+#define NEWT_FLAG_ALL NEWT_FLAG_RETURNEXIT|NEWT_FLAG_HIDDEN|\
+	NEWT_FLAG_SCROLL_NEWT_FLAG_DISABLED
+/* Backwards compatibility */
+#define NEWT_LISTBOX_RETURNEXIT NEWT_FLAG_RETURNEXIT
+#define NEWT_ENTRY_SCROLL	NEWT_FLAG_SCROLL
+#define NEWT_ENTRY_HIDDEN	NEWT_FLAG_HIDDEN
+#define NEWT_ENTRY_RETURNEXIT	NEWT_FLAG_RETURNEXIT
+#define NEWT_ENTRY_DISABLED	NEWT_FLAG_DISABLED
 
 typedef struct newtComponent_struct * newtComponent;
 
@@ -86,7 +99,7 @@ newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
 newtComponent newtListitem(int left, int top, char * text, int isDefault,
-			      newtComponent prevItem, void * data);
+			      newtComponent prevItem, void * data, int flags);
 void newtListitemSet(newtComponent co, char * text);
 void * newtListitemGetData(newtComponent co);
 
@@ -96,7 +109,6 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
 				    int normalColorset, int thumbColorset);
 void newtScrollbarSet(newtComponent co, int where, int total);
 
-#define NEWT_LISTBOX_RETURNEXIT (1 << 0)
 newtComponent newtListbox(int left, int top, int height, int flags);
 void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
@@ -137,11 +149,6 @@ newtComponent newtRunForm(newtComponent form);		/* obsolete */
 void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);
 void newtFormAddHotKey(newtComponent co, int key);
-
-#define NEWT_ENTRY_SCROLL	(1 << 0)
-#define NEWT_ENTRY_HIDDEN	(1 << 1)
-#define NEWT_ENTRY_RETURNEXIT	(1 << 2)
-#define NEWT_ENTRY_DISABLED     (1 << 3)
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
