@@ -57,9 +57,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
-* Wed Jul 05 2000 Michael Fulbright <msf@redhat.com>
-- added NEWT_FLAG_PASSWORD for entering passwords and having asterix echo'd
-
 * Fri Jun 16 2000 Matt Wilson <msw@redhat.com>
 - build for new release
 
