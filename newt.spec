@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.39
+%define version 0.51.0
 Version: %{version}
 Release: 1
 License: LGPL
@@ -81,6 +81,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Thu Aug 15 2002 Bill Nottingham <notting@redhat.com> 0.51.0-1
+- changes for element width calculation for UTF-8
+- fix textwrap for UTF-8 in general
+- bump soname to avoid shared library collisions with slang
+
 * Wed Jul 01 2002 Michael Fulbright <msf@redhat.com> 0.50.39-1
 - Changed a test to check for 'None' the correct way
 
