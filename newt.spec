@@ -6,7 +6,7 @@ Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python 
+BuildRequires: python, slang-devel 
 Requires: slang
 Provides: snack
 
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Tue Sep 12 2000 Florian La Roche <Florian.LaRoche@redhat.de>
+- add slang-devel to BuildRequires:
+
 * Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - bytecompile the snack python module
 - move the libnewt.so symlink to the devel package
