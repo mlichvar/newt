@@ -17,7 +17,10 @@
 #define COLORSET_TEXTBOX	NEWT_COLORSET_TEXTBOX
 #define COLORSET_ACTTEXTBOX	NEWT_COLORSET_ACTTEXTBOX
 
+int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense);
+
 void newtGotorc(int row, int col);
+void newtGetrc(int * row, int * col);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
 void newtClearBox(int left, int top, int width, int height);
 

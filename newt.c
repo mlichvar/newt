@@ -22,11 +22,13 @@ struct keymap {
     char * tc;
 };
 
-struct Window windowStack[20];
-struct Window * currentWindow = NULL;
+static struct Window windowStack[20];
+static struct Window * currentWindow = NULL;
 
-char * helplineStack[20];
-char ** currentHelpline = NULL;
+static char * helplineStack[20];
+static char ** currentHelpline = NULL;
+
+static int cursorRow, cursorCol;
 
 static char * defaultHelpLine = 
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -52,6 +54,7 @@ struct newtColors newtDefaultColorPalette = {
 	"yellow", "blue",			/* root text */
 	"blue",					/* scale full */
 	"red",					/* scale empty */
+	"blue", "lightgray",			/* disabled entry fg, bg */
 };
 
 static struct keymap keymap[] = {
@@ -200,6 +203,8 @@ void newtSetColors(struct newtColors colors) {
 			colors.emptyScale);
     SLtt_set_color(NEWT_COLORSET_FULLSCALE, "", "black",
 			colors.fullScale);
+    SLtt_set_color(NEWT_COLORSET_DISENTRY, "", colors.disabledEntryFg,
+			colors.disabledEntryBg);
 }
 
 int newtGetKey(void) {
@@ -365,11 +370,20 @@ void newtPopWindow(void) {
     newtRefresh();
 }
 
-void newtGotorc(int row, int col) {
-    if (!currentWindow) 
-	SLsmg_gotorc(row, col);
-    else
-	SLsmg_gotorc(row + currentWindow->top, col + currentWindow->left);
+void newtGetrc(int * row, int * col) {
+   *row = cursorRow;
+   *col = cursorCol;
+}
+
+void newtGotorc(int newRow, int newCol) {
+    if (currentWindow) {
+	newRow += currentWindow->top;
+	newCol += currentWindow->left;
+    }
+
+    cursorRow = newRow;
+    cursorCol = newCol;
+    SLsmg_gotorc(cursorRow, cursorCol);
 }
 
 void newtDrawBox(int left, int top, int width, int height, int shadow) {
@@ -492,4 +506,17 @@ void newtDrawRootText(int row, int col, char * text) {
    
     SLsmg_gotorc(row, col);
     SLsmg_write_string(text);
+}
+
+int newtSetFlags(int oldFlags, int newFlags, enum newtFlagsSense sense) {
+    switch (sense) {
+      case NEWT_FLAGS_SET:
+	return oldFlags | newFlags;
+
+      case NEWT_FLAGS_RESET:
+	return oldFlags & (~newFlags); 
+
+      default:
+	return oldFlags;
+    }
 }
