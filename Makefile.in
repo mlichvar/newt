@@ -112,16 +112,16 @@ install: $(LIBNEWT) install-sh whiptail
 	[ -d $(instroot)/$(includedir) ] || install -m 755 -d $(instroot)/$(includedir)
 	install -m 644 newt.h $(instroot)/$(includedir)
 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
-	install -s -m 755 whiptail $(instroot)/$(bindir)
+	install -m 755 whiptail $(instroot)/$(bindir)
 
 install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
-	install -s -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
+	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
-	[ -n "$(WHIPTCLSO)" ] && install -s -m 755 whiptcl.so $(instroot)/$(libdir) || :
+	[ -n "$(WHIPTCLSO)" ] && install -m 755 whiptcl.so $(instroot)/$(libdir) || :
 	for ver in $(PYTHONVERS) ; do \
 	   [ -d $(instroot)/$(libdir)/$$ver/site-packages ] || install -m 755 -d $(instroot)/$(libdir)/$$ver/site-packages ;\
-	   install -s -m 755 $$ver/_snackmodule.so $(instroot)/$(libdir)/$$ver/site-packages ;\
+	   install -m 755 $$ver/_snackmodule.so $(instroot)/$(libdir)/$$ver/site-packages ;\
 	   install -m 755 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done
 
