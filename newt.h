@@ -124,6 +124,9 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 			   const char * seq, char * result);
 char newtCheckboxGetValue(newtComponent co);
 void newtCheckboxSetValue(newtComponent co, char value);
+void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
+
+    
 newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
 			      newtComponent prevButton);
 newtComponent newtRadioGetCurrent(newtComponent setMember);
@@ -199,6 +202,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
 void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
 char * newtEntryGetValue(newtComponent co);
+void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, unsigned long long amount);

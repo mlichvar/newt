@@ -123,10 +123,34 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
     return co;
 }
 
+void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
+    struct checkbox * cb = co->data;
+    int row, col;
+
+    cb->flags = newtSetFlags(cb->flags, flags, sense);
+
+    if (!(cb->flags & NEWT_FLAG_DISABLED))
+	co->takesFocus = 1;
+    else
+	co->takesFocus = 0;
+
+    newtGetrc(&row, &col);
+    cbDraw(co);
+    newtGotorc(row, col);
+}
+
 static void cbDraw(newtComponent c) {
     struct checkbox * cb = c->data;
 
     if (c->top == -1 || !c->isMapped) return;
+
+    if (cb->flags & NEWT_FLAG_DISABLED) {
+	cb->inactive = NEWT_COLORSET_DISENTRY;
+	cb->active = NEWT_COLORSET_DISENTRY;
+    } else {
+	cb->inactive = COLORSET_CHECKBOX;
+	cb->active = COLORSET_ACTCHECKBOX;
+    }
 
     SLsmg_set_color(cb->inactive);
 
