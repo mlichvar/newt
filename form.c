@@ -206,6 +206,8 @@ void newtDrawForm(newtComponent co) {
     struct element * el;
     int i;
 
+    newtDrawCurrentWindow();
+
     SLsmg_set_color(form->background);
     newtClearBox(co->left, co->top, co->width, co->height);
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {

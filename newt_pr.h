@@ -23,6 +23,7 @@ void newtGotorc(int row, int col);
 void newtGetrc(int * row, int * col);
 void newtDrawBox(int left, int top, int width, int height, int shadow);
 void newtClearBox(int left, int top, int width, int height);
+void newtDrawCurrentWindow(void);
 
 int newtGetKey(void);
 

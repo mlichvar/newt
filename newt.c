@@ -14,6 +14,7 @@
 struct Window {
     int height, width, top, left;
     short * buffer;
+    char * title;
 };
 
 struct keymap {
@@ -318,6 +319,7 @@ int newtOpenWindow(int left, int top, int width, int height,
     currentWindow->top = top;
     currentWindow->width = width;
     currentWindow->height = height;
+    currentWindow->title = strdup(title);
 
     currentWindow->buffer = malloc(sizeof(short) * (width + 3) * (height + 3));
 
@@ -331,11 +333,28 @@ int newtOpenWindow(int left, int top, int width, int height,
 	n += currentWindow->width + 3;
     }
 
+    newtDrawCurrentWindow();
+
+    return 0;
+}
+
+void newtDrawCurrentWindow(void)
+{
+    int i;
+    int top, left, height, width;
+
+    if(!currentWindow) return;
+
+    top = currentWindow->top;
+    left = currentWindow->left;
+    height = currentWindow->height;
+    width = currentWindow->width;
+
     SLsmg_set_color(NEWT_COLORSET_BORDER);
     SLsmg_draw_box(top - 1, left - 1, height + 2, width + 2);
 
-    if (title) {
-	i = strlen(title) + 4;
+    if (currentWindow->title) {
+	i = strlen(currentWindow->title) + 4;
 	i = ((width - i) / 2) + left;
 	SLsmg_gotorc(top - 1, i);
 	SLsmg_set_char_set(1);
@@ -343,7 +362,7 @@ int newtOpenWindow(int left, int top, int width, int height,
 	SLsmg_set_char_set(0);
 	SLsmg_write_char(' ');
 	SLsmg_set_color(NEWT_COLORSET_TITLE);
-	SLsmg_write_string(title);
+	SLsmg_write_string(currentWindow->title);
 	SLsmg_set_color(NEWT_COLORSET_BORDER);
 	SLsmg_write_char(' ');
 	SLsmg_set_char_set(1);
@@ -362,8 +381,6 @@ int newtOpenWindow(int left, int top, int width, int height,
 	SLsmg_gotorc(i, left + width + 1);
 	SLsmg_write_string(" ");
     }
-
-    return 0;
 }
 
 void newtPopWindow(void) {
@@ -382,6 +399,7 @@ void newtPopWindow(void) {
     }
 
     free(currentWindow->buffer);
+    free(currentWindow->title);
 
     if (currentWindow == windowStack) 
 	currentWindow = NULL;
