@@ -603,11 +603,11 @@ class CListBox(Grid):
 			lstr = self.colFormText(col_labels, col_label_align)
 			self.label = Label(lstr)
 
-			self.setField(self.label, 0, 0)
+			self.setField(self.label, 0, 0, anchorLeft=1)
 
 		else:
 			Grid.__init__(self, 1, 1)
-			box_y = 1
+			box_y = 0
 			
 
 		self.listbox = Listbox(height, scroll, returnExit, width)
