@@ -1,4 +1,4 @@
-LIBS = -lslang -lm -lefence
+LIBS = -lslang -lm #-lefence
 SHLIBS = -lslang -lm -lc
 
 CFLAGS = $(RPM_OPT_FLAGS) -Wall
