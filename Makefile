@@ -1,4 +1,4 @@
-LIBS = -L. -lnewt -lslang -lm -lefence
+LIBS = -L. -lnewt -lslang -lm #-lefence
 CFLAGS = -g -Wall
 
 VERSION = 0.1
@@ -7,7 +7,7 @@ PROGS = test
 OBJS = test.o
 LIBNEWT = libnewt.a
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
-          scrollbar.o
+          scrollbar.o textbox.o
 
 prefix = /usr
 includedir = $(prefix)/include
