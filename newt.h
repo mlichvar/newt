@@ -61,6 +61,7 @@ void newtScrollbarSet(newtComponent co, int where, int total);
 newtComponent newtListbox(int left, int top, int height, int flags);
 /* return the data passed to AddEntry */
 void * newtListboxGetCurrent(newtComponent co);
+void newtListboxSetCurrent(newtComponent co, int num);
 void newtListboxAddEntry(newtComponent co, char * text, void * data);
 void newtListboxSetEntry(newtComponent co, int num, char * text);
 
@@ -72,6 +73,7 @@ void newtTextboxSetText(newtComponent co, const char * text);
 
 newtComponent newtForm(newtComponent vertBar);
 newtComponent newtFormGetCurrent(newtComponent co);
+void newtFormSetCurrent(newtComponent co, newtComponent subco);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
 void newtFormSetHeight(newtComponent co, int height);

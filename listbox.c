@@ -59,6 +59,12 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     return co;
 }
 
+void newtListboxSetCurrent(newtComponent co, int num) {
+    struct listbox * li = co->data;
+
+    newtFormSetCurrent(li->form, li->items[num]);
+}
+
 void * newtListboxGetCurrent(newtComponent co) {
     struct listbox * li = co->data;
     newtComponent curr;

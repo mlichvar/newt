@@ -88,6 +88,25 @@ newtComponent newtFormGetCurrent(newtComponent co) {
     return form->elements[form->currComp].co;
 }
 
+void newtFormSetCurrent(newtComponent co, newtComponent subco) {
+    struct form * form = co->data;
+    int i, new;
+
+    for (i = 0; i < form->numComps; i++) {
+	 if (form->elements[i].co == subco) break;
+    }
+
+    if (form->elements[i].co != subco) return;
+    new = i;
+
+    if (!componentFits(co, new)) {
+	gotoComponent(form, -1);
+	form->vertOffset = form->elements[new].top - co->top - 1;
+    }
+
+    gotoComponent(form, new);
+}
+
 void newtFormSetHeight(newtComponent co, int height) {
     struct form * form = co->data;
 
