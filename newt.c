@@ -92,6 +92,11 @@ static const struct keymap keymap[] = {
 	{ "\033[[D",		NEWT_KEY_F4,		NULL },
 	{ "\033[[E",		NEWT_KEY_F5,		NULL },
 
+	{ "\033OP",		NEWT_KEY_F2,		NULL },
+	{ "\033OQ",		NEWT_KEY_F2,		NULL },
+	{ "\033OR",		NEWT_KEY_F2,		NULL },
+	{ "\033OS",		NEWT_KEY_F2,		NULL },
+
 	{ "\033[11~",		NEWT_KEY_F1,		NULL },
 	{ "\033[12~",		NEWT_KEY_F2,		NULL },
 	{ "\033[13~",		NEWT_KEY_F3,		NULL },
