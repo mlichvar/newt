@@ -167,7 +167,9 @@ void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense);
 
 newtComponent newtCheckboxTree(int left, int top, int height, int flags);
+newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags);
 void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems);
+void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum);
 /* last item is NEWT_ARG_LAST for all of these */
 int newtCheckboxTreeAddItem(newtComponent co, 
 			    const char * text, const void * data,

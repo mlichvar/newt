@@ -18,7 +18,7 @@ int main(void) {
     newtInit();
     newtCls();
 
-    checktree = newtCheckboxTree(-1, -1, 10, NEWT_FLAG_SCROLL);
+    checktree = newtCheckboxTreeMulti(-1, -1, 10, " ab", NEWT_FLAG_SCROLL);
     newtCheckboxTreeAddItem(checktree, "Numbers", (void *) 2, 0,
     			    NEWT_ARG_APPEND, NEWT_ARG_LAST);
     newtCheckboxTreeAddItem(checktree, "Really really long thing",
@@ -101,11 +101,22 @@ int main(void) {
     if (!result || !numselected)
 	printf("none selected\n");
     else
-	printf("Current selection:\n");
+	printf("Current selection (all) (%d):\n", numselected);
     for (i = 0; i < numselected; i++) {
 	j = (int) *ptr++;
 	printf("%d\n", j);
     }
+    result = newtCheckboxTreeGetMultiSelection(checktree, &numselected, 'b');
+    ptr = result;
+    if (!result || !numselected)
+	printf("none selected\n");
+    else
+	printf("Current selection (b) (%d):\n",numselected);
+    for (i = 0; i < numselected; i++) {
+	j = (int) *ptr++;
+	printf("%d\n", j);
+    }
+	
     if (result)
 	free(result);
 

@@ -37,7 +37,7 @@ static void ctMapped(newtComponent co, int isMapped);
 static struct items * findItem(struct items * items, const void * data);
 static void buildFlatList(newtComponent co);
 static void doBuildFlatList(struct CheckboxTree * ct, struct items * item);
-enum countWhat { COUNT_EXPOSED, COUNT_SELECTED };
+enum countWhat { COUNT_EXPOSED=0, COUNT_SELECTED=1 };
 static int countItems(struct items * item, enum countWhat justExposed);
 
 static struct componentOps ctOps = {
@@ -52,7 +52,7 @@ static int countItems(struct items * item, enum countWhat what) {
     int count = 0;
 
     while (item) {
-        if ((!item->branch) || (what == COUNT_EXPOSED))
+        if ((!item->branch && item->selected == what) || (what == COUNT_EXPOSED))
 	    count++;
 	if (item->branch || (what == COUNT_EXPOSED && item->selected))
 	    count += countItems(item->branch, what);
@@ -256,36 +256,52 @@ static struct items * findItem(struct items * items, const void * data) {
     return NULL;
 }
 
-static void listSelected(struct items * items, int * num, void ** list) {
+static void listSelected(struct items * items, int * num, void ** list, int seqindex) {
     while (items) {
-        if (items->selected && !items->branch)
+	    if ((seqindex ? items->selected==seqindex : items->selected) && !items->branch)
 	    list[(*num)++] = items->data;
 	if (items->branch)
-	    listSelected(items->branch, num, list);
+	    listSelected(items->branch, num, list, seqindex);
 	items = items->next;
     }
 }
 
 void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems)
 {
+    return newtCheckboxTreeGetMultiSelection(co, numitems, 0);
+}
+
+void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems, char seqnum)
+{
     struct CheckboxTree * ct;
     void **retval;
+    int seqindex=0;
 
     if(!co || !numitems) return NULL;
 
     ct = co->data;
+	
+    if (seqnum) {
+	    while( ct->seq[seqindex] && ( ct->seq[seqindex] != seqnum )) seqindex++;
+    } else {
+	    seqindex = 0;
+    }
 
-    *numitems = countItems(ct->itemlist, COUNT_SELECTED);
+	*numitems = countItems(ct->itemlist, (seqindex ? seqindex : COUNT_SELECTED));
     if (!*numitems) return NULL;
     
     retval = malloc(*numitems * sizeof(void *));
     *numitems = 0;
-    listSelected(ct->itemlist, numitems, retval);
+    listSelected(ct->itemlist, numitems, retval, seqindex);
 
     return retval;
 }
 
 newtComponent newtCheckboxTree(int left, int top, int height, int flags) {
+	return newtCheckboxTreeMulti(left, top, height, NULL, flags);
+}
+
+newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, int flags) {
     newtComponent co;
     struct CheckboxTree * ct;
 
@@ -301,6 +317,10 @@ newtComponent newtCheckboxTree(int left, int top, int height, int flags) {
     ct->firstItem = NULL;
     ct->currItem = NULL;
     ct->flatList = NULL;
+	if (seq)
+	  ct->seq = strdup(seq);
+	else
+	  ct->seq = strdup(" *");
     if (flags & NEWT_FLAG_SCROLL) {
 	ct->sb = newtVerticalScrollbar(left, top, height,
 				       COLORSET_LISTBOX, COLORSET_ACTLISTBOX);
@@ -348,7 +368,13 @@ int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
 	    item->selected = 1;
 	    break;
 	case NEWT_FLAGS_TOGGLE:
-	    item->selected = !item->selected;
+	    if (item->branch)
+	      item->selected = !item->selected;
+	    else {
+		    item->selected++;
+		    if (item->selected==strlen(ct->seq))
+		      item->selected = 0;
+	    }
 	    break;
     }
 
@@ -400,8 +426,11 @@ static void ctDraw(newtComponent co) {
 	    else
 		SLsmg_write_string("<+> ");
 	} else {
-	    if ((*item)->selected) 
-		SLsmg_write_string("[*] ");
+	    if ((*item)->selected)  {
+		    char tmp[5];
+		    snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
+		SLsmg_write_string(tmp);
+	    }
 	    else
 		SLsmg_write_string("[ ] ");
 	}
@@ -434,6 +463,7 @@ static void ctDestroy(newtComponent co) {
 	item = nextitem;
     }
 
+    free(ct->seq);
     free(ct);
     free(co);
 }
