@@ -129,8 +129,6 @@ int newtWinTernary(char * title, char * button1, char * button2,
 int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown, 
 		int flexUp, int maxListHeight, char ** items, int * listItem,
 		char * button1, ...) {
-    char * reflowedText;
-    int width, height;
     newtComponent textbox, listbox, result, form;
     va_list args;
     newtComponent buttons[50];
@@ -140,11 +138,8 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
     int needScroll;
     char * buttonName;
 
-    reflowedText = newtReflowText(text, suggestedWidth, flexDown, flexUp,
-				  &width, &height);
-    
-    textbox = newtTextbox(-1, -1, width, height, NEWT_TEXTBOX_WRAP);
-    newtTextboxSetText(textbox, reflowedText);
+    textbox = newtTextboxReflowed(-1, -1, text, suggestedWidth, flexDown,
+			          flexUp, 0);
 
     for (i = 0; items[i]; i++) ;
     if (i < maxListHeight) maxListHeight = i;
@@ -193,6 +188,81 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
     for (rc = 0; result != buttons[rc] && rc < numButtons; rc++);
     if (rc == numButtons) 
 	rc = 0; /* F12 or return-on-exit (which are the same for us) */
+    else 
+	rc++;
+
+    newtFormDestroy(form);
+    newtPopWindow();
+
+    return rc;
+}
+
+/* only supports up to 50 buttons and entries -- shucks! */
+int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown, 
+		   int flexUp, int dataWidth, 
+		   struct newtWinEntry * items, char * button1, ...) {
+    newtComponent buttons[50], result, form, textw;
+    newtGrid grid, buttonBar, subgrid;
+    int numItems;
+    int rc, i;
+    int numButtons;
+    char * buttonName;
+    va_list args;
+
+    textw = newtTextboxReflowed(-1, -1, text, suggestedWidth, flexDown,
+			        flexUp, 0);
+
+    for (numItems = 0; items[numItems].text; numItems++); 
+
+    buttonName = button1, numButtons = 0;
+    va_start(args, button1);
+    while (buttonName) {
+	buttons[numButtons] = newtButton(-1, -1, buttonName);
+	numButtons++;
+	buttonName = va_arg(args, char *);
+    }
+
+    va_end(button1);
+
+    buttonBar = newtCreateGrid(numButtons, 1);
+    for (i = 0; i < numButtons; i++) {
+	newtGridSetField(buttonBar, i, 0, NEWT_GRID_COMPONENT, 
+			 buttons[i],
+			 i ? 1 : 0, 0, 0, 0, 0, 0);
+    }
+
+    subgrid = newtCreateGrid(2, numItems);
+    for (i = 0; i < numItems; i++) {
+	newtGridSetField(subgrid, 0, i, NEWT_GRID_COMPONENT,
+		         newtLabel(-1, -1, items[i].text),
+		         0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
+	newtGridSetField(subgrid, 1, i, NEWT_GRID_COMPONENT,
+		         newtEntry(-1, -1, items[i].value ? 
+				    *items[i].value : NULL, dataWidth,
+				    items[i].value, items[i].flags),
+		         1, 0, 0, 0, 0, 0);
+    }
+
+    grid = newtCreateGrid(1, 3);
+    form = newtForm(NULL, 0, 0);
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, textw, 
+		     0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 
+		     0, 1, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 2, NEWT_GRID_SUBGRID, buttonBar, 
+		     0, 1, 0, 0, 0, NEWT_GRID_FLAG_GROWX);
+    newtGridAddComponentsToForm(grid, form, 1);
+    newtGridWrappedWindow(grid, title);
+    newtGridFree(grid, 1);
+
+    result = newtRunForm(form);
+
+    for (rc = 0; rc < numItems; rc++)
+	*items[rc].value = strdup(*items[rc].value);
+
+    for (rc = 0; result != buttons[rc] && rc < numButtons; rc++);
+    if (rc == numButtons) 
+	rc = 0; /* F12 */
     else 
 	rc++;
 

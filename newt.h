@@ -153,6 +153,8 @@ void newtListboxSelectItem(newtComponent co, int item,
 	enum newtFlagsSense sense);
 
     
+newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
+				  int flexDown, int flexUp, int flags);
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 void newtTextboxSetHeight(newtComponent co, int height);
@@ -286,6 +288,17 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 		int flexUp, int maxListHeight, char ** items, int * listItem,
 		char * button1, ...);
 
+struct newtWinEntry {
+    char * text;
+    char ** value;		/* may be initialized to set default */
+    int flags;
+};
+
+/* Returns the button number pressed, 0 on F12. The final values are
+   dynamically allocated, and need to be freed. */
+int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown, 
+		   int flexUp, int dataWidth, 
+		   struct newtWinEntry * items, char * button1, ...);
 
 #ifdef __cplusplus
 } /* End of extern "C" { */

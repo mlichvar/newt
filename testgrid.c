@@ -12,6 +12,15 @@ int main(void) {
     char * flowedText;
     int textWidth, textHeight, rc;
     char * menuContents[] = { "One", "Two", "Three", "Four", "Five", NULL };
+    char * entries[10];
+    struct newtWinEntry autoEntries[] = {
+	{ "An entry", entries + 0, 0 },
+	{ "Another entry", entries + 1, 0 },
+	{ "Third entry", entries + 2, 0 },
+	{ "Fourth entry", entries + 3, 0 },
+	{ NULL, NULL, 0 } };
+
+    memset(entries, 0, sizeof(entries));
 
     newtInit();
     newtCls();
@@ -84,7 +93,13 @@ int main(void) {
 		     "depending on the need for one.", 50, 5, 5, 3, 
 		     menuContents, &textWidth, "Ok", "Cancel", NULL);
 
+    rc = newtWinEntries("Text newtWinEntries()", "This is a sample invovation of "
+		     "newtWinEntries() call. It lets you get a lot of input "
+		     "quite easily.", 50, 5, 5, 20, autoEntries, "Ok", 
+		     "Cancel", NULL);
+
     newtFinished();
+
     printf("rc = 0x%x item = %d\n", rc, textWidth);
 
     return 0;
