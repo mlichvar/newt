@@ -12,6 +12,7 @@ struct newtColors {
     char * checkboxFg, * checkboxBg;
     char * actCheckboxFg, * actCheckboxBg;
     char * entryFg, * entryBg;
+    char * labelFg, * labelBg;
 };
 
 extern struct newtColors newtDefaultColorPalette;
@@ -34,6 +35,7 @@ void newtRefresh(void);
 typedef struct newtComponent * newtComponent;
 
 newtComponent newtButton(int left, int top, char * text);
+newtComponent newtLabel(int left, int top, char * text);
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 			   char * seq, char * result);
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
@@ -42,6 +44,7 @@ newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 newtComponent newtForm(void);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
+void newtFormSetSize(newtComponent co, int width, int height);
 newtComponent newtRunForm(newtComponent form);
 
 #define NEWT_ENTRY_SCROLL	(1 << 0)
