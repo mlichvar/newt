@@ -135,9 +135,23 @@ static inline void updateWidth(newtComponent co, struct listbox * li,
 	li->sb->left = co->left + co->width - 1;
 }
 
+void newtListboxSetCurrentByKey(newtComponent co, void * key) {
+    struct listbox * li = co->data;
+    struct items * item;
+    int i;
+
+    item = li->boxItems, i = 0;
+    while (item && item->data != key)
+	item = item->next, i++;
+
+    if (item)
+	newtListboxSetCurrent(co, i);
+}
+
 void newtListboxSetCurrent(newtComponent co, int num)
 {
     struct listbox * li = co->data;
+
     if (num >= li->numItems)
 	li->currItem = li->numItems - 1;
     else if (num < 0)
@@ -153,13 +167,14 @@ void newtListboxSetCurrent(newtComponent co, int num)
 	li->startShowItem = li->numItems - co->height;
     if(li->startShowItem < 0)
 	li->startShowItem = 0;
+
     newtListboxRealSetCurrent(co);
 }
 
-static void
-newtListboxRealSetCurrent(newtComponent co)
+static void newtListboxRealSetCurrent(newtComponent co)
 {
     struct listbox * li = co->data;
+
     if(li->sb)
 	newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
     listboxDraw(co);

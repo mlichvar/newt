@@ -134,6 +134,7 @@ void newtScrollbarSet(newtComponent co, int where, int total);
 newtComponent newtListbox(int left, int top, int height, int flags);
 void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
+void newtListboxSetCurrentByKey(newtComponent co, void * key);
 void newtListboxSetText(newtComponent co, int num, const char * text);
 void newtListboxSetEntry(newtComponent co, int num, const char * text);
 void newtListboxSetWidth(newtComponent co, int width);
