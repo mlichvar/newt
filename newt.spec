@@ -1,15 +1,17 @@
 Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
-Version: 0.11
+%define verison 0.12
+Version: %{version}
 Release: 1
 Copyright: LGPL
 Group: Libraries
-Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-0.11.tar.gz
+Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
 Requires: slang
 %package devel
 Summary: Developer's toolkit for newt windowing library
 Requires: slang-devel
 Group: Libraries
+BuildRoot: /var/tmp/newtroot
 
 %description
 Newt is a windowing toolkit for text mode built from the slang library. It
@@ -33,15 +35,24 @@ make
 make shared
 
 %install
-rm -rf /usr/lib/libnewt*
-make install
-make install-sh
+rm -rf $(RPM_BUILD_ROOT)
+mkdir -p $(RPM_BUILD_ROOT)
+make instroot=$(RPM_BUILD_ROOT) install
+make instroot=$(RPM_BUILD_ROOT) install-sh
+
+%clean
+rm -rf $(RPM_BUILD_ROOT)
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %changelog
+
+* Tue Oct 07 1997 Erik Troan <ewt@redhat.com>
+
+- made Make/spec files use a buildroot
+- added grid support (for newt 0.11 actually)
 
 * Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
 
@@ -66,6 +77,7 @@ make install-sh
 %files
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
+/usr/lib/whiptcl.so
 
 %files devel
 /usr/include/newt.h

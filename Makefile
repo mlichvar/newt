@@ -6,7 +6,8 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g -O2
 endif
 
-VERSION = 0.11
+VERSION = 0.12
+CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = 0.11
 
 PROGS = test whiptail whiptcl.so testgrid
@@ -62,7 +63,7 @@ veryclean: clean
 	rm -f .depend
 
 clean:
-	rm -f $(PROGS) $(NDIALOGOBJS) $(TESTOBJS) $(OBJS) $(LIBOBJS) $(LIBNEWT) core $(LIBNEWTSH)  \
+	rm -f $(PROGS) *.o $(LIBNEWT) core $(LIBNEWTSH)  \
 		$(SHAREDOBJS) *.so*
 
 depend:
@@ -83,36 +84,30 @@ $(SHAREDDIR)/newt.o: newt.c Makefile
 	$(CC) $(SHCFLAGS) $(CFLAGS) -DVERSION=\"$(VERSION)\" -c -o $@ $<
 
 
-install: $(LIBNEWT)
-	[ -d $(bindir) ] || install -m 755 -d $(bindir)
-	[ -d $(libdir) ] || install -m 755 -d $(libdir)
-	[ -d $(includedir) ] || install -m 755 -d $(includedir)
-	install -m 644 newt.h $(includedir)
-	install -m 644 $(LIBNEWT) $(libdir)
-	install -s -m 755 whiptail $(bindir)
+install: $(LIBNEWT) whiltail
+	[ -d $(instroot)/$(bindir) ] || install -m 755 -d $(instroot)/$(bindir)
+	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
+	[ -d $(instroot)/$(includedir) ] || install -m 755 -d $(instroot)/$(includedir)
+	install -m 644 newt.h $(instroot)/$(includedir)
+	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
+	install -s -m 755 whiptail $(instroot)/$(bindir)
 
 install-sh: sharedlib
-	install -m 755 $(LIBNEWTSH) $(libdir)
-	ln -sf $(LIBNEWTSH) $(libdir)/libnewt.so
-	install -m 755 whiptcl.so $(libdir)
-	/sbin/ldconfig
+	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
+	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
+	install -m 755 whiptcl.so $(instroot)/$(libdir)
 
 archive: 
+	@cvs tag -F $(CVSTAG)
 	@rm -rf /tmp/newt-$(VERSION)
 	@mkdir /tmp/newt-$(VERSION)
-	@tar cSpf - * | (cd /tmp/newt-$(VERSION); tar xSpf -)
-	@cd /tmp/newt-$(VERSION); \
-	    make clean; \
-	    find . -name "RCS" -exec rm {} \;  ; \
-	    find . -name ".depend" -exec rm {} \;  ; \
-	    rm -rf *gz test shared showchars
+	@cvs export -r$(CVSTAG) -d /tmp/newt-$(VERSION) newt
 	@cd /tmp; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
 	@rm -rf /tmp/newt-$(VERSION)
 	@cp /tmp/newt-$(VERSION).tar.gz .
 	@rm -f /tmp/newt-$(VERSION).tar.gz 
 	@echo " "
-	@echo "The final archive is ./newt-$(VERSION).tar.gz. You should run"
-	@echo "cvs tag v$(VERSION) now."
+	@echo "The final archive is ./newt-$(VERSION).tar.gz."
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
