@@ -230,7 +230,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
     item->branch = NULL;
     item->depth = numIndexes - 1;
 
-    i = 4;
+    i = 4 + (3 * item->depth);
 
     if ((strlen(text) + i + ct->pad) > co->width) {
 	co->width = strlen(text) + i + ct->pad;
@@ -333,7 +333,8 @@ static void ctPlace(newtComponent co, int newLeft, int newTop) {
 int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
 {
     struct CheckboxTree * ct = co->data;
-    struct items ** currItem;
+    struct items * currItem;
+    struct items * firstItem;
     
     if (!item)
 	return 1;
@@ -351,12 +352,16 @@ int ctSetItem(newtComponent co, struct items *item, enum newtFlagsSense sense)
     }
 
     if (item->branch) {
-    	currItem = ct->currItem;
+    	currItem = *ct->currItem;
+	firstItem = *ct->firstItem;
 
     	buildFlatList(co);
 
     	ct->currItem = ct->flatList;
-	while (*ct->currItem != *currItem) ct->currItem++;
+	while (*ct->currItem != currItem) ct->currItem++;
+
+    	ct->firstItem = ct->flatList;
+	while (*ct->firstItem != firstItem) ct->firstItem++;
     }
 
     return 0;
