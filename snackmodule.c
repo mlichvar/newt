@@ -837,7 +837,6 @@ static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args) {
     for (i = 0; i < len; i++) {
         o = PyTuple_GetItem(pathList, i);
 	path[i] = PyInt_AsLong(o);
-	printf("found %d\n", path[i]);
     }
     path[len] = NEWT_ARG_LAST;
 

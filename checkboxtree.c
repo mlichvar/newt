@@ -160,12 +160,8 @@ int newtCheckboxTreeAddArray(newtComponent co,
     int i, index, numIndexes;
     struct CheckboxTree * ct = co->data;
 
-    printf("here\n");
-
     numIndexes = 0;
     while (indexes[numIndexes] != NEWT_ARG_LAST) numIndexes++;
-
-    printf("there\n");
 
     if (!ct->itemlist) {
 	if (numIndexes > 1) return -1;
