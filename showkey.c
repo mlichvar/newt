@@ -13,7 +13,7 @@ int main(void) {
     if (!buf) {
 	printf("termcap entry not found for kl\n\r");
     } else {
-	printf("termcap entry found for kl: ", buf);
+	printf("termcap entry found for kl: %s", buf);
 	while (*buf) {
 	    printf("0x%02x ", *buf++);
 	}

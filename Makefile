@@ -6,7 +6,7 @@ ifeq ($(RPM_OPT_FLAGS),)
 CFLAGS += -g # -O2 -I/usr/include/slang
 endif
 
-VERSION = 0.22
+VERSION = 0.23
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = 0.20
 
