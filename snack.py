@@ -10,6 +10,12 @@ import string
 
 from _snack import FLAG_DISABLED, FLAGS_SET, FLAGS_RESET, FLAGS_TOGGLE, FD_READ, FD_WRITE, FD_EXCEPT
 
+LEFT = (-1, 0)
+DOWN = (-1, -1)
+CENTER = (0, 0)
+UP = (1, 1)
+RIGHT = (1, 0)
+
 snackArgs = {"append":-1}
 
 class Widget:
@@ -571,3 +577,91 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
 	count = count + 1
 
     return (bb.buttonPressed(result), tuple(entryValues))
+
+class CListBox(Grid):
+	def __init__(self, height, cols, col_widths, scroll = 0, returnExit = 0,
+			width = 0, col_pad = 1, col_text_align = None,
+			col_labels = None, col_label_align = None):
+
+		self.cols = cols
+		self.col_widths = col_widths[:]
+		self.col_pad = col_pad
+		self.col_text_align = col_text_align
+
+		if col_labels != None:		
+			Grid.__init__(self, 1, 2)
+			box_y = 1
+
+			lstr = self.colFormText(col_labels, col_label_align)
+			self.label = Label(lstr)
+
+			self.setField(self.label, 0, 0)
+
+		else:
+			Grid.__init__(self, 1, 1)
+			box_y = 1
+			
+
+		self.listbox = Listbox(height, scroll, returnExit, width)
+		self.setField(self.listbox, 0, box_y)
+
+	def colFormText(self, col_text, align = None):
+		i = 0
+		str = ""
+		c_len = len(col_text)
+		while (i < self.cols) and (i < c_len):
+		
+			cstr = col_text[i][:self.col_widths[i]] 
+			delta = self.col_widths[i] - len(cstr)
+			if delta > 0:
+				if align == None:
+					a = LEFT
+				else:
+					a = align[i]
+
+				if a == LEFT:
+					cstr = cstr + (" " * delta)
+				if a == CENTER:
+					cstr = (" " * (delta / 2)) + cstr + \
+						(" " * ((delta + 1) / 2))
+				if a == RIGHT:
+					cstr = (" " * delta) + cstr
+
+			if i != c_len - 1:
+				pstr = (" " * self.col_pad)
+			else:
+				pstr = ""
+
+			str = str + cstr + pstr
+	
+			i = i + 1
+	
+		return str
+
+	def append(self, col_text, item, col_text_align = None):
+		if col_text_align == None:
+			col_text_align = self.col_text_align
+		text = self.colFormText(col_text, col_text_align)
+		self.listbox.append(text, item)
+
+	def insert(self, col_text, item, before, col_text_align = None):
+		if col_text_align == None:
+			col_text_align = self.col_text_align
+		text = self.colFormText(col_text, col_text_align)
+		self.listbox.insert(text, item, before)
+
+	def delete(self, item):
+		self.listbox.delete(item)
+
+	def replace(self, col_text, item, col_text_align = None):
+		if col_text_align == None:
+			col_text_align = self.col_text_align
+		text = self.colFormText(col_text, col_text_align)
+		self.listbox.replace(text, item, before)
+
+	def current(self):
+		return self.listbox.current()
+
+	def setCurrent(self, item):
+		self.listbox.setCurrent(item)
+		

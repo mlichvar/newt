@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.23
+%define version 0.50.24
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Jun  6 2001 Crutcher Dunnavant <crutcher@redhat.com>
+- added CListBox python convenience class
+
 * Tue May 15 2001 Michael Fulbright <msf@redhat.com>
 - added python binding for CompactButton()
 
