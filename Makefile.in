@@ -12,7 +12,10 @@ VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
-PROGS = test whiptail whiptcl.so testgrid testtree
+WHIPTCLSO=
+#WHIPTCLSO=whiptcl.so
+
+PROGS = test whiptail $(WHIPTCLSO) testgrid testtree
 TESTOBJS = test.o
 NDIALOGOBJS = whiptail.o dialogboxes.o
 WHIPTCLOBJS = whiptcl.o dialogboxes.o
@@ -107,11 +110,11 @@ install: $(LIBNEWT) install-sh whiptail
 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
 	install -s -m 755 whiptail $(instroot)/$(bindir)
 
-install-sh: sharedlib whiptcl.so _snackmodule.so
+install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	install -s -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
-	install -s -m 755 whiptcl.so $(instroot)/$(libdir)
+	[ -n "$(WHIPTCLSO)" ] && install -s -m 755 whiptcl.so $(instroot)/$(libdir)
 	[ -d $(instroot)/$(pythonbindir) ] || install -m 755 -d $(instroot)/$(pythonbindir)
 	install -s -m 755 _snackmodule.so $(instroot)/$(pythonbindir)
 	install -m 755 snack.py $(instroot)/$(pythondir)
