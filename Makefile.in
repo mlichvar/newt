@@ -10,7 +10,7 @@ endif
 
 VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
-SONAME = @VERSION@
+SONAME = @SONAME@
 
 PROGS = test whiptail whiptcl.so testgrid testtree
 TESTOBJS = test.o
