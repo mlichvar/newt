@@ -18,6 +18,8 @@
 #define NEWT_COLORSET_ACTTEXTBOX	16
 #define NEWT_COLORSET_HELPLINE		17
 #define NEWT_COLORSET_ROOTTEXT		18
+#define NEWT_COLORSET_EMPTYSCALE	19
+#define NEWT_COLORSET_FULLSCALE		20
 
 struct newtColors {
     char * rootFg, * rootBg;
@@ -37,6 +39,7 @@ struct newtColors {
     char * actTextboxFg, * actTextboxBg;
     char * helpLineFg, * helpLineBg;
     char * rootTextFg, * rootTextBg;
+    char * emptyScale, * fullScale;
 };
 
 typedef struct newtComponent * newtComponent;
@@ -58,6 +61,8 @@ int newtOpenWindow(int left, int top, int width, int height,
 void newtPopWindow(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
+void newtSuspend(void);
+void newtResume(void);
 void newtPushHelpLine(char * text);
 void newtRedrawHelpLine(void);
 void newtPopHelpLine(void);
@@ -126,6 +131,10 @@ void newtFormAddHotKey(newtComponent co, int key);
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
 void newtEntrySet(newtComponent co, char * value, int cursorAtEnd);
+
+newtComponent newtScale(int left, int top, int width, long long fullValue);
+void newtScaleSet(newtComponent co, long long amount);
+
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 
 /* this also destroys all of the components (including other forms) on the 
