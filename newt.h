@@ -94,12 +94,16 @@ void newtScrollbarSet(newtComponent co, int where, int total);
 
 #define NEWT_LISTBOX_RETURNEXIT (1 << 0)
 newtComponent newtListbox(int left, int top, int height, int flags);
-/* return the data passed to AddEntry */
 void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
-int newtListboxAddEntry(newtComponent co, char * text, void * data);
+void newtListboxSetText(newtComponent co, int num, char * text);
 void newtListboxSetEntry(newtComponent co, int num, char * text);
+/* return the data passed to AddEntry */
+void newtListboxSetData(newtComponent co, int num, void * data);
+int newtListboxAddEntry(newtComponent co, char * text, void * data);
+int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
+void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
 
 #define NEWT_TEXTBOX_WRAP	(1 << 0)
 #define NEWT_TEXTBOX_SCROLL	(1 << 1)
