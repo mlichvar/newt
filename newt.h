@@ -239,6 +239,7 @@ void newtGridSetField(newtGrid grid, int col, int row,
 		      int flags);
 void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
+void newtGridGetSize(newtGrid grid, int * width, int * height);
 
 #ifdef __cplusplus
 } /* End of extern "C" { */

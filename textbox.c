@@ -155,6 +155,8 @@ static void textboxDraw(newtComponent c) {
 	newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
 	tb->sb->ops->draw(tb->sb);
     }
+
+    SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
    
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);

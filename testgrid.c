@@ -7,8 +7,8 @@
 
 int main(void) {
     newtComponent b1, b2, b3, b4;
-    newtComponent answer, f;
-    newtGrid grid;
+    newtComponent answer, f, t;
+    newtGrid grid, subgrid;
 
     newtInit();
     newtCls();
@@ -37,6 +37,33 @@ int main(void) {
     newtFormDestroy(f);
 
     newtPopWindow();
+
+    newtOpenWindow(10, 5, 45, 15, "another example");
+
+    t = newtTextbox(-1, -1, 40, 5, NEWT_FLAG_WRAP);
+    newtTextboxSetText(t, "This is a quite a bit of text. It is 40 "
+			  "columns long, so some wrapping should be "
+			  "done. Did you know that the quick, brown "
+			  "fox jumped over the lazy dog?");
+    
+    b1 = newtButton(-1, -1, "Okay");
+    b2 = newtButton(-1, -1, "Cancel");
+
+    grid = newtCreateGrid(1, 2);
+    subgrid = newtCreateGrid(2, 1);
+
+    newtGridSetField(subgrid, 0, 0, NEWT_GRID_COMPONENT, b1, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(subgrid, 1, 0, NEWT_GRID_COMPONENT, b2, 0, 0, 0, 0, 0, 0);
+
+    newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, t, 0, 0, 0, 0, 0, 0);
+    newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, subgrid, 0, 0, 0, 0, 0,
+			NEWT_GRID_FLAG_GROWX);
+    newtGridPlace(grid, 1, 1);
+
+    f = newtForm(NULL, NULL, 0);
+    newtFormAddComponents(f, b1, t, b2, NULL);
+    answer = newtRunForm(f);
+
     newtFinished();
 
     return 0;

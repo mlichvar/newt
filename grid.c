@@ -57,8 +57,23 @@ void newtGridSetField(newtGrid grid, int col, int row,
     field->padTop = padTop;
     field->padBottom = padBottom;
     field->anchor = anchor;
+    field->flags = flags;
 
     grid->width = grid->height = -1;
+}
+
+static void distSpace(int extra, int items, int * list) {
+    int all, some, i;
+
+    all = extra / items;
+    some = extra % items;
+    for (i = 0; i < items; i++) {
+	list[i] += all;
+	if (some) {
+	    list[i]++;
+	    some--;
+	}
+    }
 }
 
 static void shuffleGrid(newtGrid grid, int left, int top, int set) {
@@ -106,7 +121,7 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	    if (field->type == NEWT_GRID_SUBGRID) {
 		/* we'll have to redo this later */
 		if (field->u.grid->height == -1) 
-		    shuffleGrid(field->u.grid, left, top, 0);
+		    shuffleGrid(field->u.grid, 0, 0, 0);
 		j = field->u.grid->height;
 	    } else {
 		j = field->u.co->height;
@@ -115,7 +130,7 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	    j += field->padTop + field->padBottom;
 
 	    i += j;
-	    if (j > heights[col]) heights[col] = j;
+	    if (j > heights[row]) heights[row] = j;
 	}
 
 	if (i > minHeight) minHeight = i;
@@ -127,6 +142,9 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
     if (!set) return;
 
+    distSpace(grid->width - minWidth, grid->cols, widths);
+    distSpace(grid->height - minHeight, grid->rows, heights);
+
     thisTop = top;
     for (row = 0; row < grid->rows; row++) {
 	i = 0;
@@ -137,7 +155,7 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 	    x = thisLeft + field->padLeft;
 	    remx = widths[col] - field->padLeft - field->padRight;
 	    y = thisTop + field->padTop;
-	    remy = heights[col] - field->padTop - field->padBottom;
+	    remy = heights[row] - field->padTop - field->padBottom;
 
 	    if (field->type == NEWT_GRID_SUBGRID) {
 		remx -= field->u.grid->width;
@@ -147,18 +165,28 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 		remy -= field->u.co->height;
 	    }
 
-	    if (field->anchor & NEWT_ANCHOR_RIGHT)
-		x += remx;
-	    else if (!(field->anchor & NEWT_ANCHOR_LEFT))
-		x += (remx / 2);
+	    if (!(field->flags & NEWT_GRID_FLAG_GROWX)) {
+		if (field->anchor & NEWT_ANCHOR_RIGHT)
+		    x += remx;
+		else if (!(field->anchor & NEWT_ANCHOR_LEFT))
+		    x += (remx / 2);
+	    }
 	 
-	    if (field->anchor & NEWT_ANCHOR_BOTTOM)
-		y += remx;
-	    else if (!(field->anchor & NEWT_ANCHOR_TOP))
-		y += (remy / 2);
-	 
+	    if (!(field->flags & NEWT_GRID_FLAG_GROWY)) {
+		if (field->anchor & NEWT_ANCHOR_BOTTOM)
+		    y += remx;
+		else if (!(field->anchor & NEWT_ANCHOR_TOP))
+		    y += (remy / 2);
+	    }
 
 	    if (field->type == NEWT_GRID_SUBGRID) {
+		if (field->flags & NEWT_GRID_FLAG_GROWX)
+		    field->u.grid->width = widths[col] - field->padLeft 
+						- field->padRight;
+		if (field->flags & NEWT_GRID_FLAG_GROWY)
+		    field->u.grid->height = heights[col] - field->padTop
+						- field->padBottom;
+
 		shuffleGrid(field->u.grid, x, y, 1);
 	    } else {
 		field->u.co->left = x;
@@ -175,7 +203,6 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 }
 
 void newtGridPlace(newtGrid grid, int left, int top) {
-    grid->width = grid->height = -1;
     shuffleGrid(grid, left, top, 1);
 }
 
@@ -197,3 +224,12 @@ void newtGridFree(newtGrid grid, int recurse) {
     free(grid);
 }
 
+void newtGridGetSize(newtGrid grid, int * width, int * height) {
+    if (grid->width == -1 || grid->height == -1) {
+	grid->width = grid->height = -1;
+	shuffleGrid(grid, 0, 0, 1);
+    }
+
+    *width = grid->width;
+    *height = grid->height;
+}
