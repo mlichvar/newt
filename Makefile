@@ -89,7 +89,7 @@ archive:
 	    make clean; \
 	    find . -name "RCS" -exec rm {} \;  ; \
 	    find . -name ".depend" -exec rm {} \;  ; \
-	    rm -rf *gz test shared
+	    rm -rf *gz test shared showchars
 	@cd /tmp; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
 	@rm -rf /tmp/newt-$(VERSION)
 	@cp /tmp/newt-$(VERSION).tar.gz .
