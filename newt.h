@@ -261,6 +261,7 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_TAB			'\t'
 #define NEWT_KEY_ENTER			'\r'
 #define NEWT_KEY_SUSPEND		'\032'			/* ctrl - z*/
+#define NEWT_KEY_ESCAPE			''
 #define NEWT_KEY_RETURN			NEWT_KEY_ENTER
 
 #define NEWT_KEY_EXTRA_BASE		0x8000
