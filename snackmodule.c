@@ -333,12 +333,7 @@ static PyObject * choiceWindow(PyObject * s, PyObject * args) {
 
     rc = newtWinChoice(title, okbutton, cancelbutton, text);
 
-    switch (rc) {
-      case 0: return Py_BuildValue("i", 1);
-      case 1: return Py_BuildValue("i", 2);
-    }
-
-    return Py_BuildValue("i", 0);
+    return Py_BuildValue("i", rc);
 }
 
 static PyObject * ternaryWindow(PyObject * s, PyObject * args) {
