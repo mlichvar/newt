@@ -58,7 +58,7 @@ testtree:	testtree.o $(LIBNEWT)
 	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
 
 _snackmodule.so:   snackmodule.o $(LIBNEWTSH)
-	gcc --shared -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
+	gcc --shared $(SHCFLAGS) -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
 
 snackmodule.o:   snackmodule.c
 	gcc -I/usr/include/python1.5 -fPIC $(CFLAGS) -c snackmodule.c
@@ -67,7 +67,7 @@ whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	gcc -shared -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+	gcc -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
 
 $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
 
