@@ -277,6 +277,7 @@ void newtGridSetField(newtGrid grid, int col, int row,
 		      int padTop, int padRight, int padBottom, int anchor,
 		      int flags);
 void newtGridPlace(newtGrid grid, int left, int top);
+#define newtGridDestroy newtGridFree
 void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
 void newtGridWrappedWindow(newtGrid grid, char * title);
