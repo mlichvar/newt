@@ -10,10 +10,12 @@ int main(void) {
     newtComponent answer, f, t;
     newtGrid grid, subgrid;
     char * flowedText;
-    int textWidth, textHeight;
+    int textWidth, textHeight, rc;
+    char * menuContents[] = { "One", "Two", "Three", "Four", "Five", NULL };
 
     newtInit();
     newtCls();
+
     newtOpenWindow(2, 2, 40, 15, "first window");
 
     b1 = newtButton(-1, -1, "Button 1");
@@ -76,7 +78,14 @@ int main(void) {
     newtWinMessage("Simple", "Ok", "This is a simple message window");
     newtWinChoice("Simple", "Ok", "Cancel", "This is a simple choice window");
 
+    textWidth = 0;
+    rc = newtWinMenu("Test Menu", "This is a sample invovation of the "
+		     "newtWinMenu() call. It may or may not have a scrollbar, "
+		     "depending on the need for one.", 50, 5, 5, 3, 
+		     menuContents, &textWidth, "Ok", "Cancel", NULL);
+
     newtFinished();
+    printf("rc = 0x%x item = %d\n", rc, textWidth);
 
     return 0;
 }
