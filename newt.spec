@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.33
+%define version 0.50.34
 Version: %{version}
 Release: 1
 License: LGPL
@@ -15,11 +15,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Summary: Newt windowing toolkit development files.
 Requires: slang-devel %{name} = %{version}
 Group: Development/Libraries
-
-%package python2
-Summary: Snack for python2
-Requires: python2
-Group: System Environment/Libraries
 
 %Description
 Newt is a programming library for color text mode, widget based user
@@ -39,8 +34,6 @@ the slang library.
 Install newt-devel if you want to develop applications which will use
 newt.
 
-%description python2
-The newt-python2 package contains a snack module for python2.
 
 %prep
 %setup
@@ -59,17 +52,7 @@ mkdir -p $RPM_BUILD_ROOT
 make instroot=$RPM_BUILD_ROOT install
 make instroot=$RPM_BUILD_ROOT install-sh
 
-python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python1.5",10,"/usr/lib/python1.5")'
-
-%if 0
-# cheat... build python2 stuff here
-make clean
-perl -pi -e "s/python1.5/python2.0/g" *
-./configure
-make instroot=$RPM_BUILD_ROOT install
-make instroot=$RPM_BUILD_ROOT install-sh
-python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.0",10,"/usr/lib/python2.0")'
-%endif
+python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.2",10,"/usr/lib/python2.2")'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -88,8 +71,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc CHANGES COPYING
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
-/usr/lib/python1.5/snack.py*
-/usr/lib/python1.5/lib-dynload/_snackmodule.so
+/usr/lib/python2.2/snack.py*
+/usr/lib/python2.2/lib-dynload/_snackmodule.so
 
 %files devel
 %defattr (-,root,root)
@@ -98,13 +81,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
 
-%if 0
-%files python2
-%defattr (-,root,root)
-/usr/lib/python2.0
-%endif
-
 %changelog
+* Fri Sep 15 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.34-1
+- remove python2 subpackage
+- compile package for python 2.2
+
 * Wed Aug 29 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.33-1
 - s/Copyright/License/
 - Add slang-devel to build dependencies (#49542)
