@@ -83,7 +83,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
-* Tue Aug 19 2003 Michael K. Johnson <johnsonm@redhat.com>
+* Tue Aug 19 2003 Michael K. Johnson <johnsonm@redhat.com> 0.51.5-1
 - incorporated listbox cursor location patch (#69903)
 
 * Wed Feb  5 2003 Matt Wilson <msw@redhat.com> 0.51.4-1
