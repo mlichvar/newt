@@ -24,6 +24,7 @@ static struct callbackStruct helpCallback;
 static void emptyDestructor(PyObject * s);
 
 static snackWidget * buttonWidget(PyObject * s, PyObject * args);
+static snackWidget * compactbuttonWidget(PyObject * s, PyObject * args);
 static PyObject * centeredWindow(PyObject * s, PyObject * args);
 static snackWidget * checkboxWidget(PyObject * s, PyObject * args);
 static PyObject * choiceWindow(PyObject * s, PyObject * args);
@@ -58,6 +59,7 @@ static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args);
 
 static PyMethodDef snackModuleMethods[] = {
     { "button", (PyCFunction) buttonWidget, METH_VARARGS, NULL },
+    { "compactbutton", (PyCFunction) compactbuttonWidget, METH_VARARGS, NULL },
     { "checkbox", (PyCFunction) checkboxWidget, METH_VARARGS, NULL },
     { "choice", choiceWindow, METH_VARARGS, NULL },
     { "centeredwindow", centeredWindow, METH_VARARGS, NULL },
@@ -562,6 +564,18 @@ static snackWidget * buttonWidget(PyObject * s, PyObject * args) {
 
     widget = snackWidgetNew ();
     widget->co = newtButton(-1, -1, label);
+
+    return widget;
+}
+
+static snackWidget * compactbuttonWidget(PyObject * s, PyObject * args) {
+    snackWidget * widget;
+    char * label;
+
+    if (!PyArg_ParseTuple(args, "s", &label)) return NULL;
+
+    widget = snackWidgetNew ();
+    widget->co = newtCompactButton(-1, -1, label);
 
     return widget;
 }

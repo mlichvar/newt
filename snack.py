@@ -24,6 +24,11 @@ class Button(Widget):
     def __init__(self, text):
 	self.w = _snack.button(text)
 
+class CompactButton(Widget):
+
+    def __init__(self, text):
+	self.w = _snack.compactbutton(text)
+
 class Checkbox(Widget):
 
     def value(self):
