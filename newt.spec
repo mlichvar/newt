@@ -1,6 +1,6 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.14
+%define version 0.50.15
 Version: %{version}
 Release: 1
 Copyright: LGPL
@@ -57,6 +57,12 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Thu Aug  3 2000 Matt Wilson <msw@redhat.com>
+- added setValue method for checkboxes in snack
+
+* Wed Jul 05 2000 Michael Fulbright <msf@redhat.com>
+- added NEWT_FLAG_PASSWORD for entering passwords and having asterix echo'd
+
 * Fri Jun 16 2000 Matt Wilson <msw@redhat.com>
 - build for new release
 
