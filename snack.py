@@ -1,3 +1,9 @@
+# snack.py: maps C extension module _snack to proper python types in module
+# snack.
+# The first section is a very literal mapping.
+# The second section contains convenience classes that amalgamate
+# the literal classes and make them more object-oriented.
+
 import _snack
 
 class Widget:
@@ -64,17 +70,33 @@ class Entry(Widget):
     def __init__(self, width, text = "", hidden = 0, scroll = 1):
 	self.w = _snack.entry(width, text, hidden, scroll)
 
+
+# Form uses hotkeys
+hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3, 
+            "F4" : _snack.KEY_F4, "F5" : _snack.KEY_F5, "F6" : _snack.KEY_F6, 
+            "F7" : _snack.KEY_F7, "F8" : _snack.KEY_F8, "F9" : _snack.KEY_F9, 
+            "F10" : _snack.KEY_F10, "F11" : _snack.KEY_F11, 
+            "F12" : _snack.KEY_F12 }
+
+for n in hotkeys.keys():
+    hotkeys[hotkeys[n]] = n
+
 class Form:
 
     def addHotKey(self, keyname):
-	self.f.addhotkey(hotkeys[keyname])
+	self.w.addhotkey(hotkeys[keyname])
 
     def add(self, widget):
-	self.trans[widget.w.key] = widget
-	return self.f.add(widget.w)
+	if widget.__dict__.has_key('w'):
+	    self.trans[widget.w.key] = widget
+	if widget.__dict__.has_key('w'):
+	    return self.w.add(widget.w)
+	elif widget.__dict__.has_key('g'):
+	    return self.w.add(widget.g)
+	return Null
 
     def run(self):
-	(what, which) = self.f.run()
+	(what, which) = self.w.run()
 	if (what == _snack.FORM_EXIT_WIDGET):
 	    return self.trans[which]
 
@@ -82,7 +104,7 @@ class Form:
 
     def __init__(self):
 	self.trans = {}
-	self.f = _snack.form()
+	self.w = _snack.form()
 
 class Grid:
 
@@ -148,7 +170,7 @@ def reflow(text, width, flexDown = 5, flexUp = 5):
 
 # combo widgets
 
-def RadioGroup(Widget):
+class RadioGroup(Widget):
 
     def __init__(self):
 	self.group = None
@@ -161,17 +183,35 @@ def RadioGroup(Widget):
 	    default = 1
 	b = SingleRadioButton(title, self.group, default)
 	if not self.group: self.group = b
-	buttonlist.append((b, value))
+	self.buttonlist.append((b, value))
 	return b
 
     def getSelection(self):
 	for (b, value) in self.buttonlist:
 	    if b.selected: return value
+	return None
+
+
+class RadioBar(Grid):
+
+    def __init__(self, screen, buttonlist):
+	self.list = []
+	self.item = 0
+	self.group = RadioGroup()
+	Grid.__init__(self, 1, len(buttonlist))
+	for (title, value, default) in buttonlist:
+	    b = self.group.add(title, value, default)
+	    self.list.append(b, value)
+	    self.setField(b, 0, self.item)
+	    self.item = self.item + 1
+
+    def getSelection(self):
+	return self.group.getSelection()
 	
 
-# pack a ButtonBar with growx = 1
+# you normally want to pack a ButtonBar with growx = 1
 
-def ButtonBar(Grid):
+class ButtonBar(Grid):
 
     def __init__(self, screen, buttonlist):
 	self.list = []
@@ -180,21 +220,28 @@ def ButtonBar(Grid):
 	for (title, value) in buttonlist:
 	    b = Button(title)
 	    self.list.append(b, value)
-	    self.setField(b, self.item, 0, (0, 1, 0, 1))
+	    self.setField(b, self.item, 0, (1, 0, 1, 0))
 	    self.item = self.item + 1
 
-# FIXME: need to make it possible to find what button was pressed...
+    def buttonPressed(self, widget):
+	"""Takes the widget returned by Form.run and looks to see
+	if it was one of the widgets in the ButtonBar."""
+	for (button, value) in self.list:
+	    if widget == button:
+		return value
+	return None
 
 
-def GridForm(Grid):
+class GridForm(Grid):
 
     def __init__(self, screen, title, *args):
 	self.screen = screen
 	self.title = title
 	self.form = Form()
+	self.childList = []
 	args = list(args)
-	args[:0] = self
-	apply(Grid.__init__, args)
+	args[:0] = [self]
+	apply(Grid.__init__, tuple(args))
 
     def add(self, widget, col, row, padding = (0, 0, 0, 0),
             anchorLeft = 0, anchorTop = 0, anchorRight = 0,
@@ -202,18 +249,14 @@ def GridForm(Grid):
 	self.setField(widget, col, row, padding, anchorLeft,
 		      anchorTop, anchorRight, anchorBottom,
 		      growx, growy);
-	self.form.add(widget)
+	self.childList.append(widget)
 
     def run(self):
-	self.screen.gridWrappedWindow(self.grid, title)
-	self.form.run()
+	self.place(1,1)
+	for child in self.childList:
+	    self.form.add(child)
+	self.screen.gridWrappedWindow(self, self.title)
+	result = self.form.run()
 	self.screen.popWindow()
+	return result
 
-hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3, 
-            "F4" : _snack.KEY_F4, "F5" : _snack.KEY_F5, "F6" : _snack.KEY_F6, 
-            "F7" : _snack.KEY_F7, "F8" : _snack.KEY_F8, "F9" : _snack.KEY_F9, 
-            "F10" : _snack.KEY_F10, "F11" : _snack.KEY_F11, 
-            "F12" : _snack.KEY_F12 }
-
-for n in hotkeys.keys():
-    hotkeys[hotkeys[n]] = n
