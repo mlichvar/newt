@@ -174,8 +174,11 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    } else {
 		chptr = text + width - 1;
 		while (chptr > text && !isspace(*chptr)) chptr--;
-		while (isspace(*chptr)) chptr--;
+		while (chptr > text && isspace(*chptr)) chptr--;
 		chptr++;
+		
+		if (chptr-text == 1 && !isspace(*chptr))
+		  chptr = text + width - 1;
 
 		if (chptr > text)
 		    howbad += width - (chptr - text) + 1;
@@ -185,7 +188,10 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 		    height++;
 		}
 
-		text = chptr + 1;
+		if (isspace(*chptr))
+		    text = chptr + 1;
+		else
+		  text = chptr;
 		while (isspace(*text)) text++;
 	    }
 	}
