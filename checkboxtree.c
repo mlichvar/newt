@@ -4,7 +4,6 @@
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
 
 struct items {
     char * text;
@@ -159,7 +158,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
 			    int flags, int * indexes) {
     struct items * curList, * newNode, * item;
     struct items ** listPtr = NULL;
-    int i, index, numIndexes, width;
+    int i, index, numIndexes;
     struct CheckboxTree * ct = co->data;
 
     numIndexes = 0;
@@ -233,10 +232,9 @@ int newtCheckboxTreeAddArray(newtComponent co,
     item->depth = numIndexes - 1;
 
     i = 4 + (3 * item->depth);
-	width = get_east_asia_str_width (NULL, text, 0);
 
-    if ((width + i + ct->pad) > co->width) {
-	co->width = width + i + ct->pad;
+    if ((strlen(text) + i + ct->pad) > co->width) {
+	co->width = strlen(text) + i + ct->pad;
     }
 
     return 0;
@@ -316,7 +314,6 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     co->height = height;
     co->width = 0;
     co->isMapped = 0;
-	co->isLabel = 0;
     ct->itemlist = NULL;
     ct->firstItem = NULL;
     ct->currItem = NULL;
@@ -660,7 +657,7 @@ void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * 
 {
     struct CheckboxTree * ct;
     struct items * item;
-    int i, width;
+    int i;
 
     if (!co) return;
     ct = co->data;
@@ -671,10 +668,9 @@ void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * 
     item->text = strdup(text);
 
     i = 4 + (3 * item->depth);
-	width = get_east_asia_str_width (NULL, text, 0);
 
-    if ((width + i + ct->pad) > co->width) {
-	co->width = width + i + ct->pad;
+    if ((strlen(text) + i + ct->pad) > co->width) {
+	co->width = strlen(text) + i + ct->pad;
     }
 
     ctDraw(co);

@@ -35,7 +35,6 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
-	co->isLabel = 0;
 
     sc->fullValue = fullValue;
     sc->charsSet = 0;

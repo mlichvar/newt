@@ -4,7 +4,6 @@
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
 
 struct button {
     char * text;
@@ -31,7 +30,6 @@ static struct componentOps buttonOps = {
 static newtComponent createButton(int left, int row, const char * text, int compact) {
     newtComponent co;
     struct button * bu;
-	int width = get_east_asia_str_width (NULL, text, 0);
 
     co = malloc(sizeof(*co));
     bu = malloc(sizeof(struct button));
@@ -43,17 +41,16 @@ static newtComponent createButton(int left, int row, const char * text, int comp
 
     if (bu->compact) {
 	co->height = 1;
-	co->width = width + 3;
+	co->width = strlen(text) + 3;
     } else {
 	co->height = 4;
-	co->width = width + 5;
+	co->width = strlen(text) + 5;
     }
 
     co->top = row;
     co->left = left;
     co->takesFocus = 1;
     co->isMapped = 0;
-	co->isLabel = 0;
 
     newtGotorc(co->top, co->left);
 

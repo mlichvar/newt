@@ -64,7 +64,6 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     co->height = height;
     co->width = 1;
     co->takesFocus = 0;  
-	co->isLabel = 0;
     
     return co;
 }

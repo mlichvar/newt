@@ -11,7 +11,7 @@
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
+
 
 /* Linked list of items in the listbox */
 struct items {
@@ -133,7 +133,6 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     co->ops = &listboxOps;
     co->takesFocus = 1;
     co->callback = NULL;
-	co->isLabel = 0;
 
     updateWidth(co, li, 5);
 
@@ -286,7 +285,7 @@ void ** newtListboxGetSelection(newtComponent co, int *numitems)
 
 void newtListboxSetEntry(newtComponent co, int num, const char * text) {
     struct listbox * li = co->data;
-    int i, w;
+    int i;
     struct items *item;
 
     for(i = 0, item = li->boxItems; item != NULL && i < num;
@@ -298,9 +297,8 @@ void newtListboxSetEntry(newtComponent co, int num, const char * text) {
 	free(item->text);
 	item->text = strdup(text);
     }
-	w = get_east_asia_str_width (NULL, text, 0);
-    if (li->userHasSetWidth == 0 && w > li->curWidth) {
-	updateWidth(co, li, w);
+    if (li->userHasSetWidth == 0 && strlen(text) > li->curWidth) {
+	updateWidth(co, li, strlen(text));
     }
 
     if (num >= li->startShowItem && num <= li->startShowItem + co->height)
@@ -322,7 +320,6 @@ int newtListboxAppendEntry(newtComponent co, const char * text,
 	                const void * data) {
     struct listbox * li = co->data;
     struct items *item;
-	int w;
 
     if(li->boxItems) {
 	for (item = li->boxItems; item->next != NULL; item = item->next);
@@ -332,9 +329,8 @@ int newtListboxAppendEntry(newtComponent co, const char * text,
 	item = li->boxItems = malloc(sizeof(struct items));
     }
 
-	w = get_east_asia_str_width (NULL, text, 0);
-    if (!li->userHasSetWidth && text && (w > li->curWidth))
-	updateWidth(co, li, w);
+    if (!li->userHasSetWidth && text && (strlen(text) > li->curWidth))
+	updateWidth(co, li, strlen(text));
 
     item->text = strdup(text); item->data = data; item->next = NULL;
     item->isSelected = 0;
@@ -350,7 +346,6 @@ int newtListboxInsertEntry(newtComponent co, const char * text,
 	                   const void * data, void * key) {
     struct listbox * li = co->data;
     struct items *item, *t;
-	int w;
 
     if (li->boxItems) {
 	if (key) {
@@ -374,9 +369,8 @@ int newtListboxInsertEntry(newtComponent co, const char * text,
 	item->next = NULL;
     }
 
-	w = get_east_asia_str_width (NULL, text, 0);
-    if (!li->userHasSetWidth && text && (w > li->curWidth))
-	updateWidth(co, li, w);
+    if (!li->userHasSetWidth && text && (strlen(text) > li->curWidth))
+	updateWidth(co, li, strlen(text));
 
     item->text = strdup(text?text:"(null)"); item->data = data;
     item->isSelected = 0;
@@ -423,7 +417,7 @@ int newtListboxDeleteEntry(newtComponent co, void * key) {
     if (!li->userHasSetWidth) {
 	widest = 0;
 	for (item = li->boxItems; item != NULL; item = item->next)
-	    if ((t = get_east_asia_str_width (NULL, item->text, 0)) > widest) widest = t;
+	    if ((t = strlen(item->text)) > widest) widest = t;
     }
 
     if (li->currItem >= num)

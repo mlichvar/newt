@@ -4,7 +4,6 @@
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
 
 struct gridField {
     enum newtGridElement type;
@@ -242,13 +241,12 @@ void newtGridGetSize(newtGrid grid, int * width, int * height) {
 }
 
 void newtGridWrappedWindow(newtGrid grid, char * title) {
-    int width, height, offset = 0, w;
+    int width, height, offset = 0;
 
     newtGridGetSize(grid, &width, &height);
-	w = get_east_asia_str_width (NULL, title, 0);
-    if (width < (w + 2)) {
-	offset = ((w + 2) - width) / 2; 
-	width = w + 2;
+    if (width < strlen(title) + 2) {
+	offset = ((strlen(title) + 2) - width) / 2; 
+	width = strlen(title) + 2;
     }
     newtCenteredWindow(width + 2, height + 2, title);
     newtGridPlace(grid, 1 + offset, 1);

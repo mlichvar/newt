@@ -404,9 +404,13 @@ get_east_asia_str_n_width (const char *locale_name, const char *s, size_t n, int
 int
 get_east_asia_str_width (const char *locale_name, const char *s, int x) {
   size_t n;
+  int rc;
 
   n = strlen(s) + 1;
-  return get_east_asia_str_n_width (locale_name, s, n, x);
+  rc = get_east_asia_str_n_width (locale_name, s, n, x);
+  if (rc == INT_MAX)
+      return strlen (s);
+  return rc;
 }
 
 #if TEST_GET_EAST_ASIA_STR_WIDTH

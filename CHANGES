@@ -1,9 +1,3 @@
-0.50.20
-	- changes to support Asian languages properly
-
-0.50.19-2
- 	- don't build newt-python2 sub package
-
 1.59 -> 0.50.10
 	- added support for help
 	- added cusor on/off stuff

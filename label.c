@@ -4,7 +4,6 @@
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
 
 struct label {
     char * text;
@@ -33,11 +32,10 @@ newtComponent newtLabel(int left, int top, const char * text) {
     co->ops = &labelOps;
 
     co->height = 1;
-    co->width = get_east_asia_str_width (NULL, text, 0);
+    co->width = strlen(text);
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
-	co->isLabel = 1;
 
     la->length = strlen(text);
     la->text = strdup(text);
@@ -49,7 +47,7 @@ void newtLabelSetText(newtComponent co, const char * text) {
     int newLength;
     struct label * la = co->data;
 
-    newLength = get_east_asia_str_width (NULL, text, 0);
+    newLength = strlen(text);
     if (newLength <= la->length) {
 	memset(la->text, ' ', la->length);
 	memcpy(la->text, text, newLength);

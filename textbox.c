@@ -2,11 +2,9 @@
 #include <slang.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #include "newt.h"
 #include "newt_pr.h"
-#include "eawidth.h"
 
 struct textbox {
     char ** lines;
@@ -96,7 +94,6 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     co->left = left;
     co->takesFocus = 0;
     co->width = width;
-	co->isLabel = 0;
 
     tb->doWrap = flags & NEWT_FLAG_WRAP;
     tb->numLines = 0;
@@ -160,88 +157,76 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     int howbad = 0;
     int height = 0;
     int kanji = 0;
-	int w, w2;
 
-	w = get_east_asia_str_width (NULL, text, 0);
     if (resultPtr) {
-		/* XXX I think this will work */
-		result = malloc(w * 2 + 2);
-		*result = '\0';
+	/* XXX I think this will work */
+	result = malloc(strlen(text) + (strlen(text) / width) + 2);
+	*result = '\0';
     }
     
     while (*text) {
         kanji = 0;
-		end = strchr(text, '\n');
-		if (!end)
-			end = text + strlen(text);
+	end = strchr(text, '\n');
+	if (!end)
+	    end = text + strlen(text);
 
-		while (*text && text <= end) {
-			char *ptr;
-
-			ptr = (char *)malloc (sizeof (char)*((end-text)+1));
-			strncpy (ptr, text, end - text);
-			*(ptr + (end-text)) = 0;
-			w2 = get_east_asia_str_width (NULL, ptr, 0);
-			free (ptr);
-			if (w2 < width) {
-				if (result) {
-					strncat(result, text, end - text);
-					strcat(result, "\n");
-				}
-				height++;
-
-				if (w2 < (width / 2))
-					howbad += ((width / 2) - w2) / 2;
-				text = end;
-				if (*text) text++;
-			} else {
-				int is_space = 0, into_kanji = 0;
-				char *spcptr = NULL;
-
-				chptr = text;
-				i = 0;
-				while ( i < (width - 1)) {
-					kanji = east_asia_mblen (NULL, chptr, end - chptr, 0);
-					if ( kanji == INT_MAX || kanji <= 0 ) kanji = 1;
-					else {
-						if ( kanji == 1 ) {
-							if ( is_space == 0 ) {
-								if (isspace(*chptr)) {
-									is_space = 1;
-								}
-								else if ( into_kanji == 1 ) {
-									if (!spcptr) spcptr = chptr;
-									is_space = 1;
-								}
-							} else {
-								if (!spcptr) spcptr = chptr;
-								else if (isspace(*chptr)) {
-									spcptr = NULL;
-									is_space = 1;
-								}
-							}
-						} else {
-							into_kanji = 1;
-							is_space = 0;
-							spcptr = NULL;
-						}
-						if ((i+kanji) < (width - 1)) i += kanji;
-						else break;
-					}
-					chptr = chptr + kanji;
-				}
-				if ( is_space != 0 && spcptr-text > 1 ) chptr = spcptr;
-				howbad += width - (chptr - text) + 1;
-				if ( result ) {
-					strncat (result, text, chptr - text);
-					strcat (result, "\n");
-				}
-				height++;
-				text = chptr;
-				while (east_asia_mblen (NULL, text, end - text, 0) == 1 && isspace(*text)) text++;
-			}
+	while (*text && text <= end) {
+	    if (end - text < width) {
+		if (result) {
+		    strncat(result, text, end - text);
+		    strcat(result, "\n");
+		    height++;
 		}
+
+		if (end - text < (width / 2))
+		    howbad += ((width / 2) - (end - text)) / 2;
+		text = end;
+		if (*text) text++;
+	    } else {
+	        chptr = text;
+	        kanji = 0;
+	        for ( i = 0; i < width - 1; i++ ) {
+		    if ( !iseuckanji(*chptr)) {
+			kanji = 0;
+		    } else if ( kanji == 1 ) {
+		        kanji = 2; 
+		    } else {
+		        kanji = 1;
+		    }
+		    chptr++;
+		}
+	        if (kanji == 0) {
+		    while (chptr > text && !isspace(*chptr)) chptr--;
+		    while (chptr > text && isspace(*chptr)) chptr--;
+		    chptr++;
+		}
+		
+		if (chptr-text == 1 && !isspace(*chptr))
+		  chptr = text + width - 1;
+
+		if (chptr > text)
+		    howbad += width - (chptr - text) + 1;
+		if (result) {
+		  if (kanji == 1) {
+		    strncat(result, text, chptr - text + 1 );
+		    chptr++;
+		    kanji = 0;
+		  } else {
+		    strncat(result, text, chptr - text );
+		  }
+		    strcat(result, "\n");
+		    height++;
+		}
+
+	        if (isspace(*chptr))
+		    text = chptr + 1;
+		else
+		  text = chptr;
+		while (isspace(*text)) text++;
+	    }
 	}
+    }
+
     if (badness) *badness = howbad;
     if (resultPtr) *resultPtr = result;
     if (heightPtr) *heightPtr = height;

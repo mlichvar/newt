@@ -1,12 +1,12 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.50.20
+%define version 0.50.19
 Version: %{version}
 Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python,perl
+BuildRequires: python,python2,perl
 Requires: slang
 Provides: snack
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{root}
@@ -63,11 +63,11 @@ python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/pyth
 
 # cheat... build python2 stuff here
 make clean
-#perl -pi -e "s/python1.5/python2.0/g" *
+perl -pi -e "s/python1.5/python2.0/g" *
 ./configure
 make instroot=$RPM_BUILD_ROOT install
 make instroot=$RPM_BUILD_ROOT install-sh
-#python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.0",10,"/usr/lib/python2.0")'
+python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.0",10,"/usr/lib/python2.0")'
 
 
 %clean
@@ -97,14 +97,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
 
-#%files python2
-#%defattr (-,root,root)
-#/usr/lib/python2.0
+%files python2
+%defattr (-,root,root)
+/usr/lib/python2.0
 
 %changelog
-* Mon Jan 22 2001 Than Ngo <than@redhat.com>
-- don't build newt-python2 sub package.
-
 * Fri Dec 15 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - use %%{_tmppath}
 - add python2 subpackage, with such support
