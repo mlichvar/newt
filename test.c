@@ -36,6 +36,7 @@ void main(void) {
     struct callbackInfo cbis[3];
     char results[10];
     char * enr2, * enr3, * scaleVal;
+    void ** selectedList;
     int i;
     char buf[20];
 
@@ -86,17 +87,17 @@ void main(void) {
     newtFormAddComponents(f, b1, b2, l1, l2, l3, e1, e2, e3, chklist, NULL);
     newtFormAddComponents(f, rsf, scale, NULL);
 
-    lb = newtListbox(45, 3, 4, 0);
-    newtListboxAddEntry(lb, "First", NULL);
-    newtListboxAddEntry(lb, "Second", NULL);
-    newtListboxAddEntry(lb, "Third", NULL);
-    newtListboxAddEntry(lb, "Fourth", NULL);
-    newtListboxAddEntry(lb, "Fifth", NULL);
-    newtListboxAddEntry(lb, "Sixth", NULL);
-    newtListboxAddEntry(lb, "Seventh", NULL);
-    newtListboxAddEntry(lb, "Eighth", NULL);
-    newtListboxAddEntry(lb, "Ninth", NULL);
-    newtListboxAddEntry(lb, "Tenth", NULL);
+    lb = newtListbox(45, 3, 4, NEWT_FLAG_MULTIPLE);
+    newtListboxAddEntry(lb, "First", "First");
+    newtListboxAddEntry(lb, "Second", "Second");
+    newtListboxAddEntry(lb, "Third", "Third");
+    newtListboxAddEntry(lb, "Fourth", "Fourth");
+    newtListboxAddEntry(lb, "Fifth", "Fifth");
+    newtListboxAddEntry(lb, "Sixth", "Sixth");
+    newtListboxAddEntry(lb, "Seventh", "Seventh");
+    newtListboxAddEntry(lb, "Eighth", "Eighth");
+    newtListboxAddEntry(lb, "Ninth", "Ninth");
+    newtListboxAddEntry(lb, "Tenth", "Tenth");
 
     t = newtTextbox(45, 10, 17, 5, NEWT_FLAG_WRAP);
     newtTextboxSetText(t, "This is some text does it look okay?\nThis should be alone.\nThis shouldn't be printed");
@@ -117,6 +118,8 @@ void main(void) {
     enr2 = strdup(enr2);
     enr3 = strdup(enr3);
 
+    selectedList = newtListboxGetSelection(lb);
+
     newtFormDestroy(f);
 
     newtPopWindow();
@@ -126,4 +129,10 @@ void main(void) {
     printf("got string 1: %s\n", scaleVal);
     printf("got string 2: %s\n", enr2);
     printf("got string 3: %s\n", enr3);
+
+    if(selectedList) {
+	printf("\nSelected listbox items:\n");
+	for(i = 0; selectedList[i]; i++)
+	    puts(selectedList[i]);
+    }
 }

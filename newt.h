@@ -26,6 +26,8 @@ extern "C" {
 #define NEWT_COLORSET_FULLSCALE		20
 #define NEWT_COLORSET_DISENTRY		21
 #define NEWT_COLORSET_COMPACTBUTTON	22
+#define NEWT_COLORSET_ACTSELLISTBOX	23
+#define NEWT_COLORSET_SELLISTBOX	24
 
 struct newtColors {
     char * rootFg, * rootBg;
@@ -48,6 +50,8 @@ struct newtColors {
     char * emptyScale, * fullScale;
     char * disabledEntryFg, * disabledEntryBg;
     char * compactButtonFg, * compactButtonBg;
+    char * actSelListboxFg, * actSelListboxBg;
+    char * selListboxFg, * selListboxBg;
 };
 
 enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET };
@@ -132,7 +136,9 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data);
 int newtListboxInsertEntry(newtComponent co, char * text, void * data, int num);
 int newtListboxDeleteEntry(newtComponent co, int num);
 void newtListboxGetEntry(newtComponent co, int num, char **text, void **data);
-
+void **newtListboxGetSelection(newtComponent co);
+void newtListboxClearSelection(newtComponent co);
+    
 newtComponent newtTextbox(int left, int top, int with, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 void newtTextboxSetHeight(newtComponent co, int height);

@@ -146,8 +146,39 @@ void * newtListboxGetCurrent(newtComponent co) {
 	return NULL;
 }
 
+void newtListboxSelectItem(newtComponent co, int item)
+{
+    struct listbox * li = co->data;
+    int i;
+    struct items *iitem;
+    
+    for(i = 0, iitem = li->boxItems; iitem != NULL && i < item;
+	i++, iitem = iitem->next);
+
+    if (iitem) {
+	if(iitem->isSelected)
+	    li->numSelected--;
+	else
+	    li->numSelected++;
+	iitem->isSelected = !iitem->isSelected;
+    }
+    listboxDraw(co);
+}
+
+void newtListboxClearSelection(newtComponent co)
+{
+    struct items *item;
+    struct listbox * li = co->data;
+
+    for(item = li->boxItems; item != NULL;
+	item = item->next)
+	item->isSelected = 0;
+    
+    listboxDraw(co);
+}
+
 /* Free the returned array after use, but NOT the values in the array */
-void ** newtListboxGetSelected(newtComponent co)
+void ** newtListboxGetSelection(newtComponent co)
 {
     struct listbox * li;
     int i;
@@ -159,11 +190,12 @@ void ** newtListboxGetSelected(newtComponent co)
     li = co->data;
     if(!li || !li->numSelected) return NULL;
 
-    retval = malloc(li->numSelected * sizeof(void *));
+    retval = malloc((li->numSelected + 1) * sizeof(void *));
     for(i = 0, item = li->boxItems; item != NULL;
 	item = item->next)
 	if(item->isSelected)
 	    retval[i++] = item->data;
+    retval[i] = NULL;
     return retval;
 }
 
@@ -224,7 +256,8 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 	li->curWidth = strlen(text) ;
 
     item->key = strdup(text); item->data = data; item->next = NULL;
-
+    item->isSelected = 0;
+    
     if (li->sb)
 	li->sb->left = co->left + li->curWidth + 2;
 
@@ -234,6 +267,8 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 	co->width = li->curWidth;
     li->numItems++;
 
+    listboxDraw(co);
+    
     return li->numItems;
 }
 
@@ -268,12 +303,14 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
 	li->curWidth = strlen(text);
 
     item->key = strdup(text?text:"(null)"); item->data = data;
-
+    item->isSelected = 0;
+    
     if (li->sb)
 	li->sb->left = co->left + li->curWidth + 2;
     if (li->userHasSetWidth == 0)
 	co->width = li->curWidth;
     li->numItems++;
+
     listboxDraw(co);
 
     return li->numItems;
@@ -387,13 +424,18 @@ static void listboxDraw(newtComponent co)
 	if (!item->key) continue;
 
 	newtGotorc(co->top + i, co->left + 1);
-	if(j + i == li->currItem)
-	    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
-
+	if(j + i == li->currItem) {
+	    if(item->isSelected)
+		SLsmg_set_color(NEWT_COLORSET_ACTSELLISTBOX);
+	    else
+		SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+	} else if(item->isSelected)
+	    SLsmg_set_color(NEWT_COLORSET_SELLISTBOX);
+	else
+	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
+	    
 	SLsmg_write_nstring(item->key, li->curWidth);
 
-	if(j + i == li->currItem)
-	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
     }
     newtGotorc(co->top + (li->currItem - li->startShowItem), co->left);
 }
@@ -413,6 +455,12 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 	if (!li->isActive) break;
 
 	switch(ev.u.key) {
+	  case ' ':
+	    if(!(li->flags & NEWT_FLAG_MULTIPLE)) break;
+	    newtListboxSelectItem(co, li->currItem);
+	    er.result = ER_SWALLOWED;
+	    break;
+
 	  case NEWT_KEY_ENTER:
 	    if(li->numItems <= 0) break;
 	    if(li->flags & NEWT_FLAG_RETURNEXIT)

@@ -57,6 +57,8 @@ struct newtColors newtDefaultColorPalette = {
 	"red",					/* scale empty */
 	"blue", "lightgray",			/* disabled entry fg, bg */
 	"white", "blue",			/* compact button fg, bg */
+	"yellow", "red",			/* active & sel listbox */
+	"black", "brown"			/* selected listbox */
 };
 
 static struct keymap keymap[] = {
@@ -222,6 +224,11 @@ void newtSetColors(struct newtColors colors) {
 
     SLtt_set_color(NEWT_COLORSET_COMPACTBUTTON, "", colors.compactButtonFg,
 			colors.compactButtonBg);
+    
+    SLtt_set_color(NEWT_COLORSET_ACTSELLISTBOX, "", colors.actSelListboxFg,
+		   colors.actSelListboxBg);
+    SLtt_set_color(NEWT_COLORSET_SELLISTBOX, "", colors.selListboxFg,
+		   colors.selListboxBg);
 }
 
 int newtGetKey(void) {
@@ -304,7 +311,7 @@ void newtClearKeyBuffer(void) {
 
 int newtOpenWindow(int left, int top, int width, int height, 
 			  char * title) {
-    int i, j, row, col;
+    int j, row, col;
     int n;
 
     newtFlushInput();
