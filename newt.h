@@ -75,6 +75,7 @@ enum newtFlagsSense { NEWT_FLAGS_SET, NEWT_FLAGS_RESET, NEWT_FLAGS_TOGGLE };
 #define NEWT_FLAG_PASSWORD      (1 << 11)  /* draw '*'  of chars in entrybox */
 #define NEWT_FD_READ		(1 << 0)
 #define NEWT_FD_WRITE		(1 << 1)
+#define NEWT_FD_EXCEPT		(1 << 2)
 
 #define NEWT_CHECKBOXTREE_COLLAPSED	'\0'
 #define NEWT_CHECKBOXTREE_EXPANDED	'\1'
@@ -207,6 +208,7 @@ struct newtExitStruct {
     enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
 	   NEWT_EXIT_TIMER } reason;
     union {
+	int watch;
 	int key;
 	newtComponent co;
     } u;

@@ -884,7 +884,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct eventResult er;
     int key, i, max;
     int done = 0;
-    fd_set readSet, writeSet;
+    fd_set readSet, writeSet, exceptSet;
     struct timeval nextTimeout, now, timeout;
 #ifdef USE_GPM
     int x, y;
@@ -914,6 +914,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 
 	FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
+	FD_ZERO(&exceptSet);
 	FD_SET(0, &readSet);
 #ifdef USE_GPM
 	if (gpm_fd > 0) {
@@ -929,6 +930,8 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		FD_SET(form->fds[i].fd, &readSet);
 	    if (form->fds[i].flags & NEWT_FD_WRITE)
 		FD_SET(form->fds[i].fd, &writeSet);
+	    if (form->fds[i].flags & NEWT_FD_EXCEPT)
+		FD_SET(form->fds[i].fd, &exceptSet);
 	}
 
 	if (form->timer) {
@@ -965,7 +968,7 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	    timeout.tv_sec = timeout.tv_usec = 0;
 	}
 
-	i = select(max + 1, &readSet, &writeSet, NULL, 
+	i = select(max + 1, &readSet, &writeSet, &exceptSet, 
 			form->timer ? &timeout : NULL);
 	if (i < 0) continue;	/* ?? What should we do here? */
 
@@ -1034,6 +1037,19 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		    }
 		}
 	    } else {
+		for (i = 0; i < form->numFds; i++) {
+		    if (((form->fds[i].flags & NEWT_FD_READ)
+			&& FD_ISSET(form->fds[i].fd, &readSet))
+			|| ((form->fds[i].flags & NEWT_FD_WRITE)
+			&& FD_ISSET(form->fds[i].fd, &writeSet))
+			|| ((form->fds[i].flags & NEWT_FD_EXCEPT)
+			&& FD_ISSET(form->fds[i].fd, &exceptSet))) break;
+		}
+		if(i < form->numFds)
+		    es->u.watch = form->fds[i].fd;
+		else
+		    es->u.watch = -1;
+
 		es->reason = NEWT_EXIT_FDREADY;
 		done = 1;
 	    }

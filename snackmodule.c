@@ -15,6 +15,9 @@ struct callbackStruct {
     PyObject * cb, * data;
 };
 
+/* Integer to pointer, 64-bit-sane */
+#define I2P(x) ((void *)(long)(x))
+
 static struct callbackStruct suspend;
 static struct callbackStruct helpCallback;
 
@@ -131,6 +134,7 @@ static PyObject * formRun(snackForm * s, PyObject * args);
 static PyObject * formHotKey(snackForm * s, PyObject * args);
 static PyObject * formSetCurrent(snackForm * form, PyObject * args);
 static PyObject * formSetTimer(snackForm * form, PyObject * args);
+static PyObject * formWatchFD(snackForm * form, PyObject * args);
 
 static PyMethodDef formMethods[] = {
     { "add", (PyCFunction) formAdd, METH_VARARGS, NULL },
@@ -139,6 +143,7 @@ static PyMethodDef formMethods[] = {
     { "addhotkey", (PyCFunction) formHotKey, METH_VARARGS, NULL },
     { "setcurrent", (PyCFunction) formSetCurrent, METH_VARARGS, NULL },
     { "settimer", (PyCFunction) formSetTimer, METH_VARARGS, NULL },
+    { "watchfd", (PyCFunction) formWatchFD, METH_VARARGS, NULL },
     { NULL }
 };
 
@@ -812,6 +817,8 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
 	return Py_BuildValue("(si)", "hotkey", result.u.key);
     else if (result.reason == NEWT_EXIT_TIMER)
 	return Py_BuildValue("(si)", "timer", 0);
+    else if (result.reason == NEWT_EXIT_FDREADY)
+	return Py_BuildValue("(si)", "fdready", result.u.watch);
     else
 	return Py_BuildValue("(si)", "widget", result.u.co);
 }
@@ -835,6 +842,18 @@ static PyObject * formSetTimer(snackForm * form, PyObject * args) {
 	return NULL;
 
     newtFormSetTimer(form->fo, millisecs);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * formWatchFD(snackForm * form, PyObject * args) {
+    int fd, fdflags;
+
+    if (!PyArg_ParseTuple(args, "ii", &fd, &fdflags))
+	return NULL;
+
+    newtFormWatchFd(form->fo, fd, fdflags);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -923,7 +942,7 @@ static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "s", &text))
 	return NULL;
 
-    newtListboxAddEntry(s->co, text, (void *) s->anint);
+    newtListboxAddEntry(s->co, text, I2P(s->anint));
 
     return PyInt_FromLong(s->anint++);
 }
@@ -935,7 +954,7 @@ static PyObject * widgetListboxIns(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "si", &text, &key))
 	return NULL;
 
-    newtListboxInsertEntry(s->co, text, (void *) s->anint, (void *) key);
+    newtListboxInsertEntry(s->co, text, I2P(s->anint), I2P(key));
 
     return PyInt_FromLong(s->anint++);
 }
@@ -946,7 +965,7 @@ static PyObject * widgetListboxDel(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i", &key))
 	return NULL;
 
-    newtListboxDeleteEntry(s->co, (void *) key);
+    newtListboxDeleteEntry(s->co, I2P(key));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -965,7 +984,7 @@ static PyObject * widgetListboxSet(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "i", &index))
 	return NULL;
 
-    newtListboxSetCurrentByKey(s->co, (void *) index);
+    newtListboxSetCurrentByKey(s->co, I2P(index));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1022,7 +1041,7 @@ static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args) {
     }
     path[len] = NEWT_ARG_LAST;
 
-    newtCheckboxTreeAddArray(s->co, text, (void *) s->anint,
+    newtCheckboxTreeAddArray(s->co, text, I2P(s->anint),
     			     selected ? NEWT_FLAG_SELECTED : 0, path);
 
     return PyInt_FromLong(s->anint++);
@@ -1032,7 +1051,7 @@ static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, ""))
 	return NULL;
 
-    return PyInt_FromLong((int) newtCheckboxTreeGetCurrent(s->co));
+    return PyInt_FromLong((long)newtCheckboxTreeGetCurrent(s->co));
 }
 
 static PyObject * widgetCheckboxTreeSetEntry(snackWidget * s, PyObject * args) {
@@ -1041,7 +1060,7 @@ static PyObject * widgetCheckboxTreeSetEntry(snackWidget * s, PyObject * args) {
 
     if (!PyArg_ParseTuple(args, "is", &data, &text)) return NULL;
 
-    newtCheckboxTreeSetEntry(s->co, (void *)data, text);
+    newtCheckboxTreeSetEntry(s->co, I2P(data), text);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1052,7 +1071,7 @@ static PyObject * widgetCheckboxTreeSetCurrent(snackWidget * s, PyObject * args)
 
     if (!PyArg_ParseTuple(args, "i", &data)) return NULL;
 
-    newtCheckboxTreeSetCurrent(s->co, (void *)data);
+    newtCheckboxTreeSetCurrent(s->co, I2P(data));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1064,7 +1083,7 @@ static PyObject * widgetCheckboxTreeSetEntryValue(snackWidget * s, PyObject * ar
 
     if (!PyArg_ParseTuple(args, "i|i", &data, &isOn)) return NULL;
 
-    newtCheckboxTreeSetEntryValue(s->co, (void *)data,
+    newtCheckboxTreeSetEntryValue(s->co, I2P(data),
 				  isOn ? NEWT_CHECKBOXTREE_SELECTED :
 					 NEWT_CHECKBOXTREE_UNSELECTED);
 
@@ -1080,7 +1099,7 @@ static PyObject * widgetCheckboxTreeGetEntryValue(snackWidget * s, PyObject * ar
 
     if (!PyArg_ParseTuple(args, "i", &data)) return NULL;
 
-    selection = newtCheckboxTreeGetEntryValue(s->co, (void *)data);
+    selection = newtCheckboxTreeGetEntryValue(s->co, I2P(data));
 
     if (selection == -1) return NULL;
 
@@ -1119,7 +1138,7 @@ static PyObject * widgetCheckboxTreeGetSel(snackWidget * s,
 
     sel = PyList_New(0);
     for (i = 0; i < numselected; i++) {
-    	PyList_Append(sel, PyInt_FromLong((int) selection[i]));
+    	PyList_Append(sel, PyInt_FromLong((long) selection[i]));
     }
     free(selection);
 
@@ -1140,9 +1159,14 @@ void init_snack(void) {
     PyDict_SetItemString(d, "GRID_GROWX", PyInt_FromLong(NEWT_GRID_FLAG_GROWX));
     PyDict_SetItemString(d, "GRID_GROWY", PyInt_FromLong(NEWT_GRID_FLAG_GROWY));
 
+    PyDict_SetItemString(d, "FD_READ", PyInt_FromLong(NEWT_FD_READ));
+    PyDict_SetItemString(d, "FD_WRITE", PyInt_FromLong(NEWT_FD_WRITE));
+    PyDict_SetItemString(d, "FD_EXCEPT", PyInt_FromLong(NEWT_FD_EXCEPT));
+
     PyDict_SetItemString(d, "FORM_EXIT_HOTKEY", PyString_FromString("hotkey"));
     PyDict_SetItemString(d, "FORM_EXIT_WIDGET", PyString_FromString("widget"));
     PyDict_SetItemString(d, "FORM_EXIT_TIMER", PyString_FromString("timer"));
+    PyDict_SetItemString(d, "FORM_EXIT_FDREADY", PyString_FromString("fdready"));
 
     PyDict_SetItemString(d, "KEY_F1", PyInt_FromLong(NEWT_KEY_F1));
     PyDict_SetItemString(d, "KEY_F2", PyInt_FromLong(NEWT_KEY_F2));

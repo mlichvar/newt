@@ -8,13 +8,9 @@ import _snack
 import types
 import string
 
-snackArgs = {}
-snackArgs['append'] = -1
+from _snack import FLAG_DISABLED, FLAGS_SET, FLAGS_RESET, FLAGS_TOGGLE, FD_READ, FD_WRITE, FD_EXCEPT
 
-FLAG_DISABLED = _snack.FLAG_DISABLED
-FLAGS_SET = _snack.FLAGS_SET
-FLAGS_RESET = _snack.FLAGS_RESET
-FLAGS_TOGGLE = _snack.FLAGS_TOGGLE
+snackArgs = {"append":-1}
 
 class Widget:
     def setCallback(self, obj, data = None):
@@ -179,6 +175,8 @@ class Form:
 	    return self.trans[which]
 	elif (what == _snack.FORM_EXIT_TIMER):
 	    return "TIMER"
+	elif (what == _snack.FORM_EXIT_FDREADY):
+	    return self.filemap[which]
 
 	return hotkeys[which]
 
@@ -188,6 +186,7 @@ class Form:
 
     def __init__(self, helpArg = None):
 	self.trans = {}
+	self.filemap = {}
 	self.w = _snack.form(helpArg)
 	# we do the reference count for the helpArg in python! gross
 	self.helpArg = helpArg
@@ -197,6 +196,10 @@ class Form:
 
     def setTimer (self, timer):
         self.w.settimer (timer)
+
+    def watchFile (self, file, flags):
+	self.filemap[file.fileno()] = file
+	self.w.watchfd (file.fileno(), flags)
 
 class Grid:
 
