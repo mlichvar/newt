@@ -303,6 +303,8 @@ void newtTextboxSetText(newtComponent co, const char * text) {
 	addLine(co, start, strlen(start));
 
     free(expanded);
+    
+    newtTrashScreen();    
 }
 
 /* This assumes the buffer is allocated properly! */
@@ -330,8 +332,6 @@ static void textboxDraw(newtComponent c) {
 
     SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
 
-    newtTrashScreen();
-
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);
 	SLsmg_write_string(tb->lines[i + tb->topLine]);
@@ -346,6 +346,7 @@ static struct eventResult textboxEvent(newtComponent co,
     er.result = ER_IGNORED;
 
     if (ev.when == EV_EARLY && ev.event == EV_KEYPRESS && tb->sb) {
+	newtTrashScreen();
 	switch (ev.u.key) {
 	  case NEWT_KEY_UP:
 	    if (tb->topLine) tb->topLine--;
