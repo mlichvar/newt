@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <slang/slang.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -39,6 +40,7 @@ void newtEntrySet(newtComponent co, char * value, int cursorAtEnd) {
 	en->buf = malloc(en->bufAlloced);
 	*en->resultPtr = en->buf;
     }
+    memset(en->buf, 0, en->bufAlloced);		/* clear the buffer */
     strcpy(en->buf, value);
     en->bufUsed = strlen(value);
     en->firstChar = 0;
@@ -141,7 +143,10 @@ static void entryDraw(newtComponent co) {
 	SLsmg_write_nstring(chptr, co->width);
     }
 
-    newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
+    if (en->flags & NEWT_ENTRY_HIDDEN)
+	newtGotorc(co->top, co->left);
+    else
+	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
 }
 
 static void entryDestroy(newtComponent co) {
@@ -161,8 +166,11 @@ static struct eventResult entryEvent(struct newtComponent * co,
 	switch (ev.event) {
 	  case EV_FOCUS:
 	    /*SLtt_set_cursor_visibility(0);*/
-	    newtGotorc(co->top, co->left + 
-			        (en->cursorPosition - en->firstChar));
+	    if (en->flags & NEWT_ENTRY_HIDDEN)
+		newtGotorc(co->top, co->left);
+	    else
+		newtGotorc(co->top, co->left + 
+				(en->cursorPosition - en->firstChar));
 	    er.result = ER_SWALLOWED;
 	    break;
 
