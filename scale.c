@@ -42,9 +42,14 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
 
 void newtScaleSet(newtComponent co, long long amount) {
     struct scale * sc = co->data;
-    sc->charsSet = (amount * co->width) / sc->fullValue;
+    int newCharsSet;
 
-    scaleDraw(co);
+    newCharsSet = (amount * co->width) / sc->fullValue;
+    
+    if (newCharsSet != sc->charsSet) {
+	sc->charsSet = newCharsSet;
+	scaleDraw(co);
+    }
 }
 
 static void scaleDraw(newtComponent co) {
