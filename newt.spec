@@ -1,9 +1,9 @@
-%define pythonver 2.3
+%define pythonver %(%{__python} -c "import sys; print sys.version[:3]")
 
 Summary: A development library for text mode user interfaces.
 Name: newt
 Version: 0.51.7
-Release: 1
+Release: 2
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -82,6 +82,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Thu Apr  8 2004 Adrian Havill <havill@redhat.com> 0.51.7-2
+- incorporated some debian memcheck fixes, whiptail features
+- change .spec to not use hardcoded python version much like up2date (#114419)
+
 * Fri Dec  5 2003 Jeremy Katz <katzj@redhat.com> 0.51.7-1
 - rebuild against new slang
 
