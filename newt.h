@@ -32,7 +32,6 @@ void newtRefresh(void);
 /* Components */
 
 typedef struct newtComponent * newtComponent;
-typedef struct newtForm * newtForm;
 
 newtComponent newtButton(int left, int top, char * text);
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
@@ -40,21 +39,21 @@ newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton);
 
+newtComponent newtForm(void);
+void newtFormAddComponent(newtComponent form, newtComponent co);
+void newtFormAddComponents(newtComponent form, ...);
+newtComponent newtRunForm(newtComponent form);
+
 #define NEWT_ENTRY_SCROLL	(1 << 0)
 #define NEWT_ENTRY_HIDDEN	(1 << 1)
 
 newtComponent newtEntry(int left, int top, char * initialValue, int width,
 			char ** resultPtr, int flags);
 
-/* Forms */
 
-newtForm newtCreateForm(void);
-void newtAddComponentToForm(newtForm form, newtComponent co);
-void newtAddComponentsToForm(newtForm form, ...);
-newtComponent newtRunForm(newtForm form);
-
-/* this also destroys all of the components on the form */
-void newtDestroyForm(newtForm form);	
+/* this also destroys all of the components (including other forms) on the 
+   form */
+void newtFormDestroy(newtComponent form);	
 
 /* Key codes */
 

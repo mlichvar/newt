@@ -6,7 +6,7 @@
 
 void main(void) {
     newtComponent b1, b2, c1, c2, r1, r2, r3, e1, e2, e3;
-    newtForm f;
+    newtComponent f, chklist;
     char result, result2;
     char * enr1, * enr2, * enr3;
 
@@ -16,7 +16,8 @@ void main(void) {
     newtOpenWindow(2, 5, 30, 10, "first window");
     newtOpenWindow(20, 10, 40, 13, "window 2");
 
-    f = newtCreateForm();
+    f = newtForm();
+    chklist = newtForm();
 
     b1 = newtButton(3, 1, "Push me");
     b2 = newtButton(18, 1, "Not me");
@@ -30,8 +31,10 @@ void main(void) {
     e2 = newtEntry(3, 11, "Default", 20, &enr2, NEWT_ENTRY_SCROLL);
     e3 = newtEntry(3, 12, NULL, 20, &enr3, NEWT_ENTRY_HIDDEN);
 
-    newtAddComponentsToForm(f, b1, b2, c1, c2, NULL);
-    newtAddComponentsToForm(f, r1, r2, r3, e1, e2, e3, NULL);
+    newtFormAddComponents(chklist, c1, c2, NULL);
+
+    newtFormAddComponents(f, b1, b2, chklist, NULL);
+    newtFormAddComponents(f, r1, r2, r3, e1, e2, e3, NULL);
 
     newtRunForm(f);
  
@@ -39,7 +42,7 @@ void main(void) {
     enr2 = strdup(enr2);
     enr3 = strdup(enr3);
 
-    newtDestroyForm(f);
+    newtFormDestroy(f);
 
     newtPopWindow();
     newtPopWindow();
