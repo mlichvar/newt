@@ -13,6 +13,8 @@ struct newtColors {
     char * actCheckboxFg, * actCheckboxBg;
     char * entryFg, * entryBg;
     char * labelFg, * labelBg;
+    char * listboxFg, * listboxBg;
+    char * actListboxFg, * actListboxBg;
 };
 
 extern struct newtColors newtDefaultColorPalette;
@@ -35,16 +37,22 @@ void newtRefresh(void);
 typedef struct newtComponent * newtComponent;
 
 newtComponent newtButton(int left, int top, char * text);
-newtComponent newtLabel(int left, int top, char * text);
 newtComponent newtCheckbox(int left, int top, char * text, char defValue,
 			   char * seq, char * result);
 newtComponent newtRadiobutton(int left, int top, char * text, int isDefault,
 			      newtComponent prevButton);
+newtComponent newtListitem(int left, int top, char * text, int isDefault,
+			      newtComponent prevItem);
+
+newtComponent newtLabel(int left, int top, char * text);
+
+newtComponent newtListbox(int left, int top, int height, int flags);
+void newtListboxAddEntry(newtComponent co, char * text);
 
 newtComponent newtForm(void);
 void newtFormAddComponent(newtComponent form, newtComponent co);
 void newtFormAddComponents(newtComponent form, ...);
-void newtFormSetSize(newtComponent co, int width, int height);
+void newtFormSetHeight(newtComponent co, int height);
 newtComponent newtRunForm(newtComponent form);
 
 #define NEWT_ENTRY_SCROLL	(1 << 0)
@@ -73,5 +81,6 @@ void newtFormDestroy(newtComponent form);
 #define NEWT_KEY_DELETE			NEWT_KEY_EXTRA_BASE + 7
 #define NEWT_KEY_HOME			NEWT_KEY_EXTRA_BASE + 8
 #define NEWT_KEY_END			NEWT_KEY_EXTRA_BASE + 9
+#define NEWT_KEY_UNTAB			NEWT_KEY_EXTRA_BASE + 10
 
 #endif /* H_NEWT */
