@@ -83,7 +83,8 @@ int main(void) {
     l3 = newtLabel(3, 8, "Hidden:");
     e1 = newtEntry(12, 6, "", 20, &scaleVal, 0);
     e2 = newtEntry(12, 7, "Default", 20, &enr2, NEWT_FLAG_SCROLL);
-    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_FLAG_HIDDEN);
+/*    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_FLAG_HIDDEN); */
+    e3 = newtEntry(12, 8, NULL, 20, &enr3, NEWT_FLAG_PASSWORD);
 
     cbis[0].state = &results[0];
     cbis[0].en = e1;

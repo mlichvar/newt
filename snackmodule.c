@@ -674,14 +674,15 @@ static snackWidget * entryWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
     int width;
     char * initial;
-    int isHidden, isScrolled, returnExit;
+    int isHidden, isScrolled, returnExit, isPassword;
 
-    if (!PyArg_ParseTuple(args, "isiii", &width, &initial,
-			  &isHidden, &isScrolled, &returnExit)) return NULL;
+    if (!PyArg_ParseTuple(args, "isiiii", &width, &initial,
+			  &isHidden, &isPassword, &isScrolled, &returnExit)) return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtEntry(-1, -1, initial, width, (char **) &widget->apointer, 
 			   (isHidden ? NEWT_FLAG_HIDDEN : 0) |
+			   (isPassword ? NEWT_FLAG_PASSWORD : 0) |
 			   (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
 			   (isScrolled ? NEWT_FLAG_SCROLL : 0));
 

@@ -137,9 +137,9 @@ class Entry(Widget):
     def setFlags (self, flag, sense):
         return self.w.entrySetFlags(flag, sense)
 
-    def __init__(self, width, text = "", hidden = 0, scroll = 1, 
+    def __init__(self, width, text = "", hidden = 0, password = 0, scroll = 1, 
 		 returnExit = 0):
-	self.w = _snack.entry(width, text, hidden, scroll, returnExit)
+	self.w = _snack.entry(width, text, hidden, password, scroll, returnExit)
 
 
 # Form uses hotkeys
