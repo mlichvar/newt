@@ -96,6 +96,11 @@ class Listbox(Widget):
     def setCurrent(self, item):
 	self.w.listboxSetCurrent(self.item2key[item])
 
+    def clear(self):
+        self.key2item = {}
+        self.item2key = {}        
+        self.w.listboxClear()
+
     def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
 	self.w = _snack.listbox(height, scroll, returnExit)
 	self.key2item = {}
@@ -355,7 +360,7 @@ class RadioBar(Grid):
 
 class ButtonBar(Grid):
 
-    def __init__(self, screen, buttonlist):
+    def __init__(self, screen, buttonlist, compact = 0):
 	self.list = []
 	self.hotkeys = {}
 	self.item = 0
@@ -370,7 +375,10 @@ class ButtonBar(Grid):
 		(title, value, hotkey) = blist
 		self.hotkeys[hotkey] = value
 
-	    b = Button(title)
+            if compact:
+                b = CompactButton(title)
+            else:
+                b = Button(title)
 	    self.list.append((b, value))
 	    self.setField(b, self.item, 0, (1, 0, 1, 0))
 	    self.item = self.item + 1
@@ -615,9 +623,9 @@ class CListBox(Grid):
 			delta = self.col_widths[i] - len(cstr)
 			if delta > 0:
 				if align == None:
-					a = LEFT
-				else:
-					a = align[i]
+                                    a = LEFT
+                                else:
+                                    a = align[i]
 
 				if a == LEFT:
 					cstr = cstr + (" " * delta)
@@ -664,4 +672,6 @@ class CListBox(Grid):
 
 	def setCurrent(self, item):
 		self.listbox.setCurrent(item)
-		
+
+        def clear(self):
+            self.listbox.clear()

@@ -186,6 +186,7 @@ static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSet(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxClear(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s, PyObject * args);
@@ -209,6 +210,7 @@ static PyMethodDef widgetMethods[] = {
     { "listboxSetCurrent", (PyCFunction) widgetListboxSet, METH_VARARGS, NULL },
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
+    { "listboxClear", (PyCFunction) widgetListboxClear, METH_VARARGS, NULL },
     { "scaleSet", (PyCFunction) scaleSet, METH_VARARGS, NULL },
     { "checkboxtreeAddItem", (PyCFunction) widgetCheckboxTreeAddItem,
       METH_VARARGS, NULL },
@@ -1014,6 +1016,16 @@ static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args) {
 
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+static PyObject * widgetListboxClear(snackWidget * s, PyObject * args) {
+  if (!PyArg_ParseTuple(args, ""))
+    return NULL;
+
+  newtListboxClear(s->co);
+
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 static void emptyDestructor(PyObject * s) {
