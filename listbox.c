@@ -22,6 +22,7 @@ struct items {
 struct listbox {
     newtComponent sb; /* Scrollbar on right side of listbox */
     int numItems, curWidth;
+    int userHasSetWidth;
     int currItem, startShowItem; /* startShowItem is the first item displayed
 				   on the screen */
     int isActive; /* If we handle key events all the time, it seems
@@ -59,6 +60,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     li->numItems = 0;
     li->currItem = 0;
     li->isActive = 0;
+    li->userHasSetWidth = 0;
     li->startShowItem = 0;
     li->flags = flags & (NEWT_FLAG_RETURNEXIT|NEWT_FLAG_DOBORDER);
 
@@ -108,6 +110,16 @@ void newtListboxSetCurrent(newtComponent co, int num) {
     listboxDraw(co);
 }
 
+
+void newtListboxSetWidth(newtComponent co , int width) {
+    struct listbox * li = co->data;
+    
+    li->curWidth = co->width = width;
+    li->userHasSetWidth = 1;
+    li->sb->left = width + co->left + 2;
+    listboxDraw(co);
+}
+
 void * newtListboxGetCurrent(newtComponent co) {
     struct listbox * li = co->data;
     int i;
@@ -136,7 +148,8 @@ void newtListboxSetText(newtComponent co, int num, char * text) {
 	free(item->key);
 	item->key = strdup(text);
     }
-    if (strlen(text) > li->curWidth) {
+    if (li->userHasSetWidth == 0
+	&& strlen(text) > li->curWidth) {
 	co->width = li->curWidth = strlen(text);
 	if (li->sb)
 	    li->sb->left = co->left + co->width + 2;
@@ -173,7 +186,8 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 	item = li->boxItems = malloc(sizeof(struct items));
     }
 
-    if (text && (strlen(text) > li->curWidth))
+    if (li->userHasSetWidth == 0
+	&& text && (strlen(text) > li->curWidth))
 	li->curWidth = strlen(text) ;
 
     item->key = strdup(text); item->data = data; item->next = NULL;
@@ -183,8 +197,8 @@ int newtListboxAddEntry(newtComponent co, char * text, void * data) {
 
     if (li->grow)
 	co->height++;
-
-    co->width = li->curWidth;
+    if(li->userHasSetWidth == 0)
+	co->width = li->curWidth;
     li->numItems++;
 
     return li->numItems;
@@ -216,15 +230,16 @@ int newtListboxInsertEntry(newtComponent co, char * text, void * data,
 	item->next = NULL;
     }
 
-    if (text && (strlen(text) > li->curWidth))
+    if (li->userHasSetWidth == 0
+	&& text && (strlen(text) > li->curWidth))
 	li->curWidth = strlen(text);
 
     item->key = strdup(text?text:"(null)"); item->data = data;
 
     if (li->sb)
 	li->sb->left = co->left + li->curWidth + 2;
-
-    co->width = li->curWidth;
+    if (li->userHasSetWidth == 0)
+	co->width = li->curWidth;
     li->numItems++;
     listboxDraw(co);
 
@@ -270,9 +285,11 @@ int newtListboxDeleteEntry(newtComponent co, int num) {
 	if((t = strlen(item->key)) > widest) widest = t;
 
     /* Adjust the listbox width */
-    co->width = li->curWidth = widest;
-    if (li->sb)
-	li->sb->left = co->left + widest + 2;
+    if (li->userHasSetWidth == 0) {
+	co->width = li->curWidth = widest;
+	if (li->sb)
+		li->sb->left = co->left + widest + 2;
+    }
 
     listboxDraw(co);
 

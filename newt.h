@@ -124,6 +124,7 @@ void * newtListboxGetCurrent(newtComponent co);
 void newtListboxSetCurrent(newtComponent co, int num);
 void newtListboxSetText(newtComponent co, int num, char * text);
 void newtListboxSetEntry(newtComponent co, int num, char * text);
+void newtListboxSetWidth(newtComponent co, int width);
 /* return the data passed to AddEntry */
 void newtListboxSetData(newtComponent co, int num, void * data);
 int newtListboxAddEntry(newtComponent co, char * text, void * data);

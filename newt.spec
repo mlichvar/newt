@@ -1,10 +1,10 @@
 Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
-Version: 0.8
+Version: 0.9
 Release: 1
 Copyright: LGPL
 Group: Libraries
-Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-0.8.tar.gz
+Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-0.9.tar.gz
 Requires: slang
 %package devel
 Summary: Developer's toolkit for newt windowing library
@@ -44,6 +44,11 @@ make install-sh
 /sbin/ldconfig
 
 %changelog
+
+* Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
+
+- Added patched from Clarence Smith for setting the size of a listbox
+- Version 0.9
 
 * Tue May 28 1997 Elliot Lee <sopwith@redhat.com> 0.8-2
 - Touchups on Makefile

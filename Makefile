@@ -103,7 +103,7 @@ archive:
 	@rm -f /tmp/newt-$(VERSION).tar.gz 
 	@echo " "
 	@echo "The final archive is ./newt-$(VERSION).tar.gz. You should run"
-	@echo "-n$(VERSION): RCS/*,v on all of the directories btw."
+	@echo "cvs tag v$(VERSION) now."
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
