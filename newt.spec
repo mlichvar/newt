@@ -50,6 +50,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Aug 19 1998 Bill Nottingham <notting@redhat.com>
+- bugfixes for text reflow
+- added docs to devel
+
 * Fri May 01 1998 Cristian Gafton <gafton@redhat.com>
 - devel package moved to Development/Libraries
 
@@ -97,12 +101,15 @@ rm -rf $RPM_BUILD_ROOT
 - Added changes from sopwith for C++ cleanliness and some listbox fixes.
 
 %files
+%defattr (-,root,root)
 /usr/lib/libnewt.so.*
 /usr/bin/whiptail
 /usr/lib/python1.5/snack.py
 /usr/lib/python1.5/lib-dynload/_snackmodule.so
 
 %files devel
+%defattr (-,root,root)
+%doc CHANGES COPYING tutorial.sgml
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
