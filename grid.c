@@ -245,3 +245,18 @@ void newtGridWrappedWindow(newtGrid grid, char * title) {
     newtCenteredWindow(width + 2, height + 2, title);
     newtGridPlace(grid, 1, 1);
 }
+
+void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
+				 int recurse) {
+    int row, col;
+
+    for (col = 0; col < grid->cols; col++) {
+	for (row = 0; row < grid->rows; row++) {
+	    if (grid->fields[col][row].type == NEWT_GRID_SUBGRID && recurse)
+		newtGridAddComponentsToForm(grid->fields[col][row].u.grid,
+					    form, 1);
+	    else
+		newtFormAddComponent(form, grid->fields[col][row].u.co);
+	}
+    }
+}

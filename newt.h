@@ -253,6 +253,8 @@ void newtGridPlace(newtGrid grid, int left, int top);
 void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
 void newtGridWrappedWindow(newtGrid grid, char * title);
+void newtGridAddComponentsToForm(newtGrid grid, newtComponent form, 
+				 int recurse);
 
 /* convienve */
 newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...);

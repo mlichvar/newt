@@ -50,6 +50,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Fri Jan 16 1998 Erik Troan <ewt@redhat.com>
+
+- added changes from Bruce Perens
+    - small cleanups
+    - lets whiptail automatically resize windows
+- the order of placing a grid and adding components to a form no longer
+  matters
+- added newtGridAddComponentsToForm()
+
 * Wed Oct 08 1997 Erik Troan <ewt@redhat.com>
 
 - added newtWinTernary()
