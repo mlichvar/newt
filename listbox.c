@@ -186,24 +186,24 @@ void newtListboxClearSelection(newtComponent co)
 }
 
 /* Free the returned array after use, but NOT the values in the array */
-void ** newtListboxGetSelection(newtComponent co)
+void ** newtListboxGetSelection(newtComponent co, int *numitems)
 {
     struct listbox * li;
     int i;
     void **retval;
     struct items *item;
 
-    if(!co) return NULL;
+    if(!co || !numitems) return NULL;
 
     li = co->data;
     if(!li || !li->numSelected) return NULL;
 
-    retval = malloc((li->numSelected + 1) * sizeof(void *));
+    retval = malloc(li->numSelected * sizeof(void *));
     for(i = 0, item = li->boxItems; item != NULL;
 	item = item->next)
 	if(item->isSelected)
 	    retval[i++] = item->data;
-    retval[i] = NULL;
+    *numitems = li->numSelected;
     return retval;
 }
 

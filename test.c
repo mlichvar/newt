@@ -37,7 +37,7 @@ void main(void) {
     char results[10];
     char * enr2, * enr3, * scaleVal;
     void ** selectedList;
-    int i;
+    int i, numsel;
     char buf[20];
 
     newtInit();
@@ -119,7 +119,7 @@ void main(void) {
     enr2 = strdup(enr2);
     enr3 = strdup(enr3);
 
-    selectedList = newtListboxGetSelection(lb);
+    selectedList = newtListboxGetSelection(lb, &numsel);
 
     newtFormDestroy(f);
 
@@ -133,7 +133,7 @@ void main(void) {
 
     if(selectedList) {
 	printf("\nSelected listbox items:\n");
-	for(i = 0; selectedList[i]; i++)
+	for(i = 0; i < numsel; i++)
 	    puts(selectedList[i]);
     }
 }
