@@ -2,7 +2,7 @@ Summary: Not Erik's Windowing Toolkit - text mode windowing with slang
 Name: newt
 %define version 0.30
 Version: %{version}
-Release: 1
+Release: 2
 Copyright: LGPL
 Group: Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
