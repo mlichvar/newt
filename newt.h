@@ -247,6 +247,9 @@ void newtGridFree(newtGrid grid, int recurse);
 void newtGridGetSize(newtGrid grid, int * width, int * height);
 void newtGridWrappedWindow(newtGrid grid, char * title);
 
+/* convienve */
+newtGrid newtButtonBar(char * button1, newtComponent * b1comp, ...);
+
 /* automatically centered and shrink wrapped */
 void newtWinMessage(char * title, char * buttonText, char * text, ...);
 void newtWinMessagev(char * title, char * buttonText, char * text, 

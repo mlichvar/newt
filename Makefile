@@ -17,7 +17,7 @@ LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
-          scrollbar.o textbox.o scale.o grid.o windows.o
+          scrollbar.o textbox.o scale.o grid.o windows.o buttonbar.o
 
 SHCFLAGS = -fPIC
 
