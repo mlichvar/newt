@@ -40,7 +40,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
 				   COLORSET_ACTLISTBOX);
     else
 	sb = NULL;
-    li->form = newtForm(sb);
+    li->form = newtForm(sb, NULL, NEWT_FORM_NOF12);
     li->sb = sb;
 
     if (height) {
