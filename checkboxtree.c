@@ -22,7 +22,9 @@ struct CheckboxTree {
     struct items ** flatList, ** currItem, ** firstItem;
     int flatCount;
     int flags;
-    int pad;
+    int sbAdjust;
+    int curWidth;
+    int userHasSetWidth;
     char * seq;
     char * result;
 };
@@ -37,6 +39,8 @@ static void buildFlatList(newtComponent co);
 static void doBuildFlatList(struct CheckboxTree * ct, struct items * item);
 enum countWhat { COUNT_EXPOSED=0, COUNT_SELECTED=1 };
 static int countItems(struct items * item, enum countWhat justExposed);
+static inline void updateWidth(newtComponent co, struct CheckboxTree * ct,
+				int maxField);
 
 static struct componentOps ctOps = {
     ctDraw,
@@ -45,6 +49,15 @@ static struct componentOps ctOps = {
     ctPlace,
     ctMapped,
 } ;
+
+static inline void updateWidth(newtComponent co, struct CheckboxTree * ct,
+				int maxField) {
+    ct->curWidth = maxField;
+    co->width = ct->curWidth + ct->sbAdjust;
+
+    if (ct->sb)
+	ct->sb->left = co->left + co->width - 1;
+}
 
 static int countItems(struct items * item, enum countWhat what) {
     int count = 0;
@@ -231,8 +244,8 @@ int newtCheckboxTreeAddArray(newtComponent co,
 
     i = 4 + (3 * item->depth);
 
-    if ((strlen(text) + i + ct->pad) > co->width) {
-	co->width = strlen(text) + i + ct->pad;
+    if ((ct->userHasSetWidth == 0) && ((strlen(text) + i + ct->sbAdjust) > co->width)) {
+	updateWidth(co, ct, strlen(text) + i);
     }
 
     return 0;
@@ -262,6 +275,16 @@ static void listSelected(struct items * items, int * num, const void ** list, in
 	    listSelected(items->branch, num, list, seqindex);
 	items = items->next;
     }
+}
+
+void newtCheckboxTreeSetWidth(newtComponent co, int width) {
+    struct CheckboxTree * ct = co->data;
+
+    co->width = width;
+    ct->curWidth = co->width - ct->sbAdjust;
+    ct->userHasSetWidth = 1;
+    if (ct->sb) ct->sb->left = co->width + co->left - 1;
+    ctDraw(co);
 }
 
 const void ** newtCheckboxTreeGetSelection(newtComponent co, int *numitems)
@@ -312,6 +335,8 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     co->height = height;
     co->width = 0;
     co->isMapped = 0;
+    ct->curWidth = 0;
+    ct->userHasSetWidth = 0;
     ct->itemlist = NULL;
     ct->firstItem = NULL;
     ct->currItem = NULL;
@@ -326,10 +351,10 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     if (flags & NEWT_FLAG_SCROLL) {
 	ct->sb = newtVerticalScrollbar(left, top, height,
 				       COLORSET_LISTBOX, COLORSET_ACTLISTBOX);
-	ct->pad = 2;
+	ct->sbAdjust = 2;
     } else {
 	ct->sb = NULL;
-	ct->pad = 0;
+	ct->sbAdjust = 0;
     }
     
     return co;
@@ -681,8 +706,8 @@ void newtCheckboxTreeSetEntry(newtComponent co, const void * data, const char * 
 
     i = 4 + (3 * item->depth);
 
-    if ((strlen(text) + i + ct->pad) > co->width) {
-	co->width = strlen(text) + i + ct->pad;
+    if ((ct->userHasSetWidth == 0) && ((strlen(text) + i + ct->sbAdjust) > co->width)) {
+	updateWidth(co, ct, strlen(text) + i);
     }
 
     ctDraw(co);

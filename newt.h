@@ -194,6 +194,7 @@ int newtCheckboxTreeAddArray(newtComponent co,
 int * newtCheckboxTreeFindItem(newtComponent co, void * data);
 void newtCheckboxTreeSetEntry(newtComponent co, const void * data,
 			      const char * text);
+void newtCheckboxTreeSetWidth(newtComponent co, int width);
 char newtCheckboxTreeGetEntryValue(newtComponent co, const void * data);
 void newtCheckboxTreeSetEntryValue(newtComponent co, const void * data,
 				   char value);
