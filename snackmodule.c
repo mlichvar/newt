@@ -160,10 +160,12 @@ static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
+static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
     { "labelText", (PyCFunction) widgetLabelText, METH_VARARGS, NULL },
+    { "textboxText", (PyCFunction) widgetTextboxText, METH_VARARGS, NULL },
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
     { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
@@ -445,6 +447,17 @@ static PyObject * widgetLabelText(snackWidget * s, PyObject * args) {
     return Py_None;
 }
 
+static PyObject * widgetTextboxText(snackWidget * s, PyObject * args) {
+    char * text;
+
+    if (!PyArg_ParseTuple(args, "s", &text)) return NULL;
+
+    newtTextboxSetText(s->co, text);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
     int height;
@@ -466,14 +479,16 @@ static snackWidget * textWidget(PyObject * s, PyObject * args) {
     char * text;
     int width, height;
     int scrollBar = 0;
+    int wrap = 0;
     snackWidget * widget;
     
-    if (!PyArg_ParseTuple(args, "iis|i", &width, &height, &text, &scrollBar))
+    if (!PyArg_ParseTuple(args, "iis|ii", &width, &height, &text, &scrollBar, &wrap))
 	return NULL;
 
     widget = PyObject_NEW(snackWidget, &snackWidgetType);
     widget->co = newtTextbox(-1, -1, width, height,
-				scrollBar ? NEWT_FLAG_SCROLL : 0);
+				(scrollBar ? NEWT_FLAG_SCROLL : 0) |
+ 			        (wrap ? NEWT_FLAG_WRAP : 0));
     newtTextboxSetText(widget->co, text);
     
     return widget;

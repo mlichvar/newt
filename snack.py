@@ -83,8 +83,11 @@ class Listbox(Widget):
 
 class Textbox(Widget):
 
-    def __init__(self, width, height, text, scroll = 0):
-	self.w = _snack.textbox(width, height, text, scroll)
+    def setText(self, text):
+	self.w.textboxText(text)
+
+    def __init__(self, width, height, text, scroll = 0, wrap = 0):
+	self.w = _snack.textbox(width, height, text, scroll, wrap)
 
 class TextboxReflowed(Textbox):
 
