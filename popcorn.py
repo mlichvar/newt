@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from snack import *
+import sys
 
 t = TextboxReflowed(25, "Some text which needs to be wrapped at a good place.")
 li = Listbox(5, width = 20, returnExit = 1)
@@ -43,7 +44,7 @@ r2 = SingleRadioButton("Radio 2", r1)
 def something():
     print hello
 
-e.setCallback(lambda: sys.exit(1))
+e.setCallback(sys.exit, 1)
 
 screen = SnackScreen()
 
@@ -52,7 +53,7 @@ foo = EntryWindow(screen, 'Title', 'This is some text for the entry window',
 
 lbcw = ListboxChoiceWindow(screen, 'Title 2', 
 		    'Choose one item from the list below:', 
-		    ('One', 'Two', 'Three', 'Four', 'Five'))
+		    ('One', 'Two', 'Three', 'Four', 'Five'), default = 2)
 
 sg = Grid(2, 3)
 sg.setField(b, 0, 0, anchorLeft = 1)

@@ -77,9 +77,8 @@ class Listbox(Widget):
     def current(self):
 	return self.key2item[self.w.listboxGetCurrent()]
 
-    def setCurrent(self, item):
-	pass
-	#self.w.listboxSetCurrent(self.item2key[item])
+    def setCurrent(self, index):
+	self.w.listboxSetCurrent(index)
 
     def __init__(self, height, scroll = 0, returnExit = 0, width = 0):
 	self.w = _snack.listbox(height, scroll, returnExit)
@@ -415,7 +414,7 @@ class CheckboxTree(Widget):
 
 def ListboxChoiceWindow(screen, title, text, items, 
 			buttons = ('Ok', 'Cancel'), 
-			width = 40, scroll = 0, height = -1):
+			width = 40, scroll = 0, height = -1, default = 0):
     if (height == -1): height = len(items)
 
     bb = ButtonBar(screen, buttons)
@@ -431,6 +430,8 @@ def ListboxChoiceWindow(screen, title, text, items,
 
 	l.append(text, key)
 	count = count + 1
+
+    l.setCurrent (default)
 
     g = GridForm(screen, title, 1, 3)
     g.add(t, 0, 0)
