@@ -1,7 +1,11 @@
 LIBS = -L. -lnewt -lslang -lm #-lefence
-CFLAGS = -g -Wall
 
-VERSION = 0.4
+CFLAGS = $(RPM_OPT_FLAGS) -Wall
+ifeq ($(RPM_OPT_FLAGS),)
+CFLAGS += -g
+endif
+
+VERSION = 0.5
 SONAME = 0
 
 PROGS = test
@@ -10,7 +14,7 @@ LIBNEWT = libnewt.a
 LIBNEWTSH = libnewt.so.$(VERSION)
 LIBNEWTSONAME = libnewt.so.$(SONAME)
 LIBOBJS = newt.o button.o form.o checkbox.o entry.o label.o listbox.o \
-          scrollbar.o textbox.o
+          scrollbar.o textbox.o scale.o
 
 SHCFLAGS = -fPIC
 
