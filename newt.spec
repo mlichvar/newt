@@ -4,7 +4,7 @@ Name: newt
 Version: %{version}
 Release: 4
 Copyright: LGPL
-Group: Libraries
+Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
 Requires: slang
 Provides: snack
