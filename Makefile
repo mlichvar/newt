@@ -1,4 +1,4 @@
-OBJS = newt.o test.o button.o form.o checkbox.o entry.o label.o
+OBJS = newt.o test.o button.o form.o checkbox.o entry.o label.o listbox.o
 LIBS = -lslang -lm -lefence
 CFLAGS = -g -Wall
 
