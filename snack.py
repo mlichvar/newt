@@ -5,6 +5,8 @@
 # the literal classes and make them more object-oriented.
 
 import _snack
+import types
+import string
 
 class Widget:
 
@@ -83,6 +85,12 @@ class Textbox(Widget):
 
     def __init__(self, width, height, text, scroll = 0):
 	self.w = _snack.textbox(width, height, text, scroll)
+
+class TextboxReflowed(Textbox):
+
+    def __init__(self, width, text, flexDown = 5, flexUp = 10):
+	(newtext, width, height) = reflow(text, width, flexDown, flexUp)
+	Textbox.__init__(self, width, height, newtext, 0)
 
 class Label(Widget):
 
@@ -218,7 +226,6 @@ class SnackScreen:
 def reflow(text, width, flexDown = 5, flexUp = 5):
     return _snack.reflow(text, width, flexDown, flexUp)
 
-
 # combo widgets
 
 class RadioGroup(Widget):
@@ -270,11 +277,15 @@ class ButtonBar(Grid):
 	self.item = 0
 	Grid.__init__(self, len(buttonlist), 1)
 	for blist in buttonlist:
-	    if len(blist) == 2:
+	    if (type(blist) == types.StringType):
+		title = blist
+		value = string.lower(blist)
+	    elif len(blist) == 2:
 		(title, value) = blist
 	    else:
 		(title, value, hotkey) = blist
 		self.hotkeys[hotkey] = value
+
 	    b = Button(title)
 	    self.list.append(b, value)
 	    self.setField(b, self.item, 0, (1, 0, 1, 0))
@@ -313,7 +324,7 @@ class GridForm(Grid):
 		      growx, growy);
 	self.childList.append(widget)
 
-    def run_once(self):
+    def runOnce(self):
 	result = self.run()
 	self.screen.popWindow()
 	return result
@@ -327,7 +338,7 @@ class GridForm(Grid):
 	    self.form_created = 1
 	return self.form.run()
 	
-    def run_popup(self):
+    def runPopup(self):
 	if not self.form_created:
 	    self.place(1,1)
 	    for child in self.childList:
@@ -337,3 +348,83 @@ class GridForm(Grid):
 	result = self.form.run()
 	self.screen.popWindow()
 	return result
+
+def ListboxChoiceWindow(screen, title, text, items, 
+			buttons = ('Ok', 'Cancel'), 
+			width = 40, scroll = 0, height = -1):
+    if (height == -1): height = len(items)
+
+    bb = ButtonBar(screen, buttons)
+    t = TextboxReflowed(width, text)
+    l = Listbox(height, scroll = scroll, returnExit = 1)
+    count = 0
+    for item in items:
+	if (type(item) == types.TupleType):
+	    (text, key) = item
+	else:
+	    text = item
+	    key = count
+
+	l.append(text, key)
+	count = count + 1
+
+    g = GridForm(screen, title, 1, 3)
+    g.add(t, 0, 0)
+    g.add(l, 0, 1, padding = (0, 1, 0, 1))
+    g.add(bb, 0, 2, growx = 1)
+
+    rc = g.runOnce()
+
+    return (bb.buttonPressed(rc), l.current())
+
+def ButtonChoiceWindow(screen, title, text, 
+		       buttons = [ 'Ok', 'Cancel' ], 
+		       width = 40):
+    bb = ButtonBar(screen, buttons)
+    t = TextboxReflowed(width, text)
+
+    g = GridForm(screen, title, 1, 2)
+    g.add(t, 0, 0, padding = (0, 0, 0, 1))
+    g.add(bb, 0, 1, growx = 1)
+    return bb.buttonPressed(g.runOnce())
+
+def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
+		entryWidth = 20):
+    bb = ButtonBar(screen, [ 'Ok', 'Cancel' ]);
+    t = TextboxReflowed(width, text)
+
+    count = 0
+    for n in prompts:
+	count = count + 1
+
+    sg = Grid(2, count)
+
+    count = 0
+    entryList = []
+    for n in prompts:
+	if (type(n) == types.TupleType):
+	    (n, e) = n
+	else:
+	    e = Entry(entryWidth)
+
+	sg.setField(Label(n), 0, count, padding = (0, 0, 1, 0), anchorLeft = 1)
+	sg.setField(e, 1, count, anchorLeft = 1)
+	count = count + 1
+	entryList.append(e)
+
+    g = GridForm(screen, title, 1, 3)
+
+    g.add(t, 0, 0, padding = (0, 0, 0, 1))
+    g.add(sg, 0, 1, padding = (0, 0, 0, 1))
+    g.add(bb, 0, 2, growx = 1)
+
+    result = g.runOnce()
+
+    entryValues = []
+    count = 0
+    for n in prompts:
+	entryValues.append(entryList[count].value())
+	count = count + 1
+
+    return (bb.buttonPressed(result), tuple(entryValues))
+   

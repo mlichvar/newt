@@ -2,7 +2,7 @@
 
 from snack import *
 
-t = Textbox(25, 1, "Some text")
+t = TextboxReflowed(25, "Some text which needs to be wrapped at a good place.")
 li = Listbox(5, width = 20, returnExit = 1)
 li.append("First", "f")
 li.append("Second", "s")
@@ -21,6 +21,13 @@ def something():
 e.setCallback(lambda: sys.exit(1))
 
 screen = SnackScreen()
+
+foo = EntryWindow(screen, 'Title', 'This is some text for the entry window',
+	    ['prompt', 'more', 'info'])
+
+lbcw = ListboxChoiceWindow(screen, 'Title 2', 
+		    'Choose one item from the list below:', 
+		    ('One', 'Two', 'Three', 'Four', 'Five'))
 
 sg = Grid(2, 3)
 sg.setField(b, 0, 0, anchorLeft = 1)
@@ -56,6 +63,7 @@ res = f.run()
 
 screen.popWindow()
 
+
 screen.finish()
 
 print "val", e.value()
@@ -64,3 +72,6 @@ print "r1", r1.selected()
 print "listbox", li.current()
 # returns a tuple of the wrapped text, the actual width, and the actual height
 print res
+
+print foo
+print 'lbcw', lbcw
