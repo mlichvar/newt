@@ -6,17 +6,22 @@ Release: 1
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-BuildRequires: python, slang-devel 
+BuildRequires: python,python2,perl
 Requires: slang
 Provides: snack
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{root}
 
 %package devel
 Summary: Newt windowing toolkit development files.
 Requires: slang-devel %{name} = %{version}
 Group: Development/Libraries
-BuildRoot: /var/tmp/newtroot
 
-%description
+%package python2
+Summary: Snack for python2
+Requires: python2
+Group: System Environment/Libraries
+
+%Description
 Newt is a programming library for color text mode, widget based user
 interfaces.  Newt can be used to add stacked windows, entry widgets,
 checkboxes, radio buttons, labels, plain text fields, scrollbars,
@@ -33,6 +38,9 @@ the slang library.
 
 Install newt-devel if you want to develop applications which will use
 newt.
+
+%description python2
+The newt-python2 package contains a snack module for python2.
 
 %prep
 %setup
@@ -52,6 +60,15 @@ make instroot=$RPM_BUILD_ROOT install
 make instroot=$RPM_BUILD_ROOT install-sh
 
 python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python1.5",10,"/usr/lib/python1.5")'
+
+# cheat... build python2 stuff here
+make clean
+perl -pi -e "s/python1.5/python2.0/g" *
+./configure
+make instroot=$RPM_BUILD_ROOT install
+make instroot=$RPM_BUILD_ROOT install-sh
+python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'/usr/lib/python2.0",10,"/usr/lib/python2.0")'
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -80,9 +97,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so
 
+%files python2
+%defattr (-,root,root)
+/usr/lib/python2.0
+
 %changelog
-* Tue Sep 12 2000 Florian La Roche <Florian.LaRoche@redhat.de>
-- add slang-devel to BuildRequires:
+* Fri Dec 15 2000 Trond Eivind Glomsrød <teg@redhat.com>
+- use %%{_tmppath}
+- add python2 subpackage, with such support
+- fix use of append in snack.py
 
 * Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - bytecompile the snack python module
