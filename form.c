@@ -136,7 +136,6 @@ void newtFormSetWidth(newtComponent co, int width) {
 
 void newtFormAddComponent(newtComponent co, newtComponent newco) {
     struct form * form = co->data;
-    int delta;
 
     if (form->numCompsAlloced == form->numComps) {
 	form->numCompsAlloced += 5;
@@ -144,49 +143,15 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 			    sizeof(*(form->elements)) * form->numCompsAlloced);
     }
 
-    form->elements[form->numComps].left = newco->left;
-    form->elements[form->numComps].top = newco->top;
+    /* we grab real values for these a bit later */
+    form->elements[form->numComps].left = -2;
+    form->elements[form->numComps].top = -2;
     form->elements[form->numComps].co = newco;
 
     if (newco->takesFocus && form->currComp == -1)
 	form->currComp = form->numComps;
 
     form->numComps++;
-
-    if (co->left == -1) {
-	co->left = newco->left;
-	co->top = newco->top;
-	co->width = newco->width;
-	if (!form->fixedHeight) {
-	    co->height = newco->height;
-	}
-    } else {
-	if (co->left > newco->left) {
-	    delta = co->left - newco->left;
-	    co->left -= delta;
-	    co->width += delta;
-	}
-
-	if (co->top > newco->top) {
-	    delta = co->top - newco->top;
-	    co->top -= delta;
-	    if (!form->fixedHeight)
-		co->height += delta;
-	}
-
-	if ((co->left + co->width) < (newco->left + newco->width)) 
-	    co->width = (newco->left + newco->width) - co->left;
-
-	if (!form->fixedHeight) {
-	    if ((co->top + co->height) < (newco->top + newco->height)) 
-		co->height = (newco->top + newco->height) - co->top;
-	}
-    }
-
-    if ((newco->top + newco->height - co->top) > form->numRows) {
-	form->numRows = newco->top + newco->height - co->top;
-    }
-
 }
 
 void newtFormAddComponents(newtComponent co, ...) {
@@ -415,6 +380,51 @@ void newtFormAddHotKey(newtComponent co, int key) {
     form->hotKeys[form->numHotKeys - 1] = key;
 }
 
+static void newtFormSetSize(newtComponent co) {
+    struct form * form = co->data;
+    int delta, i;
+    struct element * el;
+
+    /* figure out how big we are -- we do this as late as possible (i.e. here)
+       to let grids delay there decisions as long as possible */
+    co->width = 0;
+    co->height = 0;
+    co->top = form->elements[0].co->top;
+    co->left = form->elements[0].co->left;
+    for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
+	if (el->co->ops == &formOps)
+	    newtFormSetSize(el->co);
+
+ 	el->left = el->co->left;
+ 	el->top = el->co->top;
+
+	if (co->left > el->co->left) {
+	    delta = co->left - el->co->left;
+	    co->left -= delta;
+	    co->width += delta;
+	}
+
+	if (co->top > el->co->top) {
+	    delta = co->top - el->co->top;
+	    co->top -= delta;
+	    if (!form->fixedHeight)
+		co->height += delta;
+	}
+
+	if ((co->left + co->width) < (el->co->left + el->co->width)) 
+	    co->width = (el->co->left + el->co->width) - co->left;
+
+	if (!form->fixedHeight) {
+	    if ((co->top + co->height) < (el->co->top + el->co->height)) 
+		co->height = (el->co->top + el->co->height) - co->top;
+	}
+
+	if ((el->co->top + el->co->height - co->top) > form->numRows) {
+	    form->numRows = el->co->top + el->co->height - co->top;
+	}
+    }
+}
+
 void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     struct form * form = co->data;
     struct event ev;
@@ -422,7 +432,8 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     int key, i;
     int done = 0;
 
-    /* first, draw all of the components */
+    newtFormSetSize(co);
+    /* draw all of the components */
     newtDrawForm(co);
 
     if (form->currComp == -1) {

@@ -30,9 +30,10 @@ int main(void) {
     newtGridSetField(grid, 1, 0, NEWT_GRID_COMPONENT, b3, 0, 0, 0, 0, 0, 0);
     newtGridSetField(grid, 1, 1, NEWT_GRID_COMPONENT, b4, 0, 0, 0, 0, 0, 0);
 
-    newtGridPlace(grid, 1, 1);
 
     newtFormAddComponents(f, b1, b2, b3, b4, NULL);
+
+    newtGridPlace(grid, 1, 1);
 
     answer = newtRunForm(f);
 	
