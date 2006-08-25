@@ -86,7 +86,7 @@ dialogboxes.o: dialogboxes.c
 	$(CC) $(CFLAGS) $(SHCFLAGS) -c dialogboxes.c
 
 whiptcl.o:   whiptcl.c
-	$(CC) $(SHCFLAGS) $(CFLAGS) -c whiptcl.c
+	$(CC) -I/usr/include/tcl8.4 $(SHCFLAGS) $(CFLAGS) -c whiptcl.c
 
 
 $(LIBNEWT): $(LIBOBJS)

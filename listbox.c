@@ -527,7 +527,7 @@ static void listboxDraw(newtComponent co)
 	else
 	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
-	write_nstring_int(item->text, li->curWidth, NULL);
+	SLsmg_write_nstring(item->text, li->curWidth);
 
     }
     newtGotorc(co->top + (li->currItem - li->startShowItem) + li->bdyAdjust,

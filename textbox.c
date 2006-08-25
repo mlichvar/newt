@@ -339,42 +339,20 @@ static void textboxDraw(newtComponent c) {
     int i;
     struct textbox * tb = c->data;
     int size;
-    char dir = 'N';
-    int newdir = 1;
-    int dw = 0;
-    
+
     if (tb->sb) {
 	size = tb->numLines - c->height;
 	newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
 	tb->sb->ops->draw(tb->sb);
-	dw = 2;
     }
 
     SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
 
-    /* find direction of first visible paragraph */
-    for (i = 0; i < tb->topLine; i++) {
-	if (!*tb->lines[i]) {
-            /* new line: new paragraph starts at the next line */
-	    newdir = 1;
-	    dir = 'N';
-	}
-	else if (newdir) {
-	    /* get current paragraph direction, if possible */
-	    dir = get_text_direction(tb->lines[i]);
-            newdir = (dir == 'N') ? 1 : 0;
-	}
-    }
-    
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);
 	SLsmg_write_string(tb->blankline);
 	newtGotorc(c->top + i, c->left);
-	/* BIDI: we need *nstring* here to properly align lines */
-	write_nstring_int(tb->lines[i + tb->topLine], c->width - dw, &dir);
-	/* Does new paragraph follow? */
-	if (!*tb->lines[i + tb->topLine])
-            dir = 'N';
+	SLsmg_write_string(tb->lines[i + tb->topLine]);
     }
 }
 

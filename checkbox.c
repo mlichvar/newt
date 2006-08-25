@@ -187,7 +187,7 @@ static void cbDraw(newtComponent c) {
 	break;
     }
 
-    write_string_int(cb->text, NULL);
+    SLsmg_write_string(cb->text);
 
     if (cb->hasFocus)
 	SLsmg_set_color(cb->active);

@@ -196,15 +196,12 @@ static void entryDraw(newtComponent co) {
 
     if (len <= co->width) {
 	i = len;
-	/* BIDI: do not replaced, because it will not work.
-	 * More work needed */
 	SLsmg_write_string(chptr);
 	while (i < co->width) {
 	    SLsmg_write_char('_');
 	    i++;
 	}
     } else {
-        /* BIDI: will not work for RTL text */
 	SLsmg_write_nstring(chptr, co->width);
     }
 

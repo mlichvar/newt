@@ -482,13 +482,12 @@ static void ctDraw(newtComponent co) {
 	    } else {
 	        char tmp[5];
 	        snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
-		/* BIDI: no need to use _int funcs here: only ASCII characters */
 	        SLsmg_write_string(tmp);
 	    }
 	}
 
-	write_nstring_int((*item)->text, co->width - 4 - 
-					   (3 * (*item)->depth), NULL);
+	SLsmg_write_nstring((*item)->text, co->width - 4 - 
+					   (3 * (*item)->depth));
 
 	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 

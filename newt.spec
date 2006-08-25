@@ -2,13 +2,12 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.0
+%define version 0.52.1
 Version: %{version}
 Release: 0
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
-Patch1: newt-0.51.6-if1close.patch
 BuildRequires: python,python-devel,perl, slang-devel, tcl-devel
 Requires: slang
 Provides: snack
@@ -40,7 +39,6 @@ newt.
 
 %prep
 %setup -q
-%patch1 -p1 -b .if1close
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
@@ -87,6 +85,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Fri Sep 30 2005 Petr Rockai <prockai@redhat.com> - 0.52.1-0
+- revert bidi patch, objections by Jeremy Katz about
+  anaconda breaking
+- this version still only exists as a "ghastly" upstream tarball;
+  the patches are now cleaned up and will be integrated into
+  rhlinux cvs unless some more breakage akin to bidi occurs
+- the if1close patch is now part of upstream tarball too
+
 * Wed Sep 21 2005 Petr Rockai <prockai@redhat.com> - 0.52.0-0
 - new upstream version
 

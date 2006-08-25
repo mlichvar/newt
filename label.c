@@ -69,9 +69,7 @@ static void labelDraw(newtComponent co) {
     SLsmg_set_color(COLORSET_LABEL);
 
     newtGotorc(co->top, co->left);
-    /* BIDI: need to check if nstring is really needed.
-     * Where it is used? */
-    write_nstring_int(la->text, co->width, NULL);
+    SLsmg_write_string(la->text);
 }
 
 static void labelDestroy(newtComponent co) {

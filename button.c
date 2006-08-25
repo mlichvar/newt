@@ -110,7 +110,7 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
 	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
 	newtGotorc(co->top+ pushed, co->left + 1 + pushed);
 	SLsmg_write_char('<');
-	write_string_int(bu->text, NULL);
+	SLsmg_write_string(bu->text);
 	SLsmg_write_char('>');
     } else {
 	if (pushed) {
@@ -140,7 +140,7 @@ static void buttonDrawText(newtComponent co, int active, int pushed) {
 
     newtGotorc(co->top + 1 + pushed, co->left + 1 + pushed);
     SLsmg_write_char(' ');
-    write_string_int(bu->text, NULL);
+    SLsmg_write_string(bu->text);
     SLsmg_write_char(' ');
 }
 

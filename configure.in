@@ -4,7 +4,7 @@ AC_INIT(newt_pr.h)
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE=newt
-VERSION=0.52.0
+VERSION=0.52.1
 SONAME=0.52
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
@@ -13,7 +13,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_CHECK_HEADERS(sys/select.h alloca.h fribidi/fribidi.h dlfcn.h)
+AC_CHECK_HEADERS(sys/select.h alloca.h)
 
 AC_ARG_WITH(gpm-support, [  --with-gpm-support         Compile with GPM support])
 
