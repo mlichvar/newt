@@ -52,11 +52,11 @@ void newtScaleSet(newtComponent co, unsigned long long amount) {
     newPercentage = (amount * 100) / sc->fullValue;
 
     if (newPercentage > 100)
-        newPercentage = 100;
+	newPercentage = 100;
     
     if (newPercentage != sc->percentage) {
-        sc->percentage = newPercentage;
-        scaleDraw(co);
+	sc->percentage = newPercentage;
+	scaleDraw(co);
     }
 }
 

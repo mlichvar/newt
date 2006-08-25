@@ -17,25 +17,25 @@
 /* globals -- ick */
 static int buttonHeight = 1;
 static newtComponent (*makeButton)(int left, int right, const char * text) = 
-                newtCompactButton;
+		newtCompactButton;
 
 static void addButtons(int height, int width, newtComponent form, 
-                       newtComponent * okay, newtComponent * cancel, 
-                       int flags) {
+		       newtComponent * okay, newtComponent * cancel, 
+		       int flags) {
     if (flags & FLAG_NOCANCEL) {
-        *okay = makeButton((width - 8) / 2, height - buttonHeight - 1, "Ok");
-        *cancel = NULL;
-        newtFormAddComponent(form, *okay);
+	*okay = makeButton((width - 8) / 2, height - buttonHeight - 1, "Ok");
+	*cancel = NULL;
+	newtFormAddComponent(form, *okay);
     } else {
-        *okay = makeButton((width - 18) / 3, height - buttonHeight - 1, "Ok");
-        *cancel = makeButton(((width - 18) / 3) * 2 + 9, 
-                                height - buttonHeight - 1, "Cancel");
-        newtFormAddComponents(form, *okay, *cancel, NULL);
+	*okay = makeButton((width - 18) / 3, height - buttonHeight - 1, "Ok");
+	*cancel = makeButton(((width - 18) / 3) * 2 + 9, 
+				height - buttonHeight - 1, "Cancel");
+	newtFormAddComponents(form, *okay, *cancel, NULL);
     }
 }
 
 static newtComponent textbox(int maxHeight, int width, const char * text,
-                        int flags, int * height) {
+			int flags, int * height) {
     newtComponent tb;
     int sFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
     int i;
@@ -45,11 +45,11 @@ static newtComponent textbox(int maxHeight, int width, const char * text,
     dst = buf = alloca(strlen(text) + 1);
     src = text; 
     while (*src) {
-        if (*src == '\\' && *(src + 1) == 'n') {
-            src += 2;
-            *dst++ = '\n';
-        } else
-            *dst++ = *src++;
+	if (*src == '\\' && *(src + 1) == 'n') {
+	    src += 2;
+	    *dst++ = '\n';
+	} else
+	    *dst++ = *src++;
     }
     *dst++ = '\0';
 
@@ -58,8 +58,8 @@ static newtComponent textbox(int maxHeight, int width, const char * text,
 
     i = newtTextboxGetNumLines(tb);
     if (i < maxHeight) {
-        newtTextboxSetHeight(tb, i);
-        maxHeight = i;
+	newtTextboxSetHeight(tb, i);
+	maxHeight = i;
     }
 
     *height = maxHeight;
@@ -68,7 +68,7 @@ static newtComponent textbox(int maxHeight, int width, const char * text,
 }
 
 int gauge(const char * text, int height, int width, poptContext optCon, int fd, 
-                int flags) {
+		int flags) {
     newtComponent form, scale, tb;
     int top;
     const char * arg;
@@ -98,41 +98,41 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
     newtRefresh();
 
     while (fgets(buf, sizeof(buf) - 1, f)) {
-        buf[strlen(buf) - 1] = '\0';
+	buf[strlen(buf) - 1] = '\0';
 
-        if (!strcmp(buf, "XXX")) {
-            fgets(buf3, sizeof(buf3) - 1, f);
-            buf3[strlen(buf3) - 1] = '\0';
-            arg = buf3;
+	if (!strcmp(buf, "XXX")) {
+	    fgets(buf3, sizeof(buf3) - 1, f);
+	    buf3[strlen(buf3) - 1] = '\0';
+	    arg = buf3;
 
-            i = 0;
-            while (fgets(buf + i, sizeof(buf) - 1 - i, f)) {
-                buf[strlen(buf) - 1] = '\0';
-                if (!strcmp(buf + i, "XXX")) {
-                    *(buf + i) = '\0';
-                    break;
-                }
-                i = strlen(buf);
-            }
+	    i = 0;
+	    while (fgets(buf + i, sizeof(buf) - 1 - i, f)) {
+		buf[strlen(buf) - 1] = '\0';
+		if (!strcmp(buf + i, "XXX")) {
+		    *(buf + i) = '\0';
+		    break;
+		}
+		i = strlen(buf);
+	    }
 
-            newtTextboxSetText(tb, buf);
-        } else {
-            arg = buf;
-        }
+	    newtTextboxSetText(tb, buf);
+ 	} else {
+	    arg = buf;
+	}
 
-        val = strtoul(buf, &end, 10);
-        if (!*end) {
-            newtScaleSet(scale, val);
-            newtDrawForm(form);
-            newtRefresh();
-        }
+	val = strtoul(buf, &end, 10);
+	if (!*end) {
+	    newtScaleSet(scale, val);
+	    newtDrawForm(form);
+	    newtRefresh();
+	}
     }
 
     return DLG_OKAY;
 }
 
 int inputBox(const char * text, int height, int width, poptContext optCon, 
-                int flags, const char ** result) {
+		int flags, const char ** result) {
     newtComponent form, entry, okay, cancel, answer, tb;
     const char * val;
     int rc = DLG_OKAY;
@@ -140,11 +140,11 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 
     val = poptGetArg(optCon);
     tb = textbox(height - 3 - buttonHeight, width - 2,
-                        text, flags, &top);
+			text, flags, &top);
 
     form = newtForm(NULL, NULL, 0);
     entry = newtEntry(1, top + 1, val, width - 2, &val, 
-                        NEWT_FLAG_SCROLL | NEWT_FLAG_RETURNEXIT);
+			NEWT_FLAG_SCROLL | NEWT_FLAG_RETURNEXIT);
 
     newtFormAddComponents(form, tb, entry, NULL);
 
@@ -152,7 +152,7 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 
     answer = newtRunForm(form);
     if (answer == cancel)
-        rc = DLG_CANCEL;
+	rc = DLG_CANCEL;
 
     *result = val;
 
@@ -160,7 +160,7 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 }
 
 int listBox(const char * text, int height, int width, poptContext optCon,
-                int flags, const char ** result) {
+		int flags, const char ** result) {
     newtComponent form, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
@@ -175,8 +175,8 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     int maxTextWidth = 0;
     int scrollFlag;
     struct {
-        const char * text;
-        const char * tag;
+	const char * text;
+	const char * tag;
     } * itemInfo = malloc(allocedItems * sizeof(*itemInfo));
 
     if (itemInfo == NULL) return DLG_ERROR;
@@ -185,56 +185,56 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     if (*end) return DLG_ERROR;
 
     while ((arg = poptGetArg(optCon))) {
-        if (allocedItems == numItems) {
-            allocedItems += 5;
-            itemInfo = realloc(itemInfo, sizeof(*itemInfo) * allocedItems);
-            if (itemInfo == NULL) return DLG_ERROR;
-        }
+	if (allocedItems == numItems) {
+	    allocedItems += 5;
+	    itemInfo = realloc(itemInfo, sizeof(*itemInfo) * allocedItems);
+	    if (itemInfo == NULL) return DLG_ERROR;
+	}
 
-        itemInfo[numItems].tag = arg;
-        if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	itemInfo[numItems].tag = arg;
+	if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
 
-        if (!(flags & FLAG_NOITEM)) {
-            itemInfo[numItems].text = arg;
-        } else
-            itemInfo[numItems].text = "";
+	if (!(flags & FLAG_NOITEM)) {
+	    itemInfo[numItems].text = arg;
+	} else
+	    itemInfo[numItems].text = "";
 
-        if (wstrlen(itemInfo[numItems].text,-1) > (unsigned int)maxTextWidth)
-            maxTextWidth = wstrlen(itemInfo[numItems].text,-1);
-        if (wstrlen(itemInfo[numItems].tag,-1) > (unsigned int)maxTagWidth)
-            maxTagWidth = wstrlen(itemInfo[numItems].tag,-1);
+	if (wstrlen(itemInfo[numItems].text,-1) > (unsigned int)maxTextWidth)
+	    maxTextWidth = wstrlen(itemInfo[numItems].text,-1);
+	if (wstrlen(itemInfo[numItems].tag,-1) > (unsigned int)maxTagWidth)
+	    maxTagWidth = wstrlen(itemInfo[numItems].tag,-1);
 
-        numItems++;
+	numItems++;
     }
     if (numItems == 0)
-        return DLG_ERROR;
+	return DLG_ERROR;
 
     if (flags & FLAG_NOTAGS) {
-            maxTagWidth = 0;
+	    maxTagWidth = 0;
     }
 
     form = newtForm(NULL, NULL, 0);
 
     tb = textbox(height - 4 - buttonHeight - listHeight, width - 2,
-                        text, flags, &top);
+			text, flags, &top);
 
     if (listHeight >= numItems) {
-        scrollFlag = 0;
-        i = 0;
+	scrollFlag = 0;
+	i = 0;
     } else {
-        scrollFlag = NEWT_FLAG_SCROLL;
-        i = 2;
+	scrollFlag = NEWT_FLAG_SCROLL;
+	i = 2;
     }
 
     listBox = newtListbox(3 + ((width - 10 - maxTagWidth - maxTextWidth - i) 
-                                        / 2),
-                          top + 1, listHeight, 
-                            NEWT_FLAG_RETURNEXIT | scrollFlag);
+					/ 2),
+			  top + 1, listHeight, 
+			    NEWT_FLAG_RETURNEXIT | scrollFlag);
 
     snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxTagWidth);
     for (i = 0; i < numItems; i++) {
-        snprintf(buf, MAXBUF, format, itemInfo[i].tag, itemInfo[i].text);
-        newtListboxAddEntry(listBox, buf, (void *) i);
+	snprintf(buf, MAXBUF, format, itemInfo[i].tag, itemInfo[i].text);
+	newtListboxAddEntry(listBox, buf, (void *) i);
     }
 
     newtFormAddComponents(form, tb, listBox, NULL);
@@ -243,7 +243,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 
     answer = newtRunForm(form);
     if (answer == cancel)
-        rc = DLG_CANCEL;
+	rc = DLG_CANCEL;
 
     i = (int) newtListboxGetCurrent(listBox);
     *result = itemInfo[i].tag;
@@ -252,7 +252,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 }
 
 int checkList(const char * text, int height, int width, poptContext optCon,
-                int useRadio, int flags, const char *** selections) {
+		int useRadio, int flags, const char *** selections) {
     newtComponent form, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
@@ -267,9 +267,9 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     int maxWidth = 0;
     int top;
     struct {
-        const char * text;
-        const char * tag;
-        newtComponent comp;
+	const char * text;
+	const char * tag;
+	newtComponent comp;
     } * cbInfo = malloc(allocedBoxes * sizeof(*cbInfo));
     char * cbStates = malloc(allocedBoxes * sizeof(cbStates));
 
@@ -279,63 +279,63 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     if (*end) return DLG_ERROR;
 
     while ((arg = poptGetArg(optCon))) {
-        if (allocedBoxes == numBoxes) {
-            allocedBoxes += 5;
-            cbInfo = realloc(cbInfo, sizeof(*cbInfo) * allocedBoxes);
-            cbStates = realloc(cbStates, sizeof(*cbStates) * allocedBoxes);
-            if ((cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
-        }
+	if (allocedBoxes == numBoxes) {
+	    allocedBoxes += 5;
+	    cbInfo = realloc(cbInfo, sizeof(*cbInfo) * allocedBoxes);
+	    cbStates = realloc(cbStates, sizeof(*cbStates) * allocedBoxes);
+	    if ((cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
+	}
 
-        cbInfo[numBoxes].tag = arg;
-        if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	cbInfo[numBoxes].tag = arg;
+	if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
 
-        if (!(flags & FLAG_NOITEM)) {
-            cbInfo[numBoxes].text = arg;
-            if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
-        } else
-            cbInfo[numBoxes].text = "";
+	if (!(flags & FLAG_NOITEM)) {
+	    cbInfo[numBoxes].text = arg;
+	    if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	} else
+	    cbInfo[numBoxes].text = "";
 
-        if (!strcmp(arg, "1") || !strcasecmp(arg, "on") || 
-                !strcasecmp(arg, "yes"))
-            cbStates[numBoxes] = '*';
-        else
-            cbStates[numBoxes] = ' ';
+	if (!strcmp(arg, "1") || !strcasecmp(arg, "on") || 
+		!strcasecmp(arg, "yes"))
+	    cbStates[numBoxes] = '*';
+	else
+	    cbStates[numBoxes] = ' ';
 
-        if (wstrlen(cbInfo[numBoxes].tag,-1) > (unsigned int)maxWidth)
-            maxWidth = wstrlen(cbInfo[numBoxes].tag,-1);
+	if (wstrlen(cbInfo[numBoxes].tag,-1) > (unsigned int)maxWidth)
+	    maxWidth = wstrlen(cbInfo[numBoxes].tag,-1);
 
-        numBoxes++;
+	numBoxes++;
     }
 
-        
+	
     form = newtForm(NULL, NULL, 0);
 
     tb = textbox(height - 3 - buttonHeight - listHeight, width - 2,
-                        text, flags, &top);
+			text, flags, &top);
 
     if (listHeight < numBoxes) { 
-        sb = newtVerticalScrollbar(width - 4, 
-                                   top + 1,
-                                   listHeight, NEWT_COLORSET_CHECKBOX,
-                                   NEWT_COLORSET_ACTCHECKBOX);
-        newtFormAddComponent(form, sb);
+	sb = newtVerticalScrollbar(width - 4, 
+				   top + 1,
+				   listHeight, NEWT_COLORSET_CHECKBOX,
+				   NEWT_COLORSET_ACTCHECKBOX);
+	newtFormAddComponent(form, sb);
     }
     subform = newtForm(sb, NULL, 0);
     newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
 
     snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxWidth);
     for (i = 0; i < numBoxes; i++) {
-        snprintf(buf, MAXBUF, format, cbInfo[i].tag, cbInfo[i].text);
+	snprintf(buf, MAXBUF, format, cbInfo[i].tag, cbInfo[i].text);
 
-        if (useRadio)
-            cbInfo[i].comp = newtRadiobutton(4, top + 1 + i, buf,
-                                        cbStates[i] != ' ', 
-                                        i ? cbInfo[i - 1].comp : NULL);
-        else
-            cbInfo[i].comp = newtCheckbox(4, top + 1 + i, buf,
-                              cbStates[i], NULL, cbStates + i);
+	if (useRadio)
+	    cbInfo[i].comp = newtRadiobutton(4, top + 1 + i, buf,
+					cbStates[i] != ' ', 
+					i ? cbInfo[i - 1].comp : NULL);
+	else
+	    cbInfo[i].comp = newtCheckbox(4, top + 1 + i, buf,
+			      cbStates[i], NULL, cbStates + i);
 
-        newtFormAddComponent(subform, cbInfo[i].comp);
+	newtFormAddComponent(subform, cbInfo[i].comp);
     }
 
     newtFormSetHeight(subform, listHeight);
@@ -347,34 +347,34 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 
     answer = newtRunForm(form);
     if (answer == cancel)
-        rc = DLG_CANCEL;
+	rc = DLG_CANCEL;
 
     if (useRadio) {
-        answer = newtRadioGetCurrent(cbInfo[0].comp);
-        for (i = 0; i < numBoxes; i++) 
-            if (cbInfo[i].comp == answer) {
-                *selections = malloc(sizeof(char *) * 2);
-                if (*selections == NULL) return DLG_ERROR;
-                (*selections)[0] = cbInfo[i].tag;
-                (*selections)[1] = NULL;
-                break;
-            }
+	answer = newtRadioGetCurrent(cbInfo[0].comp);
+	for (i = 0; i < numBoxes; i++) 
+	    if (cbInfo[i].comp == answer) {
+		*selections = malloc(sizeof(char *) * 2);
+	 	if (*selections == NULL) return DLG_ERROR;
+		(*selections)[0] = cbInfo[i].tag;
+		(*selections)[1] = NULL;
+		break;
+	    }
     } else {
-        numSelected = 0;
-        for (i = 0; i < numBoxes; i++) {
-            if (cbStates[i] != ' ') numSelected++;
-        }
+	numSelected = 0;
+	for (i = 0; i < numBoxes; i++) {
+	    if (cbStates[i] != ' ') numSelected++;
+	}
 
-        *selections = malloc(sizeof(char *) * (numSelected + 1));
-        if (*selections == NULL) return DLG_ERROR;
+	*selections = malloc(sizeof(char *) * (numSelected + 1));
+	if (*selections == NULL) return DLG_ERROR;
 
-        numSelected = 0;
-        for (i = 0; i < numBoxes; i++) {
-            if (cbStates[i] != ' ') 
-                (*selections)[numSelected++] = cbInfo[i].tag;
-        }
+	numSelected = 0;
+	for (i = 0; i < numBoxes; i++) {
+	    if (cbStates[i] != ' ') 
+		(*selections)[numSelected++] = cbInfo[i].tag;
+	}
 
-        (*selections)[numSelected] = NULL;
+	(*selections)[numSelected] = NULL;
     }
 
     return rc;
@@ -388,41 +388,41 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
     form = newtForm(NULL, NULL, 0);
 
     tb = newtTextbox(1, 1, width - 2, height - 3 - buttonHeight, 
-                        NEWT_FLAG_WRAP | tFlag);
+			NEWT_FLAG_WRAP | tFlag);
     newtTextboxSetText(tb, text);
 
     newtFormAddComponent(form, tb);
 
     switch ( type ) {
     case MSGBOX_INFO:
-        break;
+	break;
     case MSGBOX_MSG:
-        yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, "Ok");
-        newtFormAddComponent(form, yes);
-        break;
+	yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, "Ok");
+	newtFormAddComponent(form, yes);
+	break;
     default:
-        yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, "Yes");
-        no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
-                        "No");
-        newtFormAddComponents(form, yes, no, NULL);
+	yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, "Yes");
+	no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
+			"No");
+	newtFormAddComponents(form, yes, no, NULL);
 
-        if (flags & FLAG_DEFAULT_NO)
-            newtFormSetCurrent(form, no);
+	if (flags & FLAG_DEFAULT_NO)
+	    newtFormSetCurrent(form, no);
     }
 
     if ( type != MSGBOX_INFO ) {
-        newtRunForm(form);
+	newtRunForm(form);
 
-        answer = newtFormGetCurrent(form);
+	answer = newtFormGetCurrent(form);
 
-        if (answer == no)
-            return DLG_CANCEL;
+	if (answer == no)
+	    return DLG_CANCEL;
     }
     else {
-        newtDrawForm(form);
-        newtRefresh();
+	newtDrawForm(form);
+	newtRefresh();
     }
-        
+	
 
 
     return DLG_OKAY;
@@ -430,10 +430,10 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
 
 void useFullButtons(int state) {
     if (state) {
-        buttonHeight = 3;
-        makeButton = newtButton;
+	buttonHeight = 3;
+	makeButton = newtButton;
    } else {
-        buttonHeight = 1;
-        makeButton = newtCompactButton;
+	buttonHeight = 1;
+	makeButton = newtCompactButton;
    }
 }

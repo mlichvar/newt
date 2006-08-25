@@ -17,9 +17,9 @@ struct entry {
     char * buf;
     const char ** resultPtr;
     int bufAlloced;
-    int bufUsed;                /* amount of the buffer that's been used */
-    int cursorPosition;         /* cursor *in the string* on on screen */
-    int firstChar;              /* first character position being shown */
+    int bufUsed;		/* amount of the buffer that's been used */
+    int cursorPosition; 	/* cursor *in the string* on on screen */
+    int firstChar;		/* first character position being shown */
     newtEntryFilter filter;
     void * filterData;
 };
@@ -27,7 +27,7 @@ struct entry {
 static void entryDraw(newtComponent co);
 static void entryDestroy(newtComponent co);
 static struct eventResult entryEvent(newtComponent co,
-                                     struct event ev);
+			             struct event ev);
 
 static struct eventResult entryHandleKey(newtComponent co, int key);
 
@@ -43,25 +43,25 @@ void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd) {
     struct entry * en = co->data;
 
     if ((strlen(value) + 1) > (unsigned int)en->bufAlloced) {
-        free(en->buf);
-        en->bufAlloced = strlen(value) + 1;
-        en->buf = malloc(en->bufAlloced);
-        if (en->resultPtr) *en->resultPtr = en->buf;
+	free(en->buf);
+	en->bufAlloced = strlen(value) + 1;
+	en->buf = malloc(en->bufAlloced);
+	if (en->resultPtr) *en->resultPtr = en->buf;
     }
-    memset(en->buf, 0, en->bufAlloced);         /* clear the buffer */
+    memset(en->buf, 0, en->bufAlloced);		/* clear the buffer */
     strcpy(en->buf, value);
     en->bufUsed = strlen(value);
     en->firstChar = 0;
     if (cursorAtEnd)
-        en->cursorPosition = en->bufUsed;
+	en->cursorPosition = en->bufUsed;
     else
-        en->cursorPosition = 0;
+	en->cursorPosition = 0;
 
     entryDraw(co);
 } ;
 
 newtComponent newtEntry(int left, int top, const char * initialValue, int width,
-                        const char ** resultPtr, int flags) {
+			const char ** resultPtr, int flags) {
     newtComponent co;
     struct entry * en;
 
@@ -86,12 +86,12 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     en->filter = NULL;
 
     if (!(en->flags & NEWT_FLAG_DISABLED))
-        co->takesFocus = 1;
+	co->takesFocus = 1;
     else
-        co->takesFocus = 0;
+	co->takesFocus = 0;
 
     if (initialValue && wstrlen(initialValue,-1) > (unsigned int)width) {
-        en->bufAlloced = wstrlen(initialValue,-1) + 1;
+	en->bufAlloced = wstrlen(initialValue,-1) + 1;
     }
     en->buf = malloc(en->bufAlloced);
     en->resultPtr = resultPtr;
@@ -99,13 +99,13 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 
     memset(en->buf, 0, en->bufAlloced);
     if (initialValue) {
-        strcpy(en->buf, initialValue);
-        en->bufUsed = strlen(initialValue);
-        en->cursorPosition = en->bufUsed;
+	strcpy(en->buf, initialValue);
+	en->bufUsed = strlen(initialValue);
+	en->cursorPosition = en->bufUsed;
     } else {
-        *en->buf = '\0';
-        en->bufUsed = 0;
-        en->cursorPosition = 0;
+	*en->buf = '\0';
+	en->bufUsed = 0;
+	en->cursorPosition = 0;
     }
 
     return co;
@@ -120,58 +120,58 @@ static void entryDraw(newtComponent co) {
     if (!co->isMapped) return;
 
     if (en->flags & NEWT_FLAG_DISABLED)
-        SLsmg_set_color(NEWT_COLORSET_DISENTRY);
+	SLsmg_set_color(NEWT_COLORSET_DISENTRY);
     else
-        SLsmg_set_color(NEWT_COLORSET_ENTRY);
+	SLsmg_set_color(NEWT_COLORSET_ENTRY);
 
     if (en->flags & NEWT_FLAG_HIDDEN) {
-        newtGotorc(co->top, co->left);
-        for (i = 0; i < co->width; i++)
-            SLsmg_write_char('_');
-        newtGotorc(co->top, co->left);
+	newtGotorc(co->top, co->left);
+	for (i = 0; i < co->width; i++)
+	    SLsmg_write_char('_');
+	newtGotorc(co->top, co->left);
 
-        return;
+	return;
     }
 
     newtGotorc(co->top, co->left);
 
     if (en->cursorPosition < en->firstChar) {
-        /* scroll to the left */
-        en->firstChar = en->cursorPosition;
+	/* scroll to the left */
+	en->firstChar = en->cursorPosition;
     } else if ((en->firstChar + co->width) <= en->cursorPosition) {
-        /* scroll to the right */
-        en->firstChar = en->cursorPosition - co->width + 1;
+	/* scroll to the right */
+	en->firstChar = en->cursorPosition - co->width + 1;
     }
 
     chptr = en->buf + en->firstChar;
 
     if (en->flags & NEWT_FLAG_PASSWORD) {
-        char *tmpptr, *p;
+	char *tmpptr, *p;
 
-        tmpptr = alloca(strlen(chptr)+2);
-        strcpy(tmpptr, chptr);
-        for (p = tmpptr; *p; p++)
-            *p = '*';
-        chptr = tmpptr;
-    }                   
+	tmpptr = alloca(strlen(chptr)+2);
+	strcpy(tmpptr, chptr);
+	for (p = tmpptr; *p; p++)
+	    *p = '*';
+	chptr = tmpptr;
+    }			
 
     len = wstrlen(chptr, -1);
 
     if (len <= co->width) {
-        i = len;
-        SLsmg_write_string(chptr);
-        while (i < co->width) {
-            SLsmg_write_char('_');
-            i++;
-        }
+	i = len;
+	SLsmg_write_string(chptr);
+	while (i < co->width) {
+	    SLsmg_write_char('_');
+	    i++;
+	}
     } else {
-        SLsmg_write_nstring(chptr, co->width);
+	SLsmg_write_nstring(chptr, co->width);
     }
 
     if (en->flags & NEWT_FLAG_HIDDEN)
-        newtGotorc(co->top, co->left);
+	newtGotorc(co->top, co->left);
     else
-        newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
+	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
 }
 
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
@@ -181,9 +181,9 @@ void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
     en->flags = newtSetFlags(en->flags, flags, sense);
 
     if (!(en->flags & NEWT_FLAG_DISABLED))
-        co->takesFocus = 1;
+	co->takesFocus = 1;
     else
-        co->takesFocus = 0;
+	co->takesFocus = 0;
 
     newtGetrc(&row, &col);
     entryDraw(co);
@@ -199,55 +199,55 @@ static void entryDestroy(newtComponent co) {
 }
 
 static struct eventResult entryEvent(newtComponent co,
-                                     struct event ev) {
+				     struct event ev) {
     struct entry * en = co->data;
     struct eventResult er;
     int ch;
 
     if (ev.when == EV_NORMAL) {
-        switch (ev.event) {
-        case EV_FOCUS:
-            newtCursorOn();
-            if (en->flags & NEWT_FLAG_HIDDEN)
-                newtGotorc(co->top, co->left);
-            else
-                newtGotorc(co->top, co->left +
-                           (en->cursorPosition - en->firstChar));
-            er.result = ER_SWALLOWED;
-            break;
+	switch (ev.event) {
+	case EV_FOCUS:
+	    newtCursorOn();
+	    if (en->flags & NEWT_FLAG_HIDDEN)
+		newtGotorc(co->top, co->left);
+	    else
+		newtGotorc(co->top, co->left +
+			   (en->cursorPosition - en->firstChar));
+	    er.result = ER_SWALLOWED;
+	    break;
 
-        case EV_UNFOCUS:
-            newtCursorOff();
-            newtGotorc(0, 0);
-            er.result = ER_SWALLOWED;
-            if (co->callback)
-                co->callback(co, co->callbackData);
-            break;
+	case EV_UNFOCUS:
+	    newtCursorOff();
+	    newtGotorc(0, 0);
+	    er.result = ER_SWALLOWED;
+	    if (co->callback)
+		co->callback(co, co->callbackData);
+	    break;
 
-        case EV_KEYPRESS:
-            ch = ev.u.key;
-            if (en->filter)
-                ch = en->filter(co, en->filterData, ch, en->cursorPosition);
-            if (ch) er = entryHandleKey(co, ch);
-            break;
+	case EV_KEYPRESS:
+	    ch = ev.u.key;
+	    if (en->filter)
+		ch = en->filter(co, en->filterData, ch, en->cursorPosition);
+	    if (ch) er = entryHandleKey(co, ch);
+	    break;
 
-        case EV_MOUSE:
-            if ((ev.u.mouse.type == MOUSE_BUTTON_DOWN) &&
-                (en->flags ^ NEWT_FLAG_HIDDEN)) {
-                if (strlen(en->buf) >= ev.u.mouse.x - co->left) {
-                    en->cursorPosition = ev.u.mouse.x - co->left;
-                    newtGotorc(co->top,
-                               co->left +(en->cursorPosition - en->firstChar));
-                } else {
-                    en->cursorPosition = strlen(en->buf);
-                    newtGotorc(co->top,
-                               co->left +(en->cursorPosition - en->firstChar));
-                }
-            }
-            break;
-        }
+	case EV_MOUSE:
+	    if ((ev.u.mouse.type == MOUSE_BUTTON_DOWN) &&
+		(en->flags ^ NEWT_FLAG_HIDDEN)) {
+		if (strlen(en->buf) >= ev.u.mouse.x - co->left) {
+		    en->cursorPosition = ev.u.mouse.x - co->left;
+		    newtGotorc(co->top,
+			       co->left +(en->cursorPosition - en->firstChar));
+		} else {
+		    en->cursorPosition = strlen(en->buf);
+		    newtGotorc(co->top,
+			       co->left +(en->cursorPosition - en->firstChar));
+		}
+	    }
+	    break;
+	}
     } else
-        er.result = ER_IGNORED;
+	er.result = ER_IGNORED;
 
     return er;
 }
@@ -259,109 +259,109 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 
     er.result = ER_SWALLOWED;
     switch (key) {
-      case '\r':                                /* Return */
-        if (en->flags & NEWT_FLAG_RETURNEXIT) {
-            er.result = ER_EXITFORM;
-        } else {
-            er.result = ER_NEXTCOMP;
-        }
-        break;
+      case '\r':				/* Return */
+	if (en->flags & NEWT_FLAG_RETURNEXIT) {
+	    er.result = ER_EXITFORM;
+	} else {
+	    er.result = ER_NEXTCOMP;
+	}
+	break;
 
-      case '\001':                              /* ^A */
+      case '\001':				/* ^A */
       case NEWT_KEY_HOME:
-        en->cursorPosition = 0;
-        break;
+	en->cursorPosition = 0;
+	break;
 
-      case '\005':                              /* ^E */
+      case '\005':				/* ^E */
       case NEWT_KEY_END:
-        en->cursorPosition = en->bufUsed;
-        break;
+	en->cursorPosition = en->bufUsed;
+	break;
 
-      case '\013':                              /* ^K */
-        en->bufUsed = en->cursorPosition;
-        memset(en->buf + en->bufUsed, 0, en->bufAlloced - en->bufUsed);
-        break;
+      case '\013':				/* ^K */
+	en->bufUsed = en->cursorPosition;
+	memset(en->buf + en->bufUsed, 0, en->bufAlloced - en->bufUsed);
+	break;
 
-      case '\002':                              /* ^B */
+      case '\002':				/* ^B */
       case NEWT_KEY_LEFT:
-        if (en->cursorPosition)
-            en->cursorPosition--;
-        break;
+	if (en->cursorPosition)
+	    en->cursorPosition--;
+	break;
 
       case '\004':
       case NEWT_KEY_DELETE:
-        chptr = en->buf + en->cursorPosition;
-        if (*chptr) {
-            chptr++;
-            while (*chptr) {
-                *(chptr - 1) = *chptr;
-                chptr++;
-            }
-            *(chptr - 1) = '\0';
-            en->bufUsed--;
-        }
-        break;
+	chptr = en->buf + en->cursorPosition;
+	if (*chptr) {
+	    chptr++;
+	    while (*chptr) {
+		*(chptr - 1) = *chptr;
+		chptr++;
+	    }
+	    *(chptr - 1) = '\0';
+	    en->bufUsed--;
+	}
+	break;
 
       case NEWT_KEY_BKSPC:
-        if (en->cursorPosition) {
-            /* if this isn't true, there's nothing to erase */
-            chptr = en->buf + en->cursorPosition;
-            en->bufUsed--;
-            en->cursorPosition--;
-            while (*chptr) {
-                *(chptr - 1) = *chptr;
-                chptr++;
-            }
-            *(chptr - 1) = '\0';
-        }
-        break;
+	if (en->cursorPosition) {
+	    /* if this isn't true, there's nothing to erase */
+	    chptr = en->buf + en->cursorPosition;
+	    en->bufUsed--;
+	    en->cursorPosition--;
+	    while (*chptr) {
+		*(chptr - 1) = *chptr;
+		chptr++;
+	    }
+	    *(chptr - 1) = '\0';
+	}
+	break;
 
-      case '\006':                              /* ^B */
+      case '\006':				/* ^B */
       case NEWT_KEY_RIGHT:
-        if (en->cursorPosition < en->bufUsed)
-            en->cursorPosition++;
-        break;
+	if (en->cursorPosition < en->bufUsed)
+	    en->cursorPosition++;
+	break;
 
       default:
-        if ((key >= 0x20 && key <= 0x7e) || (key >= 0xa0 && key <= 0xff)) {
-            if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed >= co->width) {
-                SLtt_beep();
-                break;
-            }
+	if ((key >= 0x20 && key <= 0x7e) || (key >= 0xa0 && key <= 0xff)) {
+	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed >= co->width) {
+		SLtt_beep();
+		break;
+	    }
 
-            if ((en->bufUsed + 1) == en->bufAlloced) {
-                en->bufAlloced += 20;
-                en->buf = realloc(en->buf, en->bufAlloced);
-                if (en->resultPtr) *en->resultPtr = en->buf;
-                memset(en->buf + en->bufUsed + 1, 0, 20);
-            }
+	    if ((en->bufUsed + 1) == en->bufAlloced) {
+		en->bufAlloced += 20;
+		en->buf = realloc(en->buf, en->bufAlloced);
+		if (en->resultPtr) *en->resultPtr = en->buf;
+		memset(en->buf + en->bufUsed + 1, 0, 20);
+	    }
 
-            if (en->cursorPosition == en->bufUsed) {
-                en->bufUsed++;
-            } else {
-                /* insert the new character */
+	    if (en->cursorPosition == en->bufUsed) {
+		en->bufUsed++;
+	    } else {
+		/* insert the new character */
 
-                /* chptr is the last character in the string */
-                chptr = (en->buf + en->bufUsed) - 1;
-                if ((en->bufUsed + 1) == en->bufAlloced) {
-                    /* this string fills the buffer, so clip it */
-                    chptr--;
-                } else
-                    en->bufUsed++;
+		/* chptr is the last character in the string */
+		chptr = (en->buf + en->bufUsed) - 1;
+		if ((en->bufUsed + 1) == en->bufAlloced) {
+		    /* this string fills the buffer, so clip it */
+		    chptr--;
+		} else
+		    en->bufUsed++;
 
-                insPoint = en->buf + en->cursorPosition;
+		insPoint = en->buf + en->cursorPosition;
 
-                while (chptr >= insPoint) {
-                    *(chptr + 1) = *chptr;
-                    chptr--;
-                }
+		while (chptr >= insPoint) {
+		    *(chptr + 1) = *chptr;
+		    chptr--;
+		}
 
-            }
+	    }
 
-            en->buf[en->cursorPosition++] = key;
-        } else {
-            er.result = ER_IGNORED;
-        }
+	    en->buf[en->cursorPosition++] = key;
+	} else {
+	    er.result = ER_IGNORED;
+	}
     }
 
     entryDraw(co);

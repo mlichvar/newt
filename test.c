@@ -14,9 +14,9 @@ void disableCallback(newtComponent co, void * data) {
     struct callbackInfo * cbi = data;
 
     if (*cbi->state == ' ') {
-        newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
+	newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
     } else {
-        newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+	newtEntrySetFlags(cbi->en, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
     }
 
     newtRefresh();
@@ -73,9 +73,9 @@ int main(void) {
     newtFormSetBackground(rsf, NEWT_COLORSET_CHECKBOX);
 
     for (i = 0; i < 10; i++) {
-        sprintf(buf, "Check %d", i);
-        cs[i] = newtCheckbox(3, 10 + i, buf, ' ', NULL, &results[i]);
-        newtFormAddComponent(chklist, cs[i]);
+	sprintf(buf, "Check %d", i);
+	cs[i] = newtCheckbox(3, 10 + i, buf, ' ', NULL, &results[i]);
+	newtFormAddComponent(chklist, cs[i]);
     }
 
     l1 = newtLabel(3, 6, "Scale:");
@@ -98,7 +98,7 @@ int main(void) {
     newtFormAddComponents(f, rsf, scale, NULL);
 
     lb = newtListbox(45, 1, 6, NEWT_FLAG_MULTIPLE | NEWT_FLAG_BORDER |
-                                NEWT_FLAG_SCROLL | NEWT_FLAG_SHOWCURSOR);
+				NEWT_FLAG_SCROLL | NEWT_FLAG_SHOWCURSOR);
     newtListboxAppendEntry(lb, "First", (void *) 1);
     newtListboxAppendEntry(lb, "Second", (void *) 2);
     newtListboxAppendEntry(lb, "Third", (void *) 3);
@@ -124,18 +124,18 @@ int main(void) {
     newtFormSetTimer(f, 200);
 
     do {
-        newtFormRun(f, &es);
+	newtFormRun(f, &es);
 
-        if (es.reason == NEWT_EXIT_COMPONENT && es.u.co == b2) {
-            newtScaleSet(scale, atoi(scaleVal));
-            newtRefresh();
-            answer = NULL;
-        } else if (es.reason == NEWT_EXIT_TIMER) {
-            spinState++;
-            if (!*spinState) spinState = spinner;
-            sprintf(buf, "Spinner: %c", *spinState);
-            newtLabelSetText(timeLabel, buf);
-        }
+	if (es.reason == NEWT_EXIT_COMPONENT && es.u.co == b2) {
+	    newtScaleSet(scale, atoi(scaleVal));
+	    newtRefresh();
+	    answer = NULL;
+	} else if (es.reason == NEWT_EXIT_TIMER) {
+	    spinState++;
+	    if (!*spinState) spinState = spinner;
+	    sprintf(buf, "Spinner: %c", *spinState);
+	    newtLabelSetText(timeLabel, buf);
+	}
     } while (es.reason != NEWT_EXIT_COMPONENT || es.u.co == b2);
 
     scaleVal = strdup(scaleVal);
@@ -156,8 +156,8 @@ int main(void) {
 
     printf("\nSelected listbox items (%d):\n", numsel);
     if(selectedList) {
-        for(i = 0; i < numsel; i++)
-            printf("#%d\n", (int) selectedList[i]);
+	for(i = 0; i < numsel; i++)
+	    printf("#%d\n", (int) selectedList[i]);
     }
 
     return 0;

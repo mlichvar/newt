@@ -35,16 +35,16 @@ static struct componentOps cbOps = {
 } ;
 
 newtComponent newtRadiobutton(int left, int top, const char * text, int isDefault,
-                              newtComponent prevButton) {
+			      newtComponent prevButton) {
     newtComponent co;
     newtComponent curr;
     struct checkbox * rb;
     char initialValue;
 
     if (isDefault)
-        initialValue = '*';
+	initialValue = '*';
     else
-        initialValue = ' ';
+	initialValue = ' ';
 
     co = newtCheckbox(left, top, text, initialValue, " *", NULL);
     rb = co->data;
@@ -53,8 +53,8 @@ newtComponent newtRadiobutton(int left, int top, const char * text, int isDefaul
     rb->prevButton = prevButton;
 
     for (curr = co; curr; curr = rb->prevButton) {
-        rb = curr->data;
-        rb->lastButton = co;
+	rb = curr->data;
+	rb->lastButton = co;
     }
 
     return co;
@@ -67,10 +67,10 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
     rb = setMember->data;
 
     while (rb && rb->value != '*') {
-        setMember = rb->prevButton;
-        if (!setMember)
-          return NULL;
-        rb = setMember->data;
+	setMember = rb->prevButton;
+	if (!setMember)
+	  return NULL;
+	rb = setMember->data;
     }
 
     return setMember;
@@ -94,7 +94,7 @@ void newtCheckboxSetValue(newtComponent co, char value) {
  * FIXME: Check all calls.
  */
 newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
-                           const char * seq, char * result) {
+			   const char * seq, char * result) {
     newtComponent co;
     struct checkbox * cb;
 
@@ -102,18 +102,18 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
 
     co = malloc(sizeof(*co));
     if (co == NULL)
-        return NULL;
+   	return NULL;
     cb = malloc(sizeof(struct checkbox));
     if (cb == NULL) {
-        free(co);
-        return NULL;
+	free(co);
+	return NULL;
     }
     co->data = cb;
     cb->flags = 0;
     if (result)
-        cb->result = result;
+	cb->result = result;
     else
-        cb->result = &cb->value;
+	cb->result = &cb->value;
 
     cb->text = strdup(text);
     cb->seq = strdup(seq);
@@ -142,9 +142,9 @@ void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense
     cb->flags = newtSetFlags(cb->flags, flags, sense);
 
     if (!(cb->flags & NEWT_FLAG_DISABLED))
-        co->takesFocus = 1;
+	co->takesFocus = 1;
     else
-        co->takesFocus = 0;
+	co->takesFocus = 0;
 
     newtGetrc(&row, &col);
     cbDraw(co);
@@ -157,11 +157,11 @@ static void cbDraw(newtComponent c) {
     if (c->top == -1 || !c->isMapped) return;
 
     if (cb->flags & NEWT_FLAG_DISABLED) {
-        cb->inactive = NEWT_COLORSET_DISENTRY;
-        cb->active = NEWT_COLORSET_DISENTRY;
+	cb->inactive = NEWT_COLORSET_DISENTRY;
+	cb->active = NEWT_COLORSET_DISENTRY;
     } else {
-        cb->inactive = COLORSET_CHECKBOX;
-        cb->active = COLORSET_ACTCHECKBOX;
+	cb->inactive = COLORSET_CHECKBOX;
+	cb->active = COLORSET_ACTCHECKBOX;
     }
 
     SLsmg_set_color(cb->inactive);
@@ -170,21 +170,21 @@ static void cbDraw(newtComponent c) {
 
     switch (cb->type) {
       case RADIO:
-        SLsmg_write_string("( ) ");
-        break;
+	SLsmg_write_string("( ) ");
+	break;
 
       case CHECK:
-        SLsmg_write_string("[ ] ");
-        break;
+	SLsmg_write_string("[ ] ");
+	break;
 
       default:
-        break;
+	break;
     }
 
     SLsmg_write_string(cb->text);
 
     if (cb->hasFocus)
-        SLsmg_set_color(cb->active);
+	SLsmg_set_color(cb->active);
 
     newtGotorc(c->top, c->left + 1);
     SLsmg_write_char(*cb->result);
@@ -205,73 +205,73 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
     const char * cur;
 
     if (ev.when == EV_NORMAL) {
-        switch (ev.event) {
-          case EV_FOCUS:
-            cb->hasFocus = 1;
-            cbDraw(co);
-            er.result = ER_SWALLOWED;
-            break;
+	switch (ev.event) {
+	  case EV_FOCUS:
+	    cb->hasFocus = 1;
+	    cbDraw(co);
+	    er.result = ER_SWALLOWED;
+	    break;
 
-          case EV_UNFOCUS:
-            cb->hasFocus = 0;
-            cbDraw(co);
-            er.result = ER_SWALLOWED;
-            break;
+	  case EV_UNFOCUS:
+	    cb->hasFocus = 0;
+	    cbDraw(co);
+	    er.result = ER_SWALLOWED;
+	    break;
 
-          case EV_KEYPRESS:
-            if (ev.u.key == ' ') {
-                if (cb->type == RADIO) {
-                    makeActive(co);
-                } else if (cb->type == CHECK) {
-                    cur = strchr(cb->seq, *cb->result);
-                    if (!cur)
-                        *cb->result = *cb->seq;
-                    else {
-                        cur++;
-                        if (! *cur)
-                            *cb->result = *cb->seq;
-                        else
-                            *cb->result = *cur;
-                    }
-                    cbDraw(co);
-                    er.result = ER_SWALLOWED;
+	  case EV_KEYPRESS:
+	    if (ev.u.key == ' ') {
+		if (cb->type == RADIO) {
+		    makeActive(co);
+		} else if (cb->type == CHECK) {
+		    cur = strchr(cb->seq, *cb->result);
+		    if (!cur)
+			*cb->result = *cb->seq;
+		    else {
+			cur++;
+			if (! *cur)
+			    *cb->result = *cb->seq;
+			else
+			    *cb->result = *cur;
+		    }
+		    cbDraw(co);
+		    er.result = ER_SWALLOWED;
 
-                    if (co->callback)
-                        co->callback(co, co->callbackData);
-                } else {
-                    er.result = ER_IGNORED;
-                }
-            } else if(ev.u.key == NEWT_KEY_ENTER) {
-                er.result = ER_IGNORED;
-            } else {
-                er.result = ER_IGNORED;
-            }
-            break;
-          case EV_MOUSE:
-            if (ev.u.mouse.type == MOUSE_BUTTON_DOWN) {
-                if (cb->type == RADIO) {
-                    makeActive(co);
-                } else if (cb->type == CHECK) {
-                    cur = strchr(cb->seq, *cb->result);
-                    if (!cur)
-                        *cb->result = *cb->seq;
-                    else {
-                        cur++;
-                        if (! *cur)
-                            *cb->result = *cb->seq;
-                        else
-                            *cb->result = *cur;
-                    }
-                    cbDraw(co);
-                    er.result = ER_SWALLOWED;
+		    if (co->callback)
+			co->callback(co, co->callbackData);
+		} else {
+		    er.result = ER_IGNORED;
+		}
+	    } else if(ev.u.key == NEWT_KEY_ENTER) {
+		er.result = ER_IGNORED;
+	    } else {
+		er.result = ER_IGNORED;
+	    }
+	    break;
+   	  case EV_MOUSE:
+	    if (ev.u.mouse.type == MOUSE_BUTTON_DOWN) {
+		if (cb->type == RADIO) {
+		    makeActive(co);
+		} else if (cb->type == CHECK) {
+		    cur = strchr(cb->seq, *cb->result);
+		    if (!cur)
+			*cb->result = *cb->seq;
+		    else {
+			cur++;
+			if (! *cur)
+			    *cb->result = *cb->seq;
+			else
+			    *cb->result = *cur;
+		    }
+		    cbDraw(co);
+		    er.result = ER_SWALLOWED;
 
-                    if (co->callback)
-                        co->callback(co, co->callbackData);
-                }
-            }
-        }
+		    if (co->callback)
+			co->callback(co, co->callbackData);
+		}
+	    }
+	}
     } else
-        er.result = ER_IGNORED;
+	er.result = ER_IGNORED;
 
     return er;
 }
@@ -285,16 +285,16 @@ static void makeActive(newtComponent co) {
     curr = cb->lastButton;
     rb = curr->data;
     while (curr && rb->value == rb->seq[0]) {
-        curr = rb->prevButton;
-        if (curr) rb = curr->data;
+	curr = rb->prevButton;
+	if (curr) rb = curr->data;
     }
     if (curr) {
-        rb->value = rb->seq[0];
-        cbDraw(curr);
+	rb->value = rb->seq[0];
+	cbDraw(curr);
     }
     cb->value = cb->seq[1];
     cbDraw(co);
 
     if (co->callback)
-        co->callback(co, co->callbackData);
+	co->callback(co, co->callbackData);
 }

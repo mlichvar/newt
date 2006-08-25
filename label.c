@@ -50,12 +50,12 @@ void newtLabelSetText(newtComponent co, const char * text) {
     co->width = wstrlen(text,-1);
     newLength = strlen(text);
     if (newLength <= la->length) {
-        memset(la->text, ' ', la->length);
-        memcpy(la->text, text, newLength);
+	memset(la->text, ' ', la->length);
+	memcpy(la->text, text, newLength);
     } else {
-        free(la->text);
-        la->text = strdup(text);
-        la->length = newLength;
+	free(la->text);
+	la->text = strdup(text);
+	la->length = newLength;
     }
 
     labelDraw(co);

@@ -372,8 +372,8 @@ static int Gpm_GetEvent(Gpm_Event *event)
 *****************************************************************************/
 
 struct element {
-    int top, left;              /* Actual, not virtual. These are translated */
-    newtComponent co;           /* into actual through vertOffset */
+    int top, left;		/* Actual, not virtual. These are translated */
+    newtComponent co;		/* into actual through vertOffset */
 };
 
 struct fdInfo {
@@ -428,7 +428,7 @@ static inline int componentFits(newtComponent co, int compNum) {
 
     if ((co->top + form->vertOffset) > el->top) return 0;
     if ((co->top + form->vertOffset + co->height) <
-            (el->top + el->co->height)) return 0;
+	    (el->top + el->co->height)) return 0;
 
     return 1;
 }
@@ -446,7 +446,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     co->left = -1;
     co->isMapped = 0;
 
-    co->takesFocus = 0;                 /* we may have 0 components */
+    co->takesFocus = 0;			/* we may have 0 components */
     co->ops = &formOps;
 
     form->help = help;
@@ -469,13 +469,13 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     form->timer = 0;
     form->lastTimeout.tv_sec = form->lastTimeout.tv_usec = 0;
     if (!(form->flags & NEWT_FLAG_NOF12)) {
-        newtFormAddHotKey(co, NEWT_KEY_F12);
+	newtFormAddHotKey(co, NEWT_KEY_F12);
     }
 
     if (vertBar)
-        form->vertBar = vertBar;
+	form->vertBar = vertBar;
     else
-        form->vertBar = NULL;
+	form->vertBar = NULL;
 
     form->helpTag = help;
     form->helpCb = helpCallback;
@@ -495,17 +495,17 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     int i, new;
 
     for (i = 0; i < form->numComps; i++) {
-         if (form->elements[i].co == subco) break;
+	 if (form->elements[i].co == subco) break;
     }
 
     if (form->elements[i].co != subco) return;
     new = i;
 
     if (co->isMapped && !componentFits(co, new)) {
-        gotoComponent(form, -1);
-        form->vertOffset = form->elements[new].top - co->top - 1;
-        if (form->vertOffset > (form->numRows - co->height))
-            form->vertOffset = form->numRows - co->height;
+	gotoComponent(form, -1);
+	form->vertOffset = form->elements[new].top - co->top - 1;
+	if (form->vertOffset > (form->numRows - co->height))
+	    form->vertOffset = form->numRows - co->height;
     }
 
     gotoComponent(form, new);
@@ -536,9 +536,9 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
     co->takesFocus = 1;
 
     if (form->numCompsAlloced == form->numComps) {
-        form->numCompsAlloced += 5;
-        form->elements = realloc(form->elements,
-                            sizeof(*(form->elements)) * form->numCompsAlloced);
+	form->numCompsAlloced += 5;
+	form->elements = realloc(form->elements,
+			    sizeof(*(form->elements)) * form->numCompsAlloced);
     }
 
     /* we grab real values for these a bit later */
@@ -547,7 +547,7 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
     form->elements[form->numComps].co = newco;
 
     if (newco->takesFocus && form->currComp == -1)
-        form->currComp = form->numComps;
+	form->currComp = form->numComps;
 
     form->numComps++;
 }
@@ -559,7 +559,7 @@ void newtFormAddComponents(newtComponent co, ...) {
     va_start(ap, co);
 
     while ((subco = va_arg(ap, newtComponent)))
-        newtFormAddComponent(co, subco);
+	newtFormAddComponent(co, subco);
 
     va_end(ap);
 }
@@ -578,10 +578,10 @@ static void formPlace(newtComponent co, int left, int top) {
     co->left = left;
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-        el->co->top += vertDelta;
-        el->top += vertDelta;
-        el->co->left += horizDelta;
-        el->left += horizDelta;
+	el->co->top += vertDelta;
+	el->top += vertDelta;
+	el->co->left += horizDelta;
+	el->left += horizDelta;
     }
 }
 
@@ -596,25 +596,25 @@ void newtDrawForm(newtComponent co) {
     newtClearBox(co->left, co->top, co->width, co->height);
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-        /* the scrollbar *always* fits somewhere */
-        if (el->co == form->vertBar) {
-            el->co->ops->mapped(el->co, 1);
-            el->co->ops->draw(el->co);
-        } else {
-            /* only draw it if it'll fit on the screen vertically */
-            if (componentFits(co, i)) {
-                el->co->top = el->top - form->vertOffset;
-                el->co->ops->mapped(el->co, 1);
-                el->co->ops->draw(el->co);
-            } else {
-                el->co->ops->mapped(el->co, 0);
-            }
-        }
+	/* the scrollbar *always* fits somewhere */
+	if (el->co == form->vertBar) {
+	    el->co->ops->mapped(el->co, 1);
+	    el->co->ops->draw(el->co);
+	} else {
+	    /* only draw it if it'll fit on the screen vertically */
+	    if (componentFits(co, i)) {
+		el->co->top = el->top - form->vertOffset;
+		el->co->ops->mapped(el->co, 1);
+		el->co->ops->draw(el->co);
+	    } else {
+		el->co->ops->mapped(el->co, 0);
+	    }
+	}
     }
 
     if (form->vertBar)
-        newtScrollbarSet(form->vertBar, form->vertOffset,
-                         form->numRows - co->height);
+	newtScrollbarSet(form->vertBar, form->vertOffset,
+			 form->numRows - co->height);
 }
 
 static struct eventResult formEvent(newtComponent co, struct event ev) {
@@ -633,153 +633,153 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
     switch (ev.when) {
       case EV_EARLY:
-          if (ev.event == EV_KEYPRESS) {
-            if (ev.u.key == NEWT_KEY_TAB) {
-                er.result = ER_SWALLOWED;
-                dir = 1;
-                wrap = 1;
-            } else if (ev.u.key == NEWT_KEY_UNTAB) {
-                er.result = ER_SWALLOWED;
-                dir = -1;
-                wrap = 1;
-            }
-        }
+	  if (ev.event == EV_KEYPRESS) {
+	    if (ev.u.key == NEWT_KEY_TAB) {
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		wrap = 1;
+	    } else if (ev.u.key == NEWT_KEY_UNTAB) {
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		wrap = 1;
+	    }
+	}
 
-        if (form->numComps) {
-            i = form->currComp;
-            num = 0;
-            while (er.result == ER_IGNORED && num != form->numComps ) {
-                er = form->elements[i].co->ops->event(form->elements[i].co, ev);
+	if (form->numComps) {
+	    i = form->currComp;
+	    num = 0;
+	    while (er.result == ER_IGNORED && num != form->numComps ) {
+		er = form->elements[i].co->ops->event(form->elements[i].co, ev);
 
-                num++;
-                i++;
-                if (i == form->numComps) i = 0;
-            }
-        }
+		num++;
+		i++;
+		if (i == form->numComps) i = 0;
+	    }
+	}
 
-        break;
+	break;
 
       case EV_NORMAL:
-          if (ev.event == EV_MOUSE) {
-              found = 0;
-              for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-                  if ((el->co->top <= ev.u.mouse.y) &&
-                      (el->co->top + el->co->height > ev.u.mouse.y) &&
-                      (el->co->left <= ev.u.mouse.x) &&
-                      (el->co->left + el->co->width > ev.u.mouse.x)) {
-                      found = 1;
-                      if (el->co->takesFocus) {
-                          gotoComponent(form, i);
-                          subco = form->elements[form->currComp].co;
-                      }
-                  }
-                  /* If we did not find a co to send this event to, we
-                     should just swallow the event here. */
-              }
-              if (!found) {
-                  er.result = ER_SWALLOWED;
+	  if (ev.event == EV_MOUSE) {
+	      found = 0;
+	      for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
+		  if ((el->co->top <= ev.u.mouse.y) &&
+		      (el->co->top + el->co->height > ev.u.mouse.y) &&
+		      (el->co->left <= ev.u.mouse.x) &&
+		      (el->co->left + el->co->width > ev.u.mouse.x)) {
+		      found = 1;
+		      if (el->co->takesFocus) {
+			  gotoComponent(form, i);
+			  subco = form->elements[form->currComp].co;
+		      }
+		  }
+		  /* If we did not find a co to send this event to, we
+		     should just swallow the event here. */
+	      }
+	      if (!found) {
+		  er.result = ER_SWALLOWED;
 
-                  return er;
-              }
-          }
-        er = subco->ops->event(subco, ev);
-        switch (er.result) {
-          case ER_NEXTCOMP:
-            er.result = ER_SWALLOWED;
-            dir = 1;
-            break;
+		  return er;
+	      }
+	  }
+	er = subco->ops->event(subco, ev);
+	switch (er.result) {
+	  case ER_NEXTCOMP:
+	    er.result = ER_SWALLOWED;
+	    dir = 1;
+	    break;
 
-          case ER_EXITFORM:
-            form->exitComp = subco;
-            break;
+	  case ER_EXITFORM:
+	    form->exitComp = subco;
+	    break;
 
-          default:
-            break;
-        }
-        break;
+	  default:
+	    break;
+	}
+	break;
 
       case EV_LATE:
-        er = subco->ops->event(subco, ev);
+	er = subco->ops->event(subco, ev);
 
-        if (er.result == ER_IGNORED) {
-            switch (ev.u.key) {
-              case NEWT_KEY_UP:
-              case NEWT_KEY_LEFT:
-              case NEWT_KEY_BKSPC:
-                er.result = ER_SWALLOWED;
-                dir = -1;
-                break;
+	if (er.result == ER_IGNORED) {
+	    switch (ev.u.key) {
+	      case NEWT_KEY_UP:
+	      case NEWT_KEY_LEFT:
+	      case NEWT_KEY_BKSPC:
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		break;
 
-              case NEWT_KEY_DOWN:
-              case NEWT_KEY_RIGHT:
-                er.result = ER_SWALLOWED;
-                dir = 1;
-                break;
+	      case NEWT_KEY_DOWN:
+	      case NEWT_KEY_RIGHT:
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		break;
 
-             case NEWT_KEY_PGUP:
-                er.result = ER_SWALLOWED;
-                dir = -1;
-                page = 1;
-                break;
+	     case NEWT_KEY_PGUP:
+		er.result = ER_SWALLOWED;
+		dir = -1;
+		page = 1;
+		break;
 
-             case NEWT_KEY_PGDN:
-                er.result = ER_SWALLOWED;
-                dir = 1;
-                page = 1;
-                break;
-            }
-        }
+	     case NEWT_KEY_PGDN:
+		er.result = ER_SWALLOWED;
+		dir = 1;
+		page = 1;
+		break;
+	    }
+	}
     }
 
     if (dir) {
-        new = form->currComp;
+	new = form->currComp;
 
-        if (page) {
-            new += dir * co->height;
-            if (new < 0)
-                new = 0;
-            else if (new >= form->numComps)
-                new = (form->numComps - 1);
+	if (page) {
+	    new += dir * co->height;
+	    if (new < 0)
+		new = 0;
+	    else if (new >= form->numComps)
+		new = (form->numComps - 1);
 
-            while (!form->elements[new].co->takesFocus)
-                new = new - dir;
-        } else {
-            do {
-                new += dir;
+	    while (!form->elements[new].co->takesFocus)
+		new = new - dir;
+	} else {
+	    do {
+		new += dir;
 
-                if (wrap) {
-                    if (new < 0)
-                        new = form->numComps - 1;
-                    else if (new >= form->numComps)
-                        new = 0;
-                } else if (new < 0 || new >= form->numComps)
-                    return er;
-            } while (!form->elements[new].co->takesFocus);
-        }
+		if (wrap) {
+		    if (new < 0)
+			new = form->numComps - 1;
+		    else if (new >= form->numComps)
+			new = 0;
+		} else if (new < 0 || new >= form->numComps)
+		    return er;
+	    } while (!form->elements[new].co->takesFocus);
+	}
 
-        /* make sure this component is visible */
-        if (!componentFits(co, new)) {
-            gotoComponent(form, -1);
+	/* make sure this component is visible */
+	if (!componentFits(co, new)) {
+	    gotoComponent(form, -1);
 
-            if (dir < 0) {
-                /* make the new component the first one */
-                form->vertOffset = form->elements[new].top - co->top;
-            } else {
-                /* make the new component the last one */
-                form->vertOffset = (form->elements[new].top +
-                                        form->elements[new].co->height) -
-                                    (co->top + co->height);
-            }
+	    if (dir < 0) {
+		/* make the new component the first one */
+		form->vertOffset = form->elements[new].top - co->top;
+	    } else {
+		/* make the new component the last one */
+		form->vertOffset = (form->elements[new].top +
+					form->elements[new].co->height) -
+				    (co->top + co->height);
+	    }
 
-            if (form->vertOffset < 0) form->vertOffset = 0;
-            if (form->vertOffset > (form->numRows - co->height))
-                form->vertOffset = form->numRows - co->height;
+	    if (form->vertOffset < 0) form->vertOffset = 0;
+	    if (form->vertOffset > (form->numRows - co->height))
+		form->vertOffset = form->numRows - co->height;
 
-            newtDrawForm(co);
-        }
+	    newtDrawForm(co);
+	}
 
-        gotoComponent(form, new);
-        er.result = ER_SWALLOWED;
+	gotoComponent(form, new);
+	er.result = ER_SWALLOWED;
     }
 
     return er;
@@ -793,13 +793,13 @@ void newtFormDestroy(newtComponent co) {
 
     /* first, destroy all of the components */
     for (i = 0; i < form->numComps; i++) {
-        subco = form->elements[i].co;
-        if (subco->ops->destroy) {
-            subco->ops->destroy(subco);
-        } else {
-            if (subco->data) free(subco->data);
-            free(subco);
-        }
+	subco = form->elements[i].co;
+	if (subco->ops->destroy) {
+	    subco->ops->destroy(subco);
+	} else {
+	    if (subco->data) free(subco->data);
+	    free(subco);
+	}
     }
 
     if (form->hotKeys) free(form->hotKeys);
@@ -814,12 +814,12 @@ newtComponent newtRunForm(newtComponent co) {
 
     newtFormRun(co, &es);
     if (es.reason == NEWT_EXIT_HOTKEY) {
-        if (es.u.key == NEWT_KEY_F12) {
-            es.reason = NEWT_EXIT_COMPONENT;
-            es.u.co = co;
-        } else {
-            return NULL;
-        }
+	if (es.u.key == NEWT_KEY_F12) {
+	    es.reason = NEWT_EXIT_COMPONENT;
+	    es.u.co = co;
+	} else {
+	    return NULL;
+	}
     }
 
     return es.u.co;
@@ -850,36 +850,36 @@ void newtFormSetSize(newtComponent co) {
     co->top = form->elements[0].co->top;
     co->left = form->elements[0].co->left;
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-        if (el->co->ops == &formOps)
-            newtFormSetSize(el->co);
+	if (el->co->ops == &formOps)
+	    newtFormSetSize(el->co);
 
-        el->left = el->co->left;
-        el->top = el->co->top;
+ 	el->left = el->co->left;
+ 	el->top = el->co->top;
 
-        if (co->left > el->co->left) {
-            delta = co->left - el->co->left;
-            co->left -= delta;
-            co->width += delta;
-        }
+	if (co->left > el->co->left) {
+	    delta = co->left - el->co->left;
+	    co->left -= delta;
+	    co->width += delta;
+	}
 
-        if (co->top > el->co->top) {
-            delta = co->top - el->co->top;
-            co->top -= delta;
-            if (!form->fixedHeight)
-                co->height += delta;
-        }
+	if (co->top > el->co->top) {
+	    delta = co->top - el->co->top;
+	    co->top -= delta;
+	    if (!form->fixedHeight)
+		co->height += delta;
+	}
 
-        if ((co->left + co->width) < (el->co->left + el->co->width))
-            co->width = (el->co->left + el->co->width) - co->left;
+	if ((co->left + co->width) < (el->co->left + el->co->width))
+	    co->width = (el->co->left + el->co->width) - co->left;
 
-        if (!form->fixedHeight) {
-            if ((co->top + co->height) < (el->co->top + el->co->height))
-                co->height = (el->co->top + el->co->height) - co->top;
-        }
+	if (!form->fixedHeight) {
+	    if ((co->top + co->height) < (el->co->top + el->co->height))
+		co->height = (el->co->top + el->co->height) - co->top;
+	}
 
-        if ((el->co->top + el->co->height - co->top) > form->numRows) {
-            form->numRows = el->co->top + el->co->height - co->top;
-        }
+	if ((el->co->top + el->co->height - co->top) > form->numRows) {
+	    form->numRows = el->co->top + el->co->height - co->top;
+	}
     }
 }
 
@@ -910,155 +910,155 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     newtDrawForm(co);
 
     if (form->currComp == -1) {
-        gotoComponent(form, 0);
+	gotoComponent(form, 0);
     } else
-        gotoComponent(form, form->currComp);
+	gotoComponent(form, form->currComp);
 
     while (!done) {
-        newtRefresh();
+	newtRefresh();
 
-        FD_ZERO(&readSet);
-        FD_ZERO(&writeSet);
-        FD_ZERO(&exceptSet);
-        FD_SET(0, &readSet);
+	FD_ZERO(&readSet);
+	FD_ZERO(&writeSet);
+	FD_ZERO(&exceptSet);
+	FD_SET(0, &readSet);
 #ifdef USE_GPM
-        if (gpm_fd > 0) {
-            FD_SET(gpm_fd, &readSet);
-        }
-        max = form->maxFd > gpm_fd ? form->maxFd : gpm_fd;
+	if (gpm_fd > 0) {
+	    FD_SET(gpm_fd, &readSet);
+	}
+	max = form->maxFd > gpm_fd ? form->maxFd : gpm_fd;
 #else
-        max = form->maxFd;
+	max = form->maxFd;
 #endif
 
-        for (i = 0; i < form->numFds; i++) {
-            if (form->fds[i].flags & NEWT_FD_READ)
-                FD_SET(form->fds[i].fd, &readSet);
-            if (form->fds[i].flags & NEWT_FD_WRITE)
-                FD_SET(form->fds[i].fd, &writeSet);
-            if (form->fds[i].flags & NEWT_FD_EXCEPT)
-                FD_SET(form->fds[i].fd, &exceptSet);
-        }
+	for (i = 0; i < form->numFds; i++) {
+	    if (form->fds[i].flags & NEWT_FD_READ)
+		FD_SET(form->fds[i].fd, &readSet);
+	    if (form->fds[i].flags & NEWT_FD_WRITE)
+		FD_SET(form->fds[i].fd, &writeSet);
+	    if (form->fds[i].flags & NEWT_FD_EXCEPT)
+		FD_SET(form->fds[i].fd, &exceptSet);
+	}
 
-        if (form->timer) {
-            /* Calculate when we next need to return with a timeout. Do
-               this inside the loop in case a callback resets the timer. */
-            if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
-                gettimeofday(&form->lastTimeout, NULL);
+	if (form->timer) {
+	    /* Calculate when we next need to return with a timeout. Do
+	       this inside the loop in case a callback resets the timer. */
+	    if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
+		gettimeofday(&form->lastTimeout, NULL);
 
-            nextTimeout.tv_sec = form->lastTimeout.tv_sec + 
-                    (form->timer / 1000);
-            nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
-                                    (form->timer % 1000) * 1000;
+	    nextTimeout.tv_sec = form->lastTimeout.tv_sec + 
+		    (form->timer / 1000);
+	    nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
+				    (form->timer % 1000) * 1000;
 
-            gettimeofday(&now, 0);
+	    gettimeofday(&now, 0);
 
-            if (now.tv_sec > nextTimeout.tv_sec) {
-                timeout.tv_sec = timeout.tv_usec = 0;
-            } else if (now.tv_sec == nextTimeout.tv_sec) {
-                timeout.tv_sec = 0;
-                if (now.tv_usec > nextTimeout.tv_usec)
-                    timeout.tv_usec = 0;
-                else
-                    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
-            } else if (now.tv_sec < nextTimeout.tv_sec) {
-                timeout.tv_sec = nextTimeout.tv_sec - now.tv_sec;
-                if (now.tv_usec > nextTimeout.tv_usec)
-                    timeout.tv_sec--,
-                    timeout.tv_usec = nextTimeout.tv_usec + 1000000 -
-                                        now.tv_usec;
-                else 
-                    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
-            }
-        } else {
-            timeout.tv_sec = timeout.tv_usec = 0;
-        }
+	    if (now.tv_sec > nextTimeout.tv_sec) {
+		timeout.tv_sec = timeout.tv_usec = 0;
+	    } else if (now.tv_sec == nextTimeout.tv_sec) {
+		timeout.tv_sec = 0;
+		if (now.tv_usec > nextTimeout.tv_usec)
+		    timeout.tv_usec = 0;
+		else
+		    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
+	    } else if (now.tv_sec < nextTimeout.tv_sec) {
+		timeout.tv_sec = nextTimeout.tv_sec - now.tv_sec;
+		if (now.tv_usec > nextTimeout.tv_usec)
+		    timeout.tv_sec--,
+		    timeout.tv_usec = nextTimeout.tv_usec + 1000000 -
+					now.tv_usec;
+		else 
+		    timeout.tv_usec = nextTimeout.tv_usec - now.tv_usec;
+	    }
+	} else {
+	    timeout.tv_sec = timeout.tv_usec = 0;
+	}
 
-        i = select(max + 1, &readSet, &writeSet, &exceptSet, 
-                        form->timer ? &timeout : NULL);
-        if (i < 0) continue;    /* ?? What should we do here? */
+	i = select(max + 1, &readSet, &writeSet, &exceptSet, 
+			form->timer ? &timeout : NULL);
+	if (i < 0) continue;	/* ?? What should we do here? */
 
-        if (i == 0) {
-            done = 1;
-            es->reason = NEWT_EXIT_TIMER;
-            gettimeofday(&form->lastTimeout, NULL);
-        } else
+	if (i == 0) {
+	    done = 1;
+	    es->reason = NEWT_EXIT_TIMER;
+	    gettimeofday(&form->lastTimeout, NULL);
+	} else
 #ifdef USE_GPM
-        if (gpm_fd > 0 && FD_ISSET(gpm_fd, &readSet)) {
-            Gpm_GetEvent(&event);
+	if (gpm_fd > 0 && FD_ISSET(gpm_fd, &readSet)) {
+	    Gpm_GetEvent(&event);
 
-            if (event.type & GPM_DOWN) {
-                /* Transform coordinates to current window */
-                newtGetWindowPos(&x, &y);
+	    if (event.type & GPM_DOWN) {
+		/* Transform coordinates to current window */
+		newtGetWindowPos(&x, &y);
 
-                ev.event = EV_MOUSE;
-                ev.u.mouse.type = MOUSE_BUTTON_DOWN;
-                ev.u.mouse.x = event.x - x - 1;
-                ev.u.mouse.y = event.y - y - 1;
+		ev.event = EV_MOUSE;
+		ev.u.mouse.type = MOUSE_BUTTON_DOWN;
+		ev.u.mouse.x = event.x - x - 1;
+		ev.u.mouse.y = event.y - y - 1;
 
-                /* Send the form the event */
-                er = sendEvent(co, ev);
+		/* Send the form the event */
+		er = sendEvent(co, ev);
 
-                if (er.result == ER_EXITFORM) {
-                    done = 1;
-                    es->reason = NEWT_EXIT_COMPONENT;
-                    es->u.co = form->exitComp;
-                }
+		if (er.result == ER_EXITFORM) {
+		    done = 1;
+		    es->reason = NEWT_EXIT_COMPONENT;
+		    es->u.co = form->exitComp;
+		}
 
-            }
-        } else
+	    }
+	} else
 #endif
-        {
-            if (FD_ISSET(0, &readSet)) {
+	{
+	    if (FD_ISSET(0, &readSet)) {
 
-                key = newtGetKey();
+		key = newtGetKey();
 
-                if (key == NEWT_KEY_RESIZE) {
-                    newtResizeScreen(1);
-                    continue;
-                }
+		if (key == NEWT_KEY_RESIZE) {
+		    newtResizeScreen(1);
+		    continue;
+		}
 
-                for (i = 0; i < form->numHotKeys; i++) {
-                    if (form->hotKeys[i] == key) {
-                        es->reason = NEWT_EXIT_HOTKEY;
-                        es->u.key = key;
-                        done = 1;
-                        break;
-                    }
-                }
+		for (i = 0; i < form->numHotKeys; i++) {
+		    if (form->hotKeys[i] == key) {
+			es->reason = NEWT_EXIT_HOTKEY;
+			es->u.key = key;
+			done = 1;
+			break;
+		    }
+		}
 
-                if (key == NEWT_KEY_F1 && form->helpTag && form->helpCb)
-                    form->helpCb(co, form->helpTag);
+		if (key == NEWT_KEY_F1 && form->helpTag && form->helpCb)
+		    form->helpCb(co, form->helpTag);
 
-                if (!done) {
-                    ev.event = EV_KEYPRESS;
-                    ev.u.key = key;
+		if (!done) {
+		    ev.event = EV_KEYPRESS;
+		    ev.u.key = key;
 
-                    er = sendEvent(co, ev);
+		    er = sendEvent(co, ev);
 
-                    if (er.result == ER_EXITFORM) {
-                        done = 1;
-                        es->reason = NEWT_EXIT_COMPONENT;
-                        es->u.co = form->exitComp;
-                    }
-                }
-            } else {
-                for (i = 0; i < form->numFds; i++) {
-                    if (((form->fds[i].flags & NEWT_FD_READ)
-                        && FD_ISSET(form->fds[i].fd, &readSet))
-                        || ((form->fds[i].flags & NEWT_FD_WRITE)
-                        && FD_ISSET(form->fds[i].fd, &writeSet))
-                        || ((form->fds[i].flags & NEWT_FD_EXCEPT)
-                        && FD_ISSET(form->fds[i].fd, &exceptSet))) break;
-                }
-                if(i < form->numFds)
-                    es->u.watch = form->fds[i].fd;
-                else
-                    es->u.watch = -1;
+		    if (er.result == ER_EXITFORM) {
+			done = 1;
+			es->reason = NEWT_EXIT_COMPONENT;
+			es->u.co = form->exitComp;
+		    }
+		}
+	    } else {
+		for (i = 0; i < form->numFds; i++) {
+		    if (((form->fds[i].flags & NEWT_FD_READ)
+			&& FD_ISSET(form->fds[i].fd, &readSet))
+			|| ((form->fds[i].flags & NEWT_FD_WRITE)
+			&& FD_ISSET(form->fds[i].fd, &writeSet))
+			|| ((form->fds[i].flags & NEWT_FD_EXCEPT)
+			&& FD_ISSET(form->fds[i].fd, &exceptSet))) break;
+		}
+		if(i < form->numFds)
+		    es->u.watch = form->fds[i].fd;
+		else
+		    es->u.watch = -1;
 
-                es->reason = NEWT_EXIT_FDREADY;
-                done = 1;
-            }
-        }
+		es->reason = NEWT_EXIT_FDREADY;
+		done = 1;
+	    }
+	}
     }
     newtRefresh();
 #ifdef USE_GPM
@@ -1073,13 +1073,13 @@ static struct eventResult sendEvent(newtComponent co, struct event ev) {
     er = co->ops->event(co, ev);
 
     if (er.result == ER_IGNORED) {
-        ev.when = EV_NORMAL;
-        er = co->ops->event(co, ev);
+	ev.when = EV_NORMAL;
+	er = co->ops->event(co, ev);
     }
 
     if (er.result == ER_IGNORED) {
-        ev.when = EV_LATE;
-        er = co->ops->event(co, ev);
+	ev.when = EV_LATE;
+	er = co->ops->event(co, ev);
     }
 
     return er;
@@ -1089,16 +1089,16 @@ static void gotoComponent(struct form * form, int newComp) {
     struct event ev;
 
     if (form->currComp != -1) {
-        ev.event = EV_UNFOCUS;
-        sendEvent(form->elements[form->currComp].co, ev);
+	ev.event = EV_UNFOCUS;
+	sendEvent(form->elements[form->currComp].co, ev);
     }
 
     form->currComp = newComp;
 
     if (form->currComp != -1) {
-        ev.event = EV_FOCUS;
-        ev.when = EV_NORMAL;
-        sendEvent(form->elements[form->currComp].co, ev);
+	ev.event = EV_FOCUS;
+	ev.when = EV_NORMAL;
+	sendEvent(form->elements[form->currComp].co, ev);
     }
 }
 
@@ -1123,7 +1123,7 @@ void newtFormWatchFd(newtComponent co, int fd, int fdFlags) {
 
     for (i = 0; i < form->numFds; i++)
       if (form->fds[i].fd == fd)
-        break;
+	break;
 
     if(i >= form->numFds)
       form->fds = realloc(form->fds, (++form->numFds) * sizeof(*form->fds));
