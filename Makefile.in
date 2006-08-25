@@ -46,10 +46,10 @@ else
 TARGET=depend $(PROGS)
 endif
 
-all:	$(TARGET) _snackmodule.so po/po-stamp
+all:	$(TARGET) _snackmodule.so po/stamp-po
 
-po/po-stamp:
-	$(MAKE) -C po po-stamp
+po/stamp-po:
+	$(MAKE) -C po stamp-po
 
 test:	$(TESTOBJS) $(LIBNEWT)
 	$(CC) -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
@@ -112,7 +112,7 @@ sharedlib: $(LIBNEWTSH)
 
 $(LIBNEWTSH): $(SHAREDDIR) $(SHAREDOBJS)
 	$(CC) -shared -o $(LIBNEWTSH) $(SHLIBFLAGS) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
-	ln -s $(LIBNEWTSH) libnewt.so
+	ln -fs $(LIBNEWTSH) libnewt.so
 
 $(SHAREDDIR)/%.o : %.c
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<

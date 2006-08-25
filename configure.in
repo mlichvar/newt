@@ -6,12 +6,16 @@ AC_CONFIG_HEADER(config.h)
 PACKAGE=newt
 VERSION=0.52.1
 SONAME=0.52
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [NEWT Version String])
 AC_SUBST(PACKAGE)
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Package Name])
 AC_SUBST(VERSION)
+AC_DEFINE_UNQUOTED(SONAME, "$SONAME", [NEWT Library Version (SONAME)])
 AC_SUBST(SONAME)
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AM_GNU_GETTEXT([external])
 
 AC_CHECK_HEADERS(sys/select.h alloca.h)
 
@@ -21,5 +25,5 @@ if test "x$with_gpm_support" = "xyes"; then
   AC_DEFINE(USE_GPM, 1, [Define to 1 if GPM support is enabled])
 fi
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT([Makefile po/Makefile.in])
 

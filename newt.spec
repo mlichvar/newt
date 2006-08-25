@@ -2,7 +2,7 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.1
+%define version 0.52.2
 Version: %{version}
 Release: 0
 License: LGPL
@@ -85,6 +85,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Fri Nov 22 2005 Petr Rockai <prockai@redhat.com> - 0.52.2-0
+- new upstream version (minor fixes for the source tarball
+  and build system)
+
 * Fri Sep 30 2005 Petr Rockai <prockai@redhat.com> - 0.52.1-0
 - revert bidi patch, objections by Jeremy Katz about
   anaconda breaking
