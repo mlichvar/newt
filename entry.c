@@ -8,6 +8,7 @@
 #include <slang.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "newt.h"
 #include "newt_pr.h"
@@ -90,8 +91,8 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     else
 	co->takesFocus = 0;
 
-    if (initialValue && wstrlen(initialValue,-1) > (unsigned int)width) {
-	en->bufAlloced = wstrlen(initialValue,-1) + 1;
+    if (initialValue && strlen(initialValue) > (unsigned int)width) {
+	en->bufAlloced = strlen(initialValue) + 1;
     }
     en->buf = malloc(en->bufAlloced);
     en->resultPtr = resultPtr;
@@ -111,11 +112,48 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     return co;
 }
 
+static int visible_width(const char *str, int start, int end)
+{
+    int width = wstrlen(str + start, end-start);
+    int len, w = 0;
+    wchar_t wc;
+
+    len = mbtowc(&wc, str+end, MB_CUR_MAX);
+    if (len == 0)
+       w = 1;
+    else if (len > 0)
+       w = wcwidth(wc);
+    return width + w;
+}
+
+static void scroll(struct entry *en, int width)
+{
+    wchar_t wc;
+    int len, w;
+    int  newwidth = visible_width(en->buf, en->firstChar, en->cursorPosition);
+
+    while (newwidth > width) {
+        len = mbtowc(&wc, en->buf+en->firstChar, MB_CUR_MAX);
+	if (!len) {
+		en->firstChar++;
+		break;
+	}
+	if (len < 0)
+	   break;
+	w = wcwidth(wc);
+	if (w < 0)
+	   break;
+	en->firstChar += len;
+	newwidth -= w;
+    }
+}
+
 static void entryDraw(newtComponent co) {
     struct entry * en = co->data;
     int i;
     char * chptr;
     int len;
+    char *tmpptr = NULL;
 
     if (!co->isMapped) return;
 
@@ -138,16 +176,15 @@ static void entryDraw(newtComponent co) {
     if (en->cursorPosition < en->firstChar) {
 	/* scroll to the left */
 	en->firstChar = en->cursorPosition;
-    } else if ((en->firstChar + co->width) <= en->cursorPosition) {
+    } else {
 	/* scroll to the right */
-	en->firstChar = en->cursorPosition - co->width + 1;
+	scroll(en, co->width);
     }
 
     chptr = en->buf + en->firstChar;
 
     if (en->flags & NEWT_FLAG_PASSWORD) {
-	char *tmpptr, *p;
-
+	char *p;
 	tmpptr = alloca(strlen(chptr)+2);
 	strcpy(tmpptr, chptr);
 	for (p = tmpptr; *p; p++)
@@ -159,19 +196,22 @@ static void entryDraw(newtComponent co) {
 
     if (len <= co->width) {
 	i = len;
+	/* BIDI: do not replaced, because it will not work.
+	 * More work needed */
 	SLsmg_write_string(chptr);
 	while (i < co->width) {
 	    SLsmg_write_char('_');
 	    i++;
 	}
     } else {
+        /* BIDI: will not work for RTL text */
 	SLsmg_write_nstring(chptr, co->width);
     }
 
     if (en->flags & NEWT_FLAG_HIDDEN)
 	newtGotorc(co->top, co->left);
     else
-	newtGotorc(co->top, co->left + (en->cursorPosition - en->firstChar));
+	newtGotorc(co->top, co->left + wstrlen(en->buf+en->firstChar, en->cursorPosition - en->firstChar));
 }
 
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
@@ -212,7 +252,7 @@ static struct eventResult entryEvent(newtComponent co,
 		newtGotorc(co->top, co->left);
 	    else
 		newtGotorc(co->top, co->left +
-			   (en->cursorPosition - en->firstChar));
+			   wstrlen(en->buf + en->firstChar, en->cursorPosition - en->firstChar));
 	    er.result = ER_SWALLOWED;
 	    break;
 
@@ -252,6 +292,30 @@ static struct eventResult entryEvent(newtComponent co,
     return er;
 }
 
+static int previous_char(const char *buf, int pos)
+{
+    int len = 0;
+    int off = 0;
+    
+    while (off < pos) {
+       len = mblen(buf+off, MB_CUR_MAX);
+       if (len <= 0)
+	  return pos;
+       off+=len;
+    }
+    return off-len;
+}
+
+static int next_char(const char *buf, int pos)
+{
+    int len = mblen(buf + pos, MB_CUR_MAX);
+    if (len < 0)
+       return pos;
+    if (len == 0)
+       return ++pos;
+    return pos+len;
+}
+
 static struct eventResult entryHandleKey(newtComponent co, int key) {
     struct entry * en = co->data;
     struct eventResult er;
@@ -282,49 +346,63 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 	memset(en->buf + en->bufUsed, 0, en->bufAlloced - en->bufUsed);
 	break;
 
+      case '\025':				/* ^U */
+	en->bufUsed -= en->cursorPosition;
+	memmove(en->buf, en->buf + en->cursorPosition, en->bufUsed);
+	en->cursorPosition = 0;
+	memset(en->buf + en->bufUsed, 0, en->bufAlloced - en->bufUsed);
+	break;
+
       case '\002':				/* ^B */
       case NEWT_KEY_LEFT:
 	if (en->cursorPosition)
-	    en->cursorPosition--;
+	    en->cursorPosition = previous_char(en->buf, en->cursorPosition);
 	break;
 
       case '\004':
       case NEWT_KEY_DELETE:
 	chptr = en->buf + en->cursorPosition;
 	if (*chptr) {
-	    chptr++;
-	    while (*chptr) {
-		*(chptr - 1) = *chptr;
-		chptr++;
+	    int delta = next_char(en->buf, en->cursorPosition)-en->cursorPosition;
+	    if (delta) {
+	       chptr+=delta;
+	       while (*chptr) {
+	          *(chptr - delta) = *chptr;
+		  chptr++;
+	       }
+	       memset(chptr - delta, 0, delta);
+	       en->bufUsed-=delta;
 	    }
-	    *(chptr - 1) = '\0';
-	    en->bufUsed--;
 	}
 	break;
 
-      case NEWT_KEY_BKSPC:
-	if (en->cursorPosition) {
+      case NEWT_KEY_BKSPC: {
+	int prev = previous_char(en->buf, en->cursorPosition);
+	if (en->cursorPosition != prev) {
 	    /* if this isn't true, there's nothing to erase */
+	    int delta = en->cursorPosition - prev;
 	    chptr = en->buf + en->cursorPosition;
-	    en->bufUsed--;
-	    en->cursorPosition--;
+	    en->bufUsed-=delta;
+	    en->cursorPosition-=delta;
 	    while (*chptr) {
-		*(chptr - 1) = *chptr;
+		*(chptr - delta) = *chptr;
 		chptr++;
 	    }
-	    *(chptr - 1) = '\0';
+	    memset(chptr - delta, 0, delta);
+	}
 	}
 	break;
 
       case '\006':				/* ^B */
       case NEWT_KEY_RIGHT:
 	if (en->cursorPosition < en->bufUsed)
-	    en->cursorPosition++;
+	    en->cursorPosition = next_char(en->buf, en->cursorPosition);
 	break;
 
       default:
-	if ((key >= 0x20 && key <= 0x7e) || (key >= 0xa0 && key <= 0xff)) {
-	    if (!(en->flags & NEWT_FLAG_SCROLL) && en->bufUsed >= co->width) {
+	if ((key >= 0x20 && key <= 0x7e) || (key >= 0x80 && key <= 0xff)) {
+	    if (!(en->flags & NEWT_FLAG_SCROLL) && wstrlen(en->buf, -1) >= co->width) {
+		/* FIXME this is broken */
 		SLtt_beep();
 		break;
 	    }
@@ -357,7 +435,7 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 		}
 
 	    }
-
+            /* FIXME */
 	    en->buf[en->cursorPosition++] = key;
 	} else {
 	    er.result = ER_IGNORED;

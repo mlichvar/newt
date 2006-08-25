@@ -282,7 +282,7 @@ hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3,
             "F4" : _snack.KEY_F4, "F5" : _snack.KEY_F5, "F6" : _snack.KEY_F6, 
             "F7" : _snack.KEY_F7, "F8" : _snack.KEY_F8, "F9" : _snack.KEY_F9, 
             "F10" : _snack.KEY_F10, "F11" : _snack.KEY_F11, 
-            "F12" : _snack.KEY_F12, " " : ord(" ") }
+            "F12" : _snack.KEY_F12, "ESC" : _snack.KEY_ESC ,  " " : ord(" ") }
 
 for n in hotkeys.keys():
     hotkeys[hotkeys[n]] = n
@@ -925,5 +925,5 @@ class CListbox(Grid):
     def setCurrent(self, item):
         self.listbox.setCurrent(item)
 
-        def clear(self):
-            self.listbox.clear()
+    def clear(self):
+        self.listbox.clear()

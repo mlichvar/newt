@@ -80,6 +80,11 @@ void newtDefaultMappedHandler(newtComponent c, int isMapped);
 struct eventResult newtDefaultEventHandler(newtComponent c,
 					   struct event ev);
 
-int wstrlen(const char *str, int len);
+int _newt_wstrlen(const char *str, int len);
+void write_string_int(const char *, char *);
+void write_nstring_int(const char *, int, char *);
+char get_text_direction(const char *);
+
+#define wstrlen(str,len) _newt_wstrlen((str),(len))
 
 #endif /* H_NEWT_PR */

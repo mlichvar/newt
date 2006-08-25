@@ -471,6 +471,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     if (!(form->flags & NEWT_FLAG_NOF12)) {
 	newtFormAddHotKey(co, NEWT_KEY_F12);
     }
+    /* TEST */ newtFormAddHotKey (co, NEWT_KEY_ESCAPE);
 
     if (vertBar)
 	form->vertBar = vertBar;

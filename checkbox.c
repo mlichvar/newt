@@ -79,7 +79,7 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
 char newtCheckboxGetValue(newtComponent co) {
     struct checkbox * cb = co->data;
 
-    return *cb->result;
+    return cb->value;
 }
 
 void newtCheckboxSetValue(newtComponent co, char value) {
@@ -141,6 +141,12 @@ void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense
 
     cb->flags = newtSetFlags(cb->flags, flags, sense);
 
+    // If the flag just sets a property (eg. NEWT_FLAG_RETURNEXIT),
+    // don't redraw, etc. as the component might be 'hidden' and not to
+    // be drawn (eg. in a scrolled list)
+    if (flags == NEWT_FLAG_RETURNEXIT)
+	    return;
+
     if (!(cb->flags & NEWT_FLAG_DISABLED))
 	co->takesFocus = 1;
     else
@@ -181,7 +187,7 @@ static void cbDraw(newtComponent c) {
 	break;
     }
 
-    SLsmg_write_string(cb->text);
+    write_string_int(cb->text, NULL);
 
     if (cb->hasFocus)
 	SLsmg_set_color(cb->active);
@@ -242,7 +248,10 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 		    er.result = ER_IGNORED;
 		}
 	    } else if(ev.u.key == NEWT_KEY_ENTER) {
-		er.result = ER_IGNORED;
+		if (cb->flags & NEWT_FLAG_RETURNEXIT)
+			er.result = ER_EXITFORM;
+		else
+			er.result = ER_IGNORED;
 	    } else {
 		er.result = ER_IGNORED;
 	    }

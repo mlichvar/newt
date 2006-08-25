@@ -1,6 +1,8 @@
+#include "config.h"
 #include <string.h>
 #include <stdlib.h>
 
+#include "nls.h"
 #include "dialogboxes.h"
 #include "newt.h"
 #include "popt.h"
@@ -72,6 +74,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
     const char * result;
     const char ** selections, ** next;
     char * title = NULL;
+    char *default_item = NULL;
     struct poptOption optionsTable[] = {
 	    { "checklist", '\0', 0, 0, OPT_CHECKLIST },
 	    { "defaultno", '\0', 0, &defaultNo, 0 },
@@ -83,10 +86,15 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	    { "radiolist", '\0', 0, 0, OPT_RADIOLIST },
 	    { "scrolltext", '\0', 0, &scrollText, 0 },
 	    { "title", '\0', POPT_ARG_STRING, &title, 0 },
+            { "default-item", '\0', POPT_ARG_STRING, &default_item, 0 },
 	    { "yesno", '\0', 0, 0, OPT_YESNO },
 	    { 0, 0, 0, 0, 0 } 
     };
-    
+   
+    setlocale (LC_ALL, "");
+    bindtextdomain (PACKAGE, LOCALEDIR);
+    textdomain (PACKAGE);
+
     optCon = poptGetContext("whiptcl", argc, argv, optionsTable, 0);
 
     while ((arg = poptGetNextOpt(optCon)) > 0) {
@@ -194,15 +202,15 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 
       case MODE_INPUTBOX:
 	rc = inputBox(text, height, width, optCon, flags, &result);
-	if (!rc) {
+	if (rc ==DLG_OKAY) {
 	    interp->result = strdup(result);
 	    interp->freeProc = TCL_DYNAMIC;
 	}
 	break;
 
       case MODE_MENU:
-	rc = listBox(text, height, width, optCon, flags, &result);
-	if (!rc) {
+	rc = listBox(text, height, width, optCon, flags, default_item, &result);
+	if (rc==DLG_OKAY) {
 	    interp->result = strdup(result);
 	    interp->freeProc = TCL_DYNAMIC;
 	}
@@ -210,7 +218,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
-	if (!rc) {
+	if (rc==DLG_OKAY) {
 	    interp->result = strdup(selections[0]);
 	    interp->freeProc = TCL_DYNAMIC;
 	}
@@ -219,7 +227,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
       case MODE_CHECKLIST:
 	rc = checkList(text, height, width, optCon, 0, flags, &selections);
 
-	if (!rc) {
+	if (rc==DLG_OKAY) {
 	    for (next = selections; *next; next++) 
 		Tcl_AppendElement(interp, *next);
 
@@ -241,6 +249,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 
     Tcl_SetVar(interp, "whiptcl_canceled", (rc == DLG_CANCEL) ? "1" : "0",
 		0);
+    Tcl_SetVar(interp, "whiptcl_escaped", (rc == DLG_ESCAPE) ? "1" : "0",
+	       0);
 
     return TCL_OK;
 }

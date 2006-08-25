@@ -1,0 +1,6 @@
+NEWT_0.52 {
+	global: newt*;
+		_newt_wstrlen;
+	local: *;
+};
+

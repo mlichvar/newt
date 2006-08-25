@@ -1,18 +1,18 @@
 LIBS = -lslang -lm -ldl #-lefence
-SHLIBS = -lslang -lm -dl -lc
+SHLIBS = -lslang -lm -dl -lc  
+LIBTCL = -ltcl8.4
 
 GPM_SUPPORT=@gpm_support@
+CFLAGS = $(RPM_OPT_FLAGS) -Wall  -D_GNU_SOURCE -g -O2 -DUTF8 -fPIC -I/usr/include/slang
 
-CFLAGS = $(RPM_OPT_FLAGS) -Wall -I/usr/include/slang -D_GNU_SOURCE -g -O2 -DUTF8
-
+SHLIBFLAGS= -Wl,-O1 -Wl,--version-script,newt.0.52.ver
 VERSION = @VERSION@
 CVSTAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
-PYTHONVERS = $(shell ls /usr/include/python*/Python.h | sed "s|/usr/include/||g"| sed "s|/Python.h||g")
+PYTHONVERS = python2.4
 
-WHIPTCLSO=
-#WHIPTCLSO=whiptcl.so
+WHIPTCLSO=whiptcl.so
 
 PROGS = test whiptail $(WHIPTCLSO) testgrid testtree showchars showkey
 TESTOBJS = test.o
@@ -46,7 +46,10 @@ else
 TARGET=depend $(PROGS)
 endif
 
-all:	$(TARGET) _snackmodule.so
+all:	$(TARGET) _snackmodule.so po/po-stamp
+
+po/po-stamp:
+	$(MAKE) -C po po-stamp
 
 test:	$(TESTOBJS) $(LIBNEWT)
 	$(CC) -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
@@ -68,20 +71,23 @@ _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 	    if [ ! -f "$$ver/_snackmodule.so" -o $(LIBNEWTSH) -nt "$$ver/_snackmodule.so" ]; then \
 	    	mkdir -p $$ver ;\
 	        $(CC) $(CFLAGS) -I/usr/include/$$ver -fPIC -c -o $$ver/snackmodule.o snackmodule.c ;\
-		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L . $(LIBNEWTSH) ;\
+		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L .  -lnewt -lslang ;\
 	    fi ; \
 	done
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
-	$(CC) -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
+	$(CC) -g -o whiptail $(NDIALOGOBJS) -L . -lnewt $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	gcc -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+	$(CC) -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . -lnewt  $(LIBTCL) -lslang -lpopt -lm
 
 # Ensure dialogboxes is compiled -fPIC
 dialogboxes.o: dialogboxes.c
 	$(CC) $(CFLAGS) $(SHCFLAGS) -c dialogboxes.c
-                                                                                
+
+whiptcl.o:   whiptcl.c
+	$(CC) $(SHCFLAGS) $(CFLAGS) -c whiptcl.c
+
 
 $(LIBNEWT): $(LIBOBJS)
 	ar rv $@ $^
@@ -105,7 +111,8 @@ $(SHAREDDIR):
 sharedlib: $(LIBNEWTSH)
 
 $(LIBNEWTSH): $(SHAREDDIR) $(SHAREDOBJS)
-	$(CC) -shared -o $(LIBNEWTSH) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
+	$(CC) -shared -o $(LIBNEWTSH) $(SHLIBFLAGS) -Wl,-soname,$(LIBNEWTSONAME) $(SHAREDOBJS) $(SHLIBS)
+	ln -s $(LIBNEWTSH) libnewt.so
 
 $(SHAREDDIR)/%.o : %.c
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) -o $@ $<

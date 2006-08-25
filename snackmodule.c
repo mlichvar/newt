@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "Python.h"
+#include "nls.h"
 #include "newt.h"
 #include "newt_pr.h"
 
@@ -1219,6 +1220,10 @@ static PyObject * pywstrlen(PyObject * s, PyObject * args)
 void init_snack(void) {
     PyObject * d, * m;
 
+    setlocale (LC_ALL, "");
+    bindtextdomain (PACKAGE, LOCALEDIR);
+    textdomain (PACKAGE);
+
     m = Py_InitModule("_snack", snackModuleMethods);
     d = PyModule_GetDict(m);
 
@@ -1251,6 +1256,7 @@ void init_snack(void) {
     PyDict_SetItemString(d, "KEY_F10", PyInt_FromLong(NEWT_KEY_F10));
     PyDict_SetItemString(d, "KEY_F11", PyInt_FromLong(NEWT_KEY_F11));
     PyDict_SetItemString(d, "KEY_F12", PyInt_FromLong(NEWT_KEY_F12));
+    PyDict_SetItemString(d, "KEY_ESC", PyInt_FromLong(NEWT_KEY_ESCAPE));
 
     PyDict_SetItemString(d, "FLAG_DISABLED", PyInt_FromLong(NEWT_FLAG_DISABLED));
     PyDict_SetItemString(d, "FLAGS_SET", PyInt_FromLong(NEWT_FLAGS_SET));

@@ -11,17 +11,22 @@
 #define FLAG_NOCANCEL 		(1 << 1)
 #define FLAG_SCROLL_TEXT 	(1 << 2)
 #define FLAG_DEFAULT_NO 	(1 << 3)
+#define FLAG_PASSWORD		(1 << 4)
 #define FLAG_NOTAGS		(1 << 5)
 
 #define DLG_ERROR		-1
 #define DLG_OKAY		0
 #define DLG_CANCEL		1
+#define DLG_ESCAPE		2
+
+int min(int a, int b);
+int max(int a, int b);
 
 int messageBox(const char * text, int height, int width, int type, int flags);
 int checkList(const char * text, int height, int width, poptContext optCon,
 		int useRadio, int flags, const char *** selections);
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, const char ** result);
+		int flags, const char *default_item, const char ** result);
 int inputBox(const char * text, int height, int width, poptContext optCon, 
 		int flags, const char ** result);
 int gauge(const char * text, int height, int width, poptContext optCon, int fd, 

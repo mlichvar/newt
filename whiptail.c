@@ -1,18 +1,24 @@
-/* a reasonable dialog */
-
+#include "config.h"
 #include <fcntl.h>
 #include <popt.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>
+#include <wchar.h>
+#include <slang.h>
 
+#include "nls.h"
 #include "dialogboxes.h"
 #include "newt.h"
+#include "newt_pr.h"
+
+enum { NO_ERROR = 0, WAS_ERROR = 1 };
 
 enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
-	    MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE,
-            MODE_TEXTBOX };
+		MODE_INPUTBOX, MODE_RADIOLIST, MODE_MENU, MODE_GAUGE ,
+		MODE_TEXTBOX, MODE_PASSWORDBOX};
 
 #define OPT_MSGBOX 		1000
 #define OPT_CHECKLIST 		1001
@@ -23,12 +29,267 @@ enum mode { MODE_NONE, MODE_INFOBOX, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST,
 #define OPT_RADIOLIST	 	1006
 #define OPT_GAUGE	 	1007
 #define OPT_INFOBOX	 	1008
-#define OPT_TEXTBOX	 	1009
+#define OPT_TEXTBOX		1009
+#define OPT_PASSWORDBOX		1010
 
-static void usage(void) {
-    newtFinished(); 
-    fprintf(stderr, "whiptail: bad parameters (see man whiptail(1) for details)\n");
-    exit(DLG_ERROR);
+static void usage(int err) {
+    newtFinished();
+    fprintf (err ? stderr : stdout,
+             _("Box options: \n"
+	       "\t--msgbox <text> <height> <width>\n"
+	       "\t--yesno  <text> <height> <width>\n"
+	       "\t--infobox <text> <height> <width>\n"
+	       "\t--inputbox <text> <height> <width> [init] \n"
+	       "\t--passwordbox <text> <height> <width> [init] \n"
+	       "\t--textbox <file> <height> <width>\n"
+	       "\t--menu <text> <height> <width> <listheight> [tag item] ...\n"
+	       "\t--checklist <text> <height> <width> <listheight> [tag item status]...\n"
+	       "\t--radiolist <text> <height> <width> <listheight> [tag item stautus]...\n"
+	       "\t--gauge <text> <height> <width> <percent>\n"
+	       "Options: (depend on box-option)\n"
+	       "\t--clear				clear screen on exit\n"
+	       "\t-defaultno			default no button\n"	
+	       "\t--default-item <string>		set default string\n"
+	       "\t--fb				use full buttons\n"
+	       "\t--nocancel			no cancel button\n"
+	       "\t--noitem			display tags only\n"
+	       "\t--separate-output <fd>		output one line at a time\n"
+	       "\t--output-fd <fd>		output to fd, not stdout\n"
+	       "\t--title <title>			display title\n"
+	       "\t--backtitle <backtitle>		display backtitle\n"
+	       "\t--scrolltext			force verical scrollbars\n\n"));
+    exit(err ? DLG_ERROR : 0 );
+}
+
+static void print_version(void) {
+    fprintf (stdout, _("whiptail (newt): %s\n"), VERSION);
+}
+	     
+static void handleSighup(int signum) {
+       exit(DLG_ERROR);
+}
+
+#if 0
+/* FIXME Copied from newt.c
+ * Place somewhere better -- dialogboxes? -- amck
+ */
+int wstrlen(const char *str, int len) {
+       mbstate_t ps;
+       wchar_t tmp;
+       int nchars = 0;
+
+       if (!str) return 0;
+      if (!len) return 0;
+       if (len < 0) len = strlen(str);
+      memset(&ps,0,sizeof(mbstate_t));
+       while (len > 0) {
+               int x,y;
+
+               x = mbrtowc(&tmp,str,len,&ps);
+               if (x >0) {
+                       str += x;
+                       len -= x;
+                       y = wcwidth(tmp);
+                       if (y>0)
+                         nchars+=y;
+               } else break;
+       }
+       return nchars;
+}
+#endif
+
+/*
+ * The value of *width is increased if it is not as large as the width of
+ * the line.
+ */
+static const char * lineWidth(int * width, const char * line, int *chrs)
+{
+    const char *    s = line;
+
+    if ( line == NULL )
+       return 0;
+
+   while ( *s != '\0' && *s != '\n' )
+       s++;
+
+    if ( *s == '\n' )
+       s++;
+
+    *chrs = _newt_wstrlen (line, s - line );
+    *width = max(*width, *chrs);
+
+    return s;
+}
+
+
+/*
+ * cleanNewlines
+ * Handle newlines in text. Hack.
+ */
+void cleanNewlines (char *text)
+{
+       char *p = text;
+       while (*p) {
+               if ((*p == '\\') && (*(p+1) == 'n')) {
+                       *p = '\n';
+                       *(p+1) = ' ';
+               } else  {
+                       p++;
+               }
+       }
+}
+
+/*
+ * The height of a text string is added to height, and width is increased
+ * if it is not big enough to store the text string.
+ */
+static const char * textSize(int * height, int * width,
+                            int maxWidth,
+                            const char * text)
+{
+    int h = 0;
+    int w = 0;
+    int chrs = 0;
+
+
+    if ( text == NULL )
+       return 0;
+
+   while ( *text != '\0' ) {
+       h++;
+       text = lineWidth(width, text, &chrs);
+       /* Allow for text overflowing. May overestimate a bit */
+       h += chrs /  maxWidth;
+    }
+
+    h += 2;
+   w += 2;
+
+    *height += h;
+    *width += w;
+
+    *width = min(*width, maxWidth);
+    return text;
+}
+
+/*
+ * Add space for buttons.
+ * NOTE: when this is internationalized, the button width might change.
+ */
+static void spaceForButtons(int * height, int * width, int count, int full) {
+    /* Make space for the buttons */
+    if ( full ) {
+       *height += 4;
+       if ( count == 1 )
+           *width = max(*width, 7);
+       else
+           *width = max(*width, 20);
+    }
+    else {
+       *height += 2;
+       if ( count == 1 )
+           *width = max(*width, 7);
+       else
+           *width = max(*width, 19);
+    }
+}
+
+static int menuSize(int * height, int * width, enum mode mode,
+		    poptContext options) {
+    char **    argv = poptGetArgs(options);
+    char * *    items = argv;
+    int         h = 0;
+    int         tagWidth = 0;
+    int         descriptionWidth = 0;
+    int         overhead = 10;
+    static char buf[20];
+
+    if ( argv == 0 || *argv == 0 )
+       return 0;
+
+    argv++;
+    if ( mode == MODE_MENU )
+       overhead = 5;
+
+    while ( argv[0] != 0 && argv[1] ) {
+       tagWidth = max(tagWidth, strlen(argv[0]));
+       descriptionWidth = max(descriptionWidth, strlen(argv[1]));
+
+       if ( mode == MODE_MENU )
+           argv += 2;
+       else
+          argv += 3;
+       h++;
+    }
+
+    *width = max(*width, tagWidth + descriptionWidth + overhead);
+    *width = min(*width, SLtt_Screen_Cols);
+
+    h = min(h, SLtt_Screen_Rows - *height - 4);
+    *height = *height + h + 1;
+    sprintf(buf, "%d", h);
+   *items = buf;
+    return 0;
+}
+
+/*
+ * Guess the size of a window, given what will be displayed within it.
+ */
+static void guessSize(int * height, int * width, enum mode mode,
+                     int * flags, int fullButtons,
+                     const char * title, const char * text,
+                     poptContext options) {
+
+    int w = 0, h = 0, chrs = 0;
+
+    textSize(&h, &w, SLtt_Screen_Cols -4 , text);     /* Width and height for text */
+    lineWidth(&w, title, &chrs);             /* Width for title */
+
+    if ( w > 0 )
+       w += 4;
+
+    switch ( mode ) {
+       case MODE_CHECKLIST:
+       case MODE_RADIOLIST:
+       case MODE_MENU:
+           spaceForButtons(&h, &w, *flags & FLAG_NOCANCEL ? 1 : 2,
+            fullButtons);
+           menuSize(&h, &w, mode, options);
+               break;
+       case MODE_YESNO:
+       case MODE_MSGBOX:
+           spaceForButtons(&h, &w, 1, fullButtons);
+           break;
+       case MODE_INPUTBOX:
+           spaceForButtons(&h, &w, *flags & FLAG_NOCANCEL ? 1 : 2,
+            fullButtons);
+           h += 1;
+           break;
+       case MODE_GAUGE:
+           h += 2;
+           break;
+       case MODE_NONE:
+	   break;
+       default:
+               break;
+    };
+
+    /*
+     * Fixed window-border overhead.
+     * NOTE: This will change if we add a way to turn off drop-shadow and/or
+     * box borders. That would be desirable for display-sized screens.
+     */
+    w += 2;
+    h += 2;
+
+   if ( h > SLtt_Screen_Rows - 1 ) {
+       h = SLtt_Screen_Rows - 1;
+       *flags |= FLAG_SCROLL_TEXT;
+       w += 2; /* Add width of slider - is this right? */
+    }
+
+    *width = min(max(*width, w), SLtt_Screen_Cols);
+    *height = max(*height, h);
 }
 
 char *
@@ -44,7 +305,7 @@ readTextFile(const char * filename)
      }
 
     if ( (buf = malloc(s.st_size)) == 0 )
-       fprintf(stderr, "%s: too large to display.\n", filename);
+       fprintf(stderr, _("%s: too large to display.\n"), filename);
 
     if ( read(fd, buf, s.st_size) != s.st_size ) {
         perror(filename);
@@ -59,9 +320,10 @@ int main(int argc, const char ** argv) {
     poptContext optCon;
     int arg;
     const char * optArg;
-    const char * text;
+    char * text;
     const char * nextArg;
     char * end;
+    struct sigaction sa;
     int height;
     int width;
     int fd = -1;
@@ -71,16 +333,19 @@ int main(int argc, const char ** argv) {
     int noItem = 0;
     int clear = 0;
     int scrollText = 0;
-    int rc = 1;
+    int rc = DLG_CANCEL;
     int flags = 0;
     int defaultNo = 0;
     int separateOutput = 0;
+    int fullButtons = 0;
     int outputfd = 2;
     FILE *output = stderr;
     const char * result;
     const char ** selections, ** next;
     char * title = NULL;
+    char *default_item = NULL;
     char * backtitle = NULL;
+    int help = 0, version = 0;
     struct poptOption optionsTable[] = {
 	    { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
 	    { "checklist", '\0', 0, 0, OPT_CHECKLIST },
@@ -95,16 +360,25 @@ int main(int argc, const char ** argv) {
 	    { "msgbox", '\0', 0, 0, OPT_MSGBOX },
 	    { "nocancel", '\0', 0, &noCancel, 0 },
 	    { "noitem", '\0', 0, &noItem, 0 },
+            { "default-item", '\0', POPT_ARG_STRING, &default_item, 0},
 	    { "notags", '\0', 0, &noTags, 0 },
 	    { "radiolist", '\0', 0, 0, OPT_RADIOLIST },
 	    { "scrolltext", '\0', 0, &scrollText, 0 },
 	    { "separate-output", '\0', 0, &separateOutput, 0 },
 	    { "title", '\0', POPT_ARG_STRING, &title, 0 },
-	    { "yesno", '\0', 0, 0, OPT_YESNO },
 	    { "textbox", '\0', 0, 0, OPT_TEXTBOX },
+	    { "yesno", '\0', 0, 0, OPT_YESNO },
+	    { "passwordbox", '\0', 0, 0, OPT_PASSWORDBOX },
+	    { "output-fd", '\0',  POPT_ARG_INT, &outputfd, 0 },
+	    { "help", 'h', 0,  &help, 0, NULL, NULL },
+	    { "version", 'v', 0, &version, 0, NULL, NULL },
 	    { 0, 0, 0, 0, 0 } 
     };
-    
+   
+    setlocale (LC_ALL, "");
+    bindtextdomain (PACKAGE, LOCALEDIR);
+    textdomain (PACKAGE);
+
     optCon = poptGetContext("whiptail", argc, argv, optionsTable, 0);
 
     while ((arg = poptGetNextOpt(optCon)) > 0) {
@@ -112,52 +386,69 @@ int main(int argc, const char ** argv) {
 
 	switch (arg) {
 	  case OPT_INFOBOX:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_INFOBOX;
 	    break;
 
 	  case OPT_MENU:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_MENU;
 	    break;
 
 	  case OPT_MSGBOX:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_MSGBOX;
 	    break;
-          case OPT_TEXTBOX:
-            if (mode != MODE_NONE) usage();
-            mode = MODE_TEXTBOX;
-            break;
+
+	  case OPT_TEXTBOX:
+    	    if (mode != MODE_NONE) usage(WAS_ERROR);
+	    mode = MODE_TEXTBOX;
+	    break;
+
+	  case OPT_PASSWORDBOX:
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
+	    mode = MODE_PASSWORDBOX;
+	    break;
+
 	  case OPT_RADIOLIST:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_RADIOLIST;
 	    break;
 
 	  case OPT_CHECKLIST:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_CHECKLIST;
 	    break;
 
 	  case OPT_FULLBUTTONS:
+	    fullButtons = 1;
 	    useFullButtons(1);
 	    break;
 
 	  case OPT_YESNO:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_YESNO;
 	    break;
 
 	  case OPT_GAUGE:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_GAUGE;
 	    break;
 
 	  case OPT_INPUTBOX:
-	    if (mode != MODE_NONE) usage();
+	    if (mode != MODE_NONE) usage(WAS_ERROR);
 	    mode = MODE_INPUTBOX;
 	    break;
 	}
+    }
+    
+    if (help) {
+	    usage(NO_ERROR);
+	    exit(0);
+    }
+    if (version) {
+	    print_version();
+	    exit(0);
     }
     
     if (arg < -1) {
@@ -173,19 +464,19 @@ int main(int argc, const char ** argv) {
         exit (DLG_ERROR);
     }
 
-    if (mode == MODE_NONE) usage();
+    if (mode == MODE_NONE) usage(WAS_ERROR);
 
-    if (!(text = poptGetArg(optCon))) usage();
+    if (!(text = poptGetArg(optCon))) usage(WAS_ERROR);
 
-    if ( mode == MODE_TEXTBOX ) text = readTextFile(text);
+    if  (mode == MODE_TEXTBOX ) text = readTextFile(text);
 
-    if (!(nextArg = poptGetArg(optCon))) usage();
+    if (!(nextArg = poptGetArg(optCon))) usage(WAS_ERROR);
     height = strtoul(nextArg, &end, 10);
-    if (*end) usage();
+    if (*end) usage(WAS_ERROR);
 
-    if (!(nextArg = poptGetArg(optCon))) usage();
+    if (!(nextArg = poptGetArg(optCon))) usage(WAS_ERROR);
     width = strtoul(nextArg, &end, 10);
-    if (*end) usage();
+    if (*end) usage(WAS_ERROR);
 
     if (mode == MODE_GAUGE) {
 	fd = dup(0);
@@ -193,12 +484,24 @@ int main(int argc, const char ** argv) {
 	if (open("/dev/tty", O_RDWR) != 0) perror("open /dev/tty");
     }
 
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = handleSighup;
+    sigaction(SIGWINCH, &sa, NULL);
+
     newtInit();
     newtCls();
+
+    cleanNewlines(text);
+
+    if ( height <= 0 || width <= 0 )
+       guessSize(&height, &width, mode, &flags, fullButtons, title, text,
+                 optCon);
+
     width -= 2;
     height -= 2;
-    newtOpenWindow((80 - width) / 2, (24 - height) / 2, width, height, title);
 
+    newtOpenWindow((SLtt_Screen_Cols - width) / 2, 
+                   (SLtt_Screen_Rows - height) / 2, width, height, title);
     if (backtitle)
 	newtDrawRootText(0, 0, backtitle);
 
@@ -224,18 +527,24 @@ int main(int argc, const char ** argv) {
 
       case MODE_INPUTBOX:
 	rc = inputBox(text, height, width, optCon, flags, &result);
-        if (rc == DLG_OKAY) fprintf(output, "%s", result);
+	if (rc == DLG_OKAY) fprintf(output, "%s", result);
+	break;
+
+      case MODE_PASSWORDBOX:
+	rc = inputBox(text, height, width, optCon, flags | FLAG_PASSWORD,
+	      &result);
+	if (rc == DLG_OKAY) fprintf (output, "%s", result);
 	break;
 
       case MODE_MENU:
-	rc = listBox(text, height, width, optCon, flags, &result);
+	rc = listBox(text, height, width, optCon, flags, default_item, &result);
 	if (rc == DLG_OKAY) fprintf(output, "%s", result);
 	break;
 
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
-        if (rc == DLG_OKAY) {
-            fprintf(output, "%s", selections[0]);
+	if (rc == DLG_OKAY) {
+	    fprintf(output, "%s", selections[0]);
 	    free(selections);
 	}
 	break;
@@ -263,14 +572,14 @@ int main(int argc, const char ** argv) {
 	break;
 
       default:
-	usage();
+	usage(WAS_ERROR);
     }
 
-    if (rc == -1) usage();
+    if (rc == DLG_ERROR) usage(WAS_ERROR);
 
     if (clear)
 	newtPopWindow();
     newtFinished();
 
-    return rc;
+    return ( rc == DLG_ESCAPE ) ? -1 : rc;
 }

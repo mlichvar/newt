@@ -2,12 +2,14 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-Version: 0.51.7
-Release: 2
+%define version 0.52.0
+Version: %{version}
+Release: 0
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
-BuildRequires: python,python-devel,perl, slang-devel
+Patch1: newt-0.51.6-if1close.patch
+BuildRequires: python,python-devel,perl, slang-devel, tcl-devel
 Requires: slang
 Provides: snack
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -38,11 +40,13 @@ newt.
 
 %prep
 %setup -q
+%patch1 -p1 -b .if1close
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
 #./configure --with-gpm-support
 %configure 
+make depend
 make %{?_smp_mflags} all
 chmod 0644 peanuts.py popcorn.py
 
@@ -69,9 +73,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr (-,root,root)
-%doc CHANGES COPYING
+%doc COPYING
 %{_bindir}/whiptail
 %{_libdir}/libnewt.so.*
+%{_libdir}/whiptcl.so
 %{_libdir}/python%{pythonver}/site-packages/*
 
 %files devel
@@ -82,15 +87,36 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
-* Thu Apr  8 2004 Adrian Havill <havill@redhat.com> 0.51.7-2
-- incorporated some debian memcheck fixes, whiptail features
-- change .spec to not use hardcoded python version much like up2date (#114419)
+* Wed Sep 21 2005 Petr Rockai <prockai@redhat.com> - 0.52.0-0
+- new upstream version
 
-* Fri Dec  5 2003 Jeremy Katz <katzj@redhat.com> 0.51.7-1
-- rebuild against new slang
+* Fri Sep 02 2005 Petr Rockai <prockai@redhat.com>
+- use versioned symbols, patch by Alastair McKinstry, mckinstry at
+  debian dot org, thanks
+- need private wstrlen due to versioned syms, patch from debian
+  package of newt
+- both of the above needed to be forward-ported
 
-* Mon Nov 17 2003 Nalin Dahyabhai <nalin@redhat.com>
-- fix newtCheckboxGetValue not working if checkbox created with non-NULL result
+* Sun Mar 06 2005 Petr Rockai <prockai@redhat.com>
+- rebuild
+
+* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 0.51.6-6
+- rebuild for python 2.4
+
+* Fri Oct 15 2004 Adrian Havill <havill@redhat.com> 0.51.6-5
+- only do gpmclose if gpmopen succeeed (#118530)
+
+* Thu Oct 14 2004 Adrian Havill <havill@redhat.com> 0.51.6-4
+- make the python version dynamic (#114419)
+
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
 
 * Thu Nov  6 2003 Jeremy Katz <katzj@redhat.com> 0.51.6-2
 - rebuild for python 2.3

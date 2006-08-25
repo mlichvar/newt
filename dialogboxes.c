@@ -1,11 +1,15 @@
 /* simple dialog boxes, used by both whiptail and tcl dialog bindings */
 
+#include "config.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <wchar.h>
+#include <slang.h>
 
+#include "nls.h"
 #include "dialogboxes.h"
 #include "newt.h"
 #include "newt_pr.h"
@@ -16,20 +20,35 @@
 
 /* globals -- ick */
 static int buttonHeight = 1;
+
+int max (int a, int b)
+{
+	return (a > b) ? a : b;
+}
+
+int min (int a, int b)
+{
+	return ( a < b) ? a : b ;
+}
+ 
 static newtComponent (*makeButton)(int left, int right, const char * text) = 
 		newtCompactButton;
 
 static void addButtons(int height, int width, newtComponent form, 
 		       newtComponent * okay, newtComponent * cancel, 
 		       int flags) {
+	// FIXME: DO SOMETHING ABOUT THE HARD-CODED CONSTANTS
     if (flags & FLAG_NOCANCEL) {
-	*okay = makeButton((width - 8) / 2, height - buttonHeight - 1, "Ok");
-	*cancel = NULL;
+	   *okay = makeButton((width - 8) / 2, height - buttonHeight - 1,
+			      dgettext(PACKAGE, "Ok"));
+	    *cancel = NULL;
 	newtFormAddComponent(form, *okay);
     } else {
-	*okay = makeButton((width - 18) / 3, height - buttonHeight - 1, "Ok");
+	*okay = makeButton((width - 18) / 3, height - buttonHeight - 1, 
+			   dgettext(PACKAGE,"Ok"));
 	*cancel = makeButton(((width - 18) / 3) * 2 + 9, 
-				height - buttonHeight - 1, "Cancel");
+				height - buttonHeight - 1, 
+				dgettext(PACKAGE,"Cancel"));
 	newtFormAddComponents(form, *okay, *cancel, NULL);
     }
 }
@@ -135,6 +154,7 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 		int flags, const char ** result) {
     newtComponent form, entry, okay, cancel, answer, tb;
     const char * val;
+    int pFlag = (flags & FLAG_PASSWORD) ? NEWT_FLAG_PASSWORD : 0;
     int rc = DLG_OKAY;
     int top;
 
@@ -144,7 +164,7 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 
     form = newtForm(NULL, NULL, 0);
     entry = newtEntry(1, top + 1, val, width - 2, &val, 
-			NEWT_FLAG_SCROLL | NEWT_FLAG_RETURNEXIT);
+			NEWT_FLAG_SCROLL | NEWT_FLAG_RETURNEXIT | pFlag);
 
     newtFormAddComponents(form, tb, entry, NULL);
 
@@ -153,14 +173,45 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
     answer = newtRunForm(form);
     if (answer == cancel)
 	rc = DLG_CANCEL;
+    else if (answer == NULL)
+	rc = DLG_ESCAPE;
 
     *result = val;
 
     return rc;
 }
 
+static int mystrncpyw(char *dest, const char *src, int n, int *maxwidth)
+{
+    int i = 0;
+    int w = 0, cw;
+    wchar_t c;
+    mbstate_t ps;
+    const char *p = src;
+    char *d = dest;
+    
+    memset(&ps, 0, sizeof(ps));
+    
+    for (;;) {
+	int ret = mbrtowc(&c, p, MB_CUR_MAX, &ps);
+	if (ret <= 0) break;
+	if (ret + i >= n) break;
+	cw = wcwidth(c);
+	if (cw < 0) break;
+	if (cw + w > *maxwidth) break;
+	w += cw;
+	memcpy(d, p, ret);
+	d += ret;
+	p += ret;
+	i += ret;
+    }
+    dest[i] = '\0';
+    *maxwidth = w;
+    return i;
+}
+
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, const char ** result) {
+		int flags, const char *default_item, const char ** result) {
     newtComponent form, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
@@ -170,10 +221,12 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     int allocedItems = 5;
     int i, top;
     int rc = DLG_OKAY;
-    char buf[MAXBUF], format[MAXFORMAT];
+    char buf[MAXBUF];
     int maxTagWidth = 0;
     int maxTextWidth = 0;
+    int defItem = -1;
     int scrollFlag;
+    int lineWidth, textWidth, tagWidth;
     struct {
 	const char * text;
 	const char * tag;
@@ -192,6 +245,9 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	}
 
 	itemInfo[numItems].tag = arg;
+	if (default_item && (strcmp(default_item, arg) == 0)) {
+	 	defItem = numItems;
+	}
 	if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
 
 	if (!(flags & FLAG_NOITEM)) {
@@ -226,16 +282,46 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	i = 2;
     }
 
-    listBox = newtListbox(3 + ((width - 10 - maxTagWidth - maxTextWidth - i) 
-					/ 2),
-			  top + 1, listHeight, 
-			    NEWT_FLAG_RETURNEXIT | scrollFlag);
+    lineWidth = min(maxTagWidth + maxTextWidth + i, SLtt_Screen_Cols - 10);
+    listBox = newtListbox( (width - lineWidth) / 2 , top + 1, listHeight,
+                          NEWT_FLAG_RETURNEXIT | scrollFlag);
 
-    snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxTagWidth);
-    for (i = 0; i < numItems; i++) {
-	snprintf(buf, MAXBUF, format, itemInfo[i].tag, itemInfo[i].text);
-	newtListboxAddEntry(listBox, buf, (void *) i);
+    textWidth = maxTextWidth;
+    tagWidth = maxTagWidth;
+    if (maxTextWidth == 0) {
+        tagWidth = lineWidth;
+    } else {
+       if (maxTextWidth + maxTagWidth + i > lineWidth)
+               tagWidth = textWidth = (lineWidth / 2) - 2;
+       else {
+               tagWidth++;
+               textWidth++;
+       }
     }
+
+    if (!(flags & FLAG_NOTAGS)) {
+       for (i = 0; i < numItems; i++) {
+	   int w = tagWidth;
+	   int len, j;
+	   len = mystrncpyw(buf, itemInfo[i].tag, MAXBUF, &w);
+	   for (j = 0; j < tagWidth - w; j++) {
+		   if (len >= MAXBUF) break;
+		   buf[len++] = ' ';
+	   }
+	   buf[len] = '\0';
+	   w = textWidth;
+	   mystrncpyw(buf + len, itemInfo[i].text, MAXBUF-len, &w);
+           newtListboxAddEntry(listBox, buf, (void *) i);
+       }
+     } else {
+        for (i = 0; i < numItems; i++) {
+           snprintf(buf, MAXBUF, "%s", itemInfo[i].text);
+           newtListboxAddEntry(listBox, buf, (void *) i);
+      }
+   }
+
+    if (defItem != -1)
+	newtListboxSetCurrent (listBox, defItem);
 
     newtFormAddComponents(form, tb, listBox, NULL);
 
@@ -244,6 +330,8 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     answer = newtRunForm(form);
     if (answer == cancel)
 	rc = DLG_CANCEL;
+    if (answer == NULL)
+	rc = DLG_ESCAPE;
 
     i = (int) newtListboxGetCurrent(listBox);
     *result = itemInfo[i].tag;
@@ -263,7 +351,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     int i;
     int numSelected;
     int rc = DLG_OKAY;
-    char buf[80], format[20];
+    char buf[MAXBUF], format[MAXFORMAT];
     int maxWidth = 0;
     int top;
     struct {
@@ -307,7 +395,6 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	numBoxes++;
     }
 
-	
     form = newtForm(NULL, NULL, 0);
 
     tb = textbox(height - 3 - buttonHeight - listHeight, width - 2,
@@ -335,6 +422,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	    cbInfo[i].comp = newtCheckbox(4, top + 1 + i, buf,
 			      cbStates[i], NULL, cbStates + i);
 
+	newtCheckboxSetFlags(cbInfo[i].comp, NEWT_FLAG_RETURNEXIT, NEWT_FLAGS_SET);
 	newtFormAddComponent(subform, cbInfo[i].comp);
     }
 
@@ -348,6 +436,8 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     answer = newtRunForm(form);
     if (answer == cancel)
 	rc = DLG_CANCEL;
+    if (answer == NULL)
+	rc = DLG_ESCAPE;
 
     if (useRadio) {
 	answer = newtRadioGetCurrent(cbInfo[0].comp);
@@ -383,6 +473,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 int messageBox(const char * text, int height, int width, int type, int flags) {
     newtComponent form, yes, tb, answer;
     newtComponent no = NULL;
+    int rc = DLG_OKAY;
     int tFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
 
     form = newtForm(NULL, NULL, 0);
@@ -397,13 +488,16 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
     case MSGBOX_INFO:
 	break;
     case MSGBOX_MSG:
-	yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, "Ok");
+	// FIXME Do something about the hard-coded constants
+	yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, 
+			 dgettext(PACKAGE,"Ok"));
 	newtFormAddComponent(form, yes);
 	break;
     default:
-	yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, "Yes");
+	yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, 
+			 dgettext(PACKAGE,"Yes"));
 	no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
-			"No");
+			dgettext(PACKAGE,"No"));
 	newtFormAddComponents(form, yes, no, NULL);
 
 	if (flags & FLAG_DEFAULT_NO)
@@ -411,7 +505,8 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
     }
 
     if ( type != MSGBOX_INFO ) {
-	newtRunForm(form);
+	if (newtRunForm(form) == NULL)
+		rc = DLG_ESCAPE;
 
 	answer = newtFormGetCurrent(form);
 
@@ -425,7 +520,7 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
 	
 
 
-    return DLG_OKAY;
+    return rc;
 }
 
 void useFullButtons(int state) {

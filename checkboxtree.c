@@ -443,7 +443,7 @@ static void ctDraw(newtComponent co) {
     struct items ** item; 
     int i, j;
     char * spaces;
-    int currRow = 0;
+    int currRow;
 
     if (!co->isMapped) return ;
 
@@ -482,12 +482,13 @@ static void ctDraw(newtComponent co) {
 	    } else {
 	        char tmp[5];
 	        snprintf(tmp,5,"[%c] ",ct->seq[(*item)->selected]);
+		/* BIDI: no need to use _int funcs here: only ASCII characters */
 	        SLsmg_write_string(tmp);
 	    }
 	}
 
-	SLsmg_write_nstring((*item)->text, co->width - 4 - 
-					   (3 * (*item)->depth));
+	write_nstring_int((*item)->text, co->width - 4 - 
+					   (3 * (*item)->depth), NULL);
 
 	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
