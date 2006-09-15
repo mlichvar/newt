@@ -53,21 +53,21 @@ const struct newtColors newtDefaultColorPalette = {
 	"red", "lightgray",			/* title fg, bg */
 	"lightgray", "red",			/* button fg, bg */
 	"red", "lightgray",			/* active button fg, bg */
-	"yellow", "blue",			/* checkbox fg, bg */
-	"blue", "brown",			/* active checkbox fg, bg */
-	"yellow", "blue",			/* entry box fg, bg */
+	"lightgray", "blue",			/* checkbox fg, bg */
+	"lightgray", "red",			/* active checkbox fg, bg */
+	"lightgray", "blue",			/* entry box fg, bg */
 	"blue", "lightgray",			/* label fg, bg */
 	"black", "lightgray",			/* listbox fg, bg */
-	"yellow", "blue",			/* active listbox fg, bg */
+	"lightgray", "blue",			/* active listbox fg, bg */
 	"black", "lightgray",			/* textbox fg, bg */
-	"lightgray", "black",			/* active textbox fg, bg */
+	"lightgray", "red",			/* active textbox fg, bg */
 	"white", "blue",			/* help line */
-	"yellow", "blue",			/* root text */
+	"lightgray", "blue",			/* root text */
 	"blue",					/* scale full */
 	"red",					/* scale empty */
 	"blue", "lightgray",			/* disabled entry fg, bg */
 	"black", "lightgray",			/* compact button fg, bg */
-	"yellow", "red",			/* active & sel listbox */
+	"lightgray", "red",			/* active & sel listbox */
 	"black", "brown"			/* selected listbox */
 };
 
