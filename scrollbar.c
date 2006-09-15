@@ -47,7 +47,7 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     sb = malloc(sizeof(*sb));
     co->data = sb;
 
-    if (!strcmp(getenv("TERM"), "linux") && height >= 2) {
+    if (height >= 2) {
 	sb->arrows = 1;
 	sb->curr = 1;
     } else {
@@ -100,7 +100,7 @@ static void sbDraw(newtComponent co) {
 
 static void sbDrawThumb(newtComponent co, int isOn) {
     struct scrollbar * sb = co->data;
-    SLtt_Char_Type ch = isOn ? '#' : SLSMG_CKBRD_CHAR;
+    SLtt_Char_Type ch = isOn ? SLSMG_BLOCK_CHAR : SLSMG_CKBRD_CHAR;
 
     if (!co->isMapped) return;
 
