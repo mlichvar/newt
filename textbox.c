@@ -15,9 +15,10 @@ struct textbox {
     char *blankline;
     int linesAlloced;
     int doWrap;
-    newtComponent sb;
+    newtComponent sb_act, sb;
     int topLine;
     int textWidth;
+    int isActive;
 };
 
 static char * expandTabs(const char * text);
@@ -43,8 +44,10 @@ static void textboxMapped(newtComponent co, int isMapped) {
     struct textbox * tb = co->data;
 
     co->isMapped = isMapped;
-    if (tb->sb)
+    if (tb->sb) {
 	tb->sb->ops->mapped(tb->sb, isMapped);
+	tb->sb_act->ops->mapped(tb->sb_act, isMapped);
+    }
 }
 
 static void textboxPlace(newtComponent co, int newLeft, int newTop) {
@@ -53,8 +56,10 @@ static void textboxPlace(newtComponent co, int newLeft, int newTop) {
     co->top = newTop;
     co->left = newLeft;
 
-    if (tb->sb)
+    if (tb->sb) {
 	tb->sb->ops->place(tb->sb, co->left + co->width - 1, co->top);
+	tb->sb_act->ops->place(tb->sb_act, co->left + co->width - 1, co->top);
+    }
 }
 
 void newtTextboxSetHeight(newtComponent co, int height) {
@@ -107,16 +112,20 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     tb->lines = NULL;
     tb->topLine = 0;
     tb->textWidth = width;
+    tb->isActive = 0;
     tb->blankline = malloc(width+1);
     memset(tb->blankline,' ',width);
     tb->blankline[width] = '\0';
 
     if (flags & NEWT_FLAG_SCROLL) {
 	co->width += 2;
+	tb->sb_act = newtVerticalScrollbar(co->left + co->width - 1, co->top, 
+			   co->height, COLORSET_ACTTEXTBOX, COLORSET_TEXTBOX);
 	tb->sb = newtVerticalScrollbar(co->left + co->width - 1, co->top, 
 			   co->height, COLORSET_TEXTBOX, COLORSET_TEXTBOX);
+	co->takesFocus = 1;
     } else {
-	tb->sb = NULL;
+	tb->sb_act = tb->sb = NULL;
     }
 
     return co;
@@ -342,8 +351,13 @@ static void textboxDraw(newtComponent c) {
 
     if (tb->sb) {
 	size = tb->numLines - c->height;
-	newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
-	tb->sb->ops->draw(tb->sb);
+	if (tb->isActive) {
+		newtScrollbarSet(tb->sb_act, tb->topLine, size ? size : 0);
+		tb->sb_act->ops->draw(tb->sb_act);
+	} else {
+		newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
+		tb->sb->ops->draw(tb->sb);
+	}
     }
 
     SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
@@ -363,7 +377,11 @@ static struct eventResult textboxEvent(newtComponent co,
 
     er.result = ER_IGNORED;
 
-    if (ev.when == EV_EARLY && ev.event == EV_KEYPRESS && tb->sb) {
+    if (!tb->sb || ev.when == EV_EARLY || ev.when == EV_LATE)
+	return er;
+
+    switch(ev.event) {
+      case EV_KEYPRESS:
 	newtTrashScreen();
 	switch (ev.u.key) {
 	  case NEWT_KEY_UP:
@@ -395,8 +413,8 @@ static struct eventResult textboxEvent(newtComponent co,
 	    er.result = ER_SWALLOWED;
 	    break;
 	}
-    }
-    if (ev.when == EV_EARLY && ev.event == EV_MOUSE && tb->sb) {
+	break;
+      case EV_MOUSE:
 	/* Top scroll arrow */
 	if (ev.u.mouse.x == co->width && ev.u.mouse.y == co->top) {
 	    if (tb->topLine) tb->topLine--;
@@ -412,6 +430,17 @@ static struct eventResult textboxEvent(newtComponent co,
 	    
 	    er.result = ER_SWALLOWED;
 	}
+	break;
+      case EV_FOCUS:
+	tb->isActive = 1;
+	textboxDraw(co);
+	er.result = ER_SWALLOWED;
+	break;
+      case EV_UNFOCUS:
+	tb->isActive = 0;
+	textboxDraw(co);
+	er.result = ER_SWALLOWED;
+	break;
     }
     return er;
 }

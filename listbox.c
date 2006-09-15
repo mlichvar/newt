@@ -518,7 +518,7 @@ static void listboxDraw(newtComponent co)
 
 	newtGotorc(co->top + i + li->bdyAdjust, co->left + li->bdxAdjust);
 	if(j + i == li->currItem) {
-	    if(item->isSelected)
+	    if(li->isActive)
 		SLsmg_set_color(NEWT_COLORSET_ACTSELLISTBOX);
 	    else
 		SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
@@ -529,6 +529,12 @@ static void listboxDraw(newtComponent co)
 
 	SLsmg_write_nstring(item->text, li->curWidth);
 
+	if (li->flags & NEWT_FLAG_MULTIPLE) {
+	    newtGotorc(co->top + i + li->bdyAdjust, co->left + li->bdxAdjust);
+	    SLsmg_set_color(item->isSelected ?
+		    NEWT_COLORSET_SELLISTBOX : NEWT_COLORSET_LISTBOX);
+	    SLsmg_write_nstring(item->text, 1);
+	}
     }
     newtGotorc(co->top + (li->currItem - li->startShowItem) + li->bdyAdjust,
                co->left + li->bdxAdjust);

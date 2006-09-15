@@ -1027,8 +1027,17 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 		    }
 		}
 
-		if (key == NEWT_KEY_F1 && form->helpTag && form->helpCb)
+		if (key == NEWT_KEY_F1 && form->helpTag && form->helpCb) {
+		    if (form->currComp != -1) {
+			ev.event = EV_UNFOCUS;
+			sendEvent(form->elements[form->currComp].co, ev);
+		    }
 		    form->helpCb(co, form->helpTag);
+		    if (form->currComp != -1) {
+			ev.event = EV_FOCUS;
+			sendEvent(form->elements[form->currComp].co, ev);
+		    }
+		}
 
 		if (!done) {
 		    ev.event = EV_KEYPRESS;

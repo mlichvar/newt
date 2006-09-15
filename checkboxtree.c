@@ -25,6 +25,7 @@ struct CheckboxTree {
     int sbAdjust;
     int curWidth;
     int userHasSetWidth;
+    int isActive;
     char * seq;
     char * result;
 };
@@ -341,6 +342,7 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     co->width = 0;
     co->isMapped = 0;
     ct->curWidth = 0;
+    ct->isActive = 0;
     ct->userHasSetWidth = 0;
     ct->itemlist = NULL;
     ct->firstItem = NULL;
@@ -462,12 +464,7 @@ static void ctDraw(newtComponent co) {
     
     while (*item && i < co->height) {
 	newtGotorc(co->top + i, co->left);
-	if (*item == *ct->currItem) {
-	    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
-	    currRow = co->top + i;
-	} else
-	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
-
+	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 	for (j = 0; j < (*item)->depth; j++)
 	    SLsmg_write_string("   ");
 
@@ -479,7 +476,7 @@ static void ctDraw(newtComponent co) {
 	} else {
 	    if (ct->flags & NEWT_CHECKBOXTREE_HIDE_BOX) {
 		if ((*item)->selected)
-		    SLsmg_set_color(NEWT_COLORSET_ACTLISTBOX);
+		    SLsmg_set_color(NEWT_COLORSET_SELLISTBOX);
 	        SLsmg_write_string("    ");
 	    } else {
 	        char tmp[5];
@@ -487,11 +484,14 @@ static void ctDraw(newtComponent co) {
 	        SLsmg_write_string(tmp);
 	    }
 	}
+	if (*item == *ct->currItem) {
+	    SLsmg_set_color(ct->isActive ?
+		    NEWT_COLORSET_ACTSELLISTBOX : NEWT_COLORSET_ACTLISTBOX);
+	    currRow = co->top + i;
+	}
 
 	SLsmg_write_nstring((*item)->text, co->width - 4 - 
 					   (3 * (*item)->depth));
-
-	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
 	item++;
 	i++;
@@ -688,11 +688,13 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 	break;
 
     case EV_FOCUS:
+	ct->isActive = 1;
 	ctDraw(co);
 	er.result = ER_SWALLOWED;
 	break;
 	
     case EV_UNFOCUS:
+	ct->isActive = 0;
 	ctDraw(co);
 	er.result = ER_SWALLOWED;
 	break;
