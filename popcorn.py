@@ -4,7 +4,6 @@ from snack import *
 import sys
 
 def help(screen, text):
-    raise ValueError, "foo"
     ButtonChoiceWindow(screen, "Help", text, help = "Help on help")
 
 t = TextboxReflowed(25, "Some text which needs to be wrapped at a good place.")
