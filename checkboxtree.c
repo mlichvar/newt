@@ -490,8 +490,17 @@ static void ctDraw(newtComponent co) {
 	    currRow = co->top + i;
 	}
 
-	SLsmg_write_nstring((*item)->text, co->width - 4 - 
-					   (3 * (*item)->depth));
+	j = 4 + (3 * (*item)->depth);
+	SLsmg_write_nstring(NULL, co->width - j);
+	newtGotorc(co->top + i, co->left + j);
+	if (wstrlen((*item)->text, -1) > co->width - j) {
+	    char *tmp;
+	    tmp = strdup((*item)->text);
+	    trim_string(tmp, co->width - j);
+	    SLsmg_write_string(tmp);
+	    free(tmp);
+	} else
+	    SLsmg_write_string((*item)->text);
 
 	item++;
 	i++;

@@ -184,12 +184,13 @@ int _newt_wstrlen(const char *str, int len) {
 void trim_string(char *title, int chrs)
 {
 	char *p = title;
-	int ln = chrs;
+	int ln;
 	int x = 0,y = 0;
 	wchar_t tmp;
 	mbstate_t ps;
 
 	memset(&ps, 0, sizeof(ps));
+	ln = strlen(title);
 
 	while (*p) {
 		x = mbrtowc(&tmp, p, ln, &ps);
@@ -198,12 +199,13 @@ void trim_string(char *title, int chrs)
 			return;
 		}
 		y = wcwidth(tmp);
-		if (y > ln) {
+		if (y > chrs) {
 			*p = '\0';
 			return;
 		} else {
 			p += x;
-			ln -= y;
+			ln -= x;
+			chrs -= y;
 		}
 	}	
 }
@@ -638,10 +640,10 @@ int newtOpenWindow(int left, int top,
     currentWindow->height = height;
     currentWindow->title = title ? strdup(title) : NULL;
 
-    currentWindow->buffer = malloc(sizeof(SLsmg_Char_Type) * (width + 3) * (height + 3));
+    currentWindow->buffer = malloc(sizeof(SLsmg_Char_Type) * (width + 5) * (height + 3));
 
     row = top - 1;
-    col = left - 1;
+    col = left - 2;
     /* clip to the current screen bounds - msw */
     if (row < 0)
 	row = 0;
@@ -655,8 +657,8 @@ int newtOpenWindow(int left, int top,
     for (j = 0; j < height + 3; j++, row++) {
 	SLsmg_gotorc(row, col);
 	SLsmg_read_raw(currentWindow->buffer + n,
-		       currentWindow->width + 3);
-	n += currentWindow->width + 3;
+		       currentWindow->width + 5);
+	n += currentWindow->width + 5;
     }
 
     newtTrashScreen();
@@ -732,7 +734,7 @@ void newtPopWindow(void) {
     row = col = 0;
 
     row = currentWindow->top - 1;
-    col = currentWindow->left - 1;
+    col = currentWindow->left - 2;
     if (row < 0)
 	row = 0;
     if (col < 0)
@@ -740,8 +742,8 @@ void newtPopWindow(void) {
     for (j = 0; j < currentWindow->height + 3; j++, row++) {
 	SLsmg_gotorc(row, col);
 	SLsmg_write_raw(currentWindow->buffer + n,
-			currentWindow->width + 3);
-	n += currentWindow->width + 3;
+			currentWindow->width + 5);
+	n += currentWindow->width + 5;
     }
 
     free(currentWindow->buffer);

@@ -82,5 +82,6 @@ struct eventResult newtDefaultEventHandler(newtComponent c,
 
 int _newt_wstrlen(const char *str, int len);
 #define wstrlen(str,len) _newt_wstrlen((str),(len))
+void trim_string(char *title, int chrs);
 
 #endif /* H_NEWT_PR */
