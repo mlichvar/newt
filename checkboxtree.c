@@ -536,6 +536,18 @@ static void ctDestroy(newtComponent co) {
     free(co);
 }
 
+static void ctEnsureLimits( struct CheckboxTree *ct ) {
+    struct items **listEnd = ct->flatList + ct->flatCount - 1;
+    if (ct->firstItem < ct->flatList)
+        ct->firstItem = ct->flatList;
+    if (ct->currItem < ct->flatList)
+        ct->currItem = ct->flatList;
+    if (ct->firstItem > listEnd) {
+        ct->firstItem = listEnd;
+        ct->currItem = listEnd;
+    }
+}
+
 struct eventResult ctEvent(newtComponent co, struct event ev) {
     struct CheckboxTree * ct = co->data;
     struct eventResult er;
@@ -647,6 +659,7 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 		ct->currItem -= co->height;
 		ct->firstItem -= co->height;
 	    }
+	    ctEnsureLimits( ct );
 
 	    ctDraw(co);
 	    if(co->callback) co->callback(co, co->callbackData);
@@ -663,6 +676,7 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 	    	ct->currItem += co->height;
 		ct->firstItem += co->height;
 	    }
+	    ctEnsureLimits( ct );
 
 	    ctDraw(co);
 	    if(co->callback) co->callback(co, co->callbackData);
