@@ -115,7 +115,7 @@ void newtWaitForKey(void);
 void newtClearKeyBuffer(void);
 void newtDelay(unsigned int usecs);
 /* top, left are *not* counting the border */
-int newtOpenWindow(unsigned int left,unsigned int top, 
+int newtOpenWindow(int left,int top, 
 		   unsigned int width,unsigned  int height, 
  		  const char * title);
 int newtCenteredWindow(unsigned int width,unsigned int height, const char * title);

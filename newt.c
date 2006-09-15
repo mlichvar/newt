@@ -610,14 +610,14 @@ void newtClearKeyBuffer(void) {
 
 /**
  * Open a new window.
- * @param left. unsigned int Size; _not_ including border
- * @param top: unsigned int size, _not_ including border
+ * @param left. int Size; _not_ including border
+ * @param top: int size, _not_ including border
  * @param width unsigned int
  * @param height unsigned int
  * @param title - title string
  * @return zero on success (currently no errors reported)
  */
-int newtOpenWindow(unsigned int left, unsigned int top, 
+int newtOpenWindow(int left, int top, 
                    unsigned int width, unsigned int height,
 			  const char * title) {
     int j, row, col;
@@ -708,14 +708,14 @@ int newtOpenWindow(unsigned int left, unsigned int top,
  */
 int newtCenteredWindow(unsigned int width,unsigned int height, 
                        const char * title) {
-    unsigned int top, left;
+    int top, left;
 
-    top = (SLtt_Screen_Rows - height) / 2;
+    top = (int)(SLtt_Screen_Rows - height) / 2;
 
     /* I don't know why, but this seems to look better */
     if ((SLtt_Screen_Rows % 2) && (top % 2)) top--;
 
-    left = (SLtt_Screen_Cols - width) / 2;
+    left = (int)(SLtt_Screen_Cols - width) / 2;
 
     newtOpenWindow(left, top, width, height, title);
 
