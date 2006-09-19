@@ -44,7 +44,7 @@ static void usage(int err) {
 	       "\t--textbox <file> <height> <width>\n"
 	       "\t--menu <text> <height> <width> <listheight> [tag item] ...\n"
 	       "\t--checklist <text> <height> <width> <listheight> [tag item status]...\n"
-	       "\t--radiolist <text> <height> <width> <listheight> [tag item stautus]...\n"
+	       "\t--radiolist <text> <height> <width> <listheight> [tag item status]...\n"
 	       "\t--gauge <text> <height> <width> <percent>\n"
 	       "Options: (depend on box-option)\n"
 	       "\t--clear				clear screen on exit\n"
