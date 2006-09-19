@@ -1,0 +1,33 @@
+# Tagalog translation of newt.
+# Copyright (C) 2005 Eric Pareja
+# This file is distributed under the same license as the newt package.
+# Eric Pareja <xenos@upm.edu.ph>, 2005
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: newt 0.51.6-21\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2005-01-06 17:34+0800\n"
+"Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
+"Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "OK"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Kanselahin"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Oo"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Hindi"

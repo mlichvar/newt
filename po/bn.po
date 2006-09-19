@@ -1,0 +1,32 @@
+# Bangla translation of newt_newt.pot.
+# Copyright (C) 2005, Debian Foundation.
+# This file is distributed under the same license as the Newt_Newt package. 
+# Progga <progga@BengaLinux.Org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Newt_Newt HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2005-11-20 19:00+0600\n"
+"Last-Translator: Progga <progga@BengaLinux.Org>\n"
+"Language-Team: Bangla <core@BengaLinux.Org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "ঠিক আছে"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "বাতিল"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "হ্যাঁ"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "না"

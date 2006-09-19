@@ -1,0 +1,33 @@
+# Xhosa translations for newt
+# Copyright (C) 2005 Canonical Ltd.
+# This file is distributed under the same license as the newt package.
+# Translation by Canonical Ltd <translations@canonical.com> with thanks to
+# Translation World CC in South Africa, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: newt\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2005-02-28 21:09+0200\n"
+"Last-Translator: Canonical Ltd <translations@canonical.com>\n"
+"Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "Kulungile"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Rhoxisa"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Ewe"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Hayi"

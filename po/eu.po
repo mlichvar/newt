@@ -1,0 +1,34 @@
+# Vasco translation of newt_po.
+# Copyright (C) 2004 THE newt_po'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the newt_po package.
+# Mikel Olasagasti <hey_neken@mundurat.net>, 2004.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: newt_po\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2004-04-02 20:59+0200\n"
+"Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"Language-Team: Vasco <librezale@librezale.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "Ados"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Utzi"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Bai"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Ez"

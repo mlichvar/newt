@@ -1,0 +1,31 @@
+# Copyright (C) 2004 Redhat.
+# This file is distributed under the same license as the newt package.
+# Tommi Vainikainen, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: newt 0.51.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2004-01-09 22:34+0200\n"
+"Last-Translator: Tommi Vainikainen <thv+debian@iki.fi>\n"
+"Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "OK"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Peru"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Kyllä"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Ei"

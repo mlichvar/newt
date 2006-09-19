@@ -1,0 +1,33 @@
+# translation of newt_newt_po_km.po to Khmer
+# Hok Kakada <hokkakada@khmeros.info>, 2006.
+# auk piseth <piseth_dv@khmeros.info>, 2006.
+# Khoem Sokhem <khoemsokhem@khmeros.info>, 2006.
+# Leang Chumsoben <soben@khmeros.info>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: newt_newt_po_km\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2006-03-27 16:11+0700\n"
+"Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
+"Language-Team: Khmer <support@khmeros.info>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "យល់ព្រម"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "បោះបង់"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "បាទ/ចាស"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "ទេ"

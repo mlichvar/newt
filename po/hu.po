@@ -1,0 +1,35 @@
+# Hungarian translation of newt.
+# Copyright (C) 2003 THE RedHat.
+# This file is distributed under the same license as the newt package.
+# VERÓK István <vi@fsf.hu>, 2003.
+# Translators, please read /usr/share/doc/po-debconf/README-trans
+# or http://www.debian.org/intl/l10n/po-debconf/README-trans
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: newt 0.51.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2004-01-09 20:35+0100\n"
+"Last-Translator: VERÓK István <vi@fsf.hu>\n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "Ok"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Mégsem"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Igen"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Nem"

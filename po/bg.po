@@ -1,0 +1,33 @@
+# Bulgarian translation of newt.
+# This file is distributed under the same license as the newt package.
+# Ognyan Kulev <ogi@fmi.uni-sofia.bg>, 2004.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: newt 0.51.6-14\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2004-09-13 09:02+0300\n"
+"Last-Translator: Ognyan Kulev <ogi@fmi.uni-sofia.bg>\n"
+"Language-Team: Bulgarian <dict@linux.zonebg.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "OK"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "Отказ"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "Да"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "Не"
