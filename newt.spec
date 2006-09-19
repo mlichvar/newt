@@ -2,16 +2,15 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.2
+%define version 0.52.3
 Version: %{version}
-Release: 0
+Release: 1
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
-BuildRequires: python,python-devel,perl, slang-devel, tcl-devel
-Requires: slang
-Provides: snack
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRequires: python, python-devel, slang-devel
+Provides: snack = %{version}-%{release}
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %package devel
 Summary: Newt windowing toolkit development files.
@@ -36,26 +35,23 @@ the slang library.
 Install newt-devel if you want to develop applications which will use
 newt.
 
-
 %prep
 %setup -q
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
 #./configure --with-gpm-support
-%configure 
-make depend
+%configure --without-tcl
 make %{?_smp_mflags} all
 chmod 0644 peanuts.py popcorn.py
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
-%makeinstall
-
-/sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
+make instroot=$RPM_BUILD_ROOT install
 
 python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'%{_libdir}/python%{pythonver}",10,"%{_libdir}/python%{pythonver}")'
+
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -64,18 +60,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %postun -p /sbin/ldconfig
 
-%post devel -p /sbin/ldconfig
-
-%postun devel -p /sbin/ldconfig
-
-
-%files
+%files -f %{name}.lang
 %defattr (-,root,root)
 %doc COPYING
 %{_bindir}/whiptail
 %{_libdir}/libnewt.so.*
-%{_libdir}/whiptcl.so
 %{_libdir}/python%{pythonver}/site-packages/*
+%{_mandir}/man1/whiptail.1*
 
 %files devel
 %defattr (-,root,root)
@@ -85,6 +76,63 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Tue Sep 19 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.3-1
+- makefile, configure and spec cleanup
+- package whiptail.1 and locale files
+- fix warnings
+
+* Fri Aug 04 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.2-9
+- fix screen corruption when half of double width character is overwritten
+  (#137957) 
+- fix double width character handling in checkboxtree and listbox
+
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 0.52.2-8.1
+- rebuild
+
+* Tue Jun 27 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.2-8
+- unfocus when displaying help
+- fix help dialog in popcorn.py (#81352)
+
+* Thu Jun 08 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.2-7
+- fix checkboxtree positioning
+- make textbox with scrollbar focusable (#83203)
+- turn off cursor when entry terminated form (#86074)
+- handle listbox and checkboxtree focus better (#186053)
+- make default colors more friendly to 8-color terminals (#187545)
+
+* Wed May 31 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.2-6.1
+- fix handling windows larger than screen size (#189981)
+
+* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 0.52.2-5.2
+- bump again for double-long bug on ppc(64)
+
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 0.52.2-5.1
+- rebuilt for new gcc4.1 snapshot and glibc changes
+
+* Tue Jan 17 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-5
+- Fix a crash in checkboxtree.c where pressing pgup/pgdown
+  on a checkboxtree with less items than its height would
+  cause segmentation violation. Consult BR 165347.
+
+* Tue Jan 17 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-4
+- Apply patch by Bill Nottingham (thanks) to improve scrollbar appearance
+  (BR 174771).
+- Add -%{release} to snack's Provides: line (just in case).
+
+* Tue Jan 17 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-3
+- Provide: snack = %{version} instead of plain "snack", so that
+  we don't block upgrades of custom "snack" packages. This should
+  not break anything. (Hopefully) fixes BR 171415.
+
+* Mon Jan 16 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-2
+- do not build whiptcl, as per 177346 -- so that we avoid dependency on tcl
+
+* Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
+- rebuilt
+
+* Thu Nov 24 2005 Jindrich Novy <jnovy@redhat.com> - 0.52.2-1
+- rebuild because of the new slang-2.0.5
+
 * Fri Nov 22 2005 Petr Rockai <prockai@redhat.com> - 0.52.2-0
 - new upstream version (minor fixes for the source tarball
   and build system)
