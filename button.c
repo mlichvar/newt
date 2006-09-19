@@ -149,6 +149,8 @@ static struct eventResult buttonEvent(newtComponent co,
     struct eventResult er;
     struct button * bu = co->data;
 
+    er.result = ER_IGNORED;
+
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
 	  case EV_FOCUS:
@@ -195,8 +197,7 @@ static struct eventResult buttonEvent(newtComponent co,
 	      }
 	    break;
 	}
-    } else
-	er.result = ER_IGNORED;
+    }
 
     return er;
 }

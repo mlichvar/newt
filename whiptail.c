@@ -196,8 +196,8 @@ static void spaceForButtons(int * height, int * width, int count, int full) {
 
 static int menuSize(int * height, int * width, enum mode mode,
 		    poptContext options) {
-    char **    argv = poptGetArgs(options);
-    char * *    items = argv;
+    const char ** argv = poptGetArgs(options);
+    const char ** items = argv;
     int         h = 0;
     int         tagWidth = 0;
     int         descriptionWidth = 0;
@@ -466,7 +466,8 @@ int main(int argc, const char ** argv) {
 
     if (mode == MODE_NONE) usage(WAS_ERROR);
 
-    if (!(text = poptGetArg(optCon))) usage(WAS_ERROR);
+    if (!(nextArg = poptGetArg(optCon))) usage(WAS_ERROR);
+    text = strdup(nextArg);
 
     if  (mode == MODE_TEXTBOX ) text = readTextFile(text);
 

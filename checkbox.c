@@ -210,6 +210,8 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
     struct eventResult er;
     const char * cur;
 
+    er.result = ER_IGNORED;
+
     if (ev.when == EV_NORMAL) {
 	switch (ev.event) {
 	  case EV_FOCUS:
@@ -279,8 +281,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 		}
 	    }
 	}
-    } else
-	er.result = ER_IGNORED;
+    }
 
     return er;
 }

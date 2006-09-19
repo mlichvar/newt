@@ -447,7 +447,7 @@ static void ctDraw(newtComponent co) {
     struct items ** item; 
     int i, j;
     char * spaces;
-    int currRow;
+    int currRow = co->top;
 
     if (!co->isMapped) return ;
 
@@ -513,11 +513,12 @@ static void ctDraw(newtComponent co) {
 	spaces = alloca(co->width);
 	memset(spaces, ' ', co->width);
 	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
-    }
-    while (i < co->height) {
-	newtGotorc(co->top + i, co->left);
-	SLsmg_write_nstring(spaces, co->width);
-	i++;
+
+	while (i < co->height) {
+	    newtGotorc(co->top + i, co->left);
+	    SLsmg_write_nstring(spaces, co->width);
+	    i++;
+	}
     }
     
     if(ct->sb) {

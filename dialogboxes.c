@@ -120,7 +120,8 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 	buf[strlen(buf) - 1] = '\0';
 
 	if (!strcmp(buf, "XXX")) {
-	    fgets(buf3, sizeof(buf3) - 1, f);
+	    if (!fgets(buf3, sizeof(buf3) - 1, f))
+		break;
 	    buf3[strlen(buf3) - 1] = '\0';
 	    arg = buf3;
 
