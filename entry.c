@@ -171,6 +171,13 @@ static void entryDraw(newtComponent co) {
 	return;
     }
 
+    /* workaround for double width characters */
+    if (co->width > 1) {
+	newtGotorc(co->top, co->left + co->width - 2);
+	SLsmg_write_char('_');
+	SLsmg_write_char('_');
+    }
+
     newtGotorc(co->top, co->left);
 
     if (en->cursorPosition < en->firstChar) {
@@ -184,11 +191,11 @@ static void entryDraw(newtComponent co) {
     chptr = en->buf + en->firstChar;
 
     if (en->flags & NEWT_FLAG_PASSWORD) {
-	char *p;
-	tmpptr = alloca(strlen(chptr)+2);
-	strcpy(tmpptr, chptr);
-	for (p = tmpptr; *p; p++)
-	    *p = '*';
+	len = wstrlen(chptr, -1);
+	tmpptr = alloca(len + 1);
+	for (i = 0; i < len; i++)
+	    memset(tmpptr, '*', len);
+	tmpptr[len] = '\0';
 	chptr = tmpptr;
     }			
 
@@ -202,7 +209,11 @@ static void entryDraw(newtComponent co) {
 	    i++;
 	}
     } else {
-	SLsmg_write_nstring(chptr, co->width);
+	char *tmp;
+	tmp = strdup(chptr);
+	trim_string(tmp, co->width);
+	SLsmg_write_string(tmp);
+	free(tmp);
     }
 
     if (en->flags & NEWT_FLAG_HIDDEN)
