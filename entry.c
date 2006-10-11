@@ -171,15 +171,6 @@ static void entryDraw(newtComponent co) {
 	return;
     }
 
-    /* workaround for double width characters */
-    if (co->width > 1) {
-	newtGotorc(co->top, co->left + co->width - 2);
-	SLsmg_write_char('_');
-	SLsmg_write_char('_');
-    }
-
-    newtGotorc(co->top, co->left);
-
     if (en->cursorPosition < en->firstChar) {
 	/* scroll to the left */
 	en->firstChar = en->cursorPosition;
@@ -201,6 +192,17 @@ static void entryDraw(newtComponent co) {
 
     len = wstrlen(chptr, -1);
 
+    /* workaround for double width characters */
+    if (co->width > 1) {
+	i = len < co->width ? len : co->width;
+	i = i > 2 ? i - 2 : 0;
+	newtGotorc(co->top, co->left + i);
+	SLsmg_write_char('_');
+	SLsmg_write_char('_');
+    }
+
+    newtGotorc(co->top, co->left);
+
     if (len <= co->width) {
 	i = len;
 	SLsmg_write_string(chptr);
@@ -216,10 +218,7 @@ static void entryDraw(newtComponent co) {
 	free(tmp);
     }
 
-    if (en->flags & NEWT_FLAG_HIDDEN)
-	newtGotorc(co->top, co->left);
-    else
-	newtGotorc(co->top, co->left + wstrlen(en->buf+en->firstChar, en->cursorPosition - en->firstChar));
+    newtGotorc(co->top, co->left + wstrlen(en->buf+en->firstChar, en->cursorPosition - en->firstChar));
 }
 
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
