@@ -400,42 +400,54 @@ static struct eventResult entryHandleKey(newtComponent co, int key) {
 
       default:
 	if ((key >= 0x20 && key <= 0x7e) || (key >= 0x80 && key <= 0xff)) {
-	    if (!(en->flags & NEWT_FLAG_SCROLL) && wstrlen(en->buf, -1) >= co->width) {
+	    char s[MB_CUR_MAX];
+	    mbstate_t ps;
+	    int i, l;
+
+	    for (i = 1, s[0] = key; ; i++) {
+		memset(&ps, 0, sizeof (ps));
+		l = mbrtowc(NULL, s, i, &ps);
+		if (l == -1)	/* invalid sequence */
+		    i = 0;
+		if (l != -2)	/* not incomplete sequence */
+		    break;
+
+		/* read next byte */
+		if (i == MB_CUR_MAX || !SLang_input_pending(1)) {
+		    i = 0;
+		    break;
+		}
+		s[i] = SLang_getkey();
+	    }
+
+	    if (!i || !(en->flags & NEWT_FLAG_SCROLL) && wstrlen(en->buf, -1) >= co->width) {
 		/* FIXME this is broken */
 		SLtt_beep();
 		break;
 	    }
 
-	    if ((en->bufUsed + 1) == en->bufAlloced) {
+	    if ((en->bufUsed + i) >= en->bufAlloced) {
 		en->bufAlloced += 20;
 		en->buf = realloc(en->buf, en->bufAlloced);
 		if (en->resultPtr) *en->resultPtr = en->buf;
 		memset(en->buf + en->bufUsed + 1, 0, 20);
 	    }
 
-	    if (en->cursorPosition == en->bufUsed) {
-		en->bufUsed++;
-	    } else {
+	    if (en->cursorPosition != en->bufUsed) {
 		/* insert the new character */
 
 		/* chptr is the last character in the string */
-		chptr = (en->buf + en->bufUsed) - 1;
-		if ((en->bufUsed + 1) == en->bufAlloced) {
-		    /* this string fills the buffer, so clip it */
-		    chptr--;
-		} else
-		    en->bufUsed++;
-
+		chptr = (en->buf + en->bufUsed) - 2 + i;
 		insPoint = en->buf + en->cursorPosition;
 
 		while (chptr >= insPoint) {
-		    *(chptr + 1) = *chptr;
+		    *(chptr + i) = *chptr;
 		    chptr--;
 		}
-
 	    }
-            /* FIXME */
-	    en->buf[en->cursorPosition++] = key;
+	    en->bufUsed += i;
+	    for (l = 0; l < i; l++)
+		en->buf[en->cursorPosition++] = s[l];
 	} else {
 	    er.result = ER_IGNORED;
 	}
