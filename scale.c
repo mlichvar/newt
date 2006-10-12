@@ -48,11 +48,17 @@ void newtScaleSet(newtComponent co, unsigned long long amount) {
     struct scale * sc = co->data;
     int newPercentage;
 
-    sc->charsSet = (amount * co->width) / sc->fullValue;
-    newPercentage = (amount * 100) / sc->fullValue;
-
-    if (newPercentage > 100)
+    if (amount >= sc->fullValue) {
 	newPercentage = 100;
+	sc->charsSet = co->width;
+    } else if (sc->fullValue >= -1ULL / (100 > co->width ? 100 : co->width)) {
+	/* avoid overflow on large numbers */
+	sc->charsSet = amount / (sc->fullValue / co->width);
+	newPercentage = amount / (sc->fullValue / 100);
+    } else {
+	sc->charsSet = (amount * co->width) / sc->fullValue;
+	newPercentage = (amount * 100) / sc->fullValue;
+    }
     
     if (newPercentage != sc->percentage) {
 	sc->percentage = newPercentage;
