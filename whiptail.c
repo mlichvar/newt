@@ -48,7 +48,7 @@ static void usage(int err) {
 	       "\t--gauge <text> <height> <width> <percent>\n"
 	       "Options: (depend on box-option)\n"
 	       "\t--clear				clear screen on exit\n"
-	       "\t-defaultno			default no button\n"	
+	       "\t--defaultno			default no button\n"	
 	       "\t--default-item <string>		set default string\n"
 	       "\t--fb				use full buttons\n"
 	       "\t--nocancel			no cancel button\n"
@@ -57,7 +57,8 @@ static void usage(int err) {
 	       "\t--output-fd <fd>		output to fd, not stdout\n"
 	       "\t--title <title>			display title\n"
 	       "\t--backtitle <backtitle>		display backtitle\n"
-	       "\t--scrolltext			force verical scrollbars\n\n"));
+	       "\t--scrolltext			force verical scrollbars\n"
+	       "\t--topleft			put window in top-left corner\n\n"));
     exit(err ? DLG_ERROR : 0 );
 }
 
@@ -339,6 +340,7 @@ int main(int argc, const char ** argv) {
     int separateOutput = 0;
     int fullButtons = 0;
     int outputfd = 2;
+    int topLeft = 0;
     FILE *output = stderr;
     const char * result;
     const char ** selections, ** next;
@@ -367,6 +369,7 @@ int main(int argc, const char ** argv) {
 	    { "separate-output", '\0', 0, &separateOutput, 0 },
 	    { "title", '\0', POPT_ARG_STRING, &title, 0 },
 	    { "textbox", '\0', 0, 0, OPT_TEXTBOX },
+	    { "topleft", '\0', 0, &topLeft, 0 },
 	    { "yesno", '\0', 0, 0, OPT_YESNO },
 	    { "passwordbox", '\0', 0, 0, OPT_PASSWORDBOX },
 	    { "output-fd", '\0',  POPT_ARG_INT, &outputfd, 0 },
@@ -501,8 +504,8 @@ int main(int argc, const char ** argv) {
     width -= 2;
     height -= 2;
 
-    newtOpenWindow((SLtt_Screen_Cols - width) / 2, 
-                   (SLtt_Screen_Rows - height) / 2, width, height, title);
+    newtOpenWindow(topLeft ? 1 : (SLtt_Screen_Cols - width) / 2,
+		   topLeft ? 1 : (SLtt_Screen_Rows - height) / 2, width, height, title);
     if (backtitle)
 	newtDrawRootText(0, 0, backtitle);
 
