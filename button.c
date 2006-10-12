@@ -126,6 +126,8 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
 
 	buttonDrawText(co, active, pushed);
     }
+    /* put cursor at beginning of text for better accessibility */
+    newtGotorc(co->top + (bu->compact ? 0 : 1) + pushed, co->left + 1 + pushed + 1);
 }
 
 static void buttonDrawText(newtComponent co, int active, int pushed) {

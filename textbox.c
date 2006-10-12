@@ -368,6 +368,8 @@ static void textboxDraw(newtComponent c) {
 	newtGotorc(c->top + i, c->left);
 	SLsmg_write_string(tb->lines[i + tb->topLine]);
     }
+    /* put cursor at beginning of text for better accessibility */
+    newtGotorc(c->top, c->left);
 }
 
 static struct eventResult textboxEvent(newtComponent co, 

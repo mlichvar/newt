@@ -88,4 +88,6 @@ static void scaleDraw(newtComponent co) {
         else
             SLsmg_write_char(' ');
     }
+    /* put cursor at beginning of text for better accessibility */
+    newtGotorc(co->top, co->left + xlabel);
 }
