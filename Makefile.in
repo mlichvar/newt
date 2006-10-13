@@ -134,7 +134,7 @@ install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	   install -m 755 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done
 
-configure:  configure.ac
+configure:  configure.ac newt.spec
 	autoconf
 	echo "You need to rerun ./configure before continuing"
 	exit 1
