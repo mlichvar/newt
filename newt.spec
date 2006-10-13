@@ -2,9 +2,9 @@
 
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.3
+%define version 0.52.4
 Version: %{version}
-Release: 1
+Release: 1%{?dist}
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -76,6 +76,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Fri Oct 13 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.4-1
+- fix entry corruption when reading multibyte characters
+  and double width character handling
+- avoid overflow/crash in scale
+- patches from debian
+  - fix crash of snack in EntryWindow when prompts is list of tuples
+  - put cursor at beginning of text for better accessibility
+    in button, scale and textbox
+  - add topleft option to whiptail
+
 * Tue Sep 19 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.3-1
 - makefile, configure and spec cleanup
 - package whiptail.1 and locale files
