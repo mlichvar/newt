@@ -151,7 +151,7 @@ create-archive:    configure
 	@echo "The final archive is ./newt-$(VERSION).tar.gz."
 
 tag-archive:
-	@cvs tag -F $(CVSTAG)
+	@cvs tag $(CVSTAG)
 
 archive: tag-archive create-archive
 
