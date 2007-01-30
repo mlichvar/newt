@@ -1,7 +1,7 @@
 AC_INIT([newt_pr.h])
 
 PACKAGE=newt
-VERSION=$(awk '/^%define version/ {print $3}' $srcdir/newt.spec)
+VERSION=$(awk '/^Version: / {print $2}' $srcdir/newt.spec)
 SONAME=0.52
 
 AC_CONFIG_HEADER([config.h])
