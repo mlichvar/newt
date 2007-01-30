@@ -1,10 +1,7 @@
-%define pythonver %(%{__python} -c "import sys; print sys.version[:3]")
-
 Summary: A development library for text mode user interfaces.
 Name: newt
-%define version 0.52.4
-Version: %{version}
-Release: 1%{?dist}
+Version: 0.52.4
+Release: 2%{?dist}
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -49,8 +46,6 @@ chmod 0644 peanuts.py popcorn.py
 rm -rf $RPM_BUILD_ROOT
 make instroot=$RPM_BUILD_ROOT install
 
-python -c 'from compileall import *; compile_dir("'$RPM_BUILD_ROOT'%{_libdir}/python%{pythonver}",10,"%{_libdir}/python%{pythonver}")'
-
 %find_lang %{name}
 
 %clean
@@ -65,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %{_bindir}/whiptail
 %{_libdir}/libnewt.so.*
-%{_libdir}/python%{pythonver}/site-packages/*
+%{_libdir}/python?.?/site-packages/*
 %{_mandir}/man1/whiptail.1*
 
 %files devel
@@ -76,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Thu Dec  7 2006 Jeremy Katz <katzj@redhat.com> - 0.52.4-2
+- rebuild for python 2.5
+
 * Fri Oct 13 2006 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.4-1
 - fix entry corruption when reading multibyte characters
   and double width character handling
