@@ -1,7 +1,7 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
 Version: 0.52.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Sat Jan  6 2007 Jeremy Katz <katzj@redhat.com> - 0.52.4-3
+- fix memory allocation in snack to be consistent (#212780)
+
 * Thu Dec  7 2006 Jeremy Katz <katzj@redhat.com> - 0.52.4-2
 - rebuild for python 2.5
 

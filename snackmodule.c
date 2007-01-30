@@ -924,8 +924,8 @@ static void widgetDestructor(PyObject * o) {
     
     Py_XDECREF (s->scs.cb);
     Py_XDECREF (s->scs.data);
-
-    PyMem_DEL(o);
+    
+    PyObject_Free(o);
 }
 
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
