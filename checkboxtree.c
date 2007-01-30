@@ -527,7 +527,8 @@ static void ctDraw(newtComponent co) {
 	ct->sb->ops->draw(ct->sb);
     }
 
-    newtGotorc(currRow, co->left + 1);
+    newtGotorc(currRow, co->left + 
+		    (*ct->currItem ? (*ct->currItem)->depth : 0) * 3 + 4);
 }
 
 static void ctDestroy(newtComponent co) {

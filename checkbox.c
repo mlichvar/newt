@@ -194,6 +194,7 @@ static void cbDraw(newtComponent c) {
 
     newtGotorc(c->top, c->left + 1);
     SLsmg_write_char(*cb->result);
+    newtGotorc(c->top, c->left + 4);
 }
 
 static void cbDestroy(newtComponent co) {
