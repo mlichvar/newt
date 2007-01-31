@@ -46,18 +46,13 @@ static const char * getButtonText(int button) {
 	return text;
 
     switch (button) {
-	case 0: text = "Ok";
-		break;
-	case 1: text = "Cancel";
-		break;
-	case 2: text = "Yes";
-		break;
-	case 3: text = "No";
-		break;
+	case 0: return dgettext(PACKAGE, "Ok");
+	case 1: return dgettext(PACKAGE, "Cancel");
+	case 2: return dgettext(PACKAGE, "Yes");
+	case 3: return dgettext(PACKAGE, "No");
 	default:
 		return NULL;
     }
-    return dgettext(PACKAGE, text);
 }
 
 static void addButtons(int height, int width, newtComponent form, 
