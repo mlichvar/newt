@@ -106,8 +106,10 @@ static void buttonDrawIt(newtComponent co, int active, int pushed) {
     if (bu->compact) {
 	if (!active)
 	    SLsmg_set_color(NEWT_COLORSET_COMPACTBUTTON);
-	else
+	else if (SLtt_Use_Ansi_Colors)
 	    SLsmg_set_color(NEWT_COLORSET_BUTTON);
+	else
+	    SLsmg_set_color(NEWT_COLORSET_ACTBUTTON);
 	newtGotorc(co->top+ pushed, co->left + 1 + pushed);
 	SLsmg_write_char('<');
 	SLsmg_write_string(bu->text);
