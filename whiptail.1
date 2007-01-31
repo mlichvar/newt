@@ -28,6 +28,22 @@ whiptail \- display dialog boxes from shell scripts
 .B \-\-nocancel
 ]
 [
+.B \-\-yes\-button
+.I text
+]
+[
+.B \-\-no\-button
+.I text
+]
+[
+.B \-\-ok\-button
+.I text
+]
+[
+.B \-\-cancel\-button
+.I text
+]
+[
 .B \-\-noitem
 [
 ]
@@ -67,7 +83,7 @@ an alternate screen.
 The dialog box will open with the cursor over the 
 .BR No " button."
 .TP
-.B \-\-default\-item "string"
+.BI \-\-default\-item " string"
 Set  the default item in a menu box.
 Normally the first item in the box is the default.
 .TP
@@ -79,6 +95,22 @@ uses compact buttons).
 .B \-\-nocancel
 The dialog box won't have a 
 .BR Cancel " button".
+.TP
+.BI \-\-yes\-button " text"
+Set the text of the
+.BR Yes " button."
+.TP
+.BI \-\-no\-button " text"
+Set the text of the
+.BR No " button."
+.TP
+.BI \-\-ok\-button " text"
+Set the text of the
+.BR Ok " button."
+.TP
+.BI \-\-cancel\-button " text"
+Set the text of the
+.BR Cancel " button."
 .TP
 .B \-\-noitem
 The menu, checklist and radiolist widgets will display tags only, not
