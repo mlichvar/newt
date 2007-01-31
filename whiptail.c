@@ -52,6 +52,10 @@ static void usage(int err) {
 	       "\t--default-item <string>		set default string\n"
 	       "\t--fb				use full buttons\n"
 	       "\t--nocancel			no cancel button\n"
+	       "\t--yes-button <text>		set text of yes button\n"
+	       "\t--no-button <text>		set text of no button\n"
+	       "\t--ok-button <text>		set text of ok button\n"
+	       "\t--cancel-button <text>		set text of cancel button\n"
 	       "\t--noitem			display tags only\n"
 	       "\t--separate-output <fd>		output one line at a time\n"
 	       "\t--output-fd <fd>		output to fd, not stdout\n"
@@ -347,6 +351,10 @@ int main(int argc, const char ** argv) {
     char * title = NULL;
     char *default_item = NULL;
     char * backtitle = NULL;
+    char * yes_button = NULL;
+    char * no_button = NULL;
+    char * ok_button = NULL;
+    char * cancel_button = NULL;
     int help = 0, version = 0;
     struct poptOption optionsTable[] = {
 	    { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
@@ -373,6 +381,10 @@ int main(int argc, const char ** argv) {
 	    { "yesno", '\0', 0, 0, OPT_YESNO },
 	    { "passwordbox", '\0', 0, 0, OPT_PASSWORDBOX },
 	    { "output-fd", '\0',  POPT_ARG_INT, &outputfd, 0 },
+	    { "yes-button", '\0', POPT_ARG_STRING, &yes_button, 0},
+	    { "no-button", '\0', POPT_ARG_STRING, &no_button, 0},
+	    { "ok-button", '\0', POPT_ARG_STRING, &ok_button, 0},
+	    { "cancel-button", '\0', POPT_ARG_STRING, &cancel_button, 0},
 	    { "help", 'h', 0,  &help, 0, NULL, NULL },
 	    { "version", 'v', 0, &version, 0, NULL, NULL },
 	    { 0, 0, 0, 0, 0 } 
@@ -508,6 +520,15 @@ int main(int argc, const char ** argv) {
 		   topLeft ? 1 : (SLtt_Screen_Rows - height) / 2, width, height, title);
     if (backtitle)
 	newtDrawRootText(0, 0, backtitle);
+
+    if (ok_button)
+	setButtonText(ok_button, BUTTON_OK);
+    if (cancel_button)
+	setButtonText(cancel_button, BUTTON_CANCEL);
+    if (yes_button)
+	setButtonText(yes_button, BUTTON_YES);
+    if (no_button)
+	setButtonText(no_button, BUTTON_NO);
 
     if (noCancel) flags |= FLAG_NOCANCEL;
     if (noItem) flags |= FLAG_NOITEM;

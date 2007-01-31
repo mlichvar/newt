@@ -19,6 +19,11 @@
 #define DLG_CANCEL		1
 #define DLG_ESCAPE		2
 
+#define BUTTON_OK		0
+#define BUTTON_CANCEL		1
+#define BUTTON_YES		2
+#define BUTTON_NO		3
+
 int min(int a, int b);
 int max(int a, int b);
 
@@ -32,5 +37,6 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 int gauge(const char * text, int height, int width, poptContext optCon, int fd, 
 		int flags);
 void useFullButtons(int state);
+void setButtonText(const char * text, int button);
 
 #endif

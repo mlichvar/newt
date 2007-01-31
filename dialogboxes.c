@@ -17,9 +17,11 @@
 
 #define MAXBUF    200
 #define MAXFORMAT 20
+#define BUTTONS   4
 
 /* globals -- ick */
 static int buttonHeight = 1;
+static const char * buttonText[BUTTONS];
 
 int max (int a, int b)
 {
@@ -34,21 +36,45 @@ int min (int a, int b)
 static newtComponent (*makeButton)(int left, int right, const char * text) = 
 		newtCompactButton;
 
+static const char * getButtonText(int button) {
+    const char * text;
+    if (button < 0 || button >= BUTTONS)
+	return NULL;
+
+    text = buttonText[button];
+    if (text)
+	return text;
+
+    switch (button) {
+	case 0: text = "Ok";
+		break;
+	case 1: text = "Cancel";
+		break;
+	case 2: text = "Yes";
+		break;
+	case 3: text = "No";
+		break;
+	default:
+		return NULL;
+    }
+    return dgettext(PACKAGE, text);
+}
+
 static void addButtons(int height, int width, newtComponent form, 
 		       newtComponent * okay, newtComponent * cancel, 
 		       int flags) {
 	// FIXME: DO SOMETHING ABOUT THE HARD-CODED CONSTANTS
     if (flags & FLAG_NOCANCEL) {
 	   *okay = makeButton((width - 8) / 2, height - buttonHeight - 1,
-			      dgettext(PACKAGE, "Ok"));
+			      getButtonText(BUTTON_OK));
 	    *cancel = NULL;
 	newtFormAddComponent(form, *okay);
     } else {
 	*okay = makeButton((width - 18) / 3, height - buttonHeight - 1, 
-			   dgettext(PACKAGE,"Ok"));
+			   getButtonText(BUTTON_OK));
 	*cancel = makeButton(((width - 18) / 3) * 2 + 9, 
 				height - buttonHeight - 1, 
-				dgettext(PACKAGE,"Cancel"));
+				getButtonText(BUTTON_CANCEL));
 	newtFormAddComponents(form, *okay, *cancel, NULL);
     }
 }
@@ -491,14 +517,14 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
     case MSGBOX_MSG:
 	// FIXME Do something about the hard-coded constants
 	yes = makeButton((width - 8) / 2, height - 1 - buttonHeight, 
-			 dgettext(PACKAGE,"Ok"));
+			  getButtonText(BUTTON_OK));
 	newtFormAddComponent(form, yes);
 	break;
     default:
 	yes = makeButton((width - 16) / 3, height - 1 - buttonHeight, 
-			 dgettext(PACKAGE,"Yes"));
+			 getButtonText(BUTTON_YES));
 	no = makeButton(((width - 16) / 3) * 2 + 9, height - 1 - buttonHeight, 
-			dgettext(PACKAGE,"No"));
+		         getButtonText(BUTTON_NO));
 	newtFormAddComponents(form, yes, no, NULL);
 
 	if (flags & FLAG_DEFAULT_NO)
@@ -532,4 +558,10 @@ void useFullButtons(int state) {
 	buttonHeight = 1;
 	makeButton = newtCompactButton;
    }
+}
+
+void setButtonText(const char * text, int button) {
+    if (button < 0 || button >= BUTTONS)
+	return;
+    buttonText[button] = text;
 }
