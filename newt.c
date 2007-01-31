@@ -294,11 +294,8 @@ int newtInit(void) {
     SLtt_get_screen_size();
 
     MonoValue = getenv(MonoEnv);
-    if ( MonoValue == NULL ) {
-	SLtt_Use_Ansi_Colors = 1;
-    } else {
+    if ( MonoValue != NULL )
 	SLtt_Use_Ansi_Colors = 0;
-    }
 
     if ((ret = SLsmg_init_smg()) < 0)
 	return ret;
