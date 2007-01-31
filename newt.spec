@@ -1,7 +1,7 @@
 Summary: A development library for text mode user interfaces.
 Name: newt
-Version: 0.52.4
-Release: 3%{?dist}
+Version: 0.52.5
+Release: 1%{?dist}
 License: LGPL
 Group: System Environment/Libraries
 Source: newt-%{version}.tar.gz
@@ -71,6 +71,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.so
 
 %changelog
+* Wed Jan 31 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.5-1
+- provide option to change text of buttons (#126768)
+- don't add escape key to hot keys by default (#216157)
+- fix cursor position in checkboxtree, radio button and checkbox
+- don't force monochrome terminals to output colors
+- highlight active compact button on monochrome terminals
+- update translations from debian
+
 * Sat Jan  6 2007 Jeremy Katz <katzj@redhat.com> - 0.52.4-3
 - fix memory allocation in snack to be consistent (#212780)
 
