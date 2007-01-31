@@ -57,7 +57,7 @@ static void usage(int err) {
 	       "\t--ok-button <text>		set text of ok button\n"
 	       "\t--cancel-button <text>		set text of cancel button\n"
 	       "\t--noitem			display tags only\n"
-	       "\t--separate-output <fd>		output one line at a time\n"
+	       "\t--separate-output		output one line at a time\n"
 	       "\t--output-fd <fd>		output to fd, not stdout\n"
 	       "\t--title <title>			display title\n"
 	       "\t--backtitle <backtitle>		display backtitle\n"
