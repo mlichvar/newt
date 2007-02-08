@@ -725,6 +725,11 @@ int newtCenteredWindow(unsigned int width,unsigned int height,
  * @brief Remove the top window
  */
 void newtPopWindow(void) {
+    newtPopWindowNoRefresh();
+    newtRefresh();
+}
+
+void newtPopWindowNoRefresh(void) {
     int j, row, col;
     int n = 0;
 
@@ -754,8 +759,6 @@ void newtPopWindow(void) {
     SLsmg_set_char_set(0);
 
     newtTrashScreen();
-
-    newtRefresh();
 }
 
 void newtGetWindowPos(int * x, int * y) {

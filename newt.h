@@ -120,6 +120,7 @@ int newtOpenWindow(int left,int top,
  		  const char * title);
 int newtCenteredWindow(unsigned int width,unsigned int height, const char * title);
 void newtPopWindow(void);
+void newtPopWindowNoRefresh(void);
 void newtSetColors(struct newtColors colors);
 void newtRefresh(void);
 void newtSuspend(void);

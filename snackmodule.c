@@ -53,6 +53,7 @@ static PyObject * messageWindow(PyObject * s, PyObject * args);
 static PyObject * openWindow(PyObject * s, PyObject * args);
 static PyObject * popHelpLine(PyObject * s, PyObject * args);
 static PyObject * popWindow(PyObject * s, PyObject * args);
+static PyObject * popWindowNoRefresh(PyObject * s, PyObject * args);
 static PyObject * pushHelpLine(PyObject * s, PyObject * args);
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args);
 static PyObject * refreshScreen(PyObject * s, PyObject * args);
@@ -87,6 +88,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "openwindow", openWindow, METH_VARARGS, NULL },
     { "pophelpline", popHelpLine, METH_VARARGS, NULL },
     { "popwindow", popWindow, METH_VARARGS, NULL },
+    { "popwindownorefresh", popWindowNoRefresh, METH_VARARGS, NULL },
     { "pushhelpline", pushHelpLine, METH_VARARGS, NULL },
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
     { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
@@ -526,6 +528,12 @@ static PyObject * openWindow(PyObject * s, PyObject * args) {
 
 static PyObject * popWindow(PyObject * s, PyObject * args) {
     newtPopWindow();
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * popWindowNoRefresh(PyObject * s, PyObject * args) {
+    newtPopWindowNoRefresh();
     Py_INCREF(Py_None);
     return Py_None;
 }

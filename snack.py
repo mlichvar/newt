@@ -460,8 +460,10 @@ class SnackScreen:
 
         return _snack.gridwrappedwindow(grid.g, title)
 
-    def popWindow(self):
-        return _snack.popwindow()
+    def popWindow(self, refresh = True):
+        if refresh:
+            return _snack.popwindow()
+        return _snack.popwindownorefresh()
 
     def refresh(self):
         return _snack.refresh()
