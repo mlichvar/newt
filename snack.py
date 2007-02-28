@@ -395,6 +395,30 @@ class Grid:
         self.g = apply(_snack.grid, args)
         self.gridmembers = []
 
+colorsets = { "ROOT" : _snack.COLORSET_ROOT,
+              "BORDER" : _snack.COLORSET_BORDER,
+              "WINDOW" : _snack.COLORSET_WINDOW,
+              "SHADOW" : _snack.COLORSET_SHADOW,
+              "TITLE" : _snack.COLORSET_TITLE,
+              "BUTTON" : _snack.COLORSET_BUTTON,
+              "ACTBUTTON" : _snack.COLORSET_ACTBUTTON,
+              "CHECKBOX" : _snack.COLORSET_CHECKBOX,
+              "ACTCHECKBOX" : _snack.COLORSET_ACTCHECKBOX,
+              "ENTRY" : _snack.COLORSET_ENTRY,
+              "LABEL" : _snack.COLORSET_LABEL,
+              "LISTBOX" : _snack.COLORSET_LISTBOX,
+              "ACTLISTBOX" : _snack.COLORSET_ACTLISTBOX,
+              "TEXTBOX" : _snack.COLORSET_TEXTBOX,
+              "ACTTEXTBOX" : _snack.COLORSET_ACTTEXTBOX,
+              "HELPLINE" : _snack.COLORSET_HELPLINE,
+              "ROOTTEXT" : _snack.COLORSET_ROOTTEXT,
+              "EMPTYSCALE" : _snack.COLORSET_EMPTYSCALE,
+              "FULLSCALE" : _snack.COLORSET_FULLSCALE,
+              "DISENTRY" : _snack.COLORSET_DISENTRY,
+              "COMPACTBUTTON" : _snack.COLORSET_COMPACTBUTTON,
+              "ACTSELLISTBOX" : _snack.COLORSET_ACTSELLISTBOX,
+              "SELLISTBOX" : _snack.COLORSET_SELLISTBOX }
+
 class SnackScreen:
     """A Screen;
 
@@ -467,6 +491,9 @@ class SnackScreen:
 
     def refresh(self):
         return _snack.refresh()
+
+    def setColor(self, colorset, fg, bg):
+        return _snack.setcolor(colorsets[colorset], fg, bg)
 
 def reflow(text, width, flexDown = 5, flexUp = 5):
     """ returns a tuple of the wrapped text, the actual width, and the actual height

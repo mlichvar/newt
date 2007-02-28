@@ -57,6 +57,7 @@ static PyObject * popWindowNoRefresh(PyObject * s, PyObject * args);
 static PyObject * pushHelpLine(PyObject * s, PyObject * args);
 static snackWidget * radioButtonWidget(PyObject * s, PyObject * args);
 static PyObject * refreshScreen(PyObject * s, PyObject * args);
+static PyObject * setColor(PyObject * s, PyObject * args);
 static PyObject * scaleWidget(PyObject * s, PyObject * args);
 static PyObject * scaleSet(snackWidget * s, PyObject * args);
 static PyObject * screenSize(PyObject * s, PyObject * args);
@@ -93,6 +94,7 @@ static PyMethodDef snackModuleMethods[] = {
     { "radiobutton", (PyCFunction) radioButtonWidget, METH_VARARGS, NULL },
     { "reflow", (PyCFunction) reflowText, METH_VARARGS, NULL },
     { "refresh", refreshScreen, METH_VARARGS, NULL },
+    { "setcolor", setColor, METH_VARARGS, NULL },
     { "resume", doResume, METH_VARARGS, NULL },
     { "scale", scaleWidget, METH_VARARGS, NULL },
     { "size", screenSize, METH_VARARGS, NULL },
@@ -297,6 +299,18 @@ static PyObject * finishScreen(PyObject * s, PyObject * args) {
 
 static PyObject * refreshScreen(PyObject * s, PyObject * args) {
     newtRefresh();
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * setColor(PyObject * s, PyObject * args) {
+    char * fg, * bg;
+    int colorset;
+    if (!PyArg_ParseTuple(args, "iss", &colorset, &fg, &bg))
+	return NULL;
+
+    newtSetColor(colorset, fg, bg);
+
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -1270,4 +1284,28 @@ void init_snack(void) {
     PyDict_SetItemString(d, "FLAGS_SET", PyInt_FromLong(NEWT_FLAGS_SET));
     PyDict_SetItemString(d, "FLAGS_RESET", PyInt_FromLong(NEWT_FLAGS_RESET));
     PyDict_SetItemString(d, "FLAGS_TOGGLE", PyInt_FromLong(NEWT_FLAGS_TOGGLE));
+
+    PyDict_SetItemString(d, "COLORSET_ROOT", PyInt_FromLong(NEWT_COLORSET_ROOT));
+    PyDict_SetItemString(d, "COLORSET_BORDER", PyInt_FromLong(NEWT_COLORSET_BORDER));
+    PyDict_SetItemString(d, "COLORSET_WINDOW", PyInt_FromLong(NEWT_COLORSET_WINDOW));
+    PyDict_SetItemString(d, "COLORSET_SHADOW", PyInt_FromLong(NEWT_COLORSET_SHADOW));
+    PyDict_SetItemString(d, "COLORSET_TITLE", PyInt_FromLong(NEWT_COLORSET_TITLE));
+    PyDict_SetItemString(d, "COLORSET_BUTTON", PyInt_FromLong(NEWT_COLORSET_BUTTON));
+    PyDict_SetItemString(d, "COLORSET_ACTBUTTON", PyInt_FromLong(NEWT_COLORSET_ACTBUTTON));
+    PyDict_SetItemString(d, "COLORSET_CHECKBOX", PyInt_FromLong(NEWT_COLORSET_CHECKBOX));
+    PyDict_SetItemString(d, "COLORSET_ACTCHECKBOX", PyInt_FromLong(NEWT_COLORSET_ACTCHECKBOX));
+    PyDict_SetItemString(d, "COLORSET_ENTRY", PyInt_FromLong(NEWT_COLORSET_ENTRY));
+    PyDict_SetItemString(d, "COLORSET_LABEL", PyInt_FromLong(NEWT_COLORSET_LABEL));
+    PyDict_SetItemString(d, "COLORSET_LISTBOX", PyInt_FromLong(NEWT_COLORSET_LISTBOX));
+    PyDict_SetItemString(d, "COLORSET_ACTLISTBOX", PyInt_FromLong(NEWT_COLORSET_ACTLISTBOX));
+    PyDict_SetItemString(d, "COLORSET_TEXTBOX", PyInt_FromLong(NEWT_COLORSET_TEXTBOX));
+    PyDict_SetItemString(d, "COLORSET_ACTTEXTBOX", PyInt_FromLong(NEWT_COLORSET_ACTTEXTBOX));
+    PyDict_SetItemString(d, "COLORSET_HELPLINE", PyInt_FromLong(NEWT_COLORSET_HELPLINE));
+    PyDict_SetItemString(d, "COLORSET_ROOTTEXT", PyInt_FromLong(NEWT_COLORSET_ROOTTEXT));
+    PyDict_SetItemString(d, "COLORSET_EMPTYSCALE", PyInt_FromLong(NEWT_COLORSET_EMPTYSCALE));
+    PyDict_SetItemString(d, "COLORSET_FULLSCALE", PyInt_FromLong(NEWT_COLORSET_FULLSCALE));
+    PyDict_SetItemString(d, "COLORSET_DISENTRY", PyInt_FromLong(NEWT_COLORSET_DISENTRY));
+    PyDict_SetItemString(d, "COLORSET_COMPACTBUTTON", PyInt_FromLong(NEWT_COLORSET_COMPACTBUTTON));
+    PyDict_SetItemString(d, "COLORSET_ACTSELLISTBOX", PyInt_FromLong(NEWT_COLORSET_ACTSELLISTBOX));
+    PyDict_SetItemString(d, "COLORSET_SELLISTBOX", PyInt_FromLong(NEWT_COLORSET_SELLISTBOX));
 }
