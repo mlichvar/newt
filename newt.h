@@ -122,6 +122,7 @@ int newtCenteredWindow(unsigned int width,unsigned int height, const char * titl
 void newtPopWindow(void);
 void newtPopWindowNoRefresh(void);
 void newtSetColors(struct newtColors colors);
+void newtSetColor(int colorset, char *fg, char *bg);
 void newtRefresh(void);
 void newtSuspend(void);
 void newtSetSuspendCallback(newtSuspendCallback cb, void * data);

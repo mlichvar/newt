@@ -138,5 +138,6 @@ NEWT_0.52 {
 
 NEWT_0.52.6 {
 	global:
+		newtSetColor;
 		newtPopWindowNoRefresh;
 } NEWT_0.52;

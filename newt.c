@@ -398,6 +398,14 @@ void newtSetColors(struct newtColors colors) {
 		   colors.selListboxBg);
 }
 
+void newtSetColor(int colorset, char *fg, char *bg) {
+    if (colorset < NEWT_COLORSET_ROOT || colorset > NEWT_COLORSET_SELLISTBOX ||
+	    !SLtt_Use_Ansi_Colors)
+	return;
+
+    SLtt_set_color(colorset, "", fg, bg);
+}
+
 /* Keymap handling - rewritten by Henning Makholm <henning@makholm.net>,
  * November 2003.
  */
