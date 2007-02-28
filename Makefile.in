@@ -69,11 +69,9 @@ showkey:	showkey.o $(LIBNEWT)
 
 _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 	for ver in $(PYTHONVERS) ; do \
-	    if [ ! -f "$$ver/_snackmodule.so" -o $(LIBNEWTSH) -nt "$$ver/_snackmodule.so" ]; then \
 	    	mkdir -p $$ver ;\
 	        $(CC) $(CFLAGS) -I/usr/include/$$ver $(SHCFLAGS) -c -o $$ver/snackmodule.o snackmodule.c ;\
 		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L .  -lnewt -lslang ;\
-	    fi ; \
 	done
 	touch $@
 
