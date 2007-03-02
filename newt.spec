@@ -1,9 +1,13 @@
 Summary: A development library for text mode user interfaces
 Name: newt
-Version: 0.52.5
+Version: 0.52.6
 Release: 1%{?dist}
 License: LGPL
 Group: System Environment/Libraries
+# The source for this package was pulled from upstream's vcs.  Use the
+# following commands to generate the tarball:
+# cvs -d :pserver:anonymous@elvis.redhat.com:/usr/local/CVS co -r r0-52-6 newt
+# cd newt; ./autogen.sh; ./configure; make create-archive
 Source: newt-%{version}.tar.gz
 BuildRequires: python, python-devel, slang-devel
 Provides: snack = %{version}-%{release}
@@ -84,6 +88,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+* Fri Mar 02 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.6-1
+- add newtSetColor() to allow changing individual colors
+- add newtPopWindowNoRefresh() (patch by Forest Bond)
+- move static library to -static subpackage, spec cleanup (#226195)
+  (patch by Jason Tibbitts)
+
 * Wed Jan 31 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.5-1
 - provide option to change text of buttons (#126768)
 - don't add escape key to hot keys by default (#216157)
