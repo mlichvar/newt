@@ -129,7 +129,7 @@ install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	for ver in $(PYTHONVERS) ; do \
 	   [ -d $(instroot)/$(libdir)/$$ver/site-packages ] || install -m 755 -d $(instroot)/$(libdir)/$$ver/site-packages ;\
 	   install -m 755 $$ver/_snackmodule.so $(instroot)/$(libdir)/$$ver/site-packages ;\
-	   install -m 755 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
+	   install -m 644 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done
 
 configure:  configure.ac newt.spec
