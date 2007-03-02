@@ -1,4 +1,4 @@
-Summary: A development library for text mode user interfaces.
+Summary: A development library for text mode user interfaces
 Name: newt
 Version: 0.52.5
 Release: 1%{?dist}
@@ -10,8 +10,15 @@ Provides: snack = %{version}-%{release}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %package devel
-Summary: Newt windowing toolkit development files.
+Summary: Newt windowing toolkit development files
 Requires: slang-devel %{name} = %{version}
+Group: Development/Libraries
+
+# The loader portion of the installer needs to link statically against libnewt,
+# so the static library must be shipped.
+%package static
+Summary: Newt windowing toolkit static library
+Requires: newt-devel = %{version}
 Group: Development/Libraries
 
 %Description
@@ -32,12 +39,16 @@ the slang library.
 Install newt-devel if you want to develop applications which will use
 newt.
 
+%description static
+The newt-static package contains the static version of the newt library.
+Install it if you need to link statically with libnewt.
+
 %prep
 %setup -q
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
-#./configure --with-gpm-support
+# --with-gpm-support
 %configure --without-tcl
 make %{?_smp_mflags} all
 chmod 0644 peanuts.py popcorn.py
@@ -67,8 +78,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %doc tutorial.sgml peanuts.py popcorn.py
 %{_includedir}/newt.h
-%{_libdir}/libnewt.a
 %{_libdir}/libnewt.so
+
+%files static
+%{_libdir}/libnewt.a
 
 %changelog
 * Wed Jan 31 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.5-1
@@ -136,10 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Jan 17 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-4
 - Apply patch by Bill Nottingham (thanks) to improve scrollbar appearance
   (BR 174771).
-- Add -%{release} to snack's Provides: line (just in case).
+- Add -%%{release} to snack's Provides: line (just in case).
 
 * Tue Jan 17 2006 Petr Rockai <prockai@redhat.com> - 0.52.2-3
-- Provide: snack = %{version} instead of plain "snack", so that
+- Provide: snack = %%{version} instead of plain "snack", so that
   we don't block upgrades of custom "snack" packages. This should
   not break anything. (Hopefully) fixes BR 171415.
 
@@ -255,11 +268,11 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Mar 18 2002 Bill Nottingham <notting@redhat.com> 0.50.35-1
 - build for whatever version of python happens to be installed
 
-* Fri Sep 15 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.34-1
+* Fri Sep 15 2001 Trond Eivind GlomsrÃ¸d <teg@redhat.com> 0.50.34-1
 - remove python2 subpackage
 - compile package for python 2.2
 
-* Wed Aug 29 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.33-1
+* Wed Aug 29 2001 Trond Eivind GlomsrÃ¸d <teg@redhat.com> 0.50.33-1
 - s/Copyright/License/
 - Add slang-devel to build dependencies (#49542)
 
@@ -330,12 +343,12 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Jan 22 2001 Than Ngo <than@redhat.com>
 - don't build newt-python2 sub package.
 
-* Fri Dec 15 2000 Trond Eivind Glomsrød <teg@redhat.com>
+* Fri Dec 15 2000 Trond Eivind GlomsrÃ¸d <teg@redhat.com>
 - use %%{_tmppath}
 - add python2 subpackage, with such support
 - fix use of append in snack.py
 
-* Fri Sep 08 2000 Trond Eivind Glomsrød <teg@redhat.com>
+* Fri Sep 08 2000 Trond Eivind GlomsrÃ¸d <teg@redhat.com>
 - bytecompile the snack python module
 - move the libnewt.so symlink to the devel package
 - include popcorn.py and peanuts.py in the devel package,
