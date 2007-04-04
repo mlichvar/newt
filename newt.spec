@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- fix entry scrolling (#234829)
+- fix multibyte character handling in entry
+
 * Fri Mar 02 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.6-1
 - add newtSetColor() to allow changing individual colors
 - add newtPopWindowNoRefresh() (patch by Forest Bond)
