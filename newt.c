@@ -778,8 +778,13 @@ void newtGetWindowPos(int * x, int * y) {
 }
 
 void newtGetrc(int * row, int * col) {
-   *row = cursorRow;
-   *col = cursorCol;
+    *row = cursorRow;
+    *col = cursorCol;
+
+    if (currentWindow) {
+	*row -= currentWindow->top;
+	*col -= currentWindow->left;
+    }
 }
 
 void newtGotorc(int newRow, int newCol) {

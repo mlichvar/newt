@@ -88,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- fix cursor positioning when setting entry or checkbox flags
 - fix entry scrolling (#234829)
 - fix multibyte character handling in entry
 
