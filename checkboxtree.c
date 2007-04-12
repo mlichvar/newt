@@ -38,8 +38,7 @@ static void ctMapped(newtComponent co, int isMapped);
 static struct items * findItem(struct items * items, const void * data);
 static void buildFlatList(newtComponent co);
 static void doBuildFlatList(struct CheckboxTree * ct, struct items * item);
-enum countWhat { COUNT_EXPOSED=0, COUNT_SELECTED=1 };
-static int countItems(struct items * item, enum countWhat justExposed);
+static int countItems(struct items * item, int what);
 static inline void updateWidth(newtComponent co, struct CheckboxTree * ct,
 				int maxField);
 
@@ -60,13 +59,14 @@ static inline void updateWidth(newtComponent co, struct CheckboxTree * ct,
 	ct->sb->left = co->left + co->width - 1;
 }
 
-static int countItems(struct items * item, enum countWhat what) {
+static int countItems(struct items * item, int what) {
     int count = 0;
 
     while (item) {
-        if ((!item->branch && item->selected == what) || (what == COUNT_EXPOSED))
+	if (what < 0 || !item->branch && (what > 0 && item->selected == what
+		    || what == 0 && item->selected))
 	    count++;
-	if (item->branch || (what == COUNT_EXPOSED && item->selected))
+	if (item->branch && (what >= 0 || what < 0 && item->selected))
 	    count += countItems(item->branch, what);
 	item = item->next;
     }
@@ -88,7 +88,7 @@ static void buildFlatList(newtComponent co) {
     struct CheckboxTree * ct = co->data;
 
     if (ct->flatList) free(ct->flatList);
-    ct->flatCount = countItems(ct->itemlist, COUNT_EXPOSED);
+    ct->flatCount = countItems(ct->itemlist, -1);
 
     ct->flatList = malloc(sizeof(*ct->flatList) * (ct->flatCount+1));
     ct->flatCount = 0;
@@ -273,7 +273,7 @@ static struct items * findItem(struct items * items, const void * data) {
 
 static void listSelected(struct items * items, int * num, const void ** list, int seqindex) {
     while (items) {
-	    if ((seqindex ? items->selected==seqindex : items->selected) && !items->branch)
+	if ((seqindex ? items->selected==seqindex : items->selected) && !items->branch)
 	    list[(*num)++] = (void *) items->data;
 	if (items->branch)
 	    listSelected(items->branch, num, list, seqindex);
@@ -312,7 +312,7 @@ const void ** newtCheckboxTreeGetMultiSelection(newtComponent co, int *numitems,
 	    seqindex = 0;
     }
 
-    *numitems = countItems(ct->itemlist, (seqindex ? seqindex : COUNT_SELECTED));
+    *numitems = countItems(ct->itemlist, seqindex);
     if (!*numitems) return NULL;
     
     retval = malloc(*numitems * sizeof(void *));
