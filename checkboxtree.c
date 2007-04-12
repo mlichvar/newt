@@ -531,19 +531,26 @@ static void ctDraw(newtComponent co) {
 		    (*ct->currItem ? (*ct->currItem)->depth : 0) * 3 + 4);
 }
 
-static void ctDestroy(newtComponent co) {
-    struct CheckboxTree * ct = co->data;
-    struct items * item, * nextitem;
-
-    nextitem = item = ct->itemlist;
+static void destroyItems(struct items * item) {
+    struct items * nextitem;
 
     while (item != NULL) {
 	nextitem = item->next;
 	free(item->text);
+	if (item->branch)
+	    destroyItems(item->branch);
 	free(item);
 	item = nextitem;
     }
+}
 
+static void ctDestroy(newtComponent co) {
+    struct CheckboxTree * ct = co->data;
+
+    destroyItems(ct->itemlist);
+    free(ct->flatList);
+    if (ct->sb)
+	ct->sb->ops->destroy(ct->sb);
     free(ct->seq);
     free(ct);
     free(co);
@@ -802,6 +809,7 @@ void newtCheckboxTreeSetCurrent(newtComponent co, void * data) {
 	treeTop = item->branch;
     }
 
+    free(path);
     buildFlatList(co);
 	
     item = findItem(ct->itemlist, data);

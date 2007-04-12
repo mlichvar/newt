@@ -118,6 +118,8 @@ int main(void) {
 	j = (int) *ptr++;
 	printf("%d\n", j);
     }
+    free(result);
+
     result = newtCheckboxTreeGetMultiSelection(checktree, &numselected, 'b');
     ptr = result;
     if (!result || !numselected)
@@ -137,6 +139,7 @@ int main(void) {
     for (i = 0; list && list[i] != NEWT_ARG_LAST; i++)
         printf(" %d", list[i]);
     printf("\n");
+    free(list);
     
     newtFormDestroy(form);
     

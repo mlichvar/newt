@@ -90,6 +90,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 - fix cursor positioning when setting entry or checkbox flags
 - fix counting of items in checkboxtree
+- fix some memory leaks
 - fix entry scrolling (#234829)
 - fix multibyte character handling in entry
 

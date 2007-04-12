@@ -451,6 +451,10 @@ static void textboxDestroy(newtComponent co) {
     int i;
     struct textbox * tb = co->data;
 
+    if (tb->sb)
+	tb->sb->ops->destroy(tb->sb);
+    if (tb->sb_act)
+	tb->sb_act->ops->destroy(tb->sb_act);
     for (i = 0; i < tb->numLines; i++) 
 	free(tb->lines[i]);
     free(tb->lines);
