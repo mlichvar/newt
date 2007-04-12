@@ -131,6 +131,7 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
     co->top = top;
     co->left = left;
     co->takesFocus = 1;
+    co->isMapped = 0;
 
     return co;
 }
