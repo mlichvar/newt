@@ -15,14 +15,14 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %package devel
 Summary: Newt windowing toolkit development files
-Requires: slang-devel %{name} = %{version}
+Requires: slang-devel %{name} = %{version}-%{release}
 Group: Development/Libraries
 
 # The loader portion of the installer needs to link statically against libnewt,
 # so the static library must be shipped.
 %package static
 Summary: Newt windowing toolkit static library
-Requires: newt-devel = %{version}
+Requires: %{name}-devel = %{version}-%{release}
 Group: Development/Libraries
 
 %Description
@@ -88,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- add release to -devel and -static requires (#238784)
 - fix cursor positioning when setting entry or checkbox flags
 - fix counting of items in checkboxtree
 - fix some memory leaks
