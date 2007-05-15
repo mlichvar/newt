@@ -88,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- free helplines and windows in newtFinished, check for overflow (#239992)
 - add release to -devel and -static requires (#238784)
 - fix cursor positioning when setting entry or checkbox flags
 - fix counting of items in checkboxtree

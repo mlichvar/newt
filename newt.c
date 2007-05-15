@@ -321,6 +321,20 @@ int newtInit(void) {
  * @returns int , 0. (no errors reported)
  */
 int newtFinished(void) {
+    if (currentWindow) {
+	for (; currentWindow >= windowStack; currentWindow--) {
+	    free(currentWindow->buffer);
+	    free(currentWindow->title);
+	}
+	currentWindow = NULL;
+    }
+
+    if (currentHelpline) {
+	for (; currentHelpline >= helplineStack; currentHelpline--)
+	    free(*currentHelpline);
+	currentHelpline = NULL;
+    }
+
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     newtCursorOn();
     SLsmg_refresh();
@@ -622,7 +636,7 @@ void newtClearKeyBuffer(void) {
  * @param width unsigned int
  * @param height unsigned int
  * @param title - title string
- * @return zero on success (currently no errors reported)
+ * @return zero on success
  */
 int newtOpenWindow(int left, int top, 
                    unsigned int width, unsigned int height,
@@ -632,6 +646,10 @@ int newtOpenWindow(int left, int top,
     int i;
 
     newtFlushInput();
+
+    if (currentWindow && currentWindow - windowStack + 1
+	    >= sizeof (windowStack) / sizeof (struct Window))
+	return 1;
 
     if (!currentWindow) {
 	currentWindow = windowStack;
@@ -711,7 +729,7 @@ int newtOpenWindow(int left, int top,
  * @param width - width in char cells
  * @param height - no. of char cells.
  * @param title - fixed title
- * @returns 0. No errors reported
+ * @returns zero on success
  */
 int newtCenteredWindow(unsigned int width,unsigned int height, 
                        const char * title) {
@@ -724,9 +742,7 @@ int newtCenteredWindow(unsigned int width,unsigned int height,
 
     left = (int)(SLtt_Screen_Cols - width) / 2;
 
-    newtOpenWindow(left, top, width, height, title);
-
-    return 0;
+    return newtOpenWindow(left, top, width, height, title);
 }
 
 /**
@@ -740,6 +756,9 @@ void newtPopWindow(void) {
 void newtPopWindowNoRefresh(void) {
     int j, row, col;
     int n = 0;
+
+    if (currentWindow == NULL)
+	return;
 
     row = col = 0;
 
@@ -907,6 +926,10 @@ void newtRedrawHelpLine(void) {
 }
 
 void newtPushHelpLine(const char * text) {
+    if (currentHelpline && currentHelpline - helplineStack + 1
+	    >= sizeof (helplineStack) / sizeof (char *))
+	return;
+
     if (!text)
 	text = defaultHelpLine;
 
