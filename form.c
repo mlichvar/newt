@@ -942,15 +942,18 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	if (form->timer) {
 	    /* Calculate when we next need to return with a timeout. Do
 	       this inside the loop in case a callback resets the timer. */
-	    if (!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec)
-		gettimeofday(&form->lastTimeout, NULL);
+	    gettimeofday(&now, 0);
+
+	    if ((!form->lastTimeout.tv_sec && !form->lastTimeout.tv_usec) ||
+		    now.tv_sec < form->lastTimeout.tv_sec ||
+		    (now.tv_sec == form->lastTimeout.tv_sec &&
+		     now.tv_usec < form->lastTimeout.tv_usec))
+		form->lastTimeout = now;
 
 	    nextTimeout.tv_sec = form->lastTimeout.tv_sec + 
 		    (form->timer / 1000);
 	    nextTimeout.tv_usec = form->lastTimeout.tv_usec + 
 				    (form->timer % 1000) * 1000;
-
-	    gettimeofday(&now, 0);
 
 	    if (now.tv_sec > nextTimeout.tv_sec) {
 		timeout.tv_sec = timeout.tv_usec = 0;
