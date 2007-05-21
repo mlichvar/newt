@@ -43,7 +43,7 @@ int main(void) {
     void ** selectedList;
     int i, numsel;
     char buf[20];
-    const char * spinner = "-\\|/\\|/";
+    const char * spinner = "-\\|/";
     const char * spinState;
     struct newtExitStruct es;
 
