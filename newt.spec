@@ -88,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- fix scrollbar positioning in listbox
 - cope with backward system time jumps (#240691)
 - free helplines and windows in newtFinished, check for overflow (#239992)
 - add release to -devel and -static requires (#238784)

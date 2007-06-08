@@ -74,7 +74,7 @@ static void listboxPlace(newtComponent co, int newLeft, int newTop) {
 
     if (li->sb)
 	li->sb->ops->place(li->sb, co->left + co->width - li->bdxAdjust - 1,
-			   co->top);
+			   co->top + li->bdyAdjust);
 }
 
 newtComponent newtListbox(int left, int top, int height, int flags) {
@@ -200,7 +200,8 @@ void newtListboxSetWidth(newtComponent co, int width) {
     co->width = width;
     li->curWidth = co->width - li->sbAdjust - 2 * li->bdxAdjust;
     li->userHasSetWidth = 1;
-    if (li->sb) li->sb->left = co->width + co->left - 1;
+    if (li->sb)
+	li->sb->left = co->left + co->width - li->bdxAdjust - 1;
     listboxDraw(co);
 }
 
