@@ -144,11 +144,12 @@ class Listbox(Widget):
 
     methods:
 
-     - Listbox(self,height, scroll = 0l returnExit = 0, width = 0, showCursor = 0)
+     - Listbox(self, height, scroll = 0, returnExit = 0, width = 0, showCursor = 0, multiple = 0, border = 0)
      - insert(self, text, item, before) : insert element; before = key to item to insert before, or None.
      - delete(self, item)               : delete item from list.
      - replace(self, text,item)         : Replace a given item's text
      - current(self)                    : returns currently selected item
+     - getSelection(self)               : returns a list of selected items
      - setCurrent(self,i tem)           : select current.
      - clear(self)                      : clear listbox
     """
@@ -181,6 +182,13 @@ class Listbox(Widget):
     def current(self):
         return self.key2item[self.w.listboxGetCurrent()]
 
+    def getSelection(self):
+        selection = []
+        list = self.w.listboxGetSelection()
+        for key in list:
+            selection.append(self.key2item[key])
+        return selection
+
     def setCurrent(self, item):
         self.w.listboxSetCurrent(self.item2key[item])
 
@@ -189,8 +197,8 @@ class Listbox(Widget):
         self.item2key = {}        
         self.w.listboxClear()
 
-    def __init__(self, height, scroll = 0, returnExit = 0, width = 0, showCursor = 0):
-        self.w = _snack.listbox(height, scroll, returnExit, showCursor)
+    def __init__(self, height, scroll = 0, returnExit = 0, width = 0, showCursor = 0, multiple = 0, border = 0):
+        self.w = _snack.listbox(height, scroll, returnExit, showCursor, multiple, border)
         self.key2item = {}
         self.item2key = {}
         if (width):

@@ -88,6 +88,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- add support for listbox multiple selection and border to snack
+  (patch by Shawn Starr)
 - fix scrollbar positioning in listbox
 - cope with backward system time jumps (#240691)
 - free helplines and windows in newtFinished, check for overflow (#239992)

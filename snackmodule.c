@@ -200,6 +200,7 @@ static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxDel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxGet(snackWidget * s, PyObject * args);
+static PyObject * widgetListboxGetSel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSet(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxClear(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
@@ -223,6 +224,7 @@ static PyMethodDef widgetMethods[] = {
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
     { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
     { "listboxGetCurrent", (PyCFunction) widgetListboxGet, METH_VARARGS, NULL },
+    { "listboxGetSelection", (PyCFunction) widgetListboxGetSel, METH_VARARGS, NULL },
     { "listboxSetCurrent", (PyCFunction) widgetListboxSet, METH_VARARGS, NULL },
     { "listboxSetWidth", (PyCFunction) widgetListboxSetW, METH_VARARGS, NULL },
     { "listboxDeleteItem", (PyCFunction) widgetListboxDel, METH_VARARGS, NULL },
@@ -654,16 +656,19 @@ static PyObject * widgetTextboxText(snackWidget * s, PyObject * args) {
 static snackWidget * listboxWidget(PyObject * s, PyObject * args) {
     snackWidget * widget;
     int height;
-    int doScroll = 0, returnExit = 0, showCursor = 0 ;
+    int doScroll = 0, returnExit = 0, showCursor = 0, multiple = 0, border = 0;
 
-    if (!PyArg_ParseTuple(args, "i|iii", &height, &doScroll, &returnExit, &showCursor))
+    if (!PyArg_ParseTuple(args, "i|iiiii", &height, &doScroll, &returnExit, 
+					   &showCursor, &multiple, &border))
 	return NULL;
 
     widget = snackWidgetNew ();
     widget->co = newtListbox(-1, -1, height,
 			     (doScroll ? NEWT_FLAG_SCROLL : 0) |
 			     (returnExit ? NEWT_FLAG_RETURNEXIT : 0) |
-			     (showCursor ? NEWT_FLAG_SHOWCURSOR : 0)
+			     (showCursor ? NEWT_FLAG_SHOWCURSOR : 0) |
+			     (multiple ? NEWT_FLAG_MULTIPLE : 0) |
+			     (border ? NEWT_FLAG_BORDER : 0)
 			     );
     widget->anint = 1;
     
@@ -1030,6 +1035,32 @@ static PyObject * widgetListboxGet(snackWidget * s, PyObject * args) {
 	return NULL;
 
     return PyInt_FromLong((long) newtListboxGetCurrent(s->co));
+}
+
+static PyObject * widgetListboxGetSel(snackWidget * s, PyObject * args) {
+    void ** selection;
+    int numselected;
+    int i;
+    PyObject * sel;
+
+    if (!PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    selection = (void **) newtListboxGetSelection(s->co, &numselected);
+
+    sel = PyList_New(0);
+
+    if (!selection) {
+        return sel;
+    }
+
+    sel = PyList_New(0);
+    for (i = 0; i < numselected; i++) {
+        PyList_Append(sel, PyInt_FromLong((long) selection[i]));
+    }
+    free(selection);
+
+    return sel;
 }
 
 static PyObject * widgetListboxSet(snackWidget * s, PyObject * args) {
