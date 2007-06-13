@@ -268,14 +268,14 @@ class Entry(Widget):
           if returnExit is set, return from Form when exiting this element, else
            proceed to next entry widget.
      - value(self): return value.
-     - set(text) : set the text
+     - set(text, cursorAtEnd = 1) : set the text
      - setFlags (flag, sense) : flags can be FLAG_DISABLED, FLAGS_SET, FLAGS_RESET, FLAGS_TOGGLE
     """
     def value(self):
         return self.w.entryValue
 
-    def set(self, text):
-        return self.w.entrySetValue(text)
+    def set(self, text, cursorAtEnd = 1):
+        return self.w.entrySetValue(text, cursorAtEnd)
 
     def setFlags (self, flag, sense):
         return self.w.entrySetFlags(flag, sense)

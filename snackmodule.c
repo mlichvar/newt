@@ -973,11 +973,12 @@ static PyObject * widgetAddCallback(snackWidget * s, PyObject * args) {
 
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args) {
     char * val;
+    int cursorAtEnd = 1;
 
-    if (!PyArg_ParseTuple(args, "s", &val))
+    if (!PyArg_ParseTuple(args, "s|i", &val, &cursorAtEnd))
 	return NULL;
 
-    newtEntrySet(s->co, val, 1);
+    newtEntrySet(s->co, val, cursorAtEnd);
 
     Py_INCREF(Py_None);
     return Py_None;
