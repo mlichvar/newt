@@ -1,12 +1,12 @@
 Summary: A development library for text mode user interfaces
 Name: newt
-Version: 0.52.6
+Version: 0.52.7
 Release: 1%{?dist}
 License: LGPL
 Group: System Environment/Libraries
 # The source for this package was pulled from upstream's vcs.  Use the
 # following commands to generate the tarball:
-# cvs -d :pserver:anonymous@elvis.redhat.com:/usr/local/CVS co -r r0-52-6 newt
+# cvs -d :pserver:anonymous@elvis.redhat.com:/usr/local/CVS co -r r0-52-7 newt
 # cd newt; ./autogen.sh; ./configure; make create-archive
 Source: newt-%{version}.tar.gz
 BuildRequires: python, python-devel, slang-devel
@@ -88,15 +88,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+* Fri Jun 15 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-1
 - add support to snack for multiple selection and border in listbox
   and cursorAtEnd in entry (patch by Shawn Starr)
 - fix scrollbar positioning in listbox
 - cope with backward system time jumps (#240691)
 - free helplines and windows in newtFinished, check for overflow (#239992)
 - add release to -devel and -static requires (#238784)
+
+* Thu Apr 12 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.6-3
 - fix cursor positioning when setting entry or checkbox flags
 - fix counting of items in checkboxtree
 - fix some memory leaks
+
+* Wed Apr 04 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.6-2
 - fix entry scrolling (#234829)
 - fix multibyte character handling in entry
 
