@@ -463,12 +463,13 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 
     if (useRadio) {
 	answer = newtRadioGetCurrent(cbInfo[0].comp);
+	*selections = malloc(sizeof(char *) * 2);
+	if (*selections == NULL)
+	    return DLG_ERROR;
+	(*selections)[0] = (*selections)[1] = NULL;
 	for (i = 0; i < numBoxes; i++) 
 	    if (cbInfo[i].comp == answer) {
-		*selections = malloc(sizeof(char *) * 2);
-	 	if (*selections == NULL) return DLG_ERROR;
 		(*selections)[0] = cbInfo[i].tag;
-		(*selections)[1] = NULL;
 		break;
 	    }
     } else {

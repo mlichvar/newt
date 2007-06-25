@@ -569,7 +569,8 @@ int main(int argc, const char ** argv) {
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
 	if (rc == DLG_OKAY) {
-	    fprintf(output, "%s", selections[0]);
+	    if (selections[0])
+		fprintf(output, "%s", selections[0]);
 	    free(selections);
 	}
 	break;

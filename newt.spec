@@ -88,6 +88,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libnewt.a
 
 %changelog
+- fix segfault in whiptail when no entry is selected in radiolist
+
 * Fri Jun 15 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-1
 - add support to snack for multiple selection and border in listbox
   and cursorAtEnd in entry (patch by Shawn Starr)
