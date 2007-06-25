@@ -333,12 +333,12 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	   buf[len] = '\0';
 	   w = textWidth;
 	   mystrncpyw(buf + len, itemInfo[i].text, MAXBUF-len, &w);
-           newtListboxAddEntry(listBox, buf, (void *) i);
+           newtListboxAddEntry(listBox, buf, (void *)(long) i);
        }
      } else {
         for (i = 0; i < numItems; i++) {
            snprintf(buf, MAXBUF, "%s", itemInfo[i].text);
-           newtListboxAddEntry(listBox, buf, (void *) i);
+           newtListboxAddEntry(listBox, buf, (void *)(long) i);
       }
    }
 
@@ -355,7 +355,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     if (answer == NULL)
 	rc = DLG_ESCAPE;
 
-    i = (int) newtListboxGetCurrent(listBox);
+    i = (long) newtListboxGetCurrent(listBox);
     *result = itemInfo[i].tag;
 
     return rc;

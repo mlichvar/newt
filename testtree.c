@@ -115,7 +115,7 @@ int main(void) {
     else
 	printf("Current selection (all) (%d):\n", numselected);
     for (i = 0; i < numselected; i++) {
-	j = (int) *ptr++;
+	j = (long) *ptr++;
 	printf("%d\n", j);
     }
     free(result);
@@ -127,7 +127,7 @@ int main(void) {
     else
 	printf("Current selection (b) (%d):\n",numselected);
     for (i = 0; i < numselected; i++) {
-	j = (int) *ptr++;
+	j = (long) *ptr++;
 	printf("%d\n", j);
     }
 	

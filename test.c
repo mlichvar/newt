@@ -157,7 +157,7 @@ int main(void) {
     printf("\nSelected listbox items (%d):\n", numsel);
     if(selectedList) {
 	for(i = 0; i < numsel; i++)
-	    printf("#%d\n", (int) selectedList[i]);
+	    printf("#%d\n", (int)(long) selectedList[i]);
     }
 
     return 0;

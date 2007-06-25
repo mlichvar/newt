@@ -153,7 +153,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
     listbox = newtListbox(-1, -1, maxListHeight, 
 		  (needScroll ? NEWT_FLAG_SCROLL : 0) | NEWT_FLAG_RETURNEXIT);
     for (i = 0; items[i]; i++) {
-	newtListboxAddEntry(listbox, items[i], (void *) i);
+	newtListboxAddEntry(listbox, items[i], (void *)(long) i);
     }
 
     newtListboxSetCurrent(listbox, *listItem);
