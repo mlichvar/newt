@@ -826,7 +826,8 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
     for n in prompts:
         if (type(n) == types.TupleType):
             (n, e) = n
-            e = Entry(entryWidth, e)
+            if (type(e) in types.StringTypes):
+                e = Entry(entryWidth, e)
         else:
             e = Entry(entryWidth)
 
