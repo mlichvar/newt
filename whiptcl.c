@@ -91,9 +91,11 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	    { 0, 0, 0, 0, 0 } 
     };
    
+#ifdef ENABLE_NLS
     setlocale (LC_ALL, "");
     bindtextdomain (PACKAGE, LOCALEDIR);
     textdomain (PACKAGE);
+#endif
 
     optCon = poptGetContext("whiptcl", argc, argv, optionsTable, 0);
 
