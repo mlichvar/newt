@@ -1,15 +1,16 @@
-Summary: A development library for text mode user interfaces
+%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.7
+Version: 0.52.8
 Release: 1%{?dist}
-License: LGPL
+License: LGPLv2
 Group: System Environment/Libraries
 # The source for this package was pulled from upstream's vcs.  Use the
 # following commands to generate the tarball:
 # cvs -d :pserver:anonymous@elvis.redhat.com:/usr/local/CVS co -r r0-52-7 newt
 # cd newt; ./autogen.sh; ./configure; make create-archive
 Source: newt-%{version}.tar.gz
-BuildRequires: python, python-devel, slang-devel
+BuildRequires: popt-devel python-devel slang-devel
 Provides: snack = %{version}-%{release}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -47,6 +48,15 @@ newt.
 The newt-static package contains the static version of the newt library.
 Install it if you need to link statically with libnewt.
 
+%package python
+Summary: Python bindings for newt
+Group: Development/Libraries
+Requires: newt = %{version}-%{release}
+
+%description python
+The newt-python package contains the Python bindings for the newt library
+providing a python API for creating text mode ionterfaces. 
+
 %prep
 %setup -q
 
@@ -75,25 +85,44 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %{_bindir}/whiptail
 %{_libdir}/libnewt.so.*
-%{_libdir}/python?.?/site-packages/*
 %{_mandir}/man1/whiptail.1*
 
 %files devel
 %defattr (-,root,root)
-%doc tutorial.sgml peanuts.py popcorn.py
+%doc tutorial.sgml
 %{_includedir}/newt.h
 %{_libdir}/libnewt.so
 
 %files static
+%defattr(-,root,root)
 %{_libdir}/libnewt.a
 
+%files python
+%defattr(-,root,root)
+%doc peanuts.py popcorn.py
+%{python_sitearch}/*.so
+%{python_sitearch}/*.py*
+
 %changelog
+* Wed Jan 23 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.8-1
 - enable slang utf8 mode (#425992)
 - support --disable-nls option (patch by Natanael Copa)
 - redraw screen when using entry in euc encodings
-- add back support for list of Entries in EntryWindow prompts in snack
-- fix segfault in whiptail when no entry is selected in radiolist
 
+* Mon Aug 27 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-4
+- fix segfault in whiptail when no entry is selected in radiolist
+- buildrequire popt-devel
+
+* Wed Aug 22 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-3
+- rebuild
+
+* Wed Aug 08 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-2
+- add back support for list of Entries in EntryWindow prompts in snack
+  (#248878)
+- update license tag
+- split python module to -python subpackage (patch by Yanko Kaneti)
+- fix summary
+ 
 * Fri Jun 15 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.7-1
 - add support to snack for multiple selection and border in listbox
   and cursorAtEnd in entry (patch by Shawn Starr)
