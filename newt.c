@@ -292,6 +292,7 @@ int newtInit(void) {
 
     (void) strlen(ident);
 
+    SLutf8_enable(-1);
     SLtt_get_terminfo();
     SLtt_get_screen_size();
 
