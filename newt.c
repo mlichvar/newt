@@ -285,6 +285,8 @@ int newtInit(void) {
         if ((lang = getenv("LC_CTYPE")) == NULL)
             if ((lang = getenv("LANG")) == NULL)
                 lang = "";
+    /* slang doesn't support multibyte encodings except UTF-8,
+       avoid character corruption by redrawing the screen */
     if (strstr (lang, ".euc") != NULL)
 	trashScreen = 1;
 

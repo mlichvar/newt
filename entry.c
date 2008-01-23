@@ -196,6 +196,8 @@ static void entryDraw(newtComponent co) {
 	return;
     }
 
+    newtTrashScreen();
+
     /* scroll if necessary */
     scroll(en, co->width);
 
