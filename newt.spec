@@ -104,7 +104,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
-* Wed Jan 23 2007 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.8-1
+* Wed Jan 23 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.8-1
 - enable slang utf8 mode (#425992)
 - support --disable-nls option (patch by Natanael Copa)
 - redraw screen when using entry in euc encodings
