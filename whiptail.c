@@ -390,9 +390,11 @@ int main(int argc, const char ** argv) {
 	    { 0, 0, 0, 0, 0 } 
     };
    
+#ifdef ENABLE_NLS
     setlocale (LC_ALL, "");
     bindtextdomain (PACKAGE, LOCALEDIR);
     textdomain (PACKAGE);
+#endif
 
     optCon = poptGetContext("whiptail", argc, argv, optionsTable, 0);
 

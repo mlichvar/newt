@@ -35,6 +35,12 @@ if test "x$with_gpm_support" = "xyes"; then
   AC_DEFINE([USE_GPM], 1, [Define to 1 if GPM support is enabled])
 fi
 
+AC_ARG_ENABLE([nls], [  --disable-nls           compile without NLS support])
+
+if test "x$enable_nls" != "xno"; then
+  AC_DEFINE([ENABLE_NLS], 1, [Define to 1 if NLS support is enabled])
+fi
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 

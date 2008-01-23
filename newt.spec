@@ -89,6 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 - enable slang utf8 mode (#425992)
+- support --disable-nls option (patch by Natanael Copa)
 - redraw screen when using entry in euc encodings
 - add back support for list of Entries in EntryWindow prompts in snack
 - fix segfault in whiptail when no entry is selected in radiolist
