@@ -529,16 +529,7 @@ static void listboxDraw(newtComponent co)
 	else
 	    SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
-	SLsmg_write_nstring(NULL, li->curWidth);
-	newtGotorc(co->top + i + li->bdyAdjust, co->left + li->bdxAdjust);
-	if (wstrlen(item->text, -1) > li->curWidth) {
-	    char *tmp;
-	    tmp = strdup(item->text);
-	    trim_string(tmp, li->curWidth);
-	    SLsmg_write_string(tmp);
-	    free(tmp);
-	} else
-	    SLsmg_write_string(item->text);
+	SLsmg_write_nstring(item->text, li->curWidth);
 
 	if (li->flags & NEWT_FLAG_MULTIPLE) {
 	    newtGotorc(co->top + i + li->bdyAdjust, co->left + li->bdxAdjust);
