@@ -8,8 +8,7 @@ CPPFLAGS = -D_GNU_SOURCE -I/usr/include/slang @CPPFLAGS@
 
 SHLIBFLAGS= -Wl,--version-script,newt.0.52.ver
 VERSION = @VERSION@
-CVSTAG = r$(subst .,-,$(VERSION))
-CVSROOT = $(shell cat CVS/Root)
+TAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 
 PYTHONVERS = @PYTHONVERS@
@@ -138,8 +137,8 @@ configure:  configure.ac newt.spec
 	exit 1
 
 create-archive:    configure
-	@rm -rf /tmp/newt-$(VERSION) /tmp/newt
-	@cd /tmp; cvs -d $(CVSROOT) export -r$(CVSTAG) newt; mv newt newt-$(VERSION)
+	@rm -rf /tmp/newt-$(VERSION)
+	@git archive --prefix=newt-$(VERSION)/ $(TAG) | tar x -C /tmp
 	@cd /tmp/newt-$(VERSION); ./autogen.sh
 	@cd /tmp; tar czSpf newt-$(VERSION).tar.gz newt-$(VERSION)
 	@rm -rf /tmp/newt-$(VERSION)
@@ -149,7 +148,7 @@ create-archive:    configure
 	@echo "The final archive is ./newt-$(VERSION).tar.gz."
 
 tag-archive:
-	@cvs tag $(CVSTAG)
+	@git tag $(TAG)
 
 archive: tag-archive create-archive
 
