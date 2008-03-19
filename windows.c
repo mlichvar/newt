@@ -242,7 +242,7 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
 	newtGridSetField(subgrid, 1, i, NEWT_GRID_COMPONENT,
 		         newtEntry(-1, -1, items[i].value ? 
 				    *items[i].value : NULL, dataWidth,
-				    items[i].value, items[i].flags),
+				    (const char **)items[i].value, items[i].flags),
 		         1, 0, 0, 0, 0, 0);
     }
 

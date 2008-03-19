@@ -369,7 +369,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 
 struct newtWinEntry {
     char * text;
-    const char ** value;		/* may be initialized to set default */
+    char ** value;		/* may be initialized to set default */
     int flags;
 };
 
