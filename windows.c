@@ -187,7 +187,8 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 
     *listItem = ((long) newtListboxGetCurrent(listbox));
 
-    for (rc = 0; result != buttons[rc] && rc < numButtons; rc++);
+    for (rc = 0; rc < numButtons && result != buttons[rc]; rc++)
+	;
     if (rc == numButtons) 
 	rc = 0; /* F12 or return-on-exit (which are the same for us) */
     else 
