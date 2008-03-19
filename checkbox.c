@@ -126,6 +126,7 @@ newtComponent newtCheckbox(int left, int top, const char * text, char defValue,
     co->ops = &cbOps;
 
     co->callback = NULL;
+    co->destroyCallback = NULL;
     co->height = 1;
     co->width = wstrlen(text, -1) + 4;
     co->top = top;

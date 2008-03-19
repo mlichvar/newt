@@ -105,6 +105,7 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     co->left = left;
     co->takesFocus = 0;
     co->width = width;
+    co->destroyCallback = NULL;
 
     tb->doWrap = flags & NEWT_FLAG_WRAP;
     tb->numLines = 0;

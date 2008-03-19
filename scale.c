@@ -28,6 +28,7 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     co = malloc(sizeof(*co));
     sc = malloc(sizeof(struct scale));
     co->data = sc;
+    co->destroyCallback = NULL;
 
     co->ops = &scaleOps;
 

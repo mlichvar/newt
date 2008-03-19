@@ -133,6 +133,7 @@ newtComponent newtListbox(int left, int top, int height, int flags) {
     co->ops = &listboxOps;
     co->takesFocus = 1;
     co->callback = NULL;
+    co->destroyCallback = NULL;
 
     updateWidth(co, li, 5);
 

@@ -333,6 +333,7 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     co = malloc(sizeof(*co));
     ct = malloc(sizeof(struct CheckboxTree));
     co->callback = NULL;
+    co->destroyCallback = NULL;
     co->data = ct;
     co->left = left;
     co->top = top;

@@ -45,6 +45,7 @@ static newtComponent createButton(int left, int row, const char * text, int comp
 	return NULL;
     }
     co->data = bu;
+    co->destroyCallback = NULL;
 
     bu->text = strdup(text);
     bu->compact = compact;

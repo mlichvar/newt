@@ -46,6 +46,7 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     co = malloc(sizeof(*co));
     sb = malloc(sizeof(*sb));
     co->data = sb;
+    co->destroyCallback = NULL;
 
     if (height >= 2) {
 	sb->arrows = 1;

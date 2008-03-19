@@ -78,6 +78,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     co->width = width;
     co->isMapped = 0;
     co->callback = NULL;
+    co->destroyCallback = NULL;
 
     co->ops = &entryOps;
 

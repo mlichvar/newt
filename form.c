@@ -448,6 +448,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
 
     co->takesFocus = 0;			/* we may have 0 components */
     co->ops = &formOps;
+    co->destroyCallback = NULL;
 
     form->help = help;
     form->flags = flags;
@@ -785,6 +786,26 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
     return er;
 }
 
+/* Destroy a component.  Components which have been added to a form
+ * are destroyed when the form is destroyed; this is just for the
+ * (rare) case of components which for whatever reason weren't added
+ * to a form.
+ */
+void newtComponentDestroy(newtComponent co) {
+    /* If the user registered a destroy callback for this component,
+     * now is a good time to call it.
+     */
+    if (co->destroyCallback)
+        co->destroyCallback(co, co->destroyCallbackData);
+
+    if (co->ops->destroy) {
+        co->ops->destroy(co);
+    } else {
+        if (co->data) free(co->data);
+	free(co);
+    }
+}
+
 /* this also destroys all of the components on the form */
 void newtFormDestroy(newtComponent co) {
     newtComponent subco;
@@ -794,12 +815,7 @@ void newtFormDestroy(newtComponent co) {
     /* first, destroy all of the components */
     for (i = 0; i < form->numComps; i++) {
 	subco = form->elements[i].co;
-	if (subco->ops->destroy) {
-	    subco->ops->destroy(subco);
-	} else {
-	    if (subco->data) free(subco->data);
-	    free(subco);
-	}
+	newtComponentDestroy(subco);
     }
 
     if (form->hotKeys) free(form->hotKeys);
@@ -1117,6 +1133,13 @@ static void gotoComponent(struct form * form, int newComp) {
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data) {
     co->callback = f;
     co->callbackData = data;
+}
+
+/* Add a callback which is called when the component is destroyed. */
+void newtComponentAddDestroyCallback(newtComponent co,
+				newtCallback f, void * data) {
+    co->destroyCallback = f;
+    co->destroyCallbackData = data;
 }
 
 void newtComponentTakesFocus(newtComponent co, int val) {
