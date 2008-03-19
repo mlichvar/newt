@@ -138,13 +138,8 @@ int main(void) {
 	}
     } while (es.reason != NEWT_EXIT_COMPONENT || es.u.co == b2);
 
-    scaleVal = strdup(scaleVal);
-    enr2 = strdup(enr2);
-    enr3 = strdup(enr3);
-
+    numsel = 0;
     selectedList = newtListboxGetSelection(lb, &numsel);
-
-    newtFormDestroy(f);
 
     newtPopWindow();
     newtPopWindow();
@@ -154,11 +149,14 @@ int main(void) {
     printf("got string 2: %s\n", enr2);
     printf("got string 3: %s\n", enr3);
 
+    newtFormDestroy(f);
+
     printf("\nSelected listbox items (%d):\n", numsel);
     if(selectedList) {
 	for(i = 0; i < numsel; i++)
 	    printf("#%d\n", (int)(long) selectedList[i]);
     }
+    free(selectedList);
 
     return 0;
 }

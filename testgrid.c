@@ -10,9 +10,9 @@ int main(void) {
     newtComponent answer, f, t;
     newtGrid grid, subgrid;
     char * flowedText;
-    int textWidth, textHeight, rc;
+    int textWidth, textHeight, rc, i;
     char * menuContents[] = { "One", "Two", "Three", "Four", "Five", NULL };
-    const char * entries[10];
+    char * entries[10];
     struct newtWinEntry autoEntries[] = {
 	{ "An entry", entries + 0, 0 },
 	{ "Another entry", entries + 1, 0 },
@@ -97,6 +97,8 @@ int main(void) {
 		     "newtWinEntries() call. It lets you get a lot of input "
 		     "quite easily.", 50, 5, 5, 20, autoEntries, "Ok", 
 		     "Cancel", NULL);
+    for (i = 0; i < sizeof (autoEntries) / sizeof (struct newtWinEntry) && autoEntries[i].value; i++)
+	    free(*(autoEntries[i].value));
 
     newtFinished();
 
