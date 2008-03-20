@@ -214,7 +214,7 @@ static int getkey() {
     int c;
 
     while ((c = SLang_getkey()) == '\xC') { /* if Ctrl-L redraw whole screen */
-        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_touch_lines(0, SLtt_Screen_Rows);
         SLsmg_refresh();
     }
     return c;
@@ -268,7 +268,7 @@ void newtResizeScreen(int redraw) {
     SLtt_get_screen_size();
     /* SLsmg_reinit_smg(); */
     if (redraw) {
-        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_touch_lines(0, SLtt_Screen_Rows);
         newtRefresh();
     }
 }
@@ -1017,6 +1017,6 @@ void newtCursorOn(void) {
 
 void newtTrashScreen(void) {
     if (trashScreen)
-	SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+	SLsmg_touch_lines(0, SLtt_Screen_Rows);
 }
      
