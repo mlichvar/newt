@@ -422,6 +422,8 @@ struct componentOps formOps = {
     newtDefaultMappedHandler,
 } ;
 
+int needResize = 0;
+
 static inline int componentFits(newtComponent co, int compNum) {
     struct form * form = co->data;
     struct element * el = form->elements + compNum;
@@ -992,6 +994,11 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	    timeout.tv_sec = timeout.tv_usec = 0;
 	}
 
+	if (needResize) {
+		needResize = 0;
+		newtResizeScreen(1);
+	}
+
 	i = select(max + 1, &readSet, &writeSet, &exceptSet, 
 			form->timer ? &timeout : NULL);
 	if (i < 0) continue;	/* ?? What should we do here? */
@@ -1030,11 +1037,6 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	    if (FD_ISSET(0, &readSet)) {
 
 		key = newtGetKey();
-
-		if (key == NEWT_KEY_RESIZE) {
-		    newtResizeScreen(1);
-		    continue;
-		}
 
 		for (i = 0; i < form->numHotKeys; i++) {
 		    if (form->hotKeys[i] == key) {

@@ -37,9 +37,9 @@ static char * helplineStack[20];
 static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
-static int needResize = 0;
 static int cursorOn = 1;
 static int trashScreen = 0;
+extern int needResize;
 
 static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -264,8 +264,9 @@ void newtCls(void) {
  * @param redraw - boolean - should we redraw the screen?
  */
 void newtResizeScreen(int redraw) {
+    /* we can't redraw from scratch, just redisplay SLang screen */
     SLtt_get_screen_size();
-    SLsmg_reinit_smg();
+    /* SLsmg_reinit_smg(); */
     if (redraw) {
         SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
         newtRefresh();
@@ -308,10 +309,6 @@ int newtInit(void) {
     newtSetColors(newtDefaultColorPalette);
     newtCursorOff();
     initKeymap();
-
-    /*memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = handleSigwinch;
-    sigaction(SIGWINCH, &sa, NULL);*/
 
     SLsignal_intr(SIGWINCH, handleSigwinch);
     SLang_getkey_intr_hook = getkeyInterruptHook;
