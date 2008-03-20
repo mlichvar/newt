@@ -879,15 +879,7 @@ static void initKeymap(void) {
  * @param int - number of usecs to wait for.
  */
 void newtDelay(unsigned int usecs) {
-    fd_set set;
-    struct timeval tv;
-
-    FD_ZERO(&set);
-
-    tv.tv_sec = usecs / 1000000;
-    tv.tv_usec = usecs % 1000000;
-
-    select(0, &set, &set, &set, &tv);
+    usleep(usecs);
 }
 
 struct eventResult newtDefaultEventHandler(newtComponent c,
