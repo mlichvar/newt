@@ -137,37 +137,40 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
     newtDrawForm(form);
     newtRefresh();
 
-    while (fgets(buf, sizeof(buf) - 1, f)) {
+    do {
+	if (!fgets(buf, sizeof(buf) - 1, f))
+	    continue;
 	buf[strlen(buf) - 1] = '\0';
 
 	if (!strcmp(buf, "XXX")) {
-	    if (!fgets(buf3, sizeof(buf3) - 1, f))
+	    while (!fgets(buf3, sizeof(buf3) - 1, f) && !feof(f))
+		;
+	    if (feof(f))
 		break;
 	    buf3[strlen(buf3) - 1] = '\0';
-	    arg = buf3;
 
 	    i = 0;
-	    while (fgets(buf + i, sizeof(buf) - 1 - i, f)) {
+	    do {
+		if (!fgets(buf + i, sizeof(buf) - 1 - i, f))
+		    continue;
 		buf[strlen(buf) - 1] = '\0';
 		if (!strcmp(buf + i, "XXX")) {
 		    *(buf + i) = '\0';
 		    break;
 		}
 		i = strlen(buf);
-	    }
+	    } while (!feof(f));
 
 	    newtTextboxSetText(tb, buf);
- 	} else {
-	    arg = buf;
 	}
 
 	val = strtoul(buf, &end, 10);
-	if (!*end) {
+	if (*buf && !*end) {
 	    newtScaleSet(scale, val);
 	    newtDrawForm(form);
 	    newtRefresh();
 	}
-    }
+    } while (!feof(f));
 
     return DLG_OKAY;
 }
