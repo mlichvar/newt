@@ -1,0 +1,35 @@
+# translation of newt.master.balochi.po to Balochi
+# translation of newt.master.balochi.po to
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Mostafa Daneshvar <mostafa@daneshvar.org.uk>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: newt.master.balochi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2008-03-21 23:04+0430\n"
+"Last-Translator: Mostafa Daneshvar <mostafa@daneshvar.org.uk>\n"
+"Language-Team: Balochi <fedora-trans-bal@redhat.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "هوبنت"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "کنسل"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "بله"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "نه"
+
