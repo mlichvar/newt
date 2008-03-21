@@ -1,15 +1,12 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.8
+Version: 0.52.9
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
-# The source for this package was pulled from upstream's vcs.  Use the
-# following commands to generate the tarball:
-# cvs -d :pserver:anonymous@elvis.redhat.com:/usr/local/CVS co -r r0-52-7 newt
-# cd newt; ./autogen.sh; ./configure; make create-archive
-Source: newt-%{version}.tar.gz
+URL: https://fedorahosted.org/newt/
+Source: https://fedorahosted.org/releases/n/e/newt/newt-%{version}.tar.gz
 BuildRequires: popt-devel python-devel slang-devel
 Provides: snack = %{version}-%{release}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -104,6 +101,20 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
+* Fri Mar 21 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.9-1
+- handle component destruction (patch by Richard W.M. Jones)
+- fix newtWinEntry definition
+- don't use uninitialized values in newtWinMenu
+- remove workarounds for old bug in SLsmg_write_nstring
+- improve SIGWINCH handling in form
+- don't abort from whiptail gauge on SIGWINCH
+- redisplay also last line
+- update Polish translation
+- update URL and Source tag
+
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 0.52.8-2
+- Autorebuild for GCC 4.3
+
 * Wed Jan 23 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.8-1
 - enable slang utf8 mode (#425992)
 - support --disable-nls option (patch by Natanael Copa)
