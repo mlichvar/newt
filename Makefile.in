@@ -131,12 +131,11 @@ install-sh: sharedlib $(WHIPTCLSO) _snackmodule.so
 	   install -m 644 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done
 
-configure:  configure.ac newt.spec
-	autoconf
+Makefile: newt.spec
 	echo "You need to rerun ./configure before continuing"
-	exit 1
+	@exit 1
 
-create-archive:    configure
+create-archive: Makefile
 	@rm -rf /tmp/newt-$(VERSION)
 	@git archive --prefix=newt-$(VERSION)/ $(TAG) | tar x -C /tmp
 	@cd /tmp/newt-$(VERSION) && ./autogen.sh && rm -rf autom4te.cache
@@ -147,7 +146,7 @@ create-archive:    configure
 	@echo " "
 	@echo "The final archive is ./newt-$(VERSION).tar.gz."
 
-tag-archive:
+tag-archive: Makefile
 	@git tag $(TAG)
 
 archive: tag-archive create-archive
