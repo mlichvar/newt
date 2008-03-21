@@ -78,6 +78,7 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     co->width = width;
     co->isMapped = 0;
     co->callback = NULL;
+    co->destroyCallback = NULL;
 
     co->ops = &entryOps;
 
@@ -232,13 +233,8 @@ static void entryDraw(newtComponent co) {
 	    SLsmg_write_char('_');
 	    i++;
 	}
-    } else {
-	char *tmp;
-	tmp = strdup(chptr);
-	trim_string(tmp, co->width);
-	SLsmg_write_string(tmp);
-	free(tmp);
-    }
+    } else
+	SLsmg_write_nstring(chptr, co->width);
 
     newtGotorc(co->top, co->left + wstrlen(en->buf+en->firstChar, en->cursorPosition - en->firstChar));
 }

@@ -333,6 +333,7 @@ newtComponent newtCheckboxTreeMulti(int left, int top, int height, char *seq, in
     co = malloc(sizeof(*co));
     ct = malloc(sizeof(struct CheckboxTree));
     co->callback = NULL;
+    co->destroyCallback = NULL;
     co->data = ct;
     co->left = left;
     co->top = top;
@@ -490,17 +491,7 @@ static void ctDraw(newtComponent co) {
 	    currRow = co->top + i;
 	}
 
-	j = 4 + (3 * (*item)->depth);
-	SLsmg_write_nstring(NULL, co->width - j);
-	newtGotorc(co->top + i, co->left + j);
-	if (wstrlen((*item)->text, -1) > co->width - j) {
-	    char *tmp;
-	    tmp = strdup((*item)->text);
-	    trim_string(tmp, co->width - j);
-	    SLsmg_write_string(tmp);
-	    free(tmp);
-	} else
-	    SLsmg_write_string((*item)->text);
+	SLsmg_write_nstring((*item)->text, co->width - 4 - (3 * (*item)->depth));
 
 	item++;
 	i++;

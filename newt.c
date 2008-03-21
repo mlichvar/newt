@@ -37,9 +37,9 @@ static char * helplineStack[20];
 static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
-static int needResize = 0;
 static int cursorOn = 1;
 static int trashScreen = 0;
+extern int needResize;
 
 static const char * defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
@@ -214,7 +214,7 @@ static int getkey() {
     int c;
 
     while ((c = SLang_getkey()) == '\xC') { /* if Ctrl-L redraw whole screen */
-        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_touch_lines(0, SLtt_Screen_Rows);
         SLsmg_refresh();
     }
     return c;
@@ -264,10 +264,11 @@ void newtCls(void) {
  * @param redraw - boolean - should we redraw the screen?
  */
 void newtResizeScreen(int redraw) {
+    /* we can't redraw from scratch, just redisplay SLang screen */
     SLtt_get_screen_size();
-    SLsmg_reinit_smg();
+    /* SLsmg_reinit_smg(); */
     if (redraw) {
-        SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+        SLsmg_touch_lines(0, SLtt_Screen_Rows);
         newtRefresh();
     }
 }
@@ -308,10 +309,6 @@ int newtInit(void) {
     newtSetColors(newtDefaultColorPalette);
     newtCursorOff();
     initKeymap();
-
-    /*memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = handleSigwinch;
-    sigaction(SIGWINCH, &sa, NULL);*/
 
     SLsignal_intr(SIGWINCH, handleSigwinch);
     SLang_getkey_intr_hook = getkeyInterruptHook;
@@ -882,15 +879,7 @@ static void initKeymap(void) {
  * @param int - number of usecs to wait for.
  */
 void newtDelay(unsigned int usecs) {
-    fd_set set;
-    struct timeval tv;
-
-    FD_ZERO(&set);
-
-    tv.tv_sec = usecs / 1000000;
-    tv.tv_usec = usecs % 1000000;
-
-    select(0, &set, &set, &set, &tv);
+    usleep(usecs);
 }
 
 struct eventResult newtDefaultEventHandler(newtComponent c,
@@ -1020,6 +1009,6 @@ void newtCursorOn(void) {
 
 void newtTrashScreen(void) {
     if (trashScreen)
-	SLsmg_touch_lines (0, SLtt_Screen_Rows - 1);
+	SLsmg_touch_lines(0, SLtt_Screen_Rows);
 }
      

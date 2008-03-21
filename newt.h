@@ -255,9 +255,19 @@ void newtScaleSet(newtComponent co, unsigned long long amount);
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 void newtComponentTakesFocus(newtComponent co, int val);
 
+/* This callback is called when a component is destroyed. */
+void newtComponentAddDestroyCallback(newtComponent co,
+				      newtCallback f, void * data);
+
 /* this also destroys all of the components (including other forms) on the 
    form */
 void newtFormDestroy(newtComponent form);	
+
+/* NB: You SHOULD NOT call this for components which have been added
+ * to a form (ie. almost all components).  They are destroyed along
+ * with the form when you call newtFormDestroy.
+ */
+void newtComponentDestroy(newtComponent co);
 
 /* Key codes */
 
@@ -359,7 +369,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
 
 struct newtWinEntry {
     char * text;
-    const char ** value;		/* may be initialized to set default */
+    char ** value;		/* may be initialized to set default */
     int flags;
 };
 

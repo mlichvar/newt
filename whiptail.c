@@ -70,10 +70,6 @@ static void print_version(void) {
     fprintf (stdout, _("whiptail (newt): %s\n"), VERSION);
 }
 	     
-static void handleSighup(int signum) {
-       exit(DLG_ERROR);
-}
-
 #if 0
 /* FIXME Copied from newt.c
  * Place somewhere better -- dialogboxes? -- amck
@@ -328,7 +324,6 @@ int main(int argc, const char ** argv) {
     char * text;
     const char * nextArg;
     char * end;
-    struct sigaction sa;
     int height;
     int width;
     int fd = -1;
@@ -501,10 +496,6 @@ int main(int argc, const char ** argv) {
 	close(0);
 	if (open("/dev/tty", O_RDWR) != 0) perror("open /dev/tty");
     }
-
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = handleSighup;
-    sigaction(SIGWINCH, &sa, NULL);
 
     newtInit();
     newtCls();

@@ -28,6 +28,7 @@ newtComponent newtLabel(int left, int top, const char * text) {
     co = malloc(sizeof(*co));
     la = malloc(sizeof(struct label));
     co->data = la;
+    co->destroyCallback = NULL;
 
     co->ops = &labelOps;
 

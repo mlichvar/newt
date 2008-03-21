@@ -40,6 +40,9 @@ struct newtComponent_struct {
     newtCallback callback;
     void * callbackData;
 
+    newtCallback destroyCallback;
+    void * destroyCallbackData;
+
     void * data;
 } ;
 
