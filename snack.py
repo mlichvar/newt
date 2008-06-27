@@ -54,7 +54,7 @@ RIGHT = (1, 0)
 snackArgs = {"append":-1}
 
 class Widget:
-    """Base class for NEWT toolkit
+    """Base class for NEWT toolkit - Do not use directly
 
     methods:
 
@@ -70,7 +70,7 @@ class Widget:
             self.w.setCallback(obj)
             
     def __init__(self):
-        self.w = None
+        raise NotImplementedError
 
 class Button(Widget):
     """Basic button class, takes button text as parameter
