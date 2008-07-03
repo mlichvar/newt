@@ -441,6 +441,11 @@ class SnackScreen:
     - suspendcallback(self,cb, data=None) : set callback. data=data to pass to cb.
     - openWindow(self,left, top, width, height, title): Open a window.
     - pushHelpLine(self,text): put help line on screen. Returns current help line if text=None
+    - setColor(self, colorset, fg, bg): Set foreground and background colors;
+            colorset = key from snack.colorsets,
+            fg & bg = english color names defined by S-Lang
+                (ref: S-Lang Library C Programmer's Guide section:
+                8.4.4.  Setting Character Attributes)
     """
     def __init__(self):
         _snack.init()
