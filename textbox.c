@@ -100,6 +100,7 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
 
     co->ops = &textboxOps;
 
+    co->isMapped = 0;
     co->height = height;
     co->top = top;
     co->left = left;
@@ -330,6 +331,8 @@ void newtTextboxSetText(newtComponent co, const char * text) {
 
     free(expanded);
     
+    textboxDraw(co);
+
     newtTrashScreen();    
 }
 
@@ -349,6 +352,9 @@ static void textboxDraw(newtComponent c) {
     int i;
     struct textbox * tb = c->data;
     int size;
+
+    if (!c->isMapped)
+	    return;
 
     if (tb->sb) {
 	size = tb->numLines - c->height;
