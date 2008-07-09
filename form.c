@@ -744,8 +744,9 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	    else if (new >= form->numComps)
 		new = (form->numComps - 1);
 
-	    while (!form->elements[new].co->takesFocus)
-		new = new - dir;
+	    while (!form->elements[new].co->takesFocus &&
+		    new - dir >= 0 && new - dir < form->numComps)
+		new -= dir;
 	} else {
 	    do {
 		new += dir;
@@ -755,6 +756,9 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 			new = form->numComps - 1;
 		    else if (new >= form->numComps)
 			new = 0;
+		    if (new == form->currComp)
+			/* back where we started */
+			return er;
 		} else if (new < 0 || new >= form->numComps)
 		    return er;
 	    } while (!form->elements[new].co->takesFocus);
