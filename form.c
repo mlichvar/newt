@@ -932,7 +932,8 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     newtDrawForm(co);
 
     if (form->currComp == -1) {
-	gotoComponent(form, 0);
+	if (form->numComps)
+	    gotoComponent(form, 0);
     } else
 	gotoComponent(form, form->currComp);
 
