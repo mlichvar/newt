@@ -717,7 +717,12 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 const void * newtCheckboxTreeGetCurrent(newtComponent co) {
     struct CheckboxTree * ct = co->data;
 
-    if (!ct->currItem) return NULL;
+    if (!ct->currItem)
+	if (ct->itemlist)
+	    return ct->itemlist->data;
+	else
+	    return NULL;
+
     return (*ct->currItem)->data;
 }
 
