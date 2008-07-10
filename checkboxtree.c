@@ -501,8 +501,9 @@ static void ctDraw(newtComponent co) {
        list which is the last thing in the tree, and whose elements are
        displayed at the bottom of the screen */
     if (i < co->height) {
-	spaces = alloca(co->width);
+	spaces = alloca(co->width + 1);
 	memset(spaces, ' ', co->width);
+	spaces[co->width] = '\0';
 	SLsmg_set_color(NEWT_COLORSET_LISTBOX);
 
 	while (i < co->height) {
