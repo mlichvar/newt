@@ -301,6 +301,10 @@ void newtTextboxSetText(newtComponent co, const char * text) {
     int badness, height;
 
     if (tb->lines) {
+	int i;
+
+	for (i = 0; i < tb->numLines; i++) 
+	    free(tb->lines[i]);
 	free(tb->lines);
 	tb->linesAlloced = tb->numLines = 0;
     }
