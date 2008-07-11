@@ -131,6 +131,7 @@ static const struct keymap keymap[] = {
 	{ 0 },	/* LEAVE this one */
 };
 static void initKeymap();
+static void freeKeymap();
 
 static const char ident[] = // ident friendly
     "$Version: Newt windowing library v" VERSION " $"
@@ -335,6 +336,8 @@ int newtFinished(void) {
 	currentHelpline = NULL;
     }
 
+    freeKeymap();
+
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     newtCursorOn();
     SLsmg_refresh();
@@ -425,17 +428,14 @@ void newtSetColor(int colorset, char *fg, char *bg) {
  */
 
 struct kmap_trie_entry {
+    char alloced; /* alloced/not first element in array */
     char c ;   /* character got from terminal */
     int code;  /* newt key, or 0 if c does not make a complete sequence */
     struct kmap_trie_entry *contseq; /* sub-trie for character following c */
     struct kmap_trie_entry *next;    /* try this if char received != c */
 };
-/* Here are some static entries that will help in handling esc O foo and
-   esc [ foo as variants of each other: */
-static struct kmap_trie_entry
-    kmap_trie_escO     = { 'O', 0, 0, 0 },
-    kmap_trie_escBrack = { '[', 0, 0, &kmap_trie_escO },
-    kmap_trie_root     = { '\033', 0, &kmap_trie_escBrack, 0 };
+
+static struct kmap_trie_entry *kmap_trie_root = NULL;
 static int keyreader_buf_len = 10 ;
 static unsigned char default_keyreader_buf[10];
 static unsigned char *keyreader_buf = default_keyreader_buf;
@@ -473,7 +473,7 @@ static void dumpkeys_recursive(struct kmap_trie_entry *curr, int i, FILE *f) {
 static void dump_keymap(void) {
     FILE *f = fopen("newt.keydump","wt");
     if (f) {
-        dumpkeys_recursive(&kmap_trie_root,0,f);
+        dumpkeys_recursive(kmap_trie_root, 0, f);
         fclose(f);
     }
 }
@@ -481,7 +481,7 @@ static void dump_keymap(void) {
 
 /* newtBindKey may overwrite a binding that is there already */
 static void newtBindKey(char *keyseq, int meaning) {
-    struct kmap_trie_entry *root = &kmap_trie_root ;
+    struct kmap_trie_entry *root = kmap_trie_root ;
     struct kmap_trie_entry **curptr = &root ;
 
     /* Try to make sure the common matching buffer is long enough. */
@@ -505,6 +505,7 @@ static void newtBindKey(char *keyseq, int meaning) {
             struct kmap_trie_entry* fresh
                 =  calloc(strlen(keyseq),sizeof(struct kmap_trie_entry));
             if (fresh == 0) return; /* despair! */
+	    fresh->alloced = 1;
             *curptr = fresh;
             while (keyseq[1]) {
                 fresh->contseq = fresh+1;
@@ -545,6 +546,7 @@ static void kmap_trie_fallback(struct kmap_trie_entry *to,
             *fromcopy = malloc(sizeof(struct kmap_trie_entry));
             if (*fromcopy) {
                 **fromcopy = *to ;
+		(*fromcopy)->alloced = 1;
                 (*fromcopy)->next = 0 ;
             }
         }
@@ -555,7 +557,7 @@ int newtGetKey(void) {
     int key;
     unsigned char *chptr = keyreader_buf, *lastmatch;
     int lastcode;
-    struct kmap_trie_entry *curr = &kmap_trie_root;
+    struct kmap_trie_entry *curr = kmap_trie_root;
 
     do {
 	key = getkey();
@@ -843,6 +845,22 @@ void newtClearBox(int left, int top, int width, int height) {
 
 static void initKeymap(void) {
     const struct keymap * curr;
+    struct kmap_trie_entry *kmap_trie_escBrack, *kmap_trie_escO;
+
+    /* Here are some entries that will help in handling esc O foo and
+       esc [ foo as variants of each other. */
+    kmap_trie_root = calloc(3, sizeof (struct kmap_trie_entry));
+    kmap_trie_escBrack = kmap_trie_root + 1;
+    kmap_trie_escO = kmap_trie_root + 2;
+
+    kmap_trie_root->alloced = 1;
+    kmap_trie_root->c = '\033';
+    kmap_trie_root->contseq = kmap_trie_escBrack;
+
+    kmap_trie_escBrack->c = '[';
+    kmap_trie_escBrack->next = kmap_trie_escO;
+
+    kmap_trie_escO->c = 'O';
 
     /* First bind built-in default bindings. They may be shadowed by
        the termcap entries that get bound later. */
@@ -870,8 +888,33 @@ static void initKeymap(void) {
        keypad modes. Or perhaps they were, but tried to make their
        description work with a program that puts the keyboard in the
        wrong emulation mode. In short, one needs this: */
-    kmap_trie_fallback(kmap_trie_escO.contseq, &kmap_trie_escBrack.contseq);
-    kmap_trie_fallback(kmap_trie_escBrack.contseq, &kmap_trie_escO.contseq);
+    kmap_trie_fallback(kmap_trie_escO->contseq, &kmap_trie_escBrack->contseq);
+    kmap_trie_fallback(kmap_trie_escBrack->contseq, &kmap_trie_escO->contseq);
+}
+
+static void free_keys(struct kmap_trie_entry *kmap, struct kmap_trie_entry *parent, int prepare) {
+    if (kmap == NULL)
+	return;
+
+    free_keys(kmap->contseq, kmap, prepare);
+    free_keys(kmap->next, kmap, prepare);
+
+    if (!kmap->alloced && kmap - parent == 1)
+	    return;
+
+    /* find first element in array */
+    while (!kmap->alloced)
+	kmap--;
+
+    kmap->alloced += prepare ? 1 : -1;
+    if (!prepare && kmap->alloced == 1)
+	free(kmap);
+}
+
+static void freeKeymap() {
+    free_keys(kmap_trie_root, NULL, 1);
+    free_keys(kmap_trie_root, NULL, 0);
+    kmap_trie_root = NULL;
 }
 
 /**
