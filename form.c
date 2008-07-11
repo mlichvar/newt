@@ -581,10 +581,9 @@ static void formPlace(newtComponent co, int left, int top) {
     co->left = left;
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-	el->co->top += vertDelta;
 	el->top += vertDelta;
-	el->co->left += horizDelta;
 	el->left += horizDelta;
+	el->co->ops->place(el->co, el->co->left, el->co->top);
     }
 }
 
@@ -606,7 +605,7 @@ void newtDrawForm(newtComponent co) {
 	} else {
 	    /* only draw it if it'll fit on the screen vertically */
 	    if (componentFits(co, i)) {
-		el->co->top = el->top - form->vertOffset;
+		el->co->ops->place(el->co, el->left, el->top - form->vertOffset);
 		el->co->ops->mapped(el->co, 1);
 		el->co->ops->draw(el->co);
 	    } else {
@@ -869,11 +868,19 @@ void newtFormSetSize(newtComponent co) {
     co->width = 0;
     if (!form->fixedHeight) co->height = 0;
 
-    co->top = form->elements[0].co->top;
-    co->left = form->elements[0].co->left;
+    co->top = -1;
+    co->left = -1;
+
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
 	if (el->co->ops == &formOps)
 	    newtFormSetSize(el->co);
+	else if (el->co == form->vertBar)
+	    continue;
+
+	if (co->top == -1) {
+	    co->top = el->co->top;
+	    co->left = el->co->left;
+	}
 
  	el->left = el->co->left;
  	el->top = el->co->top;
@@ -887,6 +894,7 @@ void newtFormSetSize(newtComponent co) {
 	if (co->top > el->co->top) {
 	    delta = co->top - el->co->top;
 	    co->top -= delta;
+	    form->numRows += delta;
 	    if (!form->fixedHeight)
 		co->height += delta;
 	}
