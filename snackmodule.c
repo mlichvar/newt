@@ -204,6 +204,7 @@ static PyObject * widgetListboxGetSel(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSet(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxClear(snackWidget * s, PyObject * args);
 static PyObject * widgetTextboxText(snackWidget * s, PyObject * args);
+static PyObject * widgetTextboxHeight(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeAddItem(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetSel(snackWidget * s, PyObject * args);
 static PyObject * widgetCheckboxTreeGetCur(snackWidget * s, PyObject * args);
@@ -220,6 +221,7 @@ static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
     { "labelText", (PyCFunction) widgetLabelText, METH_VARARGS, NULL },
     { "textboxText", (PyCFunction) widgetTextboxText, METH_VARARGS, NULL },
+    { "textboxHeight", (PyCFunction) widgetTextboxHeight, METH_VARARGS, NULL },
     { "entrySetValue", (PyCFunction) widgetEntrySetValue, METH_VARARGS, NULL },
     { "listboxAddItem", (PyCFunction) widgetListboxAdd, METH_VARARGS, NULL },
     { "listboxInsertItem", (PyCFunction) widgetListboxIns, METH_VARARGS, NULL },
@@ -648,6 +650,17 @@ static PyObject * widgetTextboxText(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "s", &text)) return NULL;
 
     newtTextboxSetText(s->co, text);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * widgetTextboxHeight(snackWidget * s, PyObject * args) {
+    int height;
+
+    if (!PyArg_ParseTuple(args, "i", &height)) return NULL;
+
+    newtTextboxSetHeight(s->co, height);
 
     Py_INCREF(Py_None);
     return Py_None;

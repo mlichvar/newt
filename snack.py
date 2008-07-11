@@ -212,10 +212,14 @@ class Textbox(Widget):
      - Textbox(self, width, height, scroll = 0, wrap = 0): scroll, wrap are flags
                                    include scroll bars, or text wrap.
      - setText(text) : set text.
+     - setHeight(height): set height.
     """
     
     def setText(self, text):
         self.w.textboxText(text)
+
+    def setHeight(self, height):
+        self.w.textboxHeight(height)
 
     def __init__(self, width, height, text, scroll = 0, wrap = 0):
         self.w = _snack.textbox(width, height, text, scroll, wrap)
