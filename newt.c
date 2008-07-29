@@ -41,7 +41,7 @@ static int cursorOn = 1;
 static int trashScreen = 0;
 extern int needResize;
 
-static const char * defaultHelpLine =
+static const char * const defaultHelpLine =
 "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
 ;
 
