@@ -63,10 +63,10 @@ static int countItems(struct items * item, int what) {
     int count = 0;
 
     while (item) {
-	if (what < 0 || !item->branch && (what > 0 && item->selected == what
-		    || what == 0 && item->selected))
+	if (what < 0 || (!item->branch && ((what > 0 && item->selected == what)
+		    || (what == 0 && item->selected))))
 	    count++;
-	if (item->branch && (what >= 0 || what < 0 && item->selected))
+	if (item->branch && (what >= 0 || (what < 0 && item->selected)))
 	    count += countItems(item->branch, what);
 	item = item->next;
     }
@@ -718,11 +718,12 @@ struct eventResult ctEvent(newtComponent co, struct event ev) {
 const void * newtCheckboxTreeGetCurrent(newtComponent co) {
     struct CheckboxTree * ct = co->data;
 
-    if (!ct->currItem)
+    if (!ct->currItem) {
 	if (ct->itemlist)
 	    return ct->itemlist->data;
 	else
 	    return NULL;
+    }
 
     return (*ct->currItem)->data;
 }
