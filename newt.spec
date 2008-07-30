@@ -1,7 +1,7 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.9
+Version: 0.52.10
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
@@ -101,6 +101,22 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
+* Wed Jul 30 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.10-1
+- improve --noitem description (#456305)
+- add setHeight to Textbox class
+- fix fixedheight forms
+- free keymap in newtFinished()
+- fix memory leak in textbox
+- fix valgrind error in checkboxtree
+- don't crash when running empty form
+- don't crash or hang when form has no focusable elements
+- before checkboxtree drawing return first item in GetCurrent()
+- redraw textbox in SetText()
+- add setColor description to SnackScreen docstring (Greg Swift)
+- make sure Widget isn't used directly (Greg Swift) (#452920)
+- add Serbian translations (Miloš Komarčević)
+- add Balochi translation (Mostafa Daneshvar)
+
 * Fri Mar 21 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.9-1
 - handle component destruction (patch by Richard W.M. Jones)
 - fix newtWinEntry definition
@@ -109,7 +125,7 @@ rm -rf $RPM_BUILD_ROOT
 - improve SIGWINCH handling in form
 - don't abort from whiptail gauge on SIGWINCH
 - redisplay also last line
-- update Polish translation
+- update Polish translation (Piotr Drąg)
 - update URL and Source tag
 
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 0.52.8-2
