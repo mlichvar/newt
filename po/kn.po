@@ -1,0 +1,35 @@
+# translation of newt.master.newt.po to Kannada
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Shankar Prasad <svenkate@redhat.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: newt.master.newt\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2009-09-10 17:32+0530\n"
+"Last-Translator: Shankar Prasad <svenkate@redhat.com>\n"
+"Language-Team: Kannada <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "ಸರಿ"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "ರದ್ದುಗೊಳಿಸು"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "ಹೌದು"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "ಇಲ್ಲ"
+
