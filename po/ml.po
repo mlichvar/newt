@@ -1,0 +1,34 @@
+# translation of newt.master.newt.ml.po to
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the newt package.
+# ANI PETER <apeter@redhat.com>, 2009
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: newt.master.newt.ml\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2009-09-10 16:11+0530\n"
+"Last-Translator: ANI PETER <apeter@redhat.com>\n"
+"Language-Team: Swathantra Malayalam Computing|സ്വതന്ത്ര മലയാളം കമ്പ്യൂട്ടിങ് <smc-discuss@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+msgid "Ok"
+msgstr "ശരി"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "റദ്ദാക്കുക"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "ഉവ്വു്"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "ഇല്ല"
+
