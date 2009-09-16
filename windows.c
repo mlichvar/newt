@@ -19,10 +19,14 @@ static void * newtvwindow(char * title, char * button1, char * button2,
     newtGrid grid, buttonGrid;
 
     do {
+	va_list argscopy;
+
+	va_copy(argscopy, args);
 	size += 1000;
 	if (buf) free(buf);
 	buf = malloc(size);
-	i = vsnprintf(buf, size, message, args);
+	i = vsnprintf(buf, size, message, argscopy);
+	va_end(argscopy);
     } while (i >= size || i == -1);
 
     flowedText = newtReflowText(buf, 35, 5, 5, &width, &height);
