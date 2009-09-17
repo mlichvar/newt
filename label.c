@@ -37,6 +37,7 @@ newtComponent newtLabel(int left, int top, const char * text) {
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
+    co->isMapped = 0;
 
     la->length = strlen(text);
     la->text = strdup(text);
@@ -65,7 +66,7 @@ void newtLabelSetText(newtComponent co, const char * text) {
 static void labelDraw(newtComponent co) {
     struct label * la = co->data;
 
-    if (co->isMapped == -1) return;
+    if (!co->isMapped) return;
 
     SLsmg_set_color(COLORSET_LABEL);
 
