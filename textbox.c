@@ -306,7 +306,7 @@ void newtTextboxSetText(newtComponent co, const char * text) {
 	for (i = 0; i < tb->numLines; i++) 
 	    free(tb->lines[i]);
 	free(tb->lines);
-	tb->linesAlloced = tb->numLines = 0;
+	tb->linesAlloced = tb->numLines = tb->topLine = 0;
     }
 
     expanded = expandTabs(text);
