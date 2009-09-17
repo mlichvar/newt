@@ -41,6 +41,6 @@ if test "x$enable_nls" != "xno"; then
   AC_DEFINE([ENABLE_NLS], 1, [Define to 1 if NLS support is enabled])
 fi
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile libnewt.pc])
 AC_OUTPUT
 

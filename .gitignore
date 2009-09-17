@@ -10,7 +10,9 @@ po/*.mo
 test
 testgrid
 whiptail
-libnewt*
+libnewt.a
+libnewt.pc
+libnewt.so*
 snack.pyc
 shared
 testtree

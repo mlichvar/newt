@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libnewt
+Description: A development library for text mode user interfaces
+Version: @VERSION@
+Libs: -L${libdir} -lnewt
+Cflags: -I${includedir}

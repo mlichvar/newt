@@ -89,6 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc tutorial.sgml
 %{_includedir}/newt.h
 %{_libdir}/libnewt.so
+%{_libdir}/pkgconfig/libnewt.pc
 
 %files static
 %defattr(-,root,root)
