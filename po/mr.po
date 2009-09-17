@@ -1,0 +1,33 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: mckinstry@debian.org\n"
+"POT-Creation-Date: 2005-11-22 09:35+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Priti Patil <prithisd [at] gmail [dot] com>\n"
+"Language-Team:  Marathi, janabhaaratii, C-DAC, Mumbai, India <janabhaaratii [at] cdacmumbai [dot] in>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: dialogboxes.c:43 dialogboxes.c:48 dialogboxes.c:493
+msgid "Ok"
+msgstr "ठीक"
+
+#: dialogboxes.c:51
+msgid "Cancel"
+msgstr "रद्द"
+
+#: dialogboxes.c:498
+msgid "Yes"
+msgstr "हो"
+
+#: dialogboxes.c:500
+msgid "No"
+msgstr "नाही"
