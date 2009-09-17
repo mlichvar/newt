@@ -20,8 +20,6 @@ struct checkbox {
     int hasFocus;
 };
 
-static void makeActive(newtComponent co);
-
 static void cbDraw(newtComponent c);
 static void cbDestroy(newtComponent co);
 struct eventResult cbEvent(newtComponent co, struct event ev);
@@ -74,6 +72,29 @@ newtComponent newtRadioGetCurrent(newtComponent setMember) {
     }
 
     return setMember;
+}
+
+void newtRadioSetCurrent(newtComponent setMember) {
+    struct checkbox * cb = setMember->data;
+    struct checkbox * rb;
+    newtComponent curr;
+
+    /* find the one that's turned on */
+    curr = cb->lastButton;
+    rb = curr->data;
+    while (curr && rb->value == rb->seq[0]) {
+        curr = rb->prevButton;
+        if (curr) rb = curr->data;
+    }
+    if (curr) {
+        rb->value = rb->seq[0];
+        cbDraw(curr);
+    }
+    cb->value = cb->seq[1];
+    cbDraw(setMember);
+
+    if (setMember->callback)
+        setMember->callback(setMember, setMember->callbackData);
 }
 
 char newtCheckboxGetValue(newtComponent co) {
@@ -232,7 +253,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
 	  case EV_KEYPRESS:
 	    if (ev.u.key == ' ') {
 		if (cb->type == RADIO) {
-		    makeActive(co);
+		    newtRadioSetCurrent(co);
 		} else if (cb->type == CHECK) {
 		    cur = strchr(cb->seq, *cb->result);
 		    if (!cur)
@@ -264,7 +285,7 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
    	  case EV_MOUSE:
 	    if (ev.u.mouse.type == MOUSE_BUTTON_DOWN) {
 		if (cb->type == RADIO) {
-		    makeActive(co);
+		    newtRadioSetCurrent(co);
 		} else if (cb->type == CHECK) {
 		    cur = strchr(cb->seq, *cb->result);
 		    if (!cur)
@@ -287,27 +308,4 @@ struct eventResult cbEvent(newtComponent co, struct event ev) {
     }
 
     return er;
-}
-
-static void makeActive(newtComponent co) {
-    struct checkbox * cb = co->data;
-    struct checkbox * rb;
-    newtComponent curr;
-
-    /* find the one that's turned off */
-    curr = cb->lastButton;
-    rb = curr->data;
-    while (curr && rb->value == rb->seq[0]) {
-	curr = rb->prevButton;
-	if (curr) rb = curr->data;
-    }
-    if (curr) {
-	rb->value = rb->seq[0];
-	cbDraw(curr);
-    }
-    cb->value = cb->seq[1];
-    cbDraw(co);
-
-    if (co->callback)
-	co->callback(co, co->callbackData);
 }

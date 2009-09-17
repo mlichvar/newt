@@ -147,3 +147,8 @@ NEWT_0.52.9 {
 		newtComponentAddDestroyCallback;
 		newtComponentDestroy;
 } NEWT_0.52.6;
+
+NEWT_0.52.11 {
+	global:
+		newtRadioSetCurrent;
+} NEWT_0.52.9;
