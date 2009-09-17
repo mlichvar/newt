@@ -71,7 +71,7 @@ _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 	for ver in $(PYTHONVERS) ; do \
 	    	mkdir -p $$ver ;\
 	        $(CC) $(CFLAGS) -I/usr/include/$$ver $(SHCFLAGS) -c -o $$ver/snackmodule.o snackmodule.c ;\
-		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L .  -lnewt -lslang ;\
+		$(CC) --shared $(SHCFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L .  -lnewt ;\
 	done
 	touch $@
 
@@ -79,7 +79,7 @@ whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
 	$(CC) -g -o whiptail $(NDIALOGOBJS) -L . -lnewt $(LIBS) -lpopt
 
 whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
-	$(CC) -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . -lnewt  $(LIBTCL) -lslang -lpopt -lm
+	$(CC) -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . -lnewt  $(LIBTCL) -lpopt
 
 $(LIBNEWT): $(LIBOBJS)
 	ar rv $@ $^
