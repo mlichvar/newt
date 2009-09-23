@@ -175,7 +175,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 
     if (resultPtr) {
 	/* XXX I think this will work */
-	result = malloc(strlen(text) + (strlen(text) / width) + 2);
+	result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
 	*result = '\0';
     }
 	
