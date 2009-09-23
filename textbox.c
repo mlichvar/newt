@@ -12,7 +12,6 @@
 struct textbox {
     char ** lines;
     int numLines;
-    char *blankline;
     int linesAlloced;
     int doWrap;
     newtComponent sb_act, sb;
@@ -115,9 +114,6 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     tb->topLine = 0;
     tb->textWidth = width;
     tb->isActive = 0;
-    tb->blankline = malloc(width+1);
-    memset(tb->blankline,' ',width);
-    tb->blankline[width] = '\0';
 
     if (flags & NEWT_FLAG_SCROLL) {
 	co->width += 2;
@@ -375,9 +371,7 @@ static void textboxDraw(newtComponent c) {
 
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);
-	SLsmg_write_string(tb->blankline);
-	newtGotorc(c->top + i, c->left);
-	SLsmg_write_string(tb->lines[i + tb->topLine]);
+	SLsmg_write_nstring(tb->lines[i + tb->topLine], tb->textWidth);
     }
     /* put cursor at beginning of text for better accessibility */
     newtGotorc(c->top, c->left);
@@ -469,7 +463,6 @@ static void textboxDestroy(newtComponent co) {
     for (i = 0; i < tb->numLines; i++) 
 	free(tb->lines[i]);
     free(tb->lines);
-    free(tb->blankline);
     free(tb);
     free(co);
 }
