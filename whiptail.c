@@ -305,7 +305,7 @@ readTextFile(const char * filename)
        exit(DLG_ERROR);
      }
 
-    if ( (buf = malloc(s.st_size)) == 0 )
+    if ( (buf = malloc(s.st_size + 1)) == 0 )
        fprintf(stderr, _("%s: too large to display.\n"), filename);
 
     if ( read(fd, buf, s.st_size) != s.st_size ) {
@@ -313,6 +313,7 @@ readTextFile(const char * filename)
         exit(DLG_ERROR);
     }
    close(fd);
+   buf[s.st_size] = '\0';
    return buf;
 }
 
