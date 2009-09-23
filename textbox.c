@@ -174,7 +174,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     mbstate_t ps;
 
     if (resultPtr) {
-	/* XXX I think this will work */
+	/* use width - 1 for double width characters that won't fit at end of line */
 	result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
 	*result = '\0';
     }
@@ -189,7 +189,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    int len;
 		
 	    len = wstrlen(text, end - text);
-	    if (len < width) {
+	    if (len <= width) {
 		if (result) {
 		    strncat(result, text, end - text);
 		    strcat(result, "\n");
@@ -206,11 +206,11 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 		if (*text) text++;
 	    } else {
 		const char *spcptr = NULL;
-	        int spc =0,w2, x;
+	        int spc = 0, w2 = 0, x, w;
 
 	        chptr = text;
-		w2 = 0;
-		for (i = 0; i < width - 1;) {
+		i = 0;
+		while (1) {
 			if ((x=mbrtowc(&tmp,chptr,end-chptr,&ps))<=0)
 				break;
 		        if (spc && !iswspace(tmp))
@@ -220,10 +220,13 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 				spcptr = chptr;
 				w2 = i;
 			}
+			w = wcwidth(tmp);
+			if (w < 0)
+				w = 0;
+			if (i && w + i > width)
+				break;
 			chptr += x;
-			x = wcwidth(tmp);
-			if (x>0)
-			    i+=x;
+			i += w;
 		}
 		howbad += width - w2 + 1;
 #ifdef DEBUG_WRAP		    
