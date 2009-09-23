@@ -95,7 +95,8 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     tb = malloc(sizeof(*tb));
     co->data = tb;
 
-    if (width < 2) width = 2;
+    if (width < 1)
+	width = 1;
 
     co->ops = &textboxOps;
 
@@ -174,8 +175,12 @@ static void doReflow(const char * text, char ** resultPtr, int width,
     mbstate_t ps;
 
     if (resultPtr) {
-	/* use width - 1 for double width characters that won't fit at end of line */
-	result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
+	if (width > 1) {
+	    /* use width - 1 for double width characters
+	       that won't fit at end of line */
+	    result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
+	} else
+	    result = malloc(strlen(text) * 2 + 2);
 	*result = '\0';
     }
 	
@@ -266,6 +271,9 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
     int minbad, minbadwidth, howbad;
     char * expandedText;
 
+    if (width < 1)
+	width = 1;
+
     expandedText = expandTabs(text);
 
     if (flexDown || flexUp) {
@@ -275,7 +283,7 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 	minbad = -1;
 	minbadwidth = width;
 
-	for (i = min; i <= max; i++) {
+	for (i = min; i >= 1 && i <= max; i++) {
 	    doReflow(expandedText, NULL, i, &howbad, NULL);
 
 	    if (minbad == -1 || howbad < minbad) {
