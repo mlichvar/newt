@@ -61,7 +61,7 @@ static void usage(int err) {
 	       "\t--output-fd <fd>		output to fd, not stdout\n"
 	       "\t--title <title>			display title\n"
 	       "\t--backtitle <backtitle>		display backtitle\n"
-	       "\t--scrolltext			force verical scrollbars\n"
+	       "\t--scrolltext			force vertical scrollbars\n"
 	       "\t--topleft			put window in top-left corner\n\n"));
     exit(err ? DLG_ERROR : 0 );
 }
