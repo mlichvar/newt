@@ -1,13 +1,14 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.10
+Version: 0.52.11
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
 URL: https://fedorahosted.org/newt/
 Source: https://fedorahosted.org/releases/n/e/newt/newt-%{version}.tar.gz
 BuildRequires: popt-devel python-devel slang-devel
+BuildRequires: docbook-utils
 Provides: snack = %{version}-%{release}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -63,6 +64,7 @@ providing a python API for creating text mode ionterfaces.
 %configure --without-tcl
 make %{?_smp_mflags} all
 chmod 0644 peanuts.py popcorn.py
+docbook2txt tutorial.sgml
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -86,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr (-,root,root)
-%doc tutorial.sgml
+%doc tutorial.*
 %{_includedir}/newt.h
 %{_libdir}/libnewt.so
 %{_libdir}/pkgconfig/libnewt.pc
@@ -102,6 +104,32 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
+* Thu Sep 24 2009 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.11-1
+- fix buffer overflow in textbox when reflowing (#523955, CVE-2009-2905)
+- use full textbox width when reflowing and allow minimal width 1
+- fix writing lines longer than width in textbox
+- don't use va_list in newtvwindow more than once (#523696)
+- bind \E[Z to back-tab in built-in keymap (#468046)
+- terminate string after reading file in whiptail
+- add newtRadioSetCurrent function (Thomas Jarosch)
+- add pkgconfig support (Thomas Jarosch)
+- add Malay, Malayalam, Assamese, Gujarati, Bengali India, Kannada, Telugu
+  translations
+- include tutorial in txt format
+- include debian patches
+  - fix crash in textbox SetText when topLines != 0
+  - don't link modules with libraries already linked with libnewt
+  - add Asturian and Marathi translations
+
+* Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.10-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.10-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 0.52.10-2
+- Rebuild for Python 2.6
+
 * Wed Jul 30 2008 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.10-1
 - improve --noitem description (#456305)
 - add setHeight to Textbox class
