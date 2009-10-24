@@ -14,9 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../dialogboxes.c:43
-#: ../dialogboxes.c:48
-#: ../dialogboxes.c:493
+#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
 msgid "Ok"
 msgstr "Aceutar"
 
@@ -31,4 +29,3 @@ msgstr "Sí"
 #: ../dialogboxes.c:500
 msgid "No"
 msgstr "Non"
-
