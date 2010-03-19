@@ -203,6 +203,8 @@ int newtCheckboxTreeAddArray(newtComponent co,
 
 	    i++;
 	    if (i < numIndexes) {
+		if (item == NULL)
+			return -1;
 		curList = item->branch;
 		listPtr = &item->branch;
 		if (!curList && (i + 1 != numIndexes)) return -1;
