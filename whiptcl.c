@@ -5,8 +5,8 @@
 #include "nls.h"
 #include "dialogboxes.h"
 #include "newt.h"
-#include "popt.h"
-#include "tcl.h"
+#include <popt.h>
+#include <tcl.h>
 
 enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
 	    MODE_RADIOLIST, MODE_MENU };
@@ -19,21 +19,21 @@ enum mode { MODE_NONE, MODE_MSGBOX, MODE_YESNO, MODE_CHECKLIST, MODE_INPUTBOX,
 #define OPT_RADIOLIST	 	1006
 
 static char * setBacktext(ClientData data, Tcl_Interp * interp, 
-			  char * name1, char * name2, int flags);
+			  const char * name1, const char * name2, int flags);
 static char * setHelptext(ClientData data, Tcl_Interp * interp,
-			  char * name1, char * name2, int flags);
+			  const char * name1, const char * name2, int flags);
 static char * setFullButtons(ClientData data, Tcl_Interp * interp, 
-			     char * name1, char * name2, int flags);
+			     const char * name1, const char * name2, int flags);
 
 static int wtFinish(ClientData clientData, Tcl_Interp * interp, int argc,
-                  char ** argv) {
+                  const char ** argv) {
     newtFinished();
 
     return TCL_OK;
 }
 
 static int wtInit(ClientData clientData, Tcl_Interp * interp, int argc,
-                  char ** argv) {
+                  const char ** argv) {
     newtInit();
     newtCls();
 
@@ -238,7 +238,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	break;
 
       case MODE_NONE:
-	/* this can't happen */
+	; /* this can't happen */
         break;
     }
 
@@ -258,7 +258,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 }
 
 static char * setBacktext(ClientData data, Tcl_Interp * interp, 
-			  char * name1, char * name2, int flags) {
+			  const char * name1, const char * name2, int flags) {
     static char blankLine[81] = "                                        "
                          "                                        ";
 
@@ -270,8 +270,8 @@ static char * setBacktext(ClientData data, Tcl_Interp * interp,
 }
 
 static char * setHelptext(ClientData data, Tcl_Interp * interp, 
-			  char * name1, char * name2, int flags) {
-    char * text = Tcl_GetVar(interp, "whiptcl_helpline", TCL_GLOBAL_ONLY);
+			  const char * name1, const char * name2, int flags) {
+    const char * text = Tcl_GetVar(interp, "whiptcl_helpline", TCL_GLOBAL_ONLY);
 
     if (!text)
 	text = "";
@@ -285,8 +285,8 @@ static char * setHelptext(ClientData data, Tcl_Interp * interp,
 }
 
 static char * setFullButtons(ClientData data, Tcl_Interp * interp, 
-			     char * name1, char * name2, int flags) {
-    char * val = Tcl_GetVar(interp, "whiptcl_fullbuttons", TCL_GLOBAL_ONLY);
+			     const char * name1, const char * name2, int flags) {
+    const char * val = Tcl_GetVar(interp, "whiptcl_fullbuttons", TCL_GLOBAL_ONLY);
     int rc;
     int state;
     
@@ -304,6 +304,8 @@ int Whiptcl_Init(Tcl_Interp * interp) {
     Tcl_CreateCommand(interp, "whiptcl_finish", wtFinish, NULL, NULL);
     Tcl_CreateCommand(interp, "whiptcl_init", wtInit, NULL, NULL);
     Tcl_CreateCommand(interp, "whiptcl_cmd", (Tcl_CmdProc *) wtCmd, NULL, NULL);
+
+    Tcl_PkgProvide(interp, "Whip", VERSION);
 
     return TCL_OK;
 }
