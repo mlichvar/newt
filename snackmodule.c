@@ -1333,6 +1333,21 @@ void init_snack(void) {
     PyDict_SetItemString(d, "FORM_EXIT_TIMER", PyString_FromString("timer"));
     PyDict_SetItemString(d, "FORM_EXIT_FDREADY", PyString_FromString("fdready"));
 
+    PyDict_SetItemString(d, "KEY_TAB", PyInt_FromLong(NEWT_KEY_TAB));
+    PyDict_SetItemString(d, "KEY_ENTER", PyInt_FromLong(NEWT_KEY_ENTER));
+    PyDict_SetItemString(d, "KEY_SUSPEND", PyInt_FromLong(NEWT_KEY_SUSPEND));
+    PyDict_SetItemString(d, "KEY_UP", PyInt_FromLong(NEWT_KEY_UP));
+    PyDict_SetItemString(d, "KEY_DOWN", PyInt_FromLong(NEWT_KEY_DOWN));
+    PyDict_SetItemString(d, "KEY_LEFT", PyInt_FromLong(NEWT_KEY_LEFT));
+    PyDict_SetItemString(d, "KEY_RIGHT", PyInt_FromLong(NEWT_KEY_RIGHT));
+    PyDict_SetItemString(d, "KEY_BACKSPACE", PyInt_FromLong(NEWT_KEY_BKSPC));
+    PyDict_SetItemString(d, "KEY_DELETE", PyInt_FromLong(NEWT_KEY_DELETE));
+    PyDict_SetItemString(d, "KEY_HOME", PyInt_FromLong(NEWT_KEY_HOME));
+    PyDict_SetItemString(d, "KEY_END", PyInt_FromLong(NEWT_KEY_END));
+    PyDict_SetItemString(d, "KEY_UNTAB", PyInt_FromLong(NEWT_KEY_UNTAB));
+    PyDict_SetItemString(d, "KEY_PAGEUP", PyInt_FromLong(NEWT_KEY_PGUP));
+    PyDict_SetItemString(d, "KEY_PAGEGDOWN", PyInt_FromLong(NEWT_KEY_PGDN));
+    PyDict_SetItemString(d, "KEY_INSERT", PyInt_FromLong(NEWT_KEY_INSERT));
     PyDict_SetItemString(d, "KEY_F1", PyInt_FromLong(NEWT_KEY_F1));
     PyDict_SetItemString(d, "KEY_F2", PyInt_FromLong(NEWT_KEY_F2));
     PyDict_SetItemString(d, "KEY_F3", PyInt_FromLong(NEWT_KEY_F3));

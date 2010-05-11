@@ -294,10 +294,17 @@ hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3,
             "F4" : _snack.KEY_F4, "F5" : _snack.KEY_F5, "F6" : _snack.KEY_F6, 
             "F7" : _snack.KEY_F7, "F8" : _snack.KEY_F8, "F9" : _snack.KEY_F9, 
             "F10" : _snack.KEY_F10, "F11" : _snack.KEY_F11, 
-            "F12" : _snack.KEY_F12, "ESC" : _snack.KEY_ESC ,  " " : ord(" ") }
+            "F12" : _snack.KEY_F12, "ESC" : _snack.KEY_ESC,
+            "ENTER": _snack.KEY_ENTER, "SUSPEND" : _snack.KEY_SUSPEND,
+            "BACKSPACE": _snack.KEY_BACKSPACE, "DELETE": _snack.KEY_DELETE,
+            "INSERT": _snack.KEY_INSERT,
+             " " : ord(" ") }
 
 for n in hotkeys.keys():
     hotkeys[hotkeys[n]] = n
+for o,c in [ (ord(c),c) for c in string.ascii_letters+string.digits ]:
+    hotkeys[c] = o
+    hotkeys[o] = c
 
 class Form:
     """ Base Form class, from which Grid, etc. inherit
