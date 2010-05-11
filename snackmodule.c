@@ -356,10 +356,14 @@ static PyObject * screenSize(PyObject * s, PyObject * args) {
 static void helpCallbackMarshall(newtComponent co, void * data) {
     PyObject * args, * result;
 
+    PyGILState_STATE _state = PyGILState_Ensure();
+
     args = Py_BuildValue("(O)", data);
     result = PyEval_CallObject(helpCallback.cb, args);
     Py_DECREF (args);
     Py_XDECREF(result);
+
+    PyGILState_Release(_state);
 
     return;
 }
@@ -368,6 +372,8 @@ static void suspendCallbackMarshall(void * data) {
     struct callbackStruct * scs = data;
     PyObject * args, * result;
 
+    PyGILState_STATE _state = PyGILState_Ensure();
+
     if (scs->data) {
 	args = Py_BuildValue("(O)", scs->data);
 	result = PyEval_CallObject(scs->cb, args);
@@ -381,6 +387,8 @@ static void suspendCallbackMarshall(void * data) {
     }
 
     Py_XDECREF(result);
+
+    PyGILState_Release(_state);
 
     return;
 }
@@ -389,6 +397,8 @@ static void callbackMarshall(newtComponent co, void * data) {
     struct callbackStruct * scs = data;
     PyObject * args, * result;
 
+    PyGILState_STATE _state = PyGILState_Ensure();
+
     if (scs->data) {
 	args = Py_BuildValue("(O)", scs->data);
 	result = PyEval_CallObject(scs->cb, args);
@@ -402,6 +412,8 @@ static void callbackMarshall(newtComponent co, void * data) {
     }
     
     Py_XDECREF(result);
+
+    PyGILState_Release(_state);
 
     return;
 }
@@ -563,7 +575,9 @@ static PyObject * messageWindow(PyObject * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "ss|s", &title, &text, &okbutton)) 
 	return NULL;
 
+    Py_BEGIN_ALLOW_THREADS
     newtWinMessage(title, okbutton, text);
+    Py_END_ALLOW_THREADS
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -579,7 +593,9 @@ static PyObject * choiceWindow(PyObject * s, PyObject * args) {
 			  &cancelbutton)) 
 	return NULL;
 
+    Py_BEGIN_ALLOW_THREADS
     rc = newtWinChoice(title, okbutton, cancelbutton, text);
+    Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", rc);
 }
@@ -592,7 +608,9 @@ static PyObject * ternaryWindow(PyObject * s, PyObject * args) {
 			  &button3)) 
 	return NULL;
 
+    Py_BEGIN_ALLOW_THREADS
     rc = newtWinTernary(title, button1, button2, button3, text);
+    Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", rc);
 }
@@ -883,7 +901,9 @@ static PyObject * formAdd(snackForm * s, PyObject * args) {
 static PyObject * formRun(snackForm * s, PyObject * args) {
     struct newtExitStruct result;
 
+    Py_BEGIN_ALLOW_THREADS
     newtFormRun(s->fo, &result);
+    Py_END_ALLOW_THREADS
 
     if (result.reason == NEWT_EXIT_HOTKEY)
 	return Py_BuildValue("(si)", "hotkey", result.u.key);
