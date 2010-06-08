@@ -1307,12 +1307,6 @@ static PyObject * pywstrlen(PyObject * s, PyObject * args)
 void init_snack(void) {
     PyObject * d, * m;
 
-#ifdef ENABLE_NLS
-    setlocale (LC_ALL, "");
-    bindtextdomain (PACKAGE, LOCALEDIR);
-    textdomain (PACKAGE);
-#endif
-
     m = Py_InitModule("_snack", snackModuleMethods);
     d = PyModule_GetDict(m);
 
