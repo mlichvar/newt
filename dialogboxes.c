@@ -162,9 +162,13 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 	    } while (!feof(f));
 
 	    newtTextboxSetText(tb, buf);
+
+	    arg = buf3;
+	} else {
+	    arg = buf;
 	}
 
-	val = strtoul(buf, &end, 10);
+	val = strtoul(arg, &end, 10);
 	if (*buf && !*end) {
 	    newtScaleSet(scale, val);
 	    newtDrawForm(form);
