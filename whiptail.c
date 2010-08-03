@@ -129,15 +129,15 @@ static const char * lineWidth(int * width, const char * line, int *chrs)
  */
 void cleanNewlines (char *text)
 {
-       char *p = text;
-       while (*p) {
-               if ((*p == '\\') && (*(p+1) == 'n')) {
-                       *p = '\n';
-                       *(p+1) = ' ';
-               } else  {
-                       p++;
-               }
-       }
+    char *p, *q;
+
+    for (p = q = text; *p; p++, q++)
+        if (*p == '\\' && p[1] == 'n') {
+            p++;
+            *q = '\n';
+        } else
+            *q = *p;
+    *q = '\0';
 }
 
 /*
