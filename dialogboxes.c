@@ -74,24 +74,29 @@ static void addButtons(int height, int width, newtComponent form,
     }
 }
 
+static void cleanNewlines(char *text)
+{
+    char *p, *q;
+
+    for (p = q = text; *p; p++, q++)
+        if (*p == '\\' && p[1] == 'n') {
+            p++;
+            *q = '\n';
+        } else
+            *q = *p;
+    *q = '\0';
+}
+
 static newtComponent textbox(int maxHeight, int width, const char * text,
 			int flags, int * height) {
     newtComponent tb;
     int sFlag = (flags & FLAG_SCROLL_TEXT) ? NEWT_FLAG_SCROLL : 0;
     int i;
-    char * buf, * dst;
-    const char * src;
+    char *buf;
 
-    dst = buf = alloca(strlen(text) + 1);
-    src = text; 
-    while (*src) {
-	if (*src == '\\' && *(src + 1) == 'n') {
-	    src += 2;
-	    *dst++ = '\n';
-	} else
-	    *dst++ = *src++;
-    }
-    *dst++ = '\0';
+    buf = alloca(strlen(text) + 1);
+    strcpy(buf, text);
+    cleanNewlines(buf);
 
     tb = newtTextbox(1, 0, width, maxHeight, NEWT_FLAG_WRAP | sFlag);
     newtTextboxSetText(tb, buf);
@@ -153,14 +158,19 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 	    do {
 		if (!fgets(buf + i, sizeof(buf) - 1 - i, f))
 		    continue;
-		buf[strlen(buf) - 1] = '\0';
-		if (!strcmp(buf + i, "XXX")) {
+		if (!strcmp(buf + i, "XXX\n")) {
 		    *(buf + i) = '\0';
 		    break;
 		}
 		i = strlen(buf);
 	    } while (!feof(f));
 
+	    if (i > 0)
+		buf[strlen(buf) - 1] = '\0';
+	    else
+		buf[0] = '\0';
+
+	    cleanNewlines(buf);
 	    newtTextboxSetText(tb, buf);
 
 	    arg = buf3;
@@ -169,7 +179,7 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 	}
 
 	val = strtoul(arg, &end, 10);
-	if (*buf && !*end) {
+	if (!*end) {
 	    newtScaleSet(scale, val);
 	    newtDrawForm(form);
 	    newtRefresh();
