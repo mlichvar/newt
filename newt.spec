@@ -1,12 +1,12 @@
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.11
+Version: 0.52.12
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
 URL: https://fedorahosted.org/newt/
-Source: https://fedorahosted.org/releases/n/e/newt/newt-%{version}.tar.gz
+Source: https://fedorahosted.org/released/newt/newt-%{version}.tar.gz
 BuildRequires: popt-devel python-devel slang-devel
 BuildRequires: docbook-utils
 Provides: snack = %{version}-%{release}
@@ -104,6 +104,24 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
+* Fri Aug 06 2010 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.12-1
+- fix whiptail --gauge and its description in man page (#620083)
+- remove space after \n in whiptail texts (#620083)
+- remove NLS code from snack (#599608)
+- expose more keys to python as shortcuts in dialogs (Jakob Kemi)
+- release python global-thread-lock during dialog displays (Jakob Kemi)
+- fix warnings in whiptcl.c and include Tcl_PkgProvide() call (Mikhail T.)
+- don't NULL deref when an invalid array is specified in checkboxtree
+  (Arnaldo Carvalho de Melo)
+
+* Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 0.52.11-3
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
+* Thu Jan  7 2010 Hans de Goede <hdegoede@redhat.com> - 0.52.11-2
+- Change python_sitearch macro to use %%global as the new rpm will break
+  using %%define here, see:
+  https://www.redhat.com/archives/fedora-devel-list/2010-January/msg00093.html
+
 * Thu Sep 24 2009 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.11-1
 - fix buffer overflow in textbox when reflowing (#523955, CVE-2009-2905)
 - use full textbox width when reflowing and allow minimal width 1
