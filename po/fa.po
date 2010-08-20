@@ -1,0 +1,37 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-14 16:03+0200\n"
+"PO-Revision-Date: 2010-08-20 05:02+0330\n"
+"Last-Translator: Mostafa <info@mostafadaneshvar.com>\n"
+"Language-Team: Persian <trans-fa@lists.fedoraproject.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Persian\n"
+"X-Poedit-Country: Iran\n"
+
+#: ../dialogboxes.c:43
+#: ../dialogboxes.c:48
+#: ../dialogboxes.c:493
+msgid "Ok"
+msgstr "تایید"
+
+#: ../dialogboxes.c:51
+msgid "Cancel"
+msgstr "لغو"
+
+#: ../dialogboxes.c:498
+msgid "Yes"
+msgstr "بله"
+
+#: ../dialogboxes.c:500
+msgid "No"
+msgstr "نه"
+
