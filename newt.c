@@ -565,10 +565,7 @@ int newtGetKey(void) {
 	if (key == SLANG_GETKEY_ERROR) {
 	    /* Either garbage was read, or stdin disappeared
 	     * (the parent terminal was proably closed)
-	     * if the latter, die.
 	     */
-	    if (feof(stdin))
-		    exit(1);
 	    if (needResize) {
                 needResize = 0;
 		return NEWT_KEY_RESIZE;
