@@ -841,7 +841,8 @@ newtComponent newtRunForm(newtComponent co) {
 	} else {
 	    return NULL;
 	}
-    }
+    } else if (es.reason == NEWT_EXIT_ERROR)
+	return NULL;
 
     return es.u.co;
 }
@@ -1070,6 +1071,12 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 			ev.event = EV_FOCUS;
 			sendEvent(form->elements[form->currComp].co, ev);
 		    }
+		}
+
+		if (key == NEWT_KEY_ERROR) {
+		    es->u.watch = -1;
+		    es->reason = NEWT_EXIT_ERROR;
+		    done = 1;
 		}
 
 		if (!done) {

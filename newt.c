@@ -555,29 +555,30 @@ static void kmap_trie_fallback(struct kmap_trie_entry *to,
 }
 
 int newtGetKey(void) {
-    int key;
+    int key, lastcode, errors = 0;
     unsigned char *chptr = keyreader_buf, *lastmatch;
-    int lastcode;
     struct kmap_trie_entry *curr = kmap_trie_root;
 
     do {
 	key = getkey();
 	if (key == SLANG_GETKEY_ERROR) {
-	    /* Either garbage was read, or stdin disappeared
-	     * (the parent terminal was proably closed)
-	     */
 	    if (needResize) {
                 needResize = 0;
 		return NEWT_KEY_RESIZE;
             }
 
-	    /* ignore other signals */
+	    /* Ignore other signals, but assume that stdin disappeared (the
+	     * parent terminal was proably closed) if the error persists.
+	     */
+	    if (errors++ > 10)
+		return NEWT_KEY_ERROR;
+
 	    continue;
 	}
 
 	if (key == NEWT_KEY_SUSPEND && suspendCallback)
 	    suspendCallback(suspendCallbackData);
-    } while (key == NEWT_KEY_SUSPEND);
+    } while (key == NEWT_KEY_SUSPEND || key == SLANG_GETKEY_ERROR);
 
     /* Read more characters, matching against the trie as we go */
     lastcode = *chptr = key;

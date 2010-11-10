@@ -217,7 +217,7 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 
 struct newtExitStruct {
     enum { NEWT_EXIT_HOTKEY, NEWT_EXIT_COMPONENT, NEWT_EXIT_FDREADY,
-	   NEWT_EXIT_TIMER } reason;
+	   NEWT_EXIT_TIMER, NEWT_EXIT_ERROR } reason;
     union {
 	int watch;
 	int key;
@@ -307,6 +307,7 @@ void newtComponentDestroy(newtComponent co);
 
 /* not really a key, but newtGetKey returns it */
 #define NEWT_KEY_RESIZE			NEWT_KEY_EXTRA_BASE + 113
+#define NEWT_KEY_ERROR			NEWT_KEY_EXTRA_BASE + 114
 
 #define NEWT_ANCHOR_LEFT		(1 << 0)
 #define NEWT_ANCHOR_RIGHT		(1 << 1)
