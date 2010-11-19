@@ -15,6 +15,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 
 AC_CHECK_HEADERS([sys/select.h alloca.h])
+AC_CHECK_HEADERS([slang.h])
 
 AC_MSG_CHECKING([for python versions])
 PYTHONVERS=$(echo /usr/include/python*/Python.h | sed "s|/usr/include/||g"| sed "s|/Python.h||g" 2> /dev/null)
