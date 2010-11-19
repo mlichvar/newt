@@ -36,6 +36,7 @@ datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
 pkgconfigdir = $(libdir)/pkgconfig
+instroot ?= $(DESTDIR)
 
 #--------------------------------------
 
