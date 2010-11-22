@@ -88,11 +88,11 @@ $(LIBNEWT): $(LIBOBJS)
 newt.o $(SHAREDDIR)/newt.o: newt.c Makefile
 
 veryclean: clean
-	rm -f .depend
+	rm -f .depend *.pc
 
 clean:
 	rm -f $(PROGS) *.o $(LIBNEWT) core $(LIBNEWTSH)  \
-		$(SHAREDDIR)/*.o *.so* *.pc
+		$(SHAREDDIR)/*.o *.so*
 
 depend:
 	$(CPP) $(CFLAGS) $(CPPFLAGS) -M $(SOURCES) > .depend
