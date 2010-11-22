@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <wchar.h>
 #include <slang.h>
+#include <sys/stat.h>
 
 #include "nls.h"
 #include "dialogboxes.h"
