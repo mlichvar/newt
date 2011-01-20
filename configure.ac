@@ -54,8 +54,14 @@ fi
 AC_CHECK_HEADERS([popt.h libintl.h])
 
 AC_MSG_CHECKING([for python versions])
-PYTHONVERS=$(echo /usr/include/python*/Python.h | sed "s|/usr/include/||g"| sed "s|/Python.h||g" 2> /dev/null)
-AC_MSG_RESULT([$PYTHONVERS])
+AC_ARG_WITH([python], [  --without-python        do not compile python support])
+if test "x$with_python" = "xno"; then
+  AC_MSG_RESULT([skipped])
+  PYTHONVERS=
+else
+  PYTHONVERS=$(ls /usr/include/python*/Python.h 2> /dev/null | sed "s|/usr/include/||g"| sed "s|/Python.h||g" 2> /dev/null)
+  AC_MSG_RESULT([$PYTHONVERS])
+fi
 AC_SUBST([PYTHONVERS])
 
 AC_ARG_WITH([tcl], [  --without-tcl           do not compile whiptcl.so])
