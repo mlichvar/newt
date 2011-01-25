@@ -118,7 +118,6 @@ int newtCheckboxTreeAddItem(newtComponent co,
     va_start(argList, index);
     numIndexes = 0;
     i = index;
-    va_start(argList, index);
     while (i != NEWT_ARG_LAST) {
 	indexes[numIndexes++] = i;
 	i = va_arg(argList, int);
