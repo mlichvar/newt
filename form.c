@@ -308,6 +308,7 @@ static int Gpm_Open(Gpm_Connect *conn, int flag)
     sock_name = 0;
   } /*if*/
   gpm_flag=0;
+  gpm_fd=-1;
   return -1;
 }
 
