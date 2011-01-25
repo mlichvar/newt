@@ -319,7 +319,7 @@ newtGrid newtGridHCloseStacked(enum newtGridElement type1, void * what1, ...) {
 
     grid = stackem(0, type1, what1, args, 1);
 
-    va_start(args, what1);
+    va_end(args);
 
     return grid;
 }
@@ -332,7 +332,7 @@ newtGrid newtGridVCloseStacked(enum newtGridElement type1, void * what1, ...) {
 
     grid = stackem(1, type1, what1, args, 1);
 
-    va_start(args, what1);
+    va_end(args);
 
     return grid;
 }
@@ -345,7 +345,7 @@ newtGrid newtGridVStacked(enum newtGridElement type1, void * what1, ...) {
 
     grid = stackem(1, type1, what1, args, 0);
 
-    va_start(args, what1);
+    va_end(args);
 
     return grid;
 }
@@ -358,7 +358,7 @@ newtGrid newtGridHStacked(enum newtGridElement type1, void * what1, ...) {
 
     grid = stackem(0, type1, what1, args, 0);
 
-    va_start(args, what1);
+    va_end(args);
 
     return grid;
 }
