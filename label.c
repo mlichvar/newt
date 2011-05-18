@@ -8,6 +8,7 @@
 struct label {
     char * text;
     int length;
+    int cs;
 };
 
 static void labelDraw(newtComponent co);
@@ -41,6 +42,7 @@ newtComponent newtLabel(int left, int top, const char * text) {
 
     la->length = strlen(text);
     la->text = strdup(text);
+    la->cs = COLORSET_LABEL;
 
     return co;
 }
@@ -63,12 +65,19 @@ void newtLabelSetText(newtComponent co, const char * text) {
     labelDraw(co);
 }
 
+void newtLabelSetColors(newtComponent co, int colorset) {
+    struct label * la = co->data;
+
+    la->cs = colorset;
+    labelDraw(co);
+}
+
 static void labelDraw(newtComponent co) {
     struct label * la = co->data;
 
     if (!co->isMapped) return;
 
-    SLsmg_set_color(COLORSET_LABEL);
+    SLsmg_set_color(la->cs);
 
     newtGotorc(co->top, co->left);
     SLsmg_write_string(la->text);

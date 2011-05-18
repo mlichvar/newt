@@ -69,6 +69,14 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     return co;
 }
 
+void newtScrollbarSetColors(newtComponent co, int normal, int thumb) {
+    struct scrollbar * sb = co->data;
+
+    sb->cs = normal;
+    sb->csThumb = thumb;
+    sbDraw(co);
+}
+
 static void sbDraw(newtComponent co) {
     struct scrollbar * sb = co->data;
     int i;

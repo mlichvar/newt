@@ -9,6 +9,8 @@ struct scale {
     long long fullValue;
     int charsSet;
     unsigned int percentage;
+    int csEmpty;
+    int csFull;
 };
 
 static void scaleDraw(newtComponent co);
@@ -41,6 +43,8 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     sc->fullValue = fullValue;
     sc->charsSet = 0;
     sc->percentage = 0;
+    sc->csEmpty = NEWT_COLORSET_EMPTYSCALE;
+    sc->csFull = NEWT_COLORSET_FULLSCALE;
 
     return co;
 }
@@ -67,6 +71,14 @@ void newtScaleSet(newtComponent co, unsigned long long amount) {
     }
 }
 
+void newtScaleSetColors(newtComponent co, int empty, int full) {
+    struct scale * sc = co->data;
+
+    sc->csEmpty = empty;
+    sc->csFull = full;
+    scaleDraw(co);
+}
+
 static void scaleDraw(newtComponent co) {
     struct scale * sc = co->data;
     int i;
@@ -79,11 +91,11 @@ static void scaleDraw(newtComponent co) {
 
     sprintf(percent, "%3d%%", sc->percentage);
 
-    SLsmg_set_color(NEWT_COLORSET_FULLSCALE);
+    SLsmg_set_color(sc->csFull);
     
     for (i = 0; i < co->width; i++) {
         if (i == sc->charsSet)
-            SLsmg_set_color(NEWT_COLORSET_EMPTYSCALE);
+            SLsmg_set_color(sc->csEmpty);
         if (i >= xlabel && i < xlabel+4)
             SLsmg_write_char(percent[i-xlabel]);
         else

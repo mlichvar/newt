@@ -14,10 +14,12 @@ struct textbox {
     int numLines;
     int linesAlloced;
     int doWrap;
-    newtComponent sb_act, sb;
+    newtComponent sb;
     int topLine;
     int textWidth;
     int isActive;
+    int cs;
+    int csActive;
 };
 
 static char * expandTabs(const char * text);
@@ -45,7 +47,6 @@ static void textboxMapped(newtComponent co, int isMapped) {
     co->isMapped = isMapped;
     if (tb->sb) {
 	tb->sb->ops->mapped(tb->sb, isMapped);
-	tb->sb_act->ops->mapped(tb->sb_act, isMapped);
     }
 }
 
@@ -57,7 +58,6 @@ static void textboxPlace(newtComponent co, int newLeft, int newTop) {
 
     if (tb->sb) {
 	tb->sb->ops->place(tb->sb, co->left + co->width - 1, co->top);
-	tb->sb_act->ops->place(tb->sb_act, co->left + co->width - 1, co->top);
     }
 }
 
@@ -115,19 +115,27 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     tb->topLine = 0;
     tb->textWidth = width;
     tb->isActive = 0;
+    tb->cs = COLORSET_TEXTBOX;
+    tb->csActive = COLORSET_ACTTEXTBOX;
 
     if (flags & NEWT_FLAG_SCROLL) {
 	co->width += 2;
-	tb->sb_act = newtVerticalScrollbar(co->left + co->width - 1, co->top, 
-			   co->height, COLORSET_ACTTEXTBOX, COLORSET_TEXTBOX);
 	tb->sb = newtVerticalScrollbar(co->left + co->width - 1, co->top, 
-			   co->height, COLORSET_TEXTBOX, COLORSET_TEXTBOX);
+			   co->height, tb->cs, tb->cs);
 	co->takesFocus = 1;
     } else {
-	tb->sb_act = tb->sb = NULL;
+	tb->sb = NULL;
     }
 
     return co;
+}
+
+void newtTextboxSetColors(newtComponent co, int normal, int active) {
+    struct textbox * tb = co->data;
+
+    tb->cs = normal;
+    tb->csActive = active;
+    textboxDraw(co);
 }
 
 static char * expandTabs(const char * text) {
@@ -369,16 +377,12 @@ static void textboxDraw(newtComponent c) {
 
     if (tb->sb) {
 	size = tb->numLines - c->height;
-	if (tb->isActive) {
-		newtScrollbarSet(tb->sb_act, tb->topLine, size ? size : 0);
-		tb->sb_act->ops->draw(tb->sb_act);
-	} else {
-		newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
-		tb->sb->ops->draw(tb->sb);
-	}
+	newtScrollbarSet(tb->sb, tb->topLine, size ? size : 0);
+	newtScrollbarSetColors(tb->sb, tb->isActive ? tb->csActive :
+			tb->cs, tb->cs);
     }
 
-    SLsmg_set_color(NEWT_COLORSET_TEXTBOX);
+    SLsmg_set_color(tb->cs);
 
     for (i = 0; (i + tb->topLine) < tb->numLines && i < c->height; i++) {
 	newtGotorc(c->top + i, c->left);
@@ -469,8 +473,6 @@ static void textboxDestroy(newtComponent co) {
 
     if (tb->sb)
 	tb->sb->ops->destroy(tb->sb);
-    if (tb->sb_act)
-	tb->sb_act->ops->destroy(tb->sb_act);
     for (i = 0; i < tb->numLines; i++) 
 	free(tb->lines[i]);
     free(tb->lines);

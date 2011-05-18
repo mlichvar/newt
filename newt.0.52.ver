@@ -152,3 +152,12 @@ NEWT_0.52.11 {
 	global:
 		newtRadioSetCurrent;
 } NEWT_0.52.9;
+
+NEWT_0.52.13 {
+	global:
+		newtEntrySetColors;
+		newtLabelSetColors;
+		newtScaleSetColors;
+		newtScrollbarSetColors;
+		newtTextboxSetColors;
+} NEWT_0.52.11;

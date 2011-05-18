@@ -161,9 +161,11 @@ void newtGetScreenSize(int * cols, int * rows);
 
 newtComponent newtLabel(int left, int top, const char * text);
 void newtLabelSetText(newtComponent co, const char * text);
+void newtLabelSetColors(newtComponent co, int colorset);
 newtComponent newtVerticalScrollbar(int left, int top, int height,
 				    int normalColorset, int thumbColorset);
 void newtScrollbarSet(newtComponent co, int where, int total);
+void newtScrollbarSetColors(newtComponent co, int normal, int thumb);
 
 newtComponent newtListbox(int left, int top, int height, int flags);
 void * newtListboxGetCurrent(newtComponent co);
@@ -214,6 +216,7 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags);
 void newtTextboxSetText(newtComponent co, const char * text);
 void newtTextboxSetHeight(newtComponent co, int height);
 int newtTextboxGetNumLines(newtComponent co);
+void newtTextboxSetColors(newtComponent co, int normal, int active);
 char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 		      int * actualWidth, int * actualHeight);
 
@@ -251,9 +254,11 @@ void newtEntrySet(newtComponent co, const char * value, int cursorAtEnd);
 void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
 char * newtEntryGetValue(newtComponent co);
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
+void newtEntrySetColors(newtComponent co, int normal, int disabled);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, unsigned long long amount);
+void newtScaleSetColors(newtComponent co, int empty, int full);
 
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 void newtComponentTakesFocus(newtComponent co, int val);

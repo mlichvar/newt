@@ -23,6 +23,8 @@ struct entry {
     int firstChar;		/* first character position being shown */
     newtEntryFilter filter;
     void * filterData;
+    int cs;
+    int csDisabled;
 };
 
 static int previous_char(const char *buf, int pos);
@@ -117,6 +119,9 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 	en->cursorPosition = 0;
     }
 
+    en->cs = NEWT_COLORSET_ENTRY;
+    en->csDisabled = NEWT_COLORSET_DISENTRY;
+
     return co;
 }
 
@@ -184,9 +189,9 @@ static void entryDraw(newtComponent co) {
     if (!co->isMapped) return;
 
     if (en->flags & NEWT_FLAG_DISABLED)
-	SLsmg_set_color(NEWT_COLORSET_DISENTRY);
+	SLsmg_set_color(en->csDisabled);
     else
-	SLsmg_set_color(NEWT_COLORSET_ENTRY);
+	SLsmg_set_color(en->cs);
 
     if (en->flags & NEWT_FLAG_HIDDEN) {
 	newtGotorc(co->top, co->left);
@@ -253,6 +258,14 @@ void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense) {
     newtGetrc(&row, &col);
     entryDraw(co);
     newtGotorc(row, col);
+}
+
+void newtEntrySetColors(newtComponent co, int normal, int disabled) {
+    struct entry * en = co->data;
+
+    en->cs = normal;
+    en->csDisabled = disabled;
+    entryDraw(co);
 }
 
 static void entryDestroy(newtComponent co) {
