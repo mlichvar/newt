@@ -31,6 +31,8 @@ extern "C" {
 #define NEWT_COLORSET_ACTSELLISTBOX	23
 #define NEWT_COLORSET_SELLISTBOX	24
 
+#define NEWT_COLORSET_CUSTOM(x)		(1000 + (x))
+
 #define NEWT_ARG_LAST			-100000
 #define NEWT_ARG_APPEND			-1
 

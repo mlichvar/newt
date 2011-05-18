@@ -417,7 +417,8 @@ void newtSetColors(struct newtColors colors) {
 }
 
 void newtSetColor(int colorset, char *fg, char *bg) {
-    if (colorset < NEWT_COLORSET_ROOT || colorset > NEWT_COLORSET_SELLISTBOX ||
+    if (colorset < NEWT_COLORSET_ROOT ||
+        (colorset > NEWT_COLORSET_SELLISTBOX && colorset < NEWT_COLORSET_CUSTOM(0)) ||
 	    !SLtt_Use_Ansi_Colors)
 	return;
 
