@@ -195,6 +195,7 @@ static PyObject * widgetGetAttr(PyObject * s, char * name);
 static void widgetDestructor(PyObject * s);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
 static PyObject * widgetLabelText(snackWidget * s, PyObject * args);
+static PyObject * widgetLabelSetColors(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxSetW(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxAdd(snackWidget * s, PyObject * args);
 static PyObject * widgetListboxIns(snackWidget * s, PyObject * args);
@@ -219,6 +220,7 @@ static PyObject * widgetCheckboxSetValue(snackWidget * s, PyObject * args);
 
 static PyMethodDef widgetMethods[] = {
     { "setCallback", (PyCFunction) widgetAddCallback, METH_VARARGS, NULL },
+    { "labelSetColors", (PyCFunction) widgetLabelSetColors, METH_VARARGS, NULL },
     { "labelText", (PyCFunction) widgetLabelText, METH_VARARGS, NULL },
     { "textboxText", (PyCFunction) widgetTextboxText, METH_VARARGS, NULL },
     { "textboxHeight", (PyCFunction) widgetTextboxHeight, METH_VARARGS, NULL },
@@ -657,6 +659,17 @@ static PyObject * widgetLabelText(snackWidget * s, PyObject * args) {
     if (!PyArg_ParseTuple(args, "s", &label)) return NULL;
 
     newtLabelSetText(s->co, label);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * widgetLabelSetColors(snackWidget * s, PyObject * args) {
+    int colorset;
+
+    if (!PyArg_ParseTuple(args, "i", &colorset)) return NULL;
+
+    newtLabelSetColors(s->co, colorset);
 
     Py_INCREF(Py_None);
     return Py_None;

@@ -240,12 +240,16 @@ class Label(Widget):
 
      - Label(self,text)   : create label
      - setText(self,text) : change text.
+     - setColors(self, colorset) : change individual colors
     """
     def setText(self, text):
         self.w.labelText(text)
 
     def __init__(self, text):
         self.w = _snack.label(text)
+
+    def setColors(self, colorset):
+        self.w.labelSetColors(colorset)
 
 class Scale(Widget):
     """A Scale (progress bar).
@@ -517,7 +521,11 @@ class SnackScreen:
         return _snack.refresh()
 
     def setColor(self, colorset, fg, bg):
-        return _snack.setcolor(colorsets[colorset], fg, bg)
+        if colorset in colorsets:
+            return _snack.setcolor(colorsets[colorset], fg, bg)
+        else:
+           # assume colorset is an integer for the custom color set
+           return _snack.setcolor(colorset, fg, bg)
 
 def reflow(text, width, flexDown = 5, flexUp = 5):
     """ returns a tuple of the wrapped text, the actual width, and the actual height
@@ -982,3 +990,6 @@ class CListbox(Grid):
 
     def clear(self):
         self.listbox.clear()
+
+def customColorset(x):
+    return 30 + x
