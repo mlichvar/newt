@@ -223,6 +223,112 @@ static int getkey() {
 
 }
 
+static void updateColorset(char *fg, char *bg, char **fg_p, char **bg_p)
+{
+    if (*fg && fg_p)
+	*fg_p = fg;
+    if (*bg && bg_p)
+	*bg_p = bg;
+}
+
+/* parse color specifications (e.g. root=,black:border=red,blue)
+ * and update the palette
+ */
+static void parseColors(char *s, struct newtColors *palette)
+{
+    char *name, *str, *fg, *bg;
+    int i;
+
+    for (str = s; (s = strtok(str, ";:\n\r\t ")); str = NULL) {
+	name = s;
+	if (!(s = strchr(s, '=')) || !*s)
+	    continue;
+	*s = '\0';
+	fg = ++s;
+	if (!(s = strchr(s, ',')) || !*s)
+	    continue;
+	*s = '\0';
+	bg = ++s;
+
+	if (!strcmp(name, "root"))
+	    updateColorset(fg, bg, &palette->rootFg, &palette->rootBg);
+	else if (!strcmp(name, "border"))
+	    updateColorset(fg, bg, &palette->borderFg, &palette->borderBg);
+	else if (!strcmp(name, "window"))
+	    updateColorset(fg, bg, &palette->windowFg, &palette->windowBg);
+	else if (!strcmp(name, "shadow"))
+	    updateColorset(fg, bg, &palette->shadowFg, &palette->shadowBg);
+	else if (!strcmp(name, "title"))
+	    updateColorset(fg, bg, &palette->titleFg, &palette->titleBg);
+	else if (!strcmp(name, "button"))
+	    updateColorset(fg, bg, &palette->buttonFg, &palette->buttonBg);
+	else if (!strcmp(name, "actbutton"))
+	    updateColorset(fg, bg, &palette->actButtonFg, &palette->actButtonBg);
+	else if (!strcmp(name, "checkbox"))
+	    updateColorset(fg, bg, &palette->checkboxFg, &palette->checkboxBg);
+	else if (!strcmp(name, "actcheckbox"))
+	    updateColorset(fg, bg, &palette->actCheckboxFg, &palette->actCheckboxBg);
+	else if (!strcmp(name, "entry"))
+	    updateColorset(fg, bg, &palette->entryFg, &palette->entryBg);
+	else if (!strcmp(name, "label"))
+	    updateColorset(fg, bg, &palette->labelFg, &palette->labelBg);
+	else if (!strcmp(name, "listbox"))
+	    updateColorset(fg, bg, &palette->listboxFg, &palette->listboxBg);
+	else if (!strcmp(name, "actlistbox"))
+	    updateColorset(fg, bg, &palette->actListboxFg, &palette->actListboxBg);
+	else if (!strcmp(name, "textbox"))
+	    updateColorset(fg, bg, &palette->textboxFg, &palette->textboxBg);
+	else if (!strcmp(name, "acttextbox"))
+	    updateColorset(fg, bg, &palette->actTextboxFg, &palette->actTextboxBg);
+	else if (!strcmp(name, "helpline"))
+	    updateColorset(fg, bg, &palette->helpLineFg, &palette->helpLineBg);
+	else if (!strcmp(name, "roottext"))
+	    updateColorset(fg, bg, &palette->rootTextFg, &palette->rootTextBg);
+	else if (!strcmp(name, "emptyscale"))
+	    updateColorset(fg, bg, NULL, &palette->emptyScale);
+	else if (!strcmp(name, "fullscale"))
+	    updateColorset(fg, bg, NULL, &palette->fullScale);
+	else if (!strcmp(name, "disentry"))
+	    updateColorset(fg, bg, &palette->disabledEntryFg, &palette->disabledEntryBg);
+	else if (!strcmp(name, "compactbutton"))
+	    updateColorset(fg, bg, &palette->compactButtonFg, &palette->compactButtonBg);
+	else if (!strcmp(name, "actsellistbox"))
+	    updateColorset(fg, bg, &palette->actSelListboxFg, &palette->actSelListboxBg);
+	else if (!strcmp(name, "sellistbox"))
+	    updateColorset(fg, bg, &palette->selListboxFg, &palette->selListboxBg);
+    }
+}
+
+static void initColors(void)
+{
+    char *colors, *colors_file, buf[16384];
+    FILE *f;
+    struct newtColors palette;
+
+    palette = newtDefaultColorPalette;
+
+    colors_file = getenv("NEWT_COLORS_FILE");
+#ifdef NEWT_COLORS_FILE
+    if (colors_file == NULL)
+	colors_file = NEWT_COLORS_FILE;
+#endif
+
+    if ((colors = getenv("NEWT_COLORS"))) {
+	strncpy(buf, colors, sizeof (buf));
+	buf[sizeof (buf) - 1] = '\0';
+	parseColors(buf, &palette);
+    } else if (colors_file && *colors_file && (f = fopen(colors_file, "r"))) {
+	size_t r;
+	if ((r = fread(buf, 1, sizeof (buf) - 1, f)) > 0) {
+	    buf[r] = '\0';
+	    parseColors(buf, &palette);
+	}
+	fclose(f);
+    }
+
+    newtSetColors(palette);
+}
+
 void newtFlushInput(void) {
     while (SLang_input_pending(0)) {
 	getkey();
@@ -308,7 +414,7 @@ int newtInit(void) {
     if ((ret = SLang_init_tty(0, 0, 0)) < 0)
 	return ret;
 
-    newtSetColors(newtDefaultColorPalette);
+    initColors();
     newtCursorOff();
     initKeymap();
 

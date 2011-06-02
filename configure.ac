@@ -127,6 +127,16 @@ if test "x$enable_nls" != "xno"; then
   fi
 fi
 
+AC_ARG_WITH(colorsfile, [  --with-colorsfile=file  set default location of colors file])
+
+if test "x$with_colorsfile" != "xno"; then
+  if test "x$with_colorsfile" != "xyes"; then
+    if test "x$with_colorsfile" != "x"; then
+      AC_DEFINE_UNQUOTED(NEWT_COLORS_FILE, "$with_colorsfile", [Default NEWT_COLORS_FILE ])
+    fi
+  fi
+fi
+
 AC_CONFIG_FILES([Makefile libnewt.pc])
 AC_OUTPUT
 
