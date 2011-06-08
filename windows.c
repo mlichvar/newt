@@ -167,7 +167,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
        ++totalButtons;                                                        
     va_end(args);                                                             
 
-    buttons = (newtComponent *)alloca(sizeof(newtComponent*)*(totalButtons)); 
+    buttons = (newtComponent *)alloca(sizeof(newtComponent)*(totalButtons)); 
     va_start(args, button1);                                                  
     for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
        buttons[numButtons++] = newtButton(-1, -1, buttonName);                
@@ -226,7 +226,7 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
        ++totalButtons;                                                        
     va_end(args);                                                             
  
-    buttons = (newtComponent *)alloca(sizeof(newtComponent*)*(totalButtons)); 
+    buttons = (newtComponent *)alloca(sizeof(newtComponent)*(totalButtons)); 
     va_start(args, button1);                                                  
     for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
        buttons[numButtons++] = newtButton(-1, -1, buttonName);                

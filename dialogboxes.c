@@ -186,6 +186,8 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 	}
     } while (!feof(f));
 
+    newtFormDestroy(form);
+
     return DLG_OKAY;
 }
 
@@ -216,6 +218,8 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
 	rc = DLG_ESCAPE;
 
     *result = val;
+
+    newtFormDestroy(form);
 
     return rc;
 }
@@ -344,7 +348,8 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	   int len, j;
 	   len = mystrncpyw(buf, itemInfo[i].tag, MAXBUF, &w);
 	   for (j = 0; j < tagWidth - w; j++) {
-		   if (len >= MAXBUF) break;
+		   if (len + 1 >= MAXBUF)
+		       break;
 		   buf[len++] = ' ';
 	   }
 	   buf[len] = '\0';
@@ -375,6 +380,9 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     i = (long) newtListboxGetCurrent(listBox);
     *result = itemInfo[i].tag;
 
+    newtFormDestroy(form);
+    free(itemInfo);
+
     return rc;
 }
 
@@ -398,7 +406,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	const char * tag;
 	newtComponent comp;
     } * cbInfo = malloc(allocedBoxes * sizeof(*cbInfo));
-    char * cbStates = malloc(allocedBoxes * sizeof(cbStates));
+    char * cbStates = malloc(allocedBoxes * sizeof(*cbStates));
 
     if ( (cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
     if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
@@ -507,6 +515,8 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	(*selections)[numSelected] = NULL;
     }
 
+    newtFormDestroy(form);
+
     return rc;
 }
 
@@ -557,8 +567,8 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
 	newtDrawForm(form);
 	newtRefresh();
     }
-	
 
+    newtFormDestroy(form);
 
     return rc;
 }

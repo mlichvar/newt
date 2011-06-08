@@ -306,8 +306,10 @@ readTextFile(const char * filename)
        exit(DLG_ERROR);
      }
 
-    if ( (buf = malloc(s.st_size + 1)) == 0 )
+    if ( (buf = malloc(s.st_size + 1)) == 0 ) {
        fprintf(stderr, _("%s: too large to display.\n"), filename);
+       exit(DLG_ERROR);
+    }
 
     if ( read(fd, buf, s.st_size) != s.st_size ) {
         perror(filename);
@@ -483,7 +485,11 @@ int main(int argc, const char ** argv) {
     if (!(nextArg = poptGetArg(optCon))) usage(WAS_ERROR);
     text = strdup(nextArg);
 
-    if  (mode == MODE_TEXTBOX ) text = readTextFile(text);
+    if (mode == MODE_TEXTBOX) {
+	char *t = text;
+	text = readTextFile(t);
+	free(t);
+    }
 
     if (!(nextArg = poptGetArg(optCon))) usage(WAS_ERROR);
     height = strtoul(nextArg, &end, 10);
@@ -495,8 +501,14 @@ int main(int argc, const char ** argv) {
 
     if (mode == MODE_GAUGE) {
 	fd = dup(0);
-	close(0);
-	if (open("/dev/tty", O_RDWR) != 0) perror("open /dev/tty");
+	if (fd < 0 || close(0) < 0) {
+	    perror("dup/close stdin");
+	    exit(DLG_ERROR);
+	}
+	if (open("/dev/tty", O_RDWR) != 0) {
+	    perror("open /dev/tty");
+	    exit(DLG_ERROR);
+	}
     }
 
     newtInit();
@@ -601,6 +613,9 @@ int main(int argc, const char ** argv) {
     if (clear)
 	newtPopWindow();
     newtFinished();
+
+    free(text);
+    poptFreeContext(optCon);
 
     return ( rc == DLG_ESCAPE ) ? -1 : rc;
 }

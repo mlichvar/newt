@@ -315,7 +315,8 @@ void newtListboxSetData(newtComponent co, int num, void * data) {
     for(i = 0, item = li->boxItems; item != NULL && i < num;
 	i++, item = item->next);
 
-    item->data = data;
+    if (item)
+	item->data = data;
 }
 
 int newtListboxAppendEntry(newtComponent co, const char * text,
@@ -669,7 +670,7 @@ static struct eventResult listboxEvent(newtComponent co, struct event ev) {
 			 li->currItem > li->startShowItem)
 			  li->startShowItem =
 			      li->currItem > li->numItems - li->curHeight ?
-			      li->startShowItem = li->numItems - li->curHeight :
+			      li->numItems - li->curHeight :
 			      li->currItem;
 		      if(li->sb)
 			  newtScrollbarSet(li->sb, li->currItem + 1, li->numItems);
