@@ -396,7 +396,6 @@ struct form {
     int * hotKeys;
     int numHotKeys;
     int background;
-    int beenSet;
     int numFds;
     struct fdInfo * fds;
     int maxFd;
@@ -464,7 +463,6 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     form->numFds = 0;
     form->maxFd = 0;
     form->fds = NULL;
-    form->beenSet = 0;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
 
     form->background = COLORSET_WINDOW;
@@ -858,20 +856,17 @@ void newtFormAddHotKey(newtComponent co, int key) {
 
 void newtFormSetSize(newtComponent co) {
     struct form * form = co->data;
-    int delta, i;
+    int delta, i, first;
     struct element * el;
 
-    if (form->beenSet) return;
-
-    form->beenSet = 1;
-
-    if (!form->numComps) return;
+    form->numRows = 0;
 
     co->width = 0;
     if (!form->fixedHeight) co->height = 0;
 
     co->top = -1;
     co->left = -1;
+    first = 1;
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
 	if (el->co->ops == &formOps)
@@ -879,9 +874,10 @@ void newtFormSetSize(newtComponent co) {
 	else if (el->co == form->vertBar)
 	    continue;
 
-	if (co->top == -1) {
+	if (first) {
 	    co->top = el->co->top;
 	    co->left = el->co->left;
+	    first = 0;
 	}
 
  	el->left = el->co->left;
@@ -937,7 +933,6 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
     Gpm_Open(&conn, 0);
 #endif
 
-    newtFormSetSize(co);
     /* draw all of the components */
     newtDrawForm(co);
 
