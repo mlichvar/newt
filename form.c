@@ -373,8 +373,7 @@ static int Gpm_GetEvent(Gpm_Event *event)
 *****************************************************************************/
 
 struct element {
-    int top, left;		/* Actual, not virtual. These are translated */
-    newtComponent co;		/* into actual through vertOffset */
+    newtComponent co;
 };
 
 struct fdInfo {
@@ -428,9 +427,10 @@ static inline int componentFits(newtComponent co, int compNum) {
     struct form * form = co->data;
     struct element * el = form->elements + compNum;
 
-    if ((co->top + form->vertOffset) > el->top) return 0;
-    if ((co->top + form->vertOffset + co->height) <
-	    (el->top + el->co->height)) return 0;
+    if (co->top > el->co->top)
+	return 0;
+    if (co->top + co->height < el->co->top + el->co->height)
+	return 0;
 
     return 1;
 }
@@ -492,6 +492,26 @@ newtComponent newtFormGetCurrent(newtComponent co) {
     return form->elements[form->currComp].co;
 }
 
+static void formScroll(newtComponent co, int delta) {
+    struct form * form = co->data;
+    struct element * el;
+    int i, newVertOffset = form->vertOffset + delta;
+
+    if (newVertOffset < 0)
+	newVertOffset = 0;
+    if (newVertOffset > form->numRows - co->height)
+	newVertOffset = form->numRows - co->height;
+
+    delta = newVertOffset - form->vertOffset;
+    form->vertOffset = newVertOffset;
+
+    for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
+	if (el->co == form->vertBar)
+	    continue;
+	el->co->ops->place(el->co, el->co->left, el->co->top - delta);
+    }
+}
+
 void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     struct form * form = co->data;
     int i, new;
@@ -505,9 +525,7 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
 
     if (co->isMapped && !componentFits(co, new)) {
 	gotoComponent(form, -1);
-	form->vertOffset = form->elements[new].top - co->top - 1;
-	if (form->vertOffset > (form->numRows - co->height))
-	    form->vertOffset = form->numRows - co->height;
+	formScroll(co, form->elements[new].co->top - co->top - 1);
     }
 
     gotoComponent(form, new);
@@ -543,9 +561,6 @@ void newtFormAddComponent(newtComponent co, newtComponent newco) {
 			    sizeof(*(form->elements)) * form->numCompsAlloced);
     }
 
-    /* we grab real values for these a bit later */
-    form->elements[form->numComps].left = -2;
-    form->elements[form->numComps].top = -2;
     form->elements[form->numComps].co = newco;
 
     if (newco->takesFocus && form->currComp == -1)
@@ -572,17 +587,14 @@ static void formPlace(newtComponent co, int left, int top) {
     struct element * el;
     int i;
 
-    newtFormSetSize(co);
-
     vertDelta = top - co->top;
     horizDelta = left - co->left;
     co->top = top;
     co->left = left;
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-	el->top += vertDelta;
-	el->left += horizDelta;
-	el->co->ops->place(el->co, el->co->left, el->co->top);
+	el->co->ops->place(el->co, el->co->left + horizDelta,
+		el->co->top + vertDelta);
     }
 }
 
@@ -597,19 +609,13 @@ void newtDrawForm(newtComponent co) {
     newtClearBox(co->left, co->top, co->width, co->height);
 
     for (i = 0, el = form->elements; i < form->numComps; i++, el++) {
-	/* the scrollbar *always* fits somewhere */
-	if (el->co == form->vertBar) {
+	/* only draw it if it'll fit on the screen vertically
+	   (the scrollbar *always* fits somewhere) */
+	if (el->co == form->vertBar || componentFits(co, i)) {
 	    el->co->ops->mapped(el->co, 1);
 	    el->co->ops->draw(el->co);
 	} else {
-	    /* only draw it if it'll fit on the screen vertically */
-	    if (componentFits(co, i)) {
-		el->co->ops->place(el->co, el->left, el->top - form->vertOffset);
-		el->co->ops->mapped(el->co, 1);
-		el->co->ops->draw(el->co);
-	    } else {
-		el->co->ops->mapped(el->co, 0);
-	    }
+	    el->co->ops->mapped(el->co, 0);
 	}
     }
 
@@ -764,22 +770,21 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 
 	/* make sure this component is visible */
 	if (!componentFits(co, new)) {
+	    int vertDelta;
+
 	    gotoComponent(form, -1);
 
 	    if (dir < 0) {
 		/* make the new component the first one */
-		form->vertOffset = form->elements[new].top - co->top;
+		vertDelta = form->elements[new].co->top - co->top;
 	    } else {
 		/* make the new component the last one */
-		form->vertOffset = (form->elements[new].top +
+		vertDelta = (form->elements[new].co->top +
 					form->elements[new].co->height) -
 				    (co->top + co->height);
 	    }
 
-	    if (form->vertOffset < 0) form->vertOffset = 0;
-	    if (form->vertOffset > (form->numRows - co->height))
-		form->vertOffset = form->numRows - co->height;
-
+	    formScroll(co, vertDelta);
 	    newtDrawForm(co);
 	}
 
@@ -880,9 +885,6 @@ void newtFormSetSize(newtComponent co) {
 	    first = 0;
 	}
 
- 	el->left = el->co->left;
- 	el->top = el->co->top;
-
 	if (co->left > el->co->left) {
 	    delta = co->left - el->co->left;
 	    co->left -= delta;
@@ -909,6 +911,8 @@ void newtFormSetSize(newtComponent co) {
 	    form->numRows = el->co->top + el->co->height - co->top;
 	}
     }
+
+    co->top += form->vertOffset;
 }
 
 void newtFormRun(newtComponent co, struct newtExitStruct * es) {
