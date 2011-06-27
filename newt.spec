@@ -1,7 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.12
+Version: 0.52.13
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
@@ -68,7 +68,7 @@ docbook2txt tutorial.sgml
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make instroot=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %find_lang %{name}
 
@@ -104,6 +104,24 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/*.py*
 
 %changelog
+* Mon Jun 27 2011 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.13-1
+- add support for changing colors in individual labels, scrollbars, entries,
+  textboxes and scales, add custom colorsets 
+- add support for NEWT_COLORS and NEWT_COLORS_FILE variables (#689903)
+- allow resizing of form
+- fix errors found by coverity
+- fix va_list usage (Gwenole Beauchesne)
+- fix building and installing on Mac OS X (#652479)
+- check for slang.h header, support DESTDIR variable, add --without-python
+  option (Otavio Salvador)
+- add Persian, Low German translations
+
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.12-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Wed Nov 10 2010 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.12-2
+- don't hang in form when stdin disappears
+
 * Fri Aug 06 2010 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.12-1
 - fix whiptail --gauge and its description in man page (#620083)
 - remove space after \n in whiptail texts (#620083)
