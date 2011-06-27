@@ -324,7 +324,6 @@ int main(int argc, const char ** argv) {
     enum mode mode = MODE_NONE;
     poptContext optCon;
     int arg;
-    const char * optArg;
     char * text;
     const char * nextArg;
     char * end;
@@ -398,8 +397,6 @@ int main(int argc, const char ** argv) {
     optCon = poptGetContext("whiptail", argc, argv, optionsTable, 0);
 
     while ((arg = poptGetNextOpt(optCon)) > 0) {
-	optArg = poptGetOptArg(optCon);
-
 	switch (arg) {
 	  case OPT_INFOBOX:
 	    if (mode != MODE_NONE) usage(WAS_ERROR);

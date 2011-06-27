@@ -237,7 +237,6 @@ static void updateColorset(char *fg, char *bg, char **fg_p, char **bg_p)
 static void parseColors(char *s, struct newtColors *palette)
 {
     char *name, *str, *fg, *bg;
-    int i;
 
     for (str = s; (s = strtok(str, ";:\n\r\t ")); str = NULL) {
 	name = s;
