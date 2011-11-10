@@ -521,6 +521,8 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	}
     }
 
+    free(cbInfo);
+    free(cbStates);
     newtFormDestroy(form);
 
     return rc;
