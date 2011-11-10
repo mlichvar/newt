@@ -59,7 +59,7 @@ if test "x$with_python" = "xno"; then
   AC_MSG_RESULT([skipped])
   PYTHONVERS=
 else
-  PYTHONVERS=$(ls /usr/include/python*/Python.h 2> /dev/null | sed "s|/usr/include/||g"| sed "s|/Python.h||g" 2> /dev/null)
+  PYTHONVERS=$(ls /usr/include/python2.*/Python.h 2> /dev/null | sed 's|/usr/include/\([[^/]]*\)/Python.h|\1|g' | tr '\n' ' ')
   AC_MSG_RESULT([$PYTHONVERS])
 fi
 AC_SUBST([PYTHONVERS])
