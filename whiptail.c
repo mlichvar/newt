@@ -344,8 +344,8 @@ int main(int argc, const char ** argv) {
     int outputfd = 2;
     int topLeft = 0;
     FILE *output = stderr;
-    const char * result;
-    const char ** selections, ** next;
+    char * result;
+    char ** selections, ** next;
     char * title = NULL;
     char *default_item = NULL;
     char * backtitle = NULL;
@@ -556,25 +556,34 @@ int main(int argc, const char ** argv) {
 
       case MODE_INPUTBOX:
 	rc = inputBox(text, height, width, optCon, flags, &result);
-	if (rc == DLG_OKAY) fprintf(output, "%s", result);
+	if (rc == DLG_OKAY) {
+	    fprintf(output, "%s", result);
+	    free(result);
+	}
 	break;
 
       case MODE_PASSWORDBOX:
 	rc = inputBox(text, height, width, optCon, flags | FLAG_PASSWORD,
 	      &result);
-	if (rc == DLG_OKAY) fprintf (output, "%s", result);
+	if (rc == DLG_OKAY) {
+	    fprintf (output, "%s", result);
+	    free(result);
+	}
 	break;
 
       case MODE_MENU:
 	rc = listBox(text, height, width, optCon, flags, default_item, &result);
-	if (rc == DLG_OKAY) fprintf(output, "%s", result);
+	if (rc == DLG_OKAY) {
+	    fprintf(output, "%s", result);
+	    free(result);
+	}
 	break;
 
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
-	if (rc == DLG_OKAY) {
-	    if (selections[0])
-		fprintf(output, "%s", selections[0]);
+	if (rc == DLG_OKAY && selections[0]) {
+	    fprintf(output, "%s", selections[0]);
+	    free(selections[0]);
 	    free(selections);
 	}
 	break;
@@ -591,6 +600,7 @@ int main(int argc, const char ** argv) {
 		} else {
 		    fprintf(output, "%s\n", *next);
 		}
+		free(*next);
 	    }
 
 	    free(selections);

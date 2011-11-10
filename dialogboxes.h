@@ -29,11 +29,11 @@ int max(int a, int b);
 
 int messageBox(const char * text, int height, int width, int type, int flags);
 int checkList(const char * text, int height, int width, poptContext optCon,
-		int useRadio, int flags, const char *** selections);
+		int useRadio, int flags, char *** selections);
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, const char *default_item, const char ** result);
+		int flags, const char *default_item, char ** result);
 int inputBox(const char * text, int height, int width, poptContext optCon, 
-		int flags, const char ** result);
+		int flags, char ** result);
 int gauge(const char * text, int height, int width, poptContext optCon, int fd, 
 		int flags);
 void useFullButtons(int state);

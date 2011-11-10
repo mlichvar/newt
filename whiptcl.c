@@ -71,8 +71,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
     int rc = 0;
     int flags = 0;
     int defaultNo = 0;
-    const char * result;
-    const char ** selections, ** next;
+    char * result;
+    char ** selections, ** next;
     char * title = NULL;
     char *default_item = NULL;
     struct poptOption optionsTable[] = {
@@ -205,7 +205,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
       case MODE_INPUTBOX:
 	rc = inputBox(text, height, width, optCon, flags, &result);
 	if (rc ==DLG_OKAY) {
-	    interp->result = strdup(result);
+	    interp->result = result;
 	    interp->freeProc = TCL_DYNAMIC;
 	}
 	break;
@@ -213,7 +213,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
       case MODE_MENU:
 	rc = listBox(text, height, width, optCon, flags, default_item, &result);
 	if (rc==DLG_OKAY) {
-	    interp->result = strdup(result);
+	    interp->result = result;
 	    interp->freeProc = TCL_DYNAMIC;
 	}
 	break;
@@ -221,8 +221,10 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
       case MODE_RADIOLIST:
 	rc = checkList(text, height, width, optCon, 1, flags, &selections);
 	if (rc==DLG_OKAY) {
-	    interp->result = strdup(selections[0]);
+	    interp->result = selections[0];
 	    interp->freeProc = TCL_DYNAMIC;
+
+	    free(selections);
 	}
 	break;
 

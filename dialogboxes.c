@@ -192,7 +192,7 @@ int gauge(const char * text, int height, int width, poptContext optCon, int fd,
 }
 
 int inputBox(const char * text, int height, int width, poptContext optCon, 
-		int flags, const char ** result) {
+		int flags, char ** result) {
     newtComponent form, entry, okay, cancel, answer, tb;
     const char * val;
     int pFlag = (flags & FLAG_PASSWORD) ? NEWT_FLAG_PASSWORD : 0;
@@ -212,12 +212,13 @@ int inputBox(const char * text, int height, int width, poptContext optCon,
     addButtons(height, width, form, &okay, &cancel, flags);
 
     answer = newtRunForm(form);
+    *result = NULL;
     if (answer == cancel)
 	rc = DLG_CANCEL;
     else if (answer == NULL)
 	rc = DLG_ESCAPE;
-
-    *result = val;
+    else
+	*result = strdup(val);
 
     newtFormDestroy(form);
 
@@ -254,7 +255,7 @@ static int mystrncpyw(char *dest, const char *src, int n, int *maxwidth)
 }
 
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, const char *default_item, const char ** result) {
+		int flags, const char *default_item, char ** result) {
     newtComponent form, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
@@ -372,13 +373,15 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     addButtons(height, width, form, &okay, &cancel, flags);
 
     answer = newtRunForm(form);
+    *result = NULL;
     if (answer == cancel)
 	rc = DLG_CANCEL;
     if (answer == NULL)
 	rc = DLG_ESCAPE;
-
-    i = (long) newtListboxGetCurrent(listBox);
-    *result = itemInfo[i].tag;
+    else {
+	i = (long) newtListboxGetCurrent(listBox);
+	*result = strdup(itemInfo[i].tag);
+    }
 
     newtFormDestroy(form);
     free(itemInfo);
@@ -387,7 +390,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 }
 
 int checkList(const char * text, int height, int width, poptContext optCon,
-		int useRadio, int flags, const char *** selections) {
+		int useRadio, int flags, char *** selections) {
     newtComponent form, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
@@ -481,38 +484,41 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     addButtons(height, width, form, &okay, &cancel, flags);
 
     answer = newtRunForm(form);
+    *selections = NULL;
     if (answer == cancel)
 	rc = DLG_CANCEL;
     if (answer == NULL)
 	rc = DLG_ESCAPE;
-
-    if (useRadio) {
-	answer = newtRadioGetCurrent(cbInfo[0].comp);
-	*selections = malloc(sizeof(char *) * 2);
-	if (*selections == NULL)
-	    return DLG_ERROR;
-	(*selections)[0] = (*selections)[1] = NULL;
-	for (i = 0; i < numBoxes; i++) 
-	    if (cbInfo[i].comp == answer) {
-		(*selections)[0] = cbInfo[i].tag;
-		break;
+    else {
+	if (useRadio) {
+	    answer = newtRadioGetCurrent(cbInfo[0].comp);
+	    *selections = malloc(sizeof(char *) * 2);
+	    if (*selections == NULL)
+		return DLG_ERROR;
+	    (*selections)[0] = (*selections)[1] = NULL;
+	    for (i = 0; i < numBoxes; i++)
+		if (cbInfo[i].comp == answer) {
+		    (*selections)[0] = strdup(cbInfo[i].tag);
+		    break;
+		}
+	} else {
+	    numSelected = 0;
+	    for (i = 0; i < numBoxes; i++) {
+		if (cbStates[i] != ' ') numSelected++;
 	    }
-    } else {
-	numSelected = 0;
-	for (i = 0; i < numBoxes; i++) {
-	    if (cbStates[i] != ' ') numSelected++;
+
+	    *selections = malloc(sizeof(char *) * (numSelected + 1));
+	    if (*selections == NULL)
+		return DLG_ERROR;
+
+	    numSelected = 0;
+	    for (i = 0; i < numBoxes; i++) {
+		if (cbStates[i] != ' ')
+		    (*selections)[numSelected++] = strdup(cbInfo[i].tag);
+	    }
+
+	    (*selections)[numSelected] = NULL;
 	}
-
-	*selections = malloc(sizeof(char *) * (numSelected + 1));
-	if (*selections == NULL) return DLG_ERROR;
-
-	numSelected = 0;
-	for (i = 0; i < numBoxes; i++) {
-	    if (cbStates[i] != ' ') 
-		(*selections)[numSelected++] = cbInfo[i].tag;
-	}
-
-	(*selections)[numSelected] = NULL;
     }
 
     newtFormDestroy(form);
