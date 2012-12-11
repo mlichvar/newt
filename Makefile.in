@@ -83,7 +83,7 @@ _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
 			PIFLAGS=`$$ver-config --includes`; \
 			PLDFLAGS=`$$ver-config --ldflags`; \
 			PLFLAGS=`$$ver-config --libs`; \
-	        $(CC) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snackmodule.o snackmodule.c ;\
+	        $(CC) $(SHCFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snackmodule.o snackmodule.c ;\
 	        $(CC) --shared $$PLDFLAGS $$PLFLAGS $(LDFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L.  -lnewt $(LIBS);\
 	done || :
 	touch $@
