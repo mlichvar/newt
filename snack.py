@@ -480,7 +480,7 @@ class SnackScreen:
         self.helpCb(self, arg)
     
     def helpCallback(self, cb):
-    	self.helpCb = cb
+        self.helpCb = cb
         return _snack.helpcallback(self.doHelpCallback)
 
     def suspendCallback(self, cb, data = None):
@@ -627,7 +627,7 @@ class ButtonBar(Grid):
 
         for (button, value) in self.list:
             if result == button:
-            	return value
+                return value
         return None
 
 
