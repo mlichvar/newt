@@ -39,6 +39,7 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     co->top = top;
     co->left = left;
     co->takesFocus = 0;
+    co->isMapped = 0;
 
     sc->fullValue = fullValue;
     sc->charsSet = 0;
@@ -85,7 +86,7 @@ static void scaleDraw(newtComponent co) {
     int xlabel = (co->width-4) /2;
     char percent[10];
     
-    if (co->top == -1) return;
+    if (!co->isMapped) return;
 
     newtGotorc(co->top, co->left);
 
