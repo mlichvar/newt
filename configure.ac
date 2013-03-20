@@ -96,6 +96,8 @@ else
     . ${ac_cv_c_tclconfig}/tclConfig.sh
     AC_SUBST([TCL_LIB_FLAG])
     WHIPTCLSO=whiptcl.so
+    # needed with tcl8.6
+    CPPFLAGS="$CPPFLAGS -DUSE_INTERP_RESULT"
   else
     AC_MSG_RESULT([NOT found])
   fi
