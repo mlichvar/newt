@@ -183,7 +183,7 @@ void newtCheckboxSetFlags(newtComponent co, int flags, enum newtFlagsSense sense
 static void cbDraw(newtComponent c) {
     struct checkbox * cb = c->data;
 
-    if (c->top == -1 || !c->isMapped) return;
+    if (!c->isMapped) return;
 
     if (cb->flags & NEWT_FLAG_DISABLED) {
 	cb->inactive = NEWT_COLORSET_DISENTRY;
