@@ -77,14 +77,22 @@ showkey:	showkey.o $(LIBNEWT)
 	$(CC) -g -o showkey showkey.o $(LIBNEWT) $(LDFLAGS) $(LIBS)
 
 _snackmodule.so:   snackmodule.c $(LIBNEWTSH)
-	[ -n "$(PYTHONVERS)" ] && for ver in $(PYTHONVERS) ; do \
-	    	mkdir -p $$ver ;\
-			PCFLAGS=`$$ver-config --cflags`; \
-			PIFLAGS=`$$ver-config --includes`; \
-			PLDFLAGS=`$$ver-config --ldflags`; \
-			PLFLAGS=`$$ver-config --libs`; \
-	        $(CC) $(SHCFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snackmodule.o snackmodule.c ;\
-	        $(CC) --shared $$PLDFLAGS $$PLFLAGS $(LDFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L.  -lnewt $(LIBS);\
+	@[ -n "$(PYTHONVERS)" ] && for ver in $(PYTHONVERS); do \
+		pyconfig=$$ver-config; \
+		if ! $$pyconfig --cflags > /dev/null 2>&1 && \
+				python-config --cflags > /dev/null 2>&1; then \
+			echo $$pyconfig not found, using python-config; \
+			pyconfig=python-config; \
+		fi; \
+		mkdir -p $$ver; \
+		PCFLAGS=`$$pyconfig --cflags`; \
+		PIFLAGS=`$$pyconfig --includes`; \
+		PLDFLAGS=`$$pyconfig --ldflags`; \
+		PLFLAGS=`$$pyconfig --libs`; \
+		echo $(CC) $(SHCFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snackmodule.o snackmodule.c; \
+		$(CC) $(SHCFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snackmodule.o snackmodule.c; \
+		echo $(CC) --shared $$PLDFLAGS $$PLFLAGS $(LDFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L.  -lnewt $(LIBS); \
+		$(CC) --shared $$PLDFLAGS $$PLFLAGS $(LDFLAGS) -o $$ver/_snackmodule.so $$ver/snackmodule.o -L.  -lnewt $(LIBS); \
 	done || :
 	touch $@
 
