@@ -1,7 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.14
+Version: 0.52.15
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
@@ -10,18 +10,17 @@ Source: https://fedorahosted.org/released/newt/newt-%{version}.tar.gz
 BuildRequires: popt-devel python-devel slang-devel
 BuildRequires: docbook-utils
 Provides: snack = %{version}-%{release}
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %package devel
 Summary: Newt windowing toolkit development files
-Requires: slang-devel %{name} = %{version}-%{release}
+Requires: slang-devel %{name}%{?_isa} = %{version}-%{release}
 Group: Development/Libraries
 
 # The loader portion of the installer needs to link statically against libnewt,
 # so the static library must be shipped.
 %package static
 Summary: Newt windowing toolkit static library
-Requires: %{name}-devel = %{version}-%{release}
+Requires: %{name}-devel%{?_isa} = %{version}-%{release}
 Group: Development/Libraries
 
 %Description
@@ -49,7 +48,7 @@ Install it if you need to link statically with libnewt.
 %package python
 Summary: Python bindings for newt
 Group: Development/Libraries
-Requires: newt = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description python
 The newt-python package contains the Python bindings for the newt library
@@ -67,43 +66,59 @@ chmod 0644 peanuts.py popcorn.py
 docbook2txt tutorial.sgml
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 
 %find_lang %{name}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %files -f %{name}.lang
-%defattr (-,root,root)
 %doc COPYING
 %{_bindir}/whiptail
 %{_libdir}/libnewt.so.*
 %{_mandir}/man1/whiptail.1*
 
 %files devel
-%defattr (-,root,root)
 %doc tutorial.*
 %{_includedir}/newt.h
 %{_libdir}/libnewt.so
 %{_libdir}/pkgconfig/libnewt.pc
 
 %files static
-%defattr(-,root,root)
 %{_libdir}/libnewt.a
 
 %files python
-%defattr(-,root,root)
 %doc peanuts.py popcorn.py
 %{python_sitearch}/*.so
 %{python_sitearch}/*.py*
 
 %changelog
+* Mon Mar 25 2013 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.15-1
+- fix errors found by gcc-with-cpychecker (#800075)
+- fix building with tcl8.6 (#902561)
+- add fallback to python-config (#783627)
+- replace tabs in snack.py (#870647)
+- compile snackmodule.c with flag -fPIC (Kang Kai)
+- include new translations from transifex
+- allow newtWinMenu and newtWinEntries with no buttons or items
+- don't draw scale when not mapped
+- build with large-file support for stat64
+- remove unused variables in test code
+- update FSF address
+- remove obsolete macros
+- make some dependencies arch-specific
+
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.14-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.14-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.14-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Fri Nov 11 2011 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.14-1
 - fix returning strings in whiptail and whiptcl (#752818)
 - fix configure to work with multiple python versions (#737998)
