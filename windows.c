@@ -173,7 +173,7 @@ int newtWinMenu(char * title, char * text, int suggestedWidth, int flexDown,
        buttons[numButtons++] = newtButton(-1, -1, buttonName);                
     va_end(args);                                                             
 
-    buttonBar = newtCreateGrid(numButtons, 1);
+    buttonBar = newtCreateGrid(numButtons ? numButtons : 1, 1);
     for (i = 0; i < numButtons; i++) {
 	newtGridSetField(buttonBar, i, 0, NEWT_GRID_COMPONENT, 
 			 buttons[i],
@@ -232,14 +232,14 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
        buttons[numButtons++] = newtButton(-1, -1, buttonName);                
     va_end(args);                                                             
 
-    buttonBar = newtCreateGrid(numButtons, 1);
+    buttonBar = newtCreateGrid(numButtons ? numButtons : 1, 1);
     for (i = 0; i < numButtons; i++) {
 	newtGridSetField(buttonBar, i, 0, NEWT_GRID_COMPONENT, 
 			 buttons[i],
 			 i ? 1 : 0, 0, 0, 0, 0, 0);
     }
 
-    subgrid = newtCreateGrid(2, numItems);
+    subgrid = newtCreateGrid(2, numItems ? numItems : 1);
     for (i = 0; i < numItems; i++) {
 	newtGridSetField(subgrid, 0, i, NEWT_GRID_COMPONENT,
 		         newtLabel(-1, -1, items[i].text),
@@ -268,7 +268,8 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
     for (rc = 0; rc < numItems; rc++)
 	*items[rc].value = strdup(*items[rc].value);
 
-    for (rc = 0; result != buttons[rc] && rc < numButtons; rc++);
+    for (rc = 0; rc < numButtons && result != buttons[rc]; rc++)
+	;
     if (rc == numButtons) 
 	rc = 0; /* F12 */
     else 
