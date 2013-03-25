@@ -7,7 +7,7 @@
 
 int main(void) {
     newtComponent b1, b2, b3, b4;
-    newtComponent answer, f, t;
+    newtComponent f, t;
     newtGrid grid, subgrid;
     char * flowedText;
     int textWidth, textHeight, rc, i;
@@ -45,7 +45,7 @@ int main(void) {
     newtGridWrappedWindow(grid, "first window");
     newtGridFree(grid, 1);
 
-    answer = newtRunForm(f);
+    newtRunForm(f);
 	
     newtFormDestroy(f);
     newtPopWindow();
@@ -79,7 +79,7 @@ int main(void) {
 
     f = newtForm(NULL, NULL, 0);
     newtFormAddComponents(f, b1, t, b2, NULL);
-    answer = newtRunForm(f);
+    newtRunForm(f);
 
     newtPopWindow();
     newtFormDestroy(f);

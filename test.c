@@ -34,7 +34,7 @@ void helpCallback(newtComponent co, void * tag) {
 
 int main(void) {
     newtComponent b1, b2, r1, r2, r3, e2, e3, l1, l2, l3, scale;
-    newtComponent lb, t, rsf, answer, timeLabel;
+    newtComponent lb, t, rsf, timeLabel;
     newtComponent cs[10];
     newtComponent f, chklist, e1;
     struct callbackInfo cbis[3];
@@ -129,7 +129,6 @@ int main(void) {
 	if (es.reason == NEWT_EXIT_COMPONENT && es.u.co == b2) {
 	    newtScaleSet(scale, atoi(scaleVal));
 	    newtRefresh();
-	    answer = NULL;
 	} else if (es.reason == NEWT_EXIT_TIMER) {
 	    spinState++;
 	    if (!*spinState) spinState = spinner;

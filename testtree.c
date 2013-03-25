@@ -10,7 +10,6 @@ int main(void) {
     newtComponent checktree;
     newtComponent button;
     newtComponent form;
-    newtComponent answer;
     const void **result, **ptr;
     int numselected, i, j;
     int * list;
@@ -104,7 +103,7 @@ int main(void) {
     form = newtForm(NULL, NULL, 0);
     newtFormAddComponents(form, checktree, button, NULL);
 
-    answer = newtRunForm(form);
+    newtRunForm(form);
 
     newtFinished();
 
