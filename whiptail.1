@@ -87,7 +87,7 @@ The dialog box will open with the cursor over the
 Set  the default item in a menu box.
 Normally the first item in the box is the default.
 .TP
-.B \-\-fb
+\fB\-\-fb\fR, \fB\-\-fullbuttons\fR
 Use full buttons. (By default, 
 .B whiptail
 uses compact buttons). 
@@ -117,6 +117,9 @@ The menu, checklist and radiolist widgets will display tags only, not
 the item strings. The menu widget still needs some items specified,
 but checklist and radiolist expect only tag and status.
 .TP
+.B \-\-notags
+Don't display tags in the menu, checklist and radiolist widgets.
+.TP
 .BI \-\-separate\-output
 For checklist widgets, output result one line at a time, with no
 quoting.  This facilitates parsing by another program.
@@ -143,6 +146,12 @@ Force the display of a vertical scrollbar.
 .TP
 .BI \-\-topleft
 Put window in top-left corner.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print a help message and exit.
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+Print version information and exit.
 .TP
 .B Box Options
 .TP

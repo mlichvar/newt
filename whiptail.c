@@ -51,19 +51,22 @@ static void usage(int err) {
 	       "\t--clear				clear screen on exit\n"
 	       "\t--defaultno			default no button\n"	
 	       "\t--default-item <string>		set default string\n"
-	       "\t--fb				use full buttons\n"
+	       "\t--fb, --fullbuttons		use full buttons\n"
 	       "\t--nocancel			no cancel button\n"
 	       "\t--yes-button <text>		set text of yes button\n"
 	       "\t--no-button <text>		set text of no button\n"
 	       "\t--ok-button <text>		set text of ok button\n"
 	       "\t--cancel-button <text>		set text of cancel button\n"
-	       "\t--noitem			display tags only\n"
+	       "\t--noitem			don't display items\n"
+	       "\t--notags			don't display tags\n"
 	       "\t--separate-output		output one line at a time\n"
 	       "\t--output-fd <fd>		output to fd, not stdout\n"
 	       "\t--title <title>			display title\n"
 	       "\t--backtitle <backtitle>		display backtitle\n"
 	       "\t--scrolltext			force vertical scrollbars\n"
-	       "\t--topleft			put window in top-left corner\n\n"));
+	       "\t--topleft			put window in top-left corner\n"
+	       "\t-h, --help			print this message\n"
+	       "\t-v, --version			print version information\n\n"));
     exit(err ? DLG_ERROR : 0 );
 }
 
