@@ -1160,3 +1160,12 @@ void newtTrashScreen(void) {
 	SLsmg_touch_lines(0, SLtt_Screen_Rows);
 }
      
+void newtComponentGetPosition(newtComponent co, int * left, int * top) {
+    if (left) *left = co->left;
+    if (top) *top = co->top;
+}
+
+void newtComponentGetSize(newtComponent co, int * width, int * height) {
+    if (width) *width = co->width;
+    if (height) *height = co->height;
+}

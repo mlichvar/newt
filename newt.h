@@ -263,6 +263,9 @@ void newtScaleSetColors(newtComponent co, int empty, int full);
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data);
 void newtComponentTakesFocus(newtComponent co, int val);
 
+void newtComponentGetPosition(newtComponent co, int * left, int * top);
+void newtComponentGetSize(newtComponent co, int * width, int * height);
+
 /* This callback is called when a component is destroyed. */
 void newtComponentAddDestroyCallback(newtComponent co,
 				      newtCallback f, void * data);
