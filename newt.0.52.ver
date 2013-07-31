@@ -161,3 +161,9 @@ NEWT_0.52.13 {
 		newtScrollbarSetColors;
 		newtTextboxSetColors;
 } NEWT_0.52.11;
+
+NEWT_0.52.16 {
+	global:
+		newtComponentGetPosition;
+		newtComponentGetSize;
+} NEWT_0.52.13;
