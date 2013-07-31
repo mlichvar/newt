@@ -67,7 +67,7 @@ AC_SUBST([PYTHONVERS])
 
 AC_ARG_WITH([tcl], [  --without-tcl           do not compile whiptcl.so])
 if test "x$with_tcl" = "xno"; then
-  WHIPTCLSO=
+  WHIPTCLLIB=
 else
   AC_MSG_CHECKING([for tcl configuration])
 
@@ -96,14 +96,14 @@ else
     AC_MSG_RESULT([found])
     . ${ac_cv_c_tclconfig}/tclConfig.sh
     AC_SUBST([TCL_LIB_FLAG])
-    WHIPTCLSO=whiptcl.so
+    WHIPTCLLIB=whiptcl
     # needed with tcl8.6
     CPPFLAGS="$CPPFLAGS -DUSE_INTERP_RESULT"
   else
     AC_MSG_RESULT([NOT found])
   fi
 fi
-AC_SUBST([WHIPTCLSO])
+AC_SUBST([WHIPTCLLIB])
 
 AC_ARG_WITH([gpm-support], [  --with-gpm-support      compile with GPM support])
 
