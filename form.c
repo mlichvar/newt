@@ -83,6 +83,7 @@ static int gpm_fd=-1;
 static int gpm_flag=0;
 static int gpm_tried=0;
 Gpm_Stst *gpm_stack=NULL;
+static char *gpm_sock_name=NULL;
 static struct sigaction gpm_saved_suspend_hook;
 static struct sigaction gpm_saved_winch_hook;
 
@@ -155,7 +156,6 @@ static int Gpm_Open(Gpm_Connect *conn, int flag)
   int i;
   struct sockaddr_un addr;
   Gpm_Stst *new;
-  char* sock_name = 0;
 
   /*....................................... First of all, check xterm */
 
@@ -228,10 +228,10 @@ static int Gpm_Open(Gpm_Connect *conn, int flag)
 
       bzero((char *)&addr,sizeof(addr));
       addr.sun_family=AF_UNIX;
-      if (!(sock_name = tempnam (0, "gpm"))) {
+      if (!(gpm_sock_name = tempnam (0, "gpm"))) {
         goto err;
       } /*if*/
-      strncpy (addr.sun_path, sock_name, sizeof (addr.sun_path));
+      strncpy (addr.sun_path, gpm_sock_name, sizeof (addr.sun_path));
       if (bind (gpm_fd, (struct sockaddr*)&addr,
                 sizeof (addr.sun_family) + strlen (addr.sun_path))==-1) {
         goto err;
@@ -302,10 +302,10 @@ static int Gpm_Open(Gpm_Connect *conn, int flag)
     }
   while(gpm_stack);
   if (gpm_fd>=0) close(gpm_fd);
-  if (sock_name) {
-    unlink(sock_name);
-    free(sock_name);
-    sock_name = 0;
+  if (gpm_sock_name) {
+    unlink(gpm_sock_name);
+    free(gpm_sock_name);
+    gpm_sock_name = NULL;
   } /*if*/
   gpm_flag=0;
   gpm_fd=-1;
@@ -334,6 +334,11 @@ static int Gpm_Close(void)
 
   if (gpm_fd>=0) close(gpm_fd);
   gpm_fd=-1;
+  if (gpm_sock_name) {
+    unlink(gpm_sock_name);
+    free(gpm_sock_name);
+    gpm_sock_name = NULL;
+  }
 #ifdef SIGTSTP
   sigaction(SIGTSTP, &gpm_saved_suspend_hook, 0);
 #endif
