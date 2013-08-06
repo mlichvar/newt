@@ -376,7 +376,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     *result = NULL;
     if (answer == cancel)
 	rc = DLG_CANCEL;
-    if (answer == NULL)
+    else if (answer == NULL)
 	rc = DLG_ESCAPE;
     else {
 	i = (long) newtListboxGetCurrent(listBox);
@@ -487,7 +487,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     *selections = NULL;
     if (answer == cancel)
 	rc = DLG_CANCEL;
-    if (answer == NULL)
+    else if (answer == NULL)
 	rc = DLG_ESCAPE;
     else {
 	if (useRadio) {
@@ -569,7 +569,7 @@ int messageBox(const char * text, int height, int width, int type, int flags) {
 	answer = newtFormGetCurrent(form);
 
 	if (answer == no)
-	    return DLG_CANCEL;
+	    rc = DLG_CANCEL;
     }
     else {
 	newtDrawForm(form);
