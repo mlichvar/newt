@@ -338,7 +338,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 * Thu Nov 24 2005 Jindrich Novy <jnovy@redhat.com> - 0.52.2-1
 - rebuild because of the new slang-2.0.5
 
-* Fri Nov 22 2005 Petr Rockai <prockai@redhat.com> - 0.52.2-0
+* Tue Nov 22 2005 Petr Rockai <prockai@redhat.com> - 0.52.2-0
 - new upstream version (minor fixes for the source tarball
   and build system)
 
@@ -424,7 +424,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 - fix textwrap for UTF-8 in general
 - bump soname to avoid shared library collisions with slang
 
-* Wed Jul 01 2002 Michael Fulbright <msf@redhat.com> 0.50.39-1
+* Mon Jul 01 2002 Michael Fulbright <msf@redhat.com> 0.50.39-1
 - Changed a test to check for 'None' the correct way
 
 * Wed Jun 26 2002 Bill Nottingham <notting@redhat.com> 0.50.38-1
@@ -441,7 +441,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 * Mon Mar 18 2002 Bill Nottingham <notting@redhat.com> 0.50.35-1
 - build for whatever version of python happens to be installed
 
-* Fri Sep 15 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.34-1
+* Sat Sep 15 2001 Trond Eivind Glomsrød <teg@redhat.com> 0.50.34-1
 - remove python2 subpackage
 - compile package for python 2.2
 
@@ -626,7 +626,7 @@ of keys
 * Mon Mar 15 1999 Matt Wilson <msw@redhat.com>
 - fix from Jakub Jelinek for listbox keypresses
 
-* Fri Feb 27 1999 Matt Wilson <msw@redhat.com>
+* Sat Feb 27 1999 Matt Wilson <msw@redhat.com>
 - fixed support for navigating listboxes with alphabetical keypresses
 
 * Thu Feb 25 1999 Matt Wilson <msw@redhat.com>
@@ -688,7 +688,7 @@ of keys
 - Added patched from Clarence Smith for setting the size of a listbox
 - Version 0.9
 
-* Tue May 28 1997 Elliot Lee <sopwith@redhat.com> 0.8-2
+* Wed May 28 1997 Elliot Lee <sopwith@redhat.com> 0.8-2
 - Touchups on Makefile
 - Cleaned up NEWT_FLAGS_*
 
