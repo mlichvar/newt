@@ -1,7 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 Summary: A library for text mode user interfaces
 Name: newt
-Version: 0.52.15
+Version: 0.52.16
 Release: 1%{?dist}
 License: LGPLv2
 Group: System Environment/Libraries
@@ -95,6 +95,19 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %{python_sitearch}/*.py*
 
 %changelog
+* Tue Aug 06 2013 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.16-1
+- add newtComponentGetSize and newtComponentGetPosition (#987596)
+- modify Makefile to use SOEXT (#971168)
+- free gpm socket name and unlink gpm socket on form exit
+- fix memory leaks in whiptail
+- fix weekdays in spec changelog
+
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.52.15-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
+* Fri Apr 05 2013 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.15-2
+- add missing whiptail options to help and man page
+
 * Mon Mar 25 2013 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.15-1
 - fix errors found by gcc-with-cpychecker (#800075)
 - fix building with tcl8.6 (#902561)
