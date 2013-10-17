@@ -39,9 +39,11 @@ Functions:
  - EntryWindow
 """
 
+
+from __future__ import absolute_import, print_function, unicode_literals
 import _snack
-import types
 import string
+import sys
 
 from _snack import FLAG_DISABLED, FLAGS_SET, FLAGS_RESET, FLAGS_TOGGLE, FD_READ, FD_WRITE, FD_EXCEPT
 
@@ -304,7 +306,7 @@ hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3,
             "INSERT": _snack.KEY_INSERT,
              " " : ord(" ") }
 
-for n in hotkeys.keys():
+for n in list(hotkeys.keys()):
     hotkeys[hotkeys[n]] = n
 for o,c in [ (ord(c),c) for c in string.ascii_letters+string.digits ]:
     hotkeys[c] = o
@@ -328,14 +330,14 @@ class Form:
         self.w.addhotkey(hotkeys[keyname])
 
     def add(self, widget):
-        if widget.__dict__.has_key('hotkeys'):
+        if 'hotkeys' in widget.__dict__:
             for key in widget.hotkeys.keys():
                 self.addHotKey(key)
 
-        if widget.__dict__.has_key('gridmembers'):
+        if 'gridmembers' in widget.__dict__:
             for w in widget.gridmembers:
                 self.add(w)
-        elif widget.__dict__.has_key('w'):
+        elif 'w' in widget.__dict__:
             self.trans[widget.w.key] = widget
             return self.w.add(widget.w)
         return None
@@ -408,14 +410,14 @@ class Grid:
         if (growy):
             gridFlags = gridFlags | _snack.GRID_GROWY
 
-        if (what.__dict__.has_key('g')):
+        if 'g' in what.__dict__:
             return self.g.setfield(col, row, what.g, padding, anchorFlags,
                        gridFlags)
         else:
             return self.g.setfield(col, row, what.w, padding, anchorFlags)
     
     def __init__(self, *args):
-        self.g = apply(_snack.grid, args)
+        self.g = _snack.grid(*args)
         self.gridmembers = []
 
 colorsets = { "ROOT" : _snack.COLORSET_ROOT,
@@ -604,9 +606,9 @@ class ButtonBar(Grid):
         self.item = 0
         Grid.__init__(self, len(buttonlist), 1)
         for blist in buttonlist:
-            if (type(blist) == types.StringType):
+            if isinstance(blist, str if sys.version >= '3' else basestring):
                 title = blist
-                value = string.lower(blist)
+                value = blist.lower()
             elif len(blist) == 2:
                 (title, value) = blist
             else:
@@ -622,7 +624,7 @@ class ButtonBar(Grid):
             self.item = self.item + 1
 
     def buttonPressed(self, result):    
-        if self.hotkeys.has_key(result):
+        if result in self.hotkeys:
             return self.hotkeys[result]
 
         for (button, value) in self.list:
@@ -657,7 +659,7 @@ class GridFormHelp(Grid):
         self.form_created = 0
         args = list(args)
         args[:0] = [self]
-        apply(Grid.__init__, tuple(args))
+        Grid.__init__(*tuple(args))
 
     def add(self, widget, col, row, padding = (0, 0, 0, 0),
             anchorLeft = 0, anchorTop = 0, anchorRight = 0,
@@ -713,7 +715,7 @@ class GridForm(GridFormHelp):
     """
     def __init__(self, screen, title, *args):
         myargs = (self, screen, title, None) + args
-        apply(GridFormHelp.__init__, myargs)
+        GridFormHelp.__init__(*myargs)
 
 class CheckboxTree(Widget):
     """ CheckboxTree combo widget,
@@ -788,7 +790,7 @@ def ListboxChoiceWindow(screen, title, text, items,
     l = Listbox(height, scroll = scroll, returnExit = 1)
     count = 0
     for item in items:
-        if (type(item) == types.TupleType):
+        if type(item) == tuple:
             (text, key) = item
         else:
             text = item
@@ -848,9 +850,9 @@ def EntryWindow(screen, title, text, prompts, allowCancel = 1, width = 40,
     count = 0
     entryList = []
     for n in prompts:
-        if (type(n) == types.TupleType):
+        if type(n) == tuple:
             (n, e) = n
-            if (type(e) in types.StringTypes):
+            if isinstance(e, str if sys.version >= '3' else basestring):
                 e = Entry(entryWidth, e)
         else:
             e = Entry(entryWidth)

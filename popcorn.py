@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import absolute_import, print_function, unicode_literals
 from snack import *
 import sys
 
@@ -45,7 +46,7 @@ r1 = SingleRadioButton("Radio 1", None, 1)
 r2 = SingleRadioButton("Radio 2", r1)
 
 def something():
-    print hello
+    print(hello)
 
 screen = SnackScreen()
 
@@ -99,14 +100,14 @@ g.runOnce()
 
 screen.finish()
 
-print "val", e.value()
-print "check", cb.value()
-print "r1", r1.selected()
-print "listbox", li.current()
+print("val", e.value())
+print("check", cb.value())
+print("r1", r1.selected())
+print("listbox", li.current())
 # returns a tuple of the wrapped text, the actual width, and the actual height
-print res
+print(res)
 
-print foo
-print 'lbcw', lbcw
-print "ct selected", ct.getSelection()
-print "ct current", ct.getCurrent()
+print(foo)
+print('lbcw', lbcw)
+print("ct selected", ct.getSelection())
+print("ct current", ct.getCurrent())

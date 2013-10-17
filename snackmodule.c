@@ -12,9 +12,23 @@
 #include <unistd.h>
 
 #include "Python.h"
+#include "structmember.h"
 #include "nls.h"
 #include "newt.h"
 #include "newt_pr.h"
+
+#if PY_MAJOR_VERSION >= 3
+  #define PyInt_FromLong PyLong_FromLong
+  #define PyInt_AsLong PyLong_AsLong
+  #define PyString_FromString PyUnicode_FromString
+  #define MOD_ERROR_VAL NULL
+  #define MOD_SUCCESS_VAL(val) val
+  #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
+#else
+  #define MOD_ERROR_VAL
+  #define MOD_SUCCESS_VAL(val)
+  #define MOD_INIT(name) void init##name(void)
+#endif
 
 typedef struct snackWidget_s snackWidget;
 typedef struct snackGrid_s snackGrid;
@@ -68,6 +82,8 @@ static snackWidget * textWidget(PyObject * s, PyObject * args);
 static PyObject * ternaryWindow(PyObject * s, PyObject * args);
 static snackWidget * checkboxTreeWidget(PyObject * s, PyObject * args, PyObject * kwargs);
 static PyObject * pywstrlen(PyObject * s, PyObject * args);
+static PyObject * widget_get_checkboxValue(PyObject *self, void *closure);
+static PyObject * widget_get_radioValue(PyObject *self, void *closure);
 
 static PyMethodDef snackModuleMethods[] = {
     { "button", (PyCFunction) buttonWidget, METH_VARARGS, NULL },
@@ -107,12 +123,31 @@ static PyMethodDef snackModuleMethods[] = {
     { NULL }
 } ;
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+        "_snack",            /* m_name */
+        NULL,                /* m_doc */
+        -1,                  /* m_size */
+        snackModuleMethods,  /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+#endif
+
+static struct PyGetSetDef widget_getset[] = {
+        { "checkboxValue", widget_get_checkboxValue, 0, NULL, NULL },
+        { "radioValue", widget_get_radioValue, 0, NULL, NULL },
+        { NULL }
+};
+
 struct snackGrid_s {
     PyObject_HEAD
     newtGrid grid;
 } ;
 
-static PyObject * gridGetAttr(PyObject * s, char * name);
 static PyObject * gridPlace(snackGrid * s, PyObject * args);
 static PyObject * gridSetField(snackGrid * s, PyObject * args);
 
@@ -123,20 +158,34 @@ static PyMethodDef gridMethods[] = {
 };
 
 static PyTypeObject snackGridType = {
-        PyObject_HEAD_INIT(&PyType_Type)
-        0,                              /* ob_size */
+        PyVarObject_HEAD_INIT(&PyType_Type, 0)
         "snackgrid",                    /* tp_name */
         sizeof(snackGrid),              /* tp_size */
         0,                              /* tp_itemsize */
         emptyDestructor,      			/* tp_dealloc */
         0,                              /* tp_print */
-        gridGetAttr,    		/* tp_getattr */
+        0,                   		/* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
         0,                		/* tp_as_mapping */
+	0,                              /* tp_hash */
+	0,                              /* tp_call */
+	0,                              /* tp_str */
+	PyObject_GenericGetAttr,        /* tp_getattro */
+	0,                              /* tp_setattro */
+	0,                              /* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT,             /* tp_flags */
+	0,                              /* tp_doc */
+	0,                              /* tp_traverse */
+	0,                              /* tp_clear */
+	0,                              /* tp_richcompare */
+	0,                              /* tp_weaklistoffset */
+	0,                              /* tp_iter */
+	0,                              /* tp_iternext */
+	gridMethods                     /* tp_methods */
 };
 
 struct snackForm_s {
@@ -144,7 +193,6 @@ struct snackForm_s {
     newtComponent fo;
 } ;
 
-static PyObject * formGetAttr(PyObject * s, char * name);
 static PyObject * formAdd(snackForm * s, PyObject * args);
 static PyObject * formDraw(snackForm * s, PyObject * args);
 static PyObject * formRun(snackForm * s, PyObject * args);
@@ -165,20 +213,34 @@ static PyMethodDef formMethods[] = {
 };
 
 static PyTypeObject snackFormType = {
-        PyObject_HEAD_INIT(&PyType_Type)
-        0,                              /* ob_size */
+        PyVarObject_HEAD_INIT(&PyType_Type, 0)
         "snackform",                    /* tp_name */
         sizeof(snackForm),              /* tp_size */
         0,                              /* tp_itemsize */
         emptyDestructor,      		/* tp_dealloc */
         0,                              /* tp_print */
-        formGetAttr,    		/* tp_getattr */
+        0,                     		/* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
         0,                		/* tp_as_mapping */
+	0,                              /* tp_hash */
+	0,                              /* tp_call */
+	0,                              /* tp_str */
+	PyObject_GenericGetAttr,        /* tp_getattro */
+	0,                              /* tp_setattro */
+	0,                              /* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT,             /* tp_flags */
+	0,                              /* tp_doc */
+	0,                              /* tp_traverse */
+	0,                              /* tp_clear */
+	0,                              /* tp_richcompare */
+	0,                              /* tp_weaklistoffset */
+	0,                              /* tp_iter */
+	0,                              /* tp_iternext */
+	formMethods                     /* tp_methods */
 };
 
 struct snackWidget_s {
@@ -191,7 +253,6 @@ struct snackWidget_s {
 } ;
 
 static PyObject * widgetAddCallback(snackWidget * s, PyObject * args);
-static PyObject * widgetGetAttr(PyObject * s, char * name);
 static void widgetDestructor(PyObject * s);
 static PyObject * widgetEntrySetValue(snackWidget * s, PyObject * args);
 static PyObject * widgetLabelText(snackWidget * s, PyObject * args);
@@ -255,21 +316,43 @@ static PyMethodDef widgetMethods[] = {
     { NULL }
 };
 
+static PyMemberDef widget_members[] = {
+        { "key" , T_INT, offsetof(snackWidget, co), 0, NULL },
+        { "entryValue", T_STRING, offsetof(snackWidget, apointer), 0, NULL },
+	{ NULL }
+};
+
 static PyTypeObject snackWidgetType = {
-        PyObject_HEAD_INIT(&PyType_Type)
-        0,                              /* ob_size */
+        PyVarObject_HEAD_INIT(&PyType_Type, 0)
         "snackwidget",                  /* tp_name */
         sizeof(snackWidget),            /* tp_size */
         0,                              /* tp_itemsize */
         widgetDestructor,      		/* tp_dealloc */
         0,                              /* tp_print */
-        widgetGetAttr,  		/* tp_getattr */
+        0,                   		/* tp_getattr */
         0,                              /* tp_setattr */
         0,                              /* tp_compare */
         0,                              /* tp_repr */
         0,                              /* tp_as_number */
         0,                              /* tp_as_sequence */
         0,                		/* tp_as_mapping */
+	0,                              /* tp_hash */
+	0,                              /* tp_call */
+	0,                              /* tp_str */
+	PyObject_GenericGetAttr,        /* tp_getattro */
+	0,                              /* tp_setattro */
+	0,                              /* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT,             /* tp_flags */
+	0,                              /* tp_doc */
+	0,                              /* tp_traverse */
+	0,                              /* tp_clear */
+	0,                              /* tp_richcompare */
+	0,                              /* tp_weaklistoffset */
+	0,                              /* tp_iter */
+	0,                              /* tp_iternext */
+	widgetMethods,                  /* tp_methods */
+	widget_members,                 /* tp_members */
+	widget_getset                   /* tp_getset */
 };
 
 static snackWidget * snackWidgetNew (void) {
@@ -859,10 +942,6 @@ static snackGrid * gridCreate(PyObject * s, PyObject * args) {
     return grid;
 }
 
-static PyObject * gridGetAttr(PyObject * s, char * name) {
-    return Py_FindMethod(gridMethods, s, name);
-}
-
 static PyObject * gridPlace(snackGrid * grid, PyObject * args) {
     int x, y;
 
@@ -886,7 +965,7 @@ static PyObject * gridSetField(snackGrid * grid, PyObject * args) {
 				&anchorFlags, &growFlags)) 
 	return NULL;
 
-    if (w->ob_type == &snackWidgetType) {
+    if (Py_TYPE(w) == &snackWidgetType) {
 	newtGridSetField(grid->grid, x, y, NEWT_GRID_COMPONENT,
 			 w->co, pLeft, pTop, pRight, pBottom, anchorFlags, 
 			 growFlags);
@@ -899,10 +978,6 @@ static PyObject * gridSetField(snackGrid * grid, PyObject * args) {
 
     Py_INCREF(Py_None);
     return Py_None;
-}
-
-static PyObject * formGetAttr(PyObject * s, char * name) {
-    return Py_FindMethod(formMethods, s, name);
 }
 
 static PyObject * formDraw(snackForm * s, PyObject * args) {
@@ -996,20 +1071,18 @@ static PyObject * formSetCurrent(snackForm * form, PyObject * args) {
     return Py_None;
 }
 
-static PyObject * widgetGetAttr(PyObject * s, char * name) {
-    snackWidget * w = (snackWidget *) s;
+static PyObject * widget_get_checkboxValue(PyObject *self, void *closure)
+{
+	snackWidget *w = (snackWidget *)self;
 
-    if (!strcmp(name, "key")) {
-	return Py_BuildValue("i", w->co);
-    } else if (!strcmp(name, "entryValue")) {
-	return Py_BuildValue("s", w->apointer);
-    } else if (!strcmp(name, "checkboxValue")) {
 	return Py_BuildValue("i", w->achar == ' ' ? 0 : 1);
-    } else if (!strcmp(name, "radioValue")) {
-	return Py_BuildValue("i", newtRadioGetCurrent(w->co));
-    }
+}
 
-    return Py_FindMethod(widgetMethods, s, name);
+static PyObject * widget_get_radioValue(PyObject *self, void *closure)
+{
+	snackWidget *w = (snackWidget *)self;
+
+	return Py_BuildValue("i", newtRadioGetCurrent(w->co));
 }
 
 static void widgetDestructor(PyObject * o) {
@@ -1351,10 +1424,19 @@ static void setitemstring_decref(PyObject * dict,
     Py_DECREF(o);
 }
 
-void init_snack(void) {
+MOD_INIT(_snack)
+{
     PyObject * d, * m;
 
+#if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&moduledef);
+#else
     m = Py_InitModule("_snack", snackModuleMethods);
+#endif
+
+    if (!m)
+	    return MOD_ERROR_VAL;
+
     d = PyModule_GetDict(m);
 
     setitemstring_decref(d, "ANCHOR_LEFT", PyInt_FromLong(NEWT_ANCHOR_LEFT));
@@ -1431,4 +1513,6 @@ void init_snack(void) {
     setitemstring_decref(d, "COLORSET_COMPACTBUTTON", PyInt_FromLong(NEWT_COLORSET_COMPACTBUTTON));
     setitemstring_decref(d, "COLORSET_ACTSELLISTBOX", PyInt_FromLong(NEWT_COLORSET_ACTSELLISTBOX));
     setitemstring_decref(d, "COLORSET_SELLISTBOX", PyInt_FromLong(NEWT_COLORSET_SELLISTBOX));
+
+    return MOD_SUCCESS_VAL(m);
 }

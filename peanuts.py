@@ -2,6 +2,7 @@
 
 # Demo program to show use of python-newt module
 
+from __future__ import absolute_import, print_function, unicode_literals
 from snack import *
 
 screen = SnackScreen()
@@ -38,8 +39,8 @@ result = g.runOnce()
 
 screen.finish()
 
-print result
-print "listbox:", li.current()
-print "rb:", rb.getSelection()
-print "bb:", bb.buttonPressed(result)
-print "checkboxtree:", ct.getSelection()
+print(result)
+print("listbox:", li.current())
+print("rb:", rb.getSelection())
+print("bb:", bb.buttonPressed(result))
+print("checkboxtree:", ct.getSelection())
