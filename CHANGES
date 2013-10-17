@@ -1,57 +1,340 @@
-***************
-THIS FILE IS OBSOLETE -- UPDATE THE SPEC FILE INSTEAD
-***************
+0.52.16
+- add newtComponentGetSize and newtComponentGetPosition (#987596)
+- modify Makefile to use SOEXT (#971168)
+- free gpm socket name and unlink gpm socket on form exit
+- fix memory leaks in whiptail
+- add missing whiptail options to help and man page
 
-0.59 -> 0.50.10
-	- added support for help
-	- added cusor on/off stuff
+0.52.15
+- fix errors found by gcc-with-cpychecker (#800075)
+- fix building with tcl8.6 (#902561)
+- add fallback to python-config (#783627)
+- replace tabs in snack.py (#870647)
+- compile snackmodule.c with flag -fPIC (Kang Kai)
+- include new translations from transifex
+- allow newtWinMenu and newtWinEntries with no buttons or items
+- don't draw scale when not mapped
+- build with large-file support for stat64
+- remove unused variables in test code
+- update FSF address
 
-0.57 -> 0.59
-	- minor fixes
+0.52.14
+- fix returning strings in whiptail and whiptcl (#752818)
+- fix configure to work with multiple python versions (#737998)
 
-0.55 -> 0.56
-	- added newtCheckboxTreeSetEntry(), newtCheckboxTreeGetEntryValue()
-	  and newtCheckboxTreeSetEntryValue()
-	- checkboxtree callbacks
-	- if collapsing branches at the end of the list and list length
-	  is larger then height, move first visible entry accordingly
-	- allow selection of all checkboxes on current branch
-	- snack bindings for the above
+0.52.13
+- add support for changing colors in individual labels, scrollbars, entries,
+  textboxes and scales, add custom colorsets 
+- add support for NEWT_COLORS and NEWT_COLORS_FILE variables (#689903)
+- allow resizing of form
+- fix errors found by coverity
+- fix va_list usage (Gwenole Beauchesne)
+- fix building and installing on Mac OS X (#652479)
+- check for slang.h header, support DESTDIR variable, add --without-python
+  option (Otavio Salvador)
+- add Persian, Low German translations
+- don't hang in form when stdin disappears
 
-0.54 -> 0.55
-	- added newtCheckboxTreeGetCurrent() and snack bindings
-	- updated snack stuff to allow manual placement of grid
-	  wrapped windows
+0.52.12
+- fix whiptail --gauge and its description in man page (#620083)
+- remove space after \n in whiptail texts (#620083)
+- remove NLS code from snack (#599608)
+- expose more keys to python as shortcuts in dialogs (Jakob Kemi)
+- release python global-thread-lock during dialog displays (Jakob Kemi)
+- fix warnings in whiptcl.c and include Tcl_PkgProvide() call (Mikhail T.)
+- don't NULL deref when an invalid array is specified in checkboxtree
+  (Arnaldo Carvalho de Melo)
 
-0.53 -> 0.54
-	- fix segfault in newtRadioGetCurrent
+0.52.11
+- fix buffer overflow in textbox when reflowing (#523955, CVE-2009-2905)
+- use full textbox width when reflowing and allow minimal width 1
+- fix writing lines longer than width in textbox
+- don't use va_list in newtvwindow more than once (#523696)
+- bind \E[Z to back-tab in built-in keymap (#468046)
+- terminate string after reading file in whiptail
+- add newtRadioSetCurrent function (Thomas Jarosch)
+- add pkgconfig support (Thomas Jarosch)
+- add Malay, Malayalam, Assamese, Gujarati, Bengali India, Kannada, Telugu
+  translations
+- include debian patches
+  - fix crash in textbox SetText when topLines != 0
+  - don't link modules with libraries already linked with libnewt
+  - add Asturian and Marathi translations
 
-0.52 -> 0.53
-	- place cursor in checkboxtree's more carefully
+0.52.10
+- improve --noitem description (#456305)
+- add setHeight to Textbox class
+- fix fixedheight forms
+- free keymap in newtFinished()
+- fix memory leak in textbox
+- fix valgrind error in checkboxtree
+- don't crash when running empty form
+- don't crash or hang when form has no focusable elements
+- before checkboxtree drawing return first item in GetCurrent()
+- redraw textbox in SetText()
+- add setColor description to SnackScreen docstring (Greg Swift)
+- make sure Widget isn't used directly (Greg Swift) (#452920)
+- add Serbian translations (Miloš Komarčević)
+- add Balochi translation (Mostafa Daneshvar)
 
-0.51 -> 0.52
-	- listbox bug fixes
+0.52.9
+- handle component destruction (patch by Richard W.M. Jones)
+- fix newtWinEntry definition
+- don't use uninitialized values in newtWinMenu
+- remove workarounds for old bug in SLsmg_write_nstring
+- improve SIGWINCH handling in form
+- don't abort from whiptail gauge on SIGWINCH
+- redisplay also last line
+- update Polish translation (Piotr Drąg)
 
-0.50 -> 0.51
-	- added newtFormSetTimer() (and test case, and python)
-	- checkboxtree's could improperly leave info from closed trees
-	  at the end of the display
+0.52.8
+- enable slang utf8 mode (#425992)
+- support --disable-nls option (patch by Natanael Copa)
+- redraw screen when using entry in euc encodings
+- fix segfault in whiptail when no entry is selected in radiolist
+- add back support for list of Entries in EntryWindow prompts in snack
+  (#248878)
+ 
+0.52.7
+- add support to snack for multiple selection and border in listbox
+  and cursorAtEnd in entry (patch by Shawn Starr)
+- fix scrollbar positioning in listbox
+- cope with backward system time jumps (#240691)
+- free helplines and windows in newtFinished, check for overflow (#239992)
+- fix cursor positioning when setting entry or checkbox flags
+- fix counting of items in checkboxtree
+- fix some memory leaks
+- fix entry scrolling (#234829)
+- fix multibyte character handling in entry
 
-0.40 -> 0.50
-	- added CheckboxTree widget
-	- vastly improved python bindings
+0.52.6
+- add newtSetColor() to allow changing individual colors
+- add newtPopWindowNoRefresh() (patch by Forest Bond)
 
-0.30 -> 0.40
-        - GPM mouse support added
+0.52.5
+- provide option to change text of buttons (#126768)
+- don't add escape key to hot keys by default (#216157)
+- fix cursor position in checkboxtree, radio button and checkbox
+- don't force monochrome terminals to output colors
+- highlight active compact button on monochrome terminals
+- update translations from debian
+- fix memory allocation in snack to be consistent (#212780)
 
-0.30 -> 0.31:
-	- pgdn could core dump on short textboxes
+0.52.4
+- fix entry corruption when reading multibyte characters
+  and double width character handling
+- avoid overflow/crash in scale
+- patches from debian
+  - fix crash of snack in EntryWindow when prompts is list of tuples
+  - put cursor at beginning of text for better accessibility
+    in button, scale and textbox
+  - add topleft option to whiptail
 
-0.25 -> 0.30:
-	- newtDrawRootText() didn't use the specified position properly
-	- removed relics of original listbox code still handing around
-	  checkbox.c
-	- renamed DOBORDER flag to simply BORDER
-	- listboxes no longer scroll by default
-	- newtListboxSetEntry() uses a key, not an index
-	- listbox scrollbars should work properly in borders
+0.52.3
+- makefile and configure cleanup
+- fix warnings
+- fix screen corruption when half of double width character is overwritten
+  (#137957) 
+- fix double width character handling in checkboxtree and listbox
+- unfocus when displaying help
+- fix help dialog in popcorn.py (#81352)
+- fix checkboxtree positioning
+- make textbox with scrollbar focusable (#83203)
+- turn off cursor when entry terminated form (#86074)
+- handle listbox and checkboxtree focus better (#186053)
+- make default colors more friendly to 8-color terminals (#187545)
+- fix handling windows larger than screen size (#189981)
+- fix a crash in checkboxtree.c where pressing pgup/pgdown
+  on a checkboxtree with less items than its height would
+  cause segmentation violation (#165347)
+- apply patch by Bill Nottingham (thanks) to improve scrollbar appearance
+  (#174771)
+
+0.52.2
+- minor fixes
+
+0.52.1
+- revert bidi patch, objections by Jeremy Katz about
+  anaconda breaking
+- this version still only exists as a "ghastly" upstream tarball;
+  the patches are now cleaned up and will be integrated into
+  rhlinux cvs unless some more breakage akin to bidi occurs
+- only do gpmclose if gpmopen succeeed (#118530)
+
+0.52.0
+- use versioned symbols, patch by Alastair McKinstry, mckinstry at
+  debian dot org, thanks
+- need private wstrlen due to versioned syms, patch from debian
+  package of newt
+
+0.51.5
+- incorporated listbox cursor location patch (#69903)
+
+0.51.4
+- fixed help line drawing in UTF-8 (#81718)
+- calculate the width of text in entries using wstrlen
+- always set component width to the new label width in newtLabelSetText
+- fixed snack.CListbox to work properly with UTF-8 (#81718)
+
+0.51.3
+- cleaned up const qualifiers in interfaces
+- added Ctrl-L screen refresh
+- fixed segfault in test.c when listbox items are selected
+- accessibility: made newt useable with monochrome terms (#60931)
+- leave the symbols in the libs (#60400)
+- fixed grammar in tutorial (#63496)
+- error checking (curcomp exists) for formEvent, newtFormGetCurrent,
+  removed fifty button limit (#59027)
+
+0.51.2
+- fixed wstrlen() it was calculating wcwidth(first wide char in
+  string) * strlen(str) instead of the actual width of the whole
+  string
+- fixed newtRedrawHelpLine() to copy all the bytes from a multibyte
+  string
+
+0.51.0
+- changes for element width calculation for UTF-8
+- fix textwrap for UTF-8 in general
+- bump soname to avoid shared library collisions with slang
+
+0.50.39
+- changed a test to check for 'None' the correct way
+
+0.50.38
+- don't hardcode linedrawing characters in the scrollbar code
+
+0.50.37
+- minor tweaks for use with UTF-8 slang
+
+0.50.36
+- add newtListboxGetItemCount() API call
+- include numeric percentage in scale widget appearace
+- add support for ESC key using NEWT_KEY_ESCAPE
+
+0.50.35
+- build for whatever version of python happens to be installed
+
+0.50.32
+- re-ordered the width key of CheckboxTree.__init__; #52319
+
+0.50.31
+- right anchor the internal Listbox of CListboxes, so that empty
+- scrollable CListboxes do not look like crape.
+
+0.50.30
+- padded hidden checkboxes on CheckboxTrees
+
+0.50.29
+- taught CheckboxTrees about width. Whohoo! 2-D!!!
+
+0.50.28
+- added 'hide_checkbox' and 'unselectable' options to CheckboxTrees
+
+0.50.27
+- CListBox -> CListbox for API consistency
+- fixup replace() method of CListbox
+
+0.50.26
+- few bugfixes to the CListBox
+
+0.50.25
+- added python binding for newtListboxClear() for Listbox and CListBox
+- let ButtonBars optionally be made of CompactButtons
+
+0.50.24
+- added CListBox python convenience class
+
+0.50.23
+- added python binding for CompactButton()
+- change from using SLsmg_touch_screen to SLsmg_touch_lines to prevent
+  excessive flashing due to screen clears when using touch_screen (more
+  Japanese handling)
+
+0.50.22
+- redraw the screen in certain situations when LANG=ja_JP.eucJP to
+  prevent corrupting kanji characters (#34362)
+- allow python scripts to watch file handles
+- fix 64-bit warnings in snackmodule
+- misc snack.py cleanups
+- add NEWT_FD_EXCEPT to allow watching for fd exceptions
+- in newtExitStruct, return the first file descriptor that an event occurred on 
+
+0.50.21
+- don't blow the stack if we push a help line that is longer than the
+  curret number of columns
+- clip window to screen bounds so that if we get a window that is
+  larger than the screen we can still redraw the windows behind it
+  when we pop
+
+0.50.20
+- added newtCheckboxTreeSetCurrent() and snack binding
+
+0.50.19
+- fix use of append in snack.py
+
+0.50.17
+- fixed cursor disappearing in suspend (again)
+
+0.50.16
+- fixed cursor disappearing in suspend
+
+0.50.15
+- added setValue method for checkboxes in snack
+
+0.50.14
+- added NEWT_FLAG_PASSWORD for entering passwords and having asterix echo'd
+
+0.50.10
+- added support for help
+- added cusor on/off stuff
+
+0.50.9
+- minor fixes
+
+0.50.6
+- added newtCheckboxTreeSetEntry(), newtCheckboxTreeGetEntryValue()
+  and newtCheckboxTreeSetEntryValue()
+- checkboxtree callbacks
+- if collapsing branches at the end of the list and list length
+  is larger then height, move first visible entry accordingly
+- allow selection of all checkboxes on current branch
+- snack bindings for the above
+
+0.50.5
+- added newtCheckboxTreeGetCurrent() and snack bindings
+- updated snack stuff to allow manual placement of grid
+  wrapped windows
+
+0.50.4
+- fix segfault in newtRadioGetCurrent
+
+0.50.3
+- place cursor in checkboxtree's more carefully
+
+0.50.2
+- listbox bug fixes
+
+0.50.1
+- added newtFormSetTimer() (and test case, and python)
+- checkboxtree's could improperly leave info from closed trees
+  at the end of the display
+
+0.50
+- added CheckboxTree widget
+- vastly improved python bindings
+
+0.40
+- GPM mouse support added
+
+0.31:
+- pgdn could core dump on short textboxes
+
+0.30:
+- newtDrawRootText() didn't use the specified position properly
+- removed relics of original listbox code still handing around
+  checkbox.c
+- renamed DOBORDER flag to simply BORDER
+- listboxes no longer scroll by default
+- newtListboxSetEntry() uses a key, not an index
+- listbox scrollbars should work properly in borders
