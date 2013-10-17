@@ -1,4 +1,9 @@
+%if 0%{?fedora} > 12
+%global with_python3 1
+%else
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%endif
+
 Summary: A library for text mode user interfaces
 Name: newt
 Version: 0.52.16
@@ -9,6 +14,9 @@ URL: https://fedorahosted.org/newt/
 Source: https://fedorahosted.org/released/newt/newt-%{version}.tar.gz
 BuildRequires: popt-devel python-devel slang-devel
 BuildRequires: docbook-utils
+%if 0%{?with_python3}
+BuildRequires: python3-devel
+%endif
 Provides: snack = %{version}-%{release}
 
 %package devel
@@ -46,13 +54,24 @@ The newt-static package contains the static version of the newt library.
 Install it if you need to link statically with libnewt.
 
 %package python
-Summary: Python bindings for newt
+Summary: Python 2 bindings for newt
 Group: Development/Libraries
 Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description python
-The newt-python package contains the Python bindings for the newt library
+The newt-python package contains the Python 2 bindings for the newt library
+providing a python API for creating text mode ionterfaces.
+
+%if 0%{?with_python3}
+%package python3
+Summary: Python 3 bindings for newt
+Group: Development/Libraries
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description python3
+The newt-python3 package contains the Python 3 bindings for the newt library
 providing a python API for creating text mode ionterfaces. 
+%endif
 
 %prep
 %setup -q
@@ -93,6 +112,14 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %doc peanuts.py popcorn.py
 %{python_sitearch}/*.so
 %{python_sitearch}/*.py*
+
+%if 0%{?with_python3}
+%files python3
+%doc peanuts.py popcorn.py
+%{python3_sitearch}/*.so
+%{python3_sitearch}/*.py*
+%{python3_sitearch}/__pycache__/*.py*
+%endif
 
 %changelog
 * Tue Aug 06 2013 Miroslav Lichvar <mlichvar@redhat.com> - 0.52.16-1
