@@ -409,7 +409,7 @@ struct form {
     newtCallback helpCb;
 };
 
-static void gotoComponent(struct form * form, int newComp);
+static void gotoComponent(newtComponent co, int newComp);
 static struct eventResult formEvent(newtComponent co, struct event ev);
 static struct eventResult sendEvent(newtComponent comp, struct event ev);
 static void formPlace(newtComponent co, int left, int top);
@@ -455,6 +455,7 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
 
     co->takesFocus = 0;			/* we may have 0 components */
     co->ops = &formOps;
+    co->callback = NULL;
     co->destroyCallback = NULL;
 
     form->help = help;
@@ -543,11 +544,11 @@ void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     new = i;
 
     if (co->isMapped && !componentFits(co, new)) {
-	gotoComponent(form, -1);
+	gotoComponent(co, -1);
 	formScroll(co, form->elements[new].co->top - co->top - 1);
     }
 
-    gotoComponent(form, new);
+    gotoComponent(co, new);
 }
 
 void newtFormSetTimer(newtComponent co, int millisecs) {
@@ -695,7 +696,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		      (el->co->left + el->co->width > ev.u.mouse.x)) {
 		      found = 1;
 		      if (el->co->takesFocus) {
-			  gotoComponent(form, i);
+			  gotoComponent(co, i);
 			  subco = form->elements[form->currComp].co;
 		      }
 		  }
@@ -791,7 +792,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	if (!componentFits(co, new)) {
 	    int vertDelta;
 
-	    gotoComponent(form, -1);
+	    gotoComponent(co, -1);
 
 	    if (dir < 0) {
 		/* make the new component the first one */
@@ -807,7 +808,7 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 	    newtDrawForm(co);
 	}
 
-	gotoComponent(form, new);
+	gotoComponent(co, new);
 	er.result = ER_SWALLOWED;
     }
 
@@ -961,9 +962,9 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 
     if (form->currComp == -1) {
 	if (form->numComps)
-	    gotoComponent(form, 0);
+	    gotoComponent(co, 0);
     } else
-	gotoComponent(form, form->currComp);
+	gotoComponent(co, form->currComp);
 
     while (!done) {
 	newtRefresh();
@@ -1154,7 +1155,8 @@ static struct eventResult sendEvent(newtComponent co, struct event ev) {
     return er;
 }
 
-static void gotoComponent(struct form * form, int newComp) {
+static void gotoComponent(newtComponent co, int newComp) {
+    struct form * form = co->data;
     struct event ev;
 
     if (form->currComp != -1) {
@@ -1169,6 +1171,9 @@ static void gotoComponent(struct form * form, int newComp) {
 	ev.when = EV_NORMAL;
 	sendEvent(form->elements[form->currComp].co, ev);
     }
+
+    if (co->callback)
+	co->callback(co, co->callbackData);
 }
 
 void newtComponentAddCallback(newtComponent co, newtCallback f, void * data) {
