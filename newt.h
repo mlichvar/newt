@@ -245,6 +245,8 @@ newtComponent newtRunForm(newtComponent form);		/* obsolete */
 void newtFormRun(newtComponent co, struct newtExitStruct * es);
 void newtDrawForm(newtComponent form);
 void newtFormAddHotKey(newtComponent co, int key);
+int newtFormGetScrollPosition(newtComponent co);
+void newtFormSetScrollPosition(newtComponent co, int position);
 
 typedef int (*newtEntryFilter)(newtComponent entry, void * data, int ch,
 			       int cursor);

@@ -167,3 +167,9 @@ NEWT_0.52.16 {
 		newtComponentGetPosition;
 		newtComponentGetSize;
 } NEWT_0.52.13;
+
+NEWT_0.52.17 {
+	global:
+		newtFormGetScrollPosition;
+		newtFormSetScrollPosition;
+} NEWT_0.52.16;

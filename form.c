@@ -517,6 +517,20 @@ static void formScroll(newtComponent co, int delta) {
     }
 }
 
+int newtFormGetScrollPosition(newtComponent co) {
+    struct form * form = co->data;
+
+    return form->vertOffset;
+}
+
+void newtFormSetScrollPosition(newtComponent co, int position) {
+    struct form * form = co->data;
+
+    if (form->numRows == 0)
+	newtFormSetSize(co);
+    formScroll(co, position - form->vertOffset);
+}
+
 void newtFormSetCurrent(newtComponent co, newtComponent subco) {
     struct form * form = co->data;
     int i, new;
