@@ -172,4 +172,6 @@ NEWT_0.52.17 {
 	global:
 		newtFormGetScrollPosition;
 		newtFormSetScrollPosition;
+		newtEntryGetCursorPosition;
+		newtEntrySetCursorPosition;
 } NEWT_0.52.16;

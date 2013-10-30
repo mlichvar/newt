@@ -504,3 +504,15 @@ void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data) {
     en->filter = filter;
     en->filterData = data;
 }
+
+int newtEntryGetCursorPosition (newtComponent co) {
+    struct entry * en = co->data;
+
+    return en->cursorPosition;
+}
+
+void newtEntrySetCursorPosition (newtComponent co, int position) {
+    struct entry * en = co->data;
+
+    en->cursorPosition = position;
+}

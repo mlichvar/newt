@@ -257,6 +257,8 @@ void newtEntrySetFilter(newtComponent co, newtEntryFilter filter, void * data);
 char * newtEntryGetValue(newtComponent co);
 void newtEntrySetFlags(newtComponent co, int flags, enum newtFlagsSense sense);
 void newtEntrySetColors(newtComponent co, int normal, int disabled);
+int newtEntryGetCursorPosition(newtComponent co);
+void newtEntrySetCursorPosition(newtComponent co, int position);
 
 newtComponent newtScale(int left, int top, int width, long long fullValue);
 void newtScaleSet(newtComponent co, unsigned long long amount);
