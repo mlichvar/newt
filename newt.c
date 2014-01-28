@@ -1063,6 +1063,7 @@ void newtRedrawHelpLine(void) {
     }
     SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
     SLsmg_write_string(buf);
+    SLsmg_gotorc(cursorRow, cursorCol);
 }
 
 void newtPushHelpLine(const char * text) {
