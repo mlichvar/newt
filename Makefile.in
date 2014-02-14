@@ -161,8 +161,8 @@ install-sh: sharedlib $(WHIPTCLSO) _snack.$(SOEXT)
 	   install -m 644 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done || :
 
-Makefile: newt.spec
-	echo "You need to rerun ./configure before continuing"
+Makefile: configure.ac
+	echo "You need to rerun ./autogen.sh and ./configure before continuing"
 	@exit 1
 
 create-archive: Makefile
