@@ -1,5 +1,17 @@
+0.52.17
+- add python3 support (Matthias Klose) (#963839)
+- implement newtComponentAddCallback() for forms as a focus-change
+  callback (Dan Winship)
+- add newtEntryGet/SetCursorPosition and newtFormGet/SetScrollPosition
+  (Dan Winship)
+- restore cursor position after changing help line (Dan Winship)
+- rename snackmodule to snack (#963839)
+- update CHANGES from spec changelog
+- add AUTHORS and README
+
 0.52.16
-- add newtComponentGetSize and newtComponentGetPosition (#987596)
+- add newtComponentGetSize and newtComponentGetPosition
+  (Dan Winship) (#987596)
 - modify Makefile to use SOEXT (#971168)
 - free gpm socket name and unlink gpm socket on form exit
 - fix memory leaks in whiptail
