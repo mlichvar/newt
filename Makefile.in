@@ -181,6 +181,9 @@ tag-archive: Makefile
 
 archive: tag-archive create-archive
 
+upload-archive:
+	scp -p newt-$(VERSION).tar.gz fedorahosted.org:newt
+
 ifeq (.depend,$(wildcard .depend))
 include .depend
 endif
