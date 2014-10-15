@@ -1019,8 +1019,10 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
 	return Py_BuildValue("(si)", "timer", 0);
     else if (result.reason == NEWT_EXIT_FDREADY)
 	return Py_BuildValue("(si)", "fdready", result.u.watch);
-    else
+    else if (result.reason == NEWT_EXIT_COMPONENT)
 	return Py_BuildValue("(si)", "widget", result.u.co);
+    else
+	return Py_BuildValue("(si)", "error", 0);
 }
 
 static PyObject * formHotKey(snackForm * s, PyObject * args) {
@@ -1455,6 +1457,7 @@ MOD_INIT(_snack)
     setitemstring_decref(d, "FORM_EXIT_WIDGET", PyString_FromString("widget"));
     setitemstring_decref(d, "FORM_EXIT_TIMER", PyString_FromString("timer"));
     setitemstring_decref(d, "FORM_EXIT_FDREADY", PyString_FromString("fdready"));
+    setitemstring_decref(d, "FORM_EXIT_ERROR", PyString_FromString("error"));
 
     setitemstring_decref(d, "KEY_TAB", PyInt_FromLong(NEWT_KEY_TAB));
     setitemstring_decref(d, "KEY_ENTER", PyInt_FromLong(NEWT_KEY_ENTER));

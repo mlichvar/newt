@@ -350,8 +350,9 @@ class Form:
             return "TIMER"
         elif (what == _snack.FORM_EXIT_FDREADY):
             return self.filemap[which]
-
-        return hotkeys[which]
+        elif (what == _snack.FORM_EXIT_HOTKEY):
+            return hotkeys[which]
+        raise RuntimeError("EOF or IO error")
 
     def draw(self):
         self.w.draw()
