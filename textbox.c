@@ -189,7 +189,7 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
 	} else
 	    result = malloc(strlen(text) * 2 + 2);
-	*result = '\0';
+	*resultPtr = result;
     }
 	
     memset(&ps,0,sizeof(mbstate_t));
@@ -204,8 +204,9 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    len = wstrlen(text, end - text);
 	    if (len <= width) {
 		if (result) {
-		    strncat(result, text, end - text);
-		    strcat(result, "\n");
+		    memcpy(result, text, end - text);
+		    result += end - text;
+		    *result++ = '\n';
 		    height++;
 		}
 
@@ -247,8 +248,9 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 #endif					
 		if (spcptr) chptr = spcptr;
 		if (result) {
-		    strncat(result, text, chptr - text );
-		    strcat(result, "\n");
+		    memcpy(result, text, chptr - text);
+		    result += chptr - text;
+		    *result++ = '\n';
 		    height++;
 		}
 
@@ -263,8 +265,10 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	}
     }
 
+    if (result)
+	*result = '\0';
+
     if (badness) *badness = howbad;
-    if (resultPtr) *resultPtr = result;
     if (heightPtr) *heightPtr = height;
 #ifdef DEBUG_WRAP
     fprintf(stderr, "width %d, badness %d, height %d\n",width, howbad, height);
