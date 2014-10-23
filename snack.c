@@ -1,4 +1,5 @@
 
+#include "Python.h"
 #include "config.h"
 
 #ifdef HAVE_ALLOCA_H
@@ -11,7 +12,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "Python.h"
 #include "structmember.h"
 #include "nls.h"
 #include "newt.h"
