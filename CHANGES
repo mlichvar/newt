@@ -1,3 +1,10 @@
+0.52.18
+- fix widget key collision in snack on 64-bit archs (#1151455)
+- handle NEWT_EXIT_ERROR in snack
+- fix preprocessor warnings in snack
+- optimize textbox reflowing
+- remove newtListitem declarations (#1074092)
+
 0.52.17
 - add python3 support (Matthias Klose) (#963839)
 - implement newtComponentAddCallback() for forms as a focus-change
