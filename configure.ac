@@ -16,6 +16,10 @@ AC_PROG_LN_S
 AC_PROG_GREP
 AC_SYS_LARGEFILE
 
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([long long])
+AC_CHECK_SIZEOF([void *])
+
 # Are we using GNU ld?
 AC_MSG_CHECKING([for GNU ld])
 LD=`$CC -print-prog-name=ld 2>&5`

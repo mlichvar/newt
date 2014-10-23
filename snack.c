@@ -317,7 +317,15 @@ static PyMethodDef widgetMethods[] = {
 };
 
 static PyMemberDef widget_members[] = {
-        { "key" , T_INT, offsetof(snackWidget, co), 0, NULL },
+        { "key",
+#if SIZEOF_VOID_P == SIZEOF_LONG
+		T_LONG,
+#elif SIZEOF_VOID_P == SIZEOF_LONG_LONG
+		T_LONGLONG,
+#else
+#error unsupported pointer size
+#endif
+		offsetof(snackWidget, co), 0, NULL },
         { "entryValue", T_STRING, offsetof(snackWidget, apointer), 0, NULL },
 	{ NULL }
 };
@@ -1020,7 +1028,11 @@ static PyObject * formRun(snackForm * s, PyObject * args) {
     else if (result.reason == NEWT_EXIT_FDREADY)
 	return Py_BuildValue("(si)", "fdready", result.u.watch);
     else if (result.reason == NEWT_EXIT_COMPONENT)
-	return Py_BuildValue("(si)", "widget", result.u.co);
+#if SIZEOF_VOID_P <= SIZEOF_LONG
+	return Py_BuildValue("(sl)", "widget", (long)result.u.co);
+#else
+	return Py_BuildValue("(sL)", "widget", (long long)result.u.co);
+#endif
     else
 	return Py_BuildValue("(si)", "error", 0);
 }
