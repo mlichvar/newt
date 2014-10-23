@@ -1,7 +1,7 @@
 AC_INIT([newt_pr.h])
 
 PACKAGE=newt
-VERSION=0.52.17
+VERSION=0.52.18
 SONAME=0.52
 
 AC_CONFIG_HEADER([config.h])
