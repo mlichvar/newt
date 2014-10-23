@@ -162,7 +162,7 @@ install-sh: sharedlib $(WHIPTCLSO) _snack.$(SOEXT)
 	done || :
 
 Makefile: configure.ac
-	echo "You need to rerun ./autogen.sh and ./configure before continuing"
+	@echo "You need to rerun ./autogen.sh and ./configure before continuing"
 	@exit 1
 
 create-archive: Makefile
