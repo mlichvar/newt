@@ -121,7 +121,7 @@ clean:
 		$(SHAREDDIR)/*.o *.$(SOEXT)*
 
 depend:
-	$(CPP) $(CFLAGS) $(CPPFLAGS) -M $(SOURCES) > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -M $(SOURCES) > .depend
 
 $(SHAREDDIR):
 	mkdir -p $(SHAREDDIR)
