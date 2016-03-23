@@ -460,7 +460,11 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     subform = newtForm(sb, NULL, 0);
     newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
 
-    snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxWidth);
+    if (flags & FLAG_NOTAGS)
+	snprintf(format, MAXFORMAT, "%%.0s%%s");
+    else
+	snprintf(format, MAXFORMAT, "%%-%ds  %%s", maxWidth);
+
     for (i = 0; i < numBoxes; i++) {
 	snprintf(buf, MAXBUF, format, cbInfo[i].tag, cbInfo[i].text);
 
