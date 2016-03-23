@@ -2,36 +2,35 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: 1\n"
+"Project-Id-Version: newt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-14 16:03+0200\n"
-"PO-Revision-Date: 2010-08-20 05:02+0330\n"
+"POT-Creation-Date: 2016-03-23 15:59+0100\n"
+"PO-Revision-Date: 2010-08-19 09:32-0400\n"
 "Last-Translator: Mostafa <info@mostafadaneshvar.com>\n"
 "Language-Team: Persian <trans-fa@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Persian\n"
+"Language: fa\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 3.8.2\n"
 "X-Poedit-Country: Iran\n"
+"X-Poedit-Language: Persian\n"
 
-#: ../dialogboxes.c:43
-#: ../dialogboxes.c:48
-#: ../dialogboxes.c:493
+#: ../dialogboxes.c:49
 msgid "Ok"
 msgstr "تایید"
 
-#: ../dialogboxes.c:51
+#: ../dialogboxes.c:50
 msgid "Cancel"
 msgstr "لغو"
 
-#: ../dialogboxes.c:498
+#: ../dialogboxes.c:51
 msgid "Yes"
 msgstr "بله"
 
-#: ../dialogboxes.c:500
+#: ../dialogboxes.c:52
 msgid "No"
 msgstr "نه"
-

@@ -2,32 +2,33 @@
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: mckinstry@debian.org\n"
-"POT-Creation-Date: 2005-11-22 09:35+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: newt\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-23 15:59+0100\n"
+"PO-Revision-Date: \n"
 "Last-Translator: Priti Patil <prithisd [at] gmail [dot] com>\n"
-"Language-Team:  Marathi, janabhaaratii, C-DAC, Mumbai, India <janabhaaratii [at] cdacmumbai [dot] in>\n"
+"Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India <janabhaaratii [at] cdacmumbai [dot] in>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: mr\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Zanata 3.8.2\n"
 
-#: dialogboxes.c:43 dialogboxes.c:48 dialogboxes.c:493
+#: ../dialogboxes.c:49
 msgid "Ok"
 msgstr "ठीक"
 
-#: dialogboxes.c:51
+#: ../dialogboxes.c:50
 msgid "Cancel"
 msgstr "रद्द"
 
-#: dialogboxes.c:498
+#: ../dialogboxes.c:51
 msgid "Yes"
 msgstr "हो"
 
-#: dialogboxes.c:500
+#: ../dialogboxes.c:52
 msgid "No"
 msgstr "नाही"

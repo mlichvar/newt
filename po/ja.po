@@ -2,31 +2,33 @@
 # Copyright (C) 2003,2004 Free Software Foundation
 # This file is distributed under the same license as the newt package.
 # Alastair McKinstry <mckinstry@debian.org>, 2003.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: newt 0.51.4\n"
+"Project-Id-Version: newt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-14 16:03+0200\n"
-"PO-Revision-Date: 2003-07-19 08:02+0900\n"
+"POT-Creation-Date: 2016-03-23 15:59+0100\n"
+"PO-Revision-Date: 2003-07-18 07:02-0400\n"
 "Last-Translator: Tomohiro KUBOTA <kubota@debian.org>\n"
 "Language-Team: Japanese <debian-doc@debian.or.jp>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 3.8.2\n"
 
-#: ../dialogboxes.c:43 ../dialogboxes.c:48 ../dialogboxes.c:493
+#: ../dialogboxes.c:49
 msgid "Ok"
-msgstr "Œª≤Ú"
+msgstr "‰∫ÜËß£"
+
+#: ../dialogboxes.c:50
+msgid "Cancel"
+msgstr "ÂèñÊ∂à"
 
 #: ../dialogboxes.c:51
-msgid "Cancel"
-msgstr "ºËæ√"
-
-#: ../dialogboxes.c:498
 msgid "Yes"
-msgstr "§œ§§"
+msgstr "„ÅØ„ÅÑ"
 
-#: ../dialogboxes.c:500
+#: ../dialogboxes.c:52
 msgid "No"
-msgstr "§§§§§®"
+msgstr "„ÅÑ„ÅÑ„Åà"
