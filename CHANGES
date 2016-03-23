@@ -1,3 +1,9 @@
+0.52.19
+- support --notags in whiptail checklist and radiolist (#1319794)
+- don't hard-code -I/usr/include/slang in CPPFLAGS (Alex Suykov)
+- use $(CC) instead of $(CPP) to generate .depend files (Samuel Martin)
+- update translations from Zanata
+
 0.52.18
 - fix widget key collision in snack on 64-bit archs (#1151455)
 - handle NEWT_EXIT_ERROR in snack
