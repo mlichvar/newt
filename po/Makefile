@@ -48,9 +48,6 @@ report:
 clean:
 	rm -f *mo
 
-distclean: clean
-	rm -f .depend Makefile
-
 depend:
 
 install: all
