@@ -168,7 +168,7 @@ Makefile: configure.ac
 create-archive: Makefile
 	@rm -rf /tmp/newt-$(VERSION)
 	@git archive --prefix=newt-$(VERSION)/ $(TAG) | tar x -C /tmp
-	@cd /tmp/newt-$(VERSION) && ./autogen.sh && rm -rf autom4te.cache .tx .gitignore
+	@cd /tmp/newt-$(VERSION) && ./autogen.sh && rm -rf autom4te.cache .gitignore
 	@cd /tmp; tar c --owner root --group root newt-$(VERSION) | gzip -9 > newt-$(VERSION).tar.gz
 	@rm -rf /tmp/newt-$(VERSION)
 	@cp /tmp/newt-$(VERSION).tar.gz .
