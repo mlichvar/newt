@@ -326,7 +326,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	i = 2;
     }
 
-    lineWidth = min(maxTagWidth + maxTextWidth + i, SLtt_Screen_Cols - 10);
+    lineWidth = min(maxTagWidth + maxTextWidth + i + 1, SLtt_Screen_Cols - 6);
     listBox = newtListbox( (width - lineWidth) / 2 , top + 1, listHeight,
                           NEWT_FLAG_RETURNEXIT | scrollFlag);
 
@@ -335,12 +335,16 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     if (maxTextWidth == 0) {
         tagWidth = lineWidth;
     } else {
-       if (maxTextWidth + maxTagWidth + i > lineWidth)
-               tagWidth = textWidth = (lineWidth / 2) - 2;
-       else {
-               tagWidth++;
-               textWidth++;
-       }
+	tagWidth++;
+	textWidth++;
+	while (textWidth + tagWidth + i > lineWidth) {
+	    if (textWidth >= tagWidth && textWidth > 0)
+		textWidth--;
+	    else if (tagWidth > 0)
+		tagWidth--;
+	    else
+		break;
+	}
     }
 
     if (!(flags & FLAG_NOTAGS)) {
