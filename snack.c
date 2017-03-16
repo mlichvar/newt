@@ -1499,6 +1499,7 @@ MOD_INIT(_snack)
     setitemstring_decref(d, "KEY_F11", PyInt_FromLong(NEWT_KEY_F11));
     setitemstring_decref(d, "KEY_F12", PyInt_FromLong(NEWT_KEY_F12));
     setitemstring_decref(d, "KEY_ESC", PyInt_FromLong(NEWT_KEY_ESCAPE));
+    setitemstring_decref(d, "KEY_RESIZE", PyInt_FromLong(NEWT_KEY_RESIZE));
 
     setitemstring_decref(d, "FLAG_DISABLED", PyInt_FromLong(NEWT_FLAG_DISABLED));
     setitemstring_decref(d, "FLAGS_SET", PyInt_FromLong(NEWT_FLAGS_SET));

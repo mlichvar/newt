@@ -303,7 +303,7 @@ hotkeys = { "F1" : _snack.KEY_F1, "F2" : _snack.KEY_F2, "F3" : _snack.KEY_F3,
             "F12" : _snack.KEY_F12, "ESC" : _snack.KEY_ESC,
             "ENTER": _snack.KEY_ENTER, "SUSPEND" : _snack.KEY_SUSPEND,
             "BACKSPACE": _snack.KEY_BACKSPACE, "DELETE": _snack.KEY_DELETE,
-            "INSERT": _snack.KEY_INSERT,
+            "INSERT": _snack.KEY_INSERT, "RESIZE": _snack.KEY_RESIZE,
              " " : ord(" ") }
 
 for n in list(hotkeys.keys()):

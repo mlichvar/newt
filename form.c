@@ -1031,6 +1031,18 @@ void newtFormRun(newtComponent co, struct newtExitStruct * es) {
 	if (needResize) {
 		needResize = 0;
 		newtResizeScreen(1);
+
+		/* The application may want to handle the resize */
+		for (i = 0; i < form->numHotKeys; i++) {
+		    if (form->hotKeys[i] == NEWT_KEY_RESIZE) {
+			es->reason = NEWT_EXIT_HOTKEY;
+			es->u.key = NEWT_KEY_RESIZE;
+			done = 1;
+			break;
+		    }
+		}
+		if (done)
+		    break;
 	}
 
 	i = select(max + 1, &readSet, &writeSet, &exceptSet, 
