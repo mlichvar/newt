@@ -59,12 +59,18 @@ fi
 AC_CHECK_HEADERS([popt.h libintl.h])
 
 AC_MSG_CHECKING([for python versions])
-AC_ARG_WITH([python], [  --without-python        do not compile python support])
+AC_ARG_WITH([python], [  --without-python        do not compile python support],
+            [], [with_python="yes"])
 if test "x$with_python" = "xno"; then
   AC_MSG_RESULT([skipped])
   PYTHONVERS=
 else
-  PYTHONVERS=$(ls /usr/include/python*/Python.h 2> /dev/null | sed 's|.*\(python[[0-9]]*\.[[0-9]]*\).*|\1|g' | tr '\n' ' ')
+  if test "x$with_python" = "xyes"; then
+    PYTHONVERS=$(ls /usr/include/python*/Python.h 2> /dev/null | \
+                 sed 's|.*\(python[[0-9]]*\.[[0-9]]*\).*|\1|g' | tr '\n' ' ')
+  else
+    PYTHONVERS="$with_python"
+  fi
   AC_MSG_RESULT([$PYTHONVERS])
 fi
 AC_SUBST([PYTHONVERS])
