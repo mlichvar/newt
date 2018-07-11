@@ -256,7 +256,7 @@ static int mystrncpyw(char *dest, const char *src, int n, int *maxwidth)
 
 int listBox(const char * text, int height, int width, poptContext optCon,
 		int flags, const char *default_item, char ** result) {
-    newtComponent form, okay, tb, answer, listBox;
+    newtComponent form = NULL, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
     char * end;
@@ -264,7 +264,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     int numItems = 0;
     int allocedItems = 5;
     int i, top;
-    int rc = DLG_OKAY;
+    int rc = DLG_ERROR;
     char buf[MAXBUF];
     int maxTagWidth = 0;
     int maxTextWidth = 0;
@@ -275,24 +275,31 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	const char * text;
 	const char * tag;
     } * itemInfo = malloc(allocedItems * sizeof(*itemInfo));
+    void * tmp;
 
-    if (itemInfo == NULL) return DLG_ERROR;
-    if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+    if (itemInfo == NULL)
+	goto error;
+    if (!(arg = poptGetArg(optCon)))
+	goto error;
     listHeight = strtoul(arg, &end, 10);
-    if (*end) return DLG_ERROR;
+    if (*end)
+	goto error;
 
     while ((arg = poptGetArg(optCon))) {
 	if (allocedItems == numItems) {
 	    allocedItems += 5;
-	    itemInfo = realloc(itemInfo, sizeof(*itemInfo) * allocedItems);
-	    if (itemInfo == NULL) return DLG_ERROR;
+	    tmp = realloc(itemInfo, sizeof(*itemInfo) * allocedItems);
+	    if (tmp == NULL)
+		goto error;
+	    itemInfo = tmp;
 	}
 
 	itemInfo[numItems].tag = arg;
 	if (default_item && (strcmp(default_item, arg) == 0)) {
 	 	defItem = numItems;
 	}
-	if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	if (!(arg = poptGetArg(optCon)))
+	    goto error;
 
 	if (!(flags & FLAG_NOITEM)) {
 	    itemInfo[numItems].text = arg;
@@ -307,7 +314,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	numItems++;
     }
     if (numItems == 0)
-	return DLG_ERROR;
+	goto error;
 
     if (flags & FLAG_NOTAGS) {
 	    maxTagWidth = 0;
@@ -385,9 +392,14 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     else {
 	i = (long) newtListboxGetCurrent(listBox);
 	*result = strdup(itemInfo[i].tag);
+	if (*result == NULL)
+	    goto error;
+	rc = DLG_OKAY;
     }
 
-    newtFormDestroy(form);
+error:
+    if (form)
+	newtFormDestroy(form);
     free(itemInfo);
 
     return rc;
@@ -395,7 +407,7 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 
 int checkList(const char * text, int height, int width, poptContext optCon,
 		int useRadio, int flags, char *** selections) {
-    newtComponent form, okay, tb, subform, answer;
+    newtComponent form = NULL, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
     char * end;
@@ -404,7 +416,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     int allocedBoxes = 5;
     int i;
     int numSelected;
-    int rc = DLG_OKAY;
+    int rc = DLG_ERROR;
     char buf[MAXBUF], format[MAXFORMAT];
     int maxWidth = 0;
     int top;
@@ -414,26 +426,39 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	newtComponent comp;
     } * cbInfo = malloc(allocedBoxes * sizeof(*cbInfo));
     char * cbStates = malloc(allocedBoxes * sizeof(*cbStates));
+    void * tmp;
 
-    if ( (cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
-    if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+    if (cbInfo == NULL || cbStates == NULL)
+	goto error;
+    if (!(arg = poptGetArg(optCon)))
+	goto error;
     listHeight = strtoul(arg, &end, 10);
-    if (*end) return DLG_ERROR;
+    if (*end)
+	goto error;
 
     while ((arg = poptGetArg(optCon))) {
 	if (allocedBoxes == numBoxes) {
 	    allocedBoxes += 5;
-	    cbInfo = realloc(cbInfo, sizeof(*cbInfo) * allocedBoxes);
-	    cbStates = realloc(cbStates, sizeof(*cbStates) * allocedBoxes);
-	    if ((cbInfo == NULL) || (cbStates == NULL)) return DLG_ERROR;
+
+	    tmp = realloc(cbInfo, sizeof(*cbInfo) * allocedBoxes);
+	    if (tmp == NULL)
+		goto error;
+	    cbInfo = tmp;
+
+	    tmp = realloc(cbStates, sizeof(*cbStates) * allocedBoxes);
+	    if (tmp == NULL)
+		goto error;
+	    cbStates = tmp;
 	}
 
 	cbInfo[numBoxes].tag = arg;
-	if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	if (!(arg = poptGetArg(optCon)))
+	    goto error;
 
 	if (!(flags & FLAG_NOITEM)) {
 	    cbInfo[numBoxes].text = arg;
-	    if (!(arg = poptGetArg(optCon))) return DLG_ERROR;
+	    if (!(arg = poptGetArg(optCon)))
+		goto error;
 	} else
 	    cbInfo[numBoxes].text = "";
 
@@ -502,7 +527,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	    answer = newtRadioGetCurrent(cbInfo[0].comp);
 	    *selections = malloc(sizeof(char *) * 2);
 	    if (*selections == NULL)
-		return DLG_ERROR;
+		goto error;
 	    (*selections)[0] = (*selections)[1] = NULL;
 	    for (i = 0; i < numBoxes; i++)
 		if (cbInfo[i].comp == answer) {
@@ -517,7 +542,7 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 
 	    *selections = malloc(sizeof(char *) * (numSelected + 1));
 	    if (*selections == NULL)
-		return DLG_ERROR;
+		goto error;
 
 	    numSelected = 0;
 	    for (i = 0; i < numBoxes; i++) {
@@ -527,11 +552,15 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 
 	    (*selections)[numSelected] = NULL;
 	}
+
+	rc = DLG_OKAY;
     }
 
+error:
     free(cbInfo);
     free(cbStates);
-    newtFormDestroy(form);
+    if (form)
+	newtFormDestroy(form);
 
     return rc;
 }
