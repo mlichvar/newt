@@ -38,6 +38,7 @@ static char ** currentHelpline = NULL;
 
 static int cursorRow, cursorCol;
 static int cursorOn = 1;
+static int noFlowCtrl = 0;
 static int trashScreen = 0;
 extern int needResize;
 
@@ -355,7 +356,7 @@ void newtSuspend(void) {
 int newtResume(void) {
     SLsmg_resume_smg ();
     SLsmg_refresh();
-    return SLang_init_tty(0, 0, 0);
+    return SLang_init_tty(0, noFlowCtrl, 0);
 }
 
 void newtCls(void) {
@@ -386,6 +387,7 @@ void newtResizeScreen(int redraw) {
  */
 int newtInit(void) {
     char * MonoValue, * MonoEnv = "NEWT_MONO";
+    char * NoFlowCtrlValue, * NoFlowCtrlEnv = "NEWT_NOFLOWCTRL";
     const char *lang;
     int ret;
 
@@ -408,9 +410,13 @@ int newtInit(void) {
     if ( MonoValue != NULL )
 	SLtt_Use_Ansi_Colors = 0;
 
+    NoFlowCtrlValue = getenv(NoFlowCtrlEnv);
+    if ( NoFlowCtrlValue != NULL )
+        noFlowCtrl = 1;
+
     if ((ret = SLsmg_init_smg()) < 0)
 	return ret;
-    if ((ret = SLang_init_tty(0, 0, 0)) < 0)
+    if ((ret = SLang_init_tty(0, noFlowCtrl, 0)) < 0)
 	return ret;
 
     initColors();
