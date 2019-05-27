@@ -1,3 +1,11 @@
+0.52.21
+- define env NEWT_NOFLOWCTRL to disable flow control (Robert Gill)
+- don't leak memory on errors in dialogboxes
+- fix radio button selection check in snack
+- fix plural forms in Lithuanian translation (#1568999)
+- fix parallel build (Émeric Dupont)
+- allow python versions to be specified with --with-python option
+
 0.52.20
 - improve handling of long strings in whiptail menu (#1353792)
 - support screen resize as hotkey in form (#1432926)
