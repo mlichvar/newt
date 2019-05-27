@@ -1096,7 +1096,11 @@ static PyObject * widget_get_radioValue(PyObject *self, void *closure)
 {
 	snackWidget *w = (snackWidget *)self;
 
-	return Py_BuildValue("i", newtRadioGetCurrent(w->co));
+#if SIZEOF_VOID_P <= SIZEOF_LONG
+	return Py_BuildValue("l", (long)newtRadioGetCurrent(w->co));
+#else
+	return Py_BuildValue("L", (long long)newtRadioGetCurrent(w->co));
+#endif
 }
 
 static void widgetDestructor(PyObject * o) {
