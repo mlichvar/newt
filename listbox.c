@@ -758,7 +758,7 @@ static void listboxDestroy(newtComponent co) {
     struct listbox * li = co->data;
     struct items * item, * nextitem;
 
-    nextitem = item = li->boxItems;
+    item = li->boxItems;
 
     while (item != NULL) {
 	nextitem = item->next;

@@ -873,8 +873,6 @@ void newtPopWindowNoRefresh(void) {
     if (currentWindow == NULL)
 	return;
 
-    row = col = 0;
-
     row = currentWindow->top - 1;
     col = currentWindow->left - 2;
     if (row < 0)

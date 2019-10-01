@@ -158,7 +158,6 @@ static void shuffleGrid(newtGrid grid, int left, int top, int set) {
 
     thisTop = top;
     for (row = 0; row < grid->rows; row++) {
-	i = 0;
 	thisLeft = left;
 	for (col = 0; col < grid->cols; col++) {
 	    field = &grid->fields[col][row];

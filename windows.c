@@ -220,7 +220,6 @@ int newtWinEntries(char * title, char * text, int suggestedWidth, int flexDown,
 
     for (numItems = 0; items[numItems].text; numItems++); 
 
-    buttonName = button1;
     va_start(args, button1);
     for (buttonName = button1; buttonName; buttonName = va_arg(args, char *)) 
        ++totalButtons;                                                        

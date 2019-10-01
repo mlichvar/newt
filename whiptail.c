@@ -346,7 +346,7 @@ int main(int argc, const char ** argv) {
     int fullButtons = 0;
     int outputfd = 2;
     int topLeft = 0;
-    FILE *output = stderr;
+    FILE *output;
     char * result;
     char ** selections, ** next;
     char * title = NULL;
