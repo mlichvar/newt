@@ -26,7 +26,7 @@ newtGrid newtButtonBarv(char * button1, newtComponent * b1comp, va_list args) {
 	*buttons[i].compPtr = newtButton(-1, -1, buttons[i].name);
 	newtGridSetField(grid, i, 0, NEWT_GRID_COMPONENT, 
 			 *buttons[i].compPtr,
-			 num ? 1 : 0, 0, 0, 0, 0, 0);
+			 i ? 1 : 0, 0, 0, 0, 0, 0);
     }
 
     return grid;
