@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 #include <wchar.h>
 
@@ -1031,7 +1032,9 @@ static void freeKeymap() {
  * @param int - number of usecs to wait for.
  */
 void newtDelay(unsigned int usecs) {
-    usleep(usecs);
+    struct timespec t = { usecs / 1000000, (usecs % 1000000) * 1000 };
+
+    nanosleep(&t, NULL);
 }
 
 struct eventResult newtDefaultEventHandler(newtComponent c,
