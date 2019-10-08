@@ -136,11 +136,6 @@ static const struct keymap keymap[] = {
 static void initKeymap();
 static void freeKeymap();
 
-static const char ident[] = // ident friendly
-    "$Version: Newt windowing library v" VERSION " $"
-    "$Copyright: (C) 1996-2003 Red Hat, Inc. Written by Erik Troan $"
-    "$License: Lesser GNU Public License. $";
-
 static newtSuspendCallback suspendCallback = NULL;
 static void * suspendCallbackData = NULL;
 
@@ -400,8 +395,6 @@ int newtInit(void) {
        avoid character corruption by redrawing the screen */
     if (strstr (lang, ".euc") != NULL)
 	trashScreen = 1;
-
-    (void) strlen(ident);
 
     SLutf8_enable(-1);
     SLtt_get_terminfo();
