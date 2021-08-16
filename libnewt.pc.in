@@ -6,5 +6,6 @@ includedir=@includedir@
 Name: libnewt
 Description: A development library for text mode user interfaces
 Version: @VERSION@
+Requires.private: slang
 Libs: -L${libdir} -lnewt
 Cflags: -I${includedir}
