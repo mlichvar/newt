@@ -22,9 +22,9 @@ AC_CHECK_SIZEOF([void *])
 
 # Are we using GNU ld?
 AC_MSG_CHECKING([for GNU ld])
-LD=`$CC -print-prog-name=ld 2>&5`
+LD=$($CC -print-prog-name=ld 2>&5)
 
-if test `$LD -v 2>&1 | $ac_cv_path_GREP -c "GNU ld"` = 0; then
+if test $($LD -v 2>&1 | $ac_cv_path_GREP -c "GNU ld") = 0; then
   # Not
   GNU_LD=""
   AC_MSG_RESULT([no])
@@ -83,20 +83,20 @@ else
 
   # check in a few common install locations
   if test x"${ac_cv_c_tclconfig}" = x ; then
-    for i in `ls -d ${libdir} 2>/dev/null` \
-      `ls -d /usr/lib 2>/dev/null` \
-      `ls -d /usr/lib64 2>/dev/null` \
-      `ls -d /usr/local/lib 2>/dev/null` \
-      `ls -d /usr/contrib/lib 2>/dev/null` \
-      `ls -d /usr/pkg/lib 2>/dev/null` \
-      `ls -d /usr/local/lib/tcl8.5 2>/dev/null` \
-      `ls -d /usr/local/lib/tcl8.4 2>/dev/null` \
-      `ls -d /usr/lib/tcl8.5 2>/dev/null` \
-      `ls -d /usr/lib/tcl8.4 2>/dev/null` \
-      `ls -d /opt/local/lib 2>/dev/null` \
+    for i in $(ls -d ${libdir} 2>/dev/null) \
+      $(ls -d /usr/lib 2>/dev/null) \
+      $(ls -d /usr/lib64 2>/dev/null) \
+      $(ls -d /usr/local/lib 2>/dev/null) \
+      $(ls -d /usr/contrib/lib 2>/dev/null) \
+      $(ls -d /usr/pkg/lib 2>/dev/null) \
+      $(ls -d /usr/local/lib/tcl8.5 2>/dev/null) \
+      $(ls -d /usr/local/lib/tcl8.4 2>/dev/null) \
+      $(ls -d /usr/lib/tcl8.5 2>/dev/null) \
+      $(ls -d /usr/lib/tcl8.4 2>/dev/null) \
+      $(ls -d /opt/local/lib 2>/dev/null) \
       ; do
       if test -f "$i/tclConfig.sh" ; then
-        ac_cv_c_tclconfig=`(cd $i; pwd)`
+        ac_cv_c_tclconfig=$( (cd $i; pwd) )
         break
       fi
     done
