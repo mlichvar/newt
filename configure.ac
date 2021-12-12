@@ -1,10 +1,11 @@
-AC_INIT([newt_pr.h])
+AC_INIT
+AC_CONFIG_SRCDIR([newt_pr.h])
 
 PACKAGE=newt
 VERSION=0.52.21
 SONAME=0.52
 
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 AC_DEFINE_UNQUOTED([PACKAGE], ["$PACKAGE"], [Package Name])
 AC_DEFINE_UNQUOTED([VERSION], ["$VERSION"], [NEWT Version String])
