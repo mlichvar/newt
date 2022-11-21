@@ -202,12 +202,10 @@ static void spaceForButtons(int * height, int * width, int count, int full) {
 static int menuSize(int * height, int * width, enum mode mode,
 		    poptContext options) {
     const char ** argv = poptGetArgs(options);
-    const char ** items = argv;
     int         h = 0;
     int         tagWidth = 0;
     int         descriptionWidth = 0;
     int         overhead = 10;
-    static char buf[20];
 
     if ( argv == 0 || *argv == 0 )
        return 0;
@@ -232,8 +230,6 @@ static int menuSize(int * height, int * width, enum mode mode,
 
     h = min(h, SLtt_Screen_Rows - *height - 4);
     *height = *height + h + 1;
-    sprintf(buf, "%d", h);
-   *items = buf;
     return 0;
 }
 
