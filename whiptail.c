@@ -214,8 +214,8 @@ static int menuSize(int * height, int * width, int * listHeight,
        overhead = 5;
 
     while ( argv[0] != 0 && argv[1] ) {
-       tagWidth = max(tagWidth, strlen(argv[0]));
-       descriptionWidth = max(descriptionWidth, strlen(argv[1]));
+       tagWidth = max(tagWidth, _newt_wstrlen(argv[0], -1));
+       descriptionWidth = max(descriptionWidth, _newt_wstrlen(argv[1], -1));
 
        if ( mode == MODE_MENU )
            argv += 2;
