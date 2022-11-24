@@ -254,13 +254,12 @@ static int mystrncpyw(char *dest, const char *src, int n, int *maxwidth)
     return i;
 }
 
-int listBox(const char * text, int height, int width, poptContext optCon,
+int listBox(const char * text, int height, int width, int listHeight, poptContext optCon,
 		int flags, const char *default_item, char ** result) {
     newtComponent form = NULL, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
     char * end;
-    int listHeight;
     int numItems = 0;
     int allocedItems = 5;
     int i, top;
@@ -278,11 +277,6 @@ int listBox(const char * text, int height, int width, poptContext optCon,
     void * tmp;
 
     if (itemInfo == NULL)
-	goto error;
-    if (!(arg = poptGetArg(optCon)))
-	goto error;
-    listHeight = strtoul(arg, &end, 10);
-    if (*end)
 	goto error;
 
     while ((arg = poptGetArg(optCon))) {
@@ -405,13 +399,12 @@ error:
     return rc;
 }
 
-int checkList(const char * text, int height, int width, poptContext optCon,
-		int useRadio, int flags, char *** selections) {
+int checkList(const char * text, int height, int width, int listHeight,
+	      poptContext optCon, int useRadio, int flags, char *** selections) {
     newtComponent form = NULL, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
     char * end;
-    int listHeight;
     int numBoxes = 0;
     int allocedBoxes = 5;
     int i;
@@ -429,11 +422,6 @@ int checkList(const char * text, int height, int width, poptContext optCon,
     void * tmp;
 
     if (cbInfo == NULL || cbStates == NULL)
-	goto error;
-    if (!(arg = poptGetArg(optCon)))
-	goto error;
-    listHeight = strtoul(arg, &end, 10);
-    if (*end)
 	goto error;
 
     while ((arg = poptGetArg(optCon))) {

@@ -65,6 +65,7 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
     char * end;
     int height;
     int width;
+    int listHeight;
     int noCancel = 0;
     int noItem = 0;
     int scrollText = 0;
@@ -179,6 +180,22 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	return TCL_ERROR;
     }
 
+    switch (mode) {
+      case MODE_MENU:
+      case MODE_RADIOLIST:
+      case MODE_CHECKLIST:
+	if (!(nextArg = poptGetArg(optCon))) {
+	    interp->result = "list-height missing";
+	    return TCL_ERROR;
+	}
+	listHeight = strtoul(nextArg, &end, 10);
+	if (*end) {
+	    interp->result = "list-height is not a number";
+	    return TCL_ERROR;
+	}
+	break;
+    }
+
     width -= 2;
     height -= 2;
     newtOpenWindow((80 - width) / 2, (24 - height) / 2, width, height, title);
@@ -211,7 +228,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	break;
 
       case MODE_MENU:
-	rc = listBox(text, height, width, optCon, flags, default_item, &result);
+	rc = listBox(text, height, width, listHeight, optCon, flags, default_item,
+		     &result);
 	if (rc==DLG_OKAY) {
 	    interp->result = result;
 	    interp->freeProc = TCL_DYNAMIC;
@@ -219,7 +237,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	break;
 
       case MODE_RADIOLIST:
-	rc = checkList(text, height, width, optCon, 1, flags, &selections);
+	rc = checkList(text, height, width, listHeight, optCon, 1, flags,
+		       &selections);
 	if (rc==DLG_OKAY) {
 	    interp->result = selections[0];
 	    interp->freeProc = TCL_DYNAMIC;
@@ -229,7 +248,8 @@ static int wtCmd(ClientData clientData, Tcl_Interp * interp, int argc,
 	break;
 
       case MODE_CHECKLIST:
-	rc = checkList(text, height, width, optCon, 0, flags, &selections);
+	rc = checkList(text, height, width, listHeight, optCon, 0, flags,
+		       &selections);
 
 	if (rc==DLG_OKAY) {
 	    for (next = selections; *next; next++) 

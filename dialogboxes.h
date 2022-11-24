@@ -28,9 +28,9 @@ int min(int a, int b);
 int max(int a, int b);
 
 int messageBox(const char * text, int height, int width, int type, int flags);
-int checkList(const char * text, int height, int width, poptContext optCon,
+int checkList(const char * text, int height, int width, int list_height, poptContext optCon,
 		int useRadio, int flags, char *** selections);
-int listBox(const char * text, int height, int width, poptContext optCon,
+int listBox(const char * text, int height, int width, int list_height, poptContext optCon,
 		int flags, const char *default_item, char ** result);
 int inputBox(const char * text, int height, int width, poptContext optCon, 
 		int flags, char ** result);
