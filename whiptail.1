@@ -290,6 +290,11 @@ To avoid this, and start some text in, for example, a menubox item, with a
 dash, whiptail honours the getopt convention of accepting the special
 argument "\-\-" which means that all following arguments with dashes are to
 be treated verbatim and not parsed as options.
+
+If the specified height, width, or menu/list-height is zero,
+.BR whiptail
+will increase the values as needed in order to display all information.
+
 .SH DIAGNOSTICS
 Exit status is 0 if
 .BR whiptail " is exited by pressing the " Yes " or " OK
