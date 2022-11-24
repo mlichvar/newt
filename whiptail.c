@@ -328,7 +328,7 @@ int main(int argc, const char ** argv) {
     char * end;
     int height;
     int width;
-    int listHeight = 0;
+    int listHeight = 1;
     int fd = -1;
     int needSpace = 0;
     int noCancel = 0;
@@ -523,7 +523,7 @@ int main(int argc, const char ** argv) {
 
     cleanNewlines(text);
 
-    if ( height <= 0 || width <= 0 )
+    if (height <= 0 || width <= 0 || listHeight <= 0)
 	guessSize(&height, &width, &listHeight, mode, &flags, fullButtons,
 		 title, text, optCon);
 
