@@ -200,7 +200,7 @@ static void spaceForButtons(int * height, int * width, int count, int full) {
 }
 
 static int menuSize(int * height, int * width, int * listHeight,
-                    enum mode mode, poptContext options) {
+                    enum mode mode, int * flags, poptContext options) {
     const char ** argv = poptGetArgs(options);
     int         h = 0;
     int         tagWidth = 0;
@@ -217,11 +217,19 @@ static int menuSize(int * height, int * width, int * listHeight,
        tagWidth = max(tagWidth, _newt_wstrlen(argv[0], -1));
        descriptionWidth = max(descriptionWidth, _newt_wstrlen(argv[1], -1));
 
-       if ( mode == MODE_MENU )
+       if (mode == MODE_MENU || *flags & FLAG_NOITEM)
            argv += 2;
        else
           argv += 3;
        h++;
+    }
+
+    if (*flags & FLAG_NOTAGS) {
+	tagWidth = 0;
+	overhead -= mode == MODE_MENU ? 1 : 2;
+    }
+    if (*flags & FLAG_NOITEM) {
+	descriptionWidth = 0;
     }
 
     *width = max(*width, tagWidth + descriptionWidth + overhead);
@@ -255,7 +263,7 @@ static void guessSize(int * height, int * width, int * listHeight,
        case MODE_MENU:
            spaceForButtons(&h, &w, *flags & FLAG_NOCANCEL ? 1 : 2,
             fullButtons);
-           menuSize(&h, &w, listHeight, mode, options);
+           menuSize(&h, &w, listHeight, mode, flags, options);
                break;
        case MODE_YESNO:
        case MODE_MSGBOX:
@@ -518,6 +526,12 @@ int main(int argc, const char ** argv) {
 	break;
     }
 
+    if (noCancel) flags |= FLAG_NOCANCEL;
+    if (noItem) flags |= FLAG_NOITEM;
+    if (noTags) flags |= FLAG_NOTAGS;
+    if (scrollText) flags |= FLAG_SCROLL_TEXT;
+    if (defaultNo) flags |= FLAG_DEFAULT_NO;
+
     newtInit();
     newtCls();
 
@@ -550,12 +564,6 @@ int main(int argc, const char ** argv) {
 	setButtonText(yes_button, BUTTON_YES);
     if (no_button)
 	setButtonText(no_button, BUTTON_NO);
-
-    if (noCancel) flags |= FLAG_NOCANCEL;
-    if (noItem) flags |= FLAG_NOITEM;
-    if (noTags) flags |= FLAG_NOTAGS;
-    if (scrollText) flags |= FLAG_SCROLL_TEXT;
-    if (defaultNo) flags |= FLAG_DEFAULT_NO;
 
     switch (mode) {
       case MODE_MSGBOX:

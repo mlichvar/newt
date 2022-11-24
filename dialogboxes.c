@@ -485,11 +485,11 @@ int checkList(const char * text, int height, int width, int listHeight,
 	snprintf(buf, MAXBUF, format, cbInfo[i].tag, cbInfo[i].text);
 
 	if (useRadio)
-	    cbInfo[i].comp = newtRadiobutton(4, top + 1 + i, buf,
+	    cbInfo[i].comp = newtRadiobutton(2, top + 1 + i, buf,
 					cbStates[i] != ' ', 
 					i ? cbInfo[i - 1].comp : NULL);
 	else
-	    cbInfo[i].comp = newtCheckbox(4, top + 1 + i, buf,
+	    cbInfo[i].comp = newtCheckbox(2, top + 1 + i, buf,
 			      cbStates[i], NULL, cbStates + i);
 
 	newtCheckboxSetFlags(cbInfo[i].comp, NEWT_FLAG_RETURNEXIT, NEWT_FLAGS_SET);
