@@ -523,9 +523,16 @@ int main(int argc, const char ** argv) {
 
     cleanNewlines(text);
 
-    if (height <= 0 || width <= 0 || listHeight <= 0)
+    if (height <= 0 || width <= 0 || listHeight <= 0) {
 	guessSize(&height, &width, &listHeight, mode, &flags, fullButtons,
 		 title, text, optCon);
+	if (!topLeft && backtitle && SLtt_Screen_Rows > 10 &&
+	    height + 1 == SLtt_Screen_Rows &&
+	    _newt_wstrlen(backtitle, -1) > (SLtt_Screen_Cols - width) / 2) {
+	    height -= 1;
+	    listHeight -= 1;
+	}
+    }
 
     width -= 2;
     height -= 2;
