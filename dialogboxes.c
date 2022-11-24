@@ -337,7 +337,6 @@ int listBox(const char * text, int height, int width, int listHeight, poptContex
         tagWidth = lineWidth;
     } else {
 	tagWidth++;
-	textWidth++;
 	while (textWidth + tagWidth + i > lineWidth) {
 	    if (textWidth >= tagWidth && textWidth > 0)
 		textWidth--;
