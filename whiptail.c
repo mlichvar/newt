@@ -266,6 +266,8 @@ static void guessSize(int * height, int * width, int * listHeight,
            menuSize(&h, &w, listHeight, mode, flags, options);
                break;
        case MODE_YESNO:
+           spaceForButtons(&h, &w, 2, fullButtons);
+           break;
        case MODE_MSGBOX:
            spaceForButtons(&h, &w, 1, fullButtons);
            break;
