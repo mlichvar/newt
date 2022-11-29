@@ -1,3 +1,11 @@
+0.52.23
+- fix automatic height of menu/list in whiptail (broken in 0.52.22)
+- fix automatic width of whiptail --yesno box
+- fix automatic width in whiptail with unicode characters
+- fix automatic width with whiptail --noitem and --notags options
+- fix spacing with longer tags in whiptail
+- avoid overlapping backtitle in whiptail with automatic height
+
 0.52.22
 - fix crash in whiptail with new libpopt
 - switch from usleep to nanosleep (Rosen Penev)
