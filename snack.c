@@ -456,7 +456,7 @@ static void helpCallbackMarshall(newtComponent co, void * data) {
     PyGILState_STATE _state = PyGILState_Ensure();
 
     args = Py_BuildValue("(O)", data);
-    result = PyEval_CallObject(helpCallback.cb, args);
+    result = PyObject_CallObject(helpCallback.cb, args);
     Py_DECREF (args);
     Py_XDECREF(result);
 
@@ -473,10 +473,10 @@ static void suspendCallbackMarshall(void * data) {
 
     if (scs->data) {
 	args = Py_BuildValue("(O)", scs->data);
-	result = PyEval_CallObject(scs->cb, args);
+	result = PyObject_CallObject(scs->cb, args);
 	Py_DECREF (args);
     } else
-	result = PyEval_CallObject(scs->cb, NULL);
+	result = PyObject_CallObject(scs->cb, NULL);
     
     if (!result) {
 	PyErr_Print();
@@ -498,10 +498,10 @@ static void callbackMarshall(newtComponent co, void * data) {
 
     if (scs->data) {
 	args = Py_BuildValue("(O)", scs->data);
-	result = PyEval_CallObject(scs->cb, args);
+	result = PyObject_CallObject(scs->cb, args);
 	Py_DECREF (args);
     } else
-	result = PyEval_CallObject(scs->cb, NULL);
+	result = PyObject_CallObject(scs->cb, NULL);
 
     if (!result) {
 	PyErr_Print();
