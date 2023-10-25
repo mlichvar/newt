@@ -526,6 +526,8 @@ int main(int argc, const char ** argv) {
 	    exit(DLG_ERROR);
 	}
 	break;
+      default:
+	break;
     }
 
     if (noCancel) flags |= FLAG_NOCANCEL;
