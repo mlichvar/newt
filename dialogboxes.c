@@ -259,7 +259,6 @@ int listBox(const char * text, int height, int width, int listHeight, poptContex
     newtComponent form = NULL, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
-    char * end;
     int numItems = 0;
     int allocedItems = 5;
     int i, top;
@@ -403,7 +402,6 @@ int checkList(const char * text, int height, int width, int listHeight,
     newtComponent form = NULL, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
-    char * end;
     int numBoxes = 0;
     int allocedBoxes = 5;
     int i;
