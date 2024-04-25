@@ -92,7 +92,7 @@ _snack.$(SOEXT):   snack.c $(LIBNEWTSH)
 		fi; \
 		mkdir -p $$ver; \
 		PCFLAGS=`$$pyconfig --cflags`; \
-		PLDFLAGS=`$$pyconfig --ldflags`; \
+		PLDFLAGS=`$$pyconfig --ldflags --embed || $$pyconfig --ldflags`; \
 		echo $(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PCFLAGS -c -o $$ver/snack.o snack.c; \
 		$(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PCFLAGS -c -o $$ver/snack.o snack.c; \
 		echo $(CC) --shared $(LDFLAGS) $$PLDFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L. -lnewt $(LIBS); \
