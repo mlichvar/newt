@@ -143,7 +143,7 @@ install: $(LIBNEWT) install-sh whiptail
 	install -m 644 whiptail.1 $(instroot)/$(man1dir)
 	make -C po datadir=$(instroot)/$(datadir) install
 
-install-sh: sharedlib $(WHIPTCLSO) _snack.$(SOEXT)
+install-sh: sharedlib install-tcl install-py
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	[ -d $(instroot)/$(includedir) ] || install -m 755 -d $(instroot)/$(includedir)
 	[ -d $(instroot)/$(pkgconfigdir) ] || install -m 755 -d $(instroot)/$(pkgconfigdir)
@@ -151,9 +151,15 @@ install-sh: sharedlib $(WHIPTCLSO) _snack.$(SOEXT)
 	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSONAME) $(instroot)/$(libdir)/libnewt.$(SOEXT)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/$(LIBNEWTSONAME)
+	install -m 644 libnewt.pc $(instroot)/$(pkgconfigdir)
+
+install-tcl: $(WHIPTCLSO)
 ifneq ($(WHIPTCLSO),)
+	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	install -m 755 $(WHIPTCLSO) $(instroot)/$(libdir)
 endif
+
+install-py: _snack.$(SOEXT)
 ifneq ($(PYTHONVERS),)
 	for ver in $(PYTHONVERS); do \
 	   [ -d $(instroot)/$(libdir)/$$ver/site-packages ] || install -m 755 -d $(instroot)/$(libdir)/$$ver/site-packages ;\
@@ -161,7 +167,6 @@ ifneq ($(PYTHONVERS),)
 	   install -m 644 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
 	done
 endif
-	install -m 644 libnewt.pc $(instroot)/$(pkgconfigdir)
 
 Makefile: configure.ac
 	@echo "You need to rerun ./autogen.sh and ./configure before continuing"
