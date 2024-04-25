@@ -92,13 +92,11 @@ _snack.$(SOEXT):   snack.c $(LIBNEWTSH)
 		fi; \
 		mkdir -p $$ver; \
 		PCFLAGS=`$$pyconfig --cflags`; \
-		PIFLAGS=`$$pyconfig --includes`; \
 		PLDFLAGS=`$$pyconfig --ldflags`; \
-		PLFLAGS=`$$pyconfig --libs`; \
-		echo $(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snack.o snack.c; \
-		$(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PIFLAGS $$PCFLAGS -c -o $$ver/snack.o snack.c; \
-		echo $(CC) --shared $(LDFLAGS) $$PLDFLAGS $$PLFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L.  -lnewt $(LIBS); \
-		$(CC) --shared $(LDFLAGS) $$PLDFLAGS $$PLFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L.  -lnewt $(LIBS); \
+		echo $(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PCFLAGS -c -o $$ver/snack.o snack.c; \
+		$(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PCFLAGS -c -o $$ver/snack.o snack.c; \
+		echo $(CC) --shared $(LDFLAGS) $$PLDFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L. -lnewt $(LIBS); \
+		$(CC) --shared $(LDFLAGS) $$PLDFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L. -lnewt $(LIBS); \
 	done || :
 	touch $@
 
