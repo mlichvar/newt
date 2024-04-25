@@ -83,7 +83,8 @@ showkey:	showkey.o $(LIBNEWT)
 	$(CC) -g -o showkey showkey.o $(LIBNEWT) $(LDFLAGS) $(LIBS)
 
 _snack.$(SOEXT):   snack.c $(LIBNEWTSH)
-	@[ -n "$(PYTHONVERS)" ] && for ver in $(PYTHONVERS); do \
+ifneq ($(PYTHONVERS),)
+	@for ver in $(PYTHONVERS); do \
 		pyconfig=$$ver-config; \
 		if ! $$pyconfig --cflags > /dev/null 2>&1 && \
 				python-config --cflags > /dev/null 2>&1; then \
@@ -97,7 +98,8 @@ _snack.$(SOEXT):   snack.c $(LIBNEWTSH)
 		$(CC) $(SHCFLAGS) $(CFLAGS) $(CPPFLAGS) $$PCFLAGS -c -o $$ver/snack.o snack.c; \
 		echo $(CC) --shared $(LDFLAGS) $$PLDFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L. -lnewt $(LIBS); \
 		$(CC) --shared $(LDFLAGS) $$PLDFLAGS -o $$ver/_snack.$(SOEXT) $$ver/snack.o -L. -lnewt $(LIBS); \
-	done || :
+	done
+endif
 	touch $@
 
 whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
@@ -149,12 +151,16 @@ install-sh: sharedlib $(WHIPTCLSO) _snack.$(SOEXT)
 	install -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
 	ln -sf $(LIBNEWTSONAME) $(instroot)/$(libdir)/libnewt.$(SOEXT)
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/$(LIBNEWTSONAME)
-	[ -n "$(WHIPTCLSO)" ] && install -m 755 whiptcl.$(SOEXT) $(instroot)/$(libdir) || :
-	[ -n "$(PYTHONVERS)" ] && for ver in $(PYTHONVERS) ; do \
+ifneq ($(WHIPTCLSO),)
+	install -m 755 $(WHIPTCLSO) $(instroot)/$(libdir)
+endif
+ifneq ($(PYTHONVERS),)
+	for ver in $(PYTHONVERS); do \
 	   [ -d $(instroot)/$(libdir)/$$ver/site-packages ] || install -m 755 -d $(instroot)/$(libdir)/$$ver/site-packages ;\
 	   install -m 755 $$ver/_snack.$(SOEXT) $(instroot)/$(libdir)/$$ver/site-packages ;\
 	   install -m 644 snack.py $(instroot)/$(libdir)/$$ver/site-packages ;\
-	done || :
+	done
+endif
 	install -m 644 libnewt.pc $(instroot)/$(pkgconfigdir)
 
 Makefile: configure.ac
