@@ -669,6 +669,8 @@ static struct eventResult formEvent(newtComponent co, struct event ev) {
 		er.result = ER_SWALLOWED;
 		dir = -1;
 		wrap = 1;
+	    } else if (ev.u.key == NEWT_KEY_ESCAPE) {
+		er.result = ER_EXITFORM;
 	    }
 	}
 
