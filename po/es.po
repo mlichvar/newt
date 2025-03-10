@@ -27,7 +27,7 @@ msgstr "Cancelar"
 
 #: ../dialogboxes.c:51
 msgid "Yes"
-msgstr "S�"
+msgstr "Sí"
 
 #: ../dialogboxes.c:52
 msgid "No"
