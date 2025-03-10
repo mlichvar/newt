@@ -1,3 +1,7 @@
+0.52.25
+- improve Makefile (Ryan Carsten Schmidt)
+- fix "yes" in Spanish translation
+
 0.52.24
 - add support for python3.13
 - fix compiler warnings
