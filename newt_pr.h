@@ -46,13 +46,9 @@ struct newtComponent_struct {
     void * data;
 } ;
 
-enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM, ER_SETFOCUS,
-			ER_NEXTCOMP };
+enum eventResultTypes { ER_IGNORED, ER_SWALLOWED, ER_EXITFORM, ER_NEXTCOMP };
 struct eventResult {
     enum eventResultTypes result;
-    union {
-	newtComponent focus;
-    } u;
 };
 
 enum eventTypes { EV_FOCUS, EV_UNFOCUS, EV_KEYPRESS, EV_MOUSE };
