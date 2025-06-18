@@ -33,12 +33,26 @@ newtGrid newtCreateGrid(int cols, int rows) {
     newtGrid grid;
 
     grid = malloc(sizeof(*grid));
+    if (grid == NULL)
+	return NULL;
     grid->rows = rows;
     grid->cols = cols;
 
     grid->fields = malloc(sizeof(*grid->fields) * cols);
+    if (grid->fields == NULL) {
+	free(grid);
+	return NULL;
+    }
+
     while (cols--) {
 	grid->fields[cols] = malloc(sizeof(**(grid->fields)) * rows);
+	if (grid->fields[cols] == NULL) {
+	    for (cols++; cols < grid->cols; cols++)
+		free(grid->fields[cols]);
+	    free(grid->fields);
+	    free(grid);
+	    return NULL;
+	}
 	memset(grid->fields[cols], 0, sizeof(**(grid->fields)) * rows);
     }
 
@@ -299,6 +313,8 @@ static newtGrid stackem(int isVert, enum newtGridElement type1, void * what1,
     }
 
     grid = newtCreateGrid(isVert ? 1 : num, isVert ? num : 1);
+    if (grid == NULL)
+	return NULL;
 
     for (i = 0; i < num; i++) {
 	newtGridSetField(grid, isVert ? 0 : i, isVert ? i : 0, 
@@ -367,6 +383,9 @@ newtGrid newtGridBasicWindow(newtComponent text, newtGrid middle,
     newtGrid grid;
 
     grid = newtCreateGrid(1, 3);
+    if (grid == NULL)
+	return NULL;
+
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
 		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_SUBGRID, middle,
@@ -382,6 +401,9 @@ newtGrid newtGridSimpleWindow(newtComponent text, newtComponent middle,
     newtGrid grid;
 
     grid = newtCreateGrid(1, 3);
+    if (grid == NULL)
+	return NULL;
+
     newtGridSetField(grid, 0, 0, NEWT_GRID_COMPONENT, text,
 		     0, 0, 0, 0, NEWT_ANCHOR_LEFT, 0);
     newtGridSetField(grid, 0, 1, NEWT_GRID_COMPONENT, middle,

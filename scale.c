@@ -28,7 +28,13 @@ newtComponent newtScale(int left, int top, int width, long long fullValue) {
     struct scale * sc;
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+	return NULL;
     sc = malloc(sizeof(struct scale));
+    if (sc == NULL) {
+	free(co);
+	return NULL;
+    }
     co->data = sc;
     co->destroyCallback = NULL;
 

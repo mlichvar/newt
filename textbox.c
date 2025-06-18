@@ -79,8 +79,15 @@ newtComponent newtTextboxReflowed(int left, int top, char * text, int width,
 
     reflowedText = newtReflowText(text, width, flexDown, flexUp,
 				  &actWidth, &actHeight);
+    if (reflowedText == NULL)
+	return NULL;
     
     co = newtTextbox(left, top, actWidth, actHeight, NEWT_FLAG_WRAP);
+    if (co == NULL) {
+	free(reflowedText);
+	return NULL;
+    }
+
     newtTextboxSetText(co, reflowedText);
     free(reflowedText);
 
@@ -92,7 +99,13 @@ newtComponent newtTextbox(int left, int top, int width, int height, int flags) {
     struct textbox * tb;
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+	return NULL;
     tb = malloc(sizeof(*tb));
+    if (tb == NULL) {
+	free(co);
+	return NULL;
+    }
     co->data = tb;
 
     if (width < 1)
@@ -147,10 +160,15 @@ static char * expandTabs(const char * text) {
     int i;
 
     buf = malloc(bufAlloced + 1);
+    if (buf == NULL)
+	return NULL;
+
     for (src = text, dest = buf; *src; src++) {
 	if ((bufUsed + 10) > bufAlloced) {
 	    bufAlloced += strlen(text) / 2;
 	    buf = realloc(buf, bufAlloced + 1);
+	    if (buf == NULL)
+		return NULL;
 	    dest = buf + bufUsed;
 	}
 	if (*src == '\t') {
@@ -189,7 +207,10 @@ static void doReflow(const char * text, char ** resultPtr, int width,
 	    result = malloc(strlen(text) + (strlen(text) / (width - 1)) + 2);
 	} else
 	    result = malloc(strlen(text) * 2 + 2);
+
 	*resultPtr = result;
+	if (result == NULL)
+	    return;
     }
 	
     memset(&ps,0,sizeof(mbstate_t));
@@ -287,6 +308,8 @@ char * newtReflowText(char * text, int width, int flexDown, int flexUp,
 	width = 1;
 
     expandedText = expandTabs(text);
+    if (expandedText == NULL)
+	return NULL;
 
     if (flexDown || flexUp) {
 	min = width - flexDown;

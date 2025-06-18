@@ -45,6 +45,8 @@ newtComponent newtRadiobutton(int left, int top, const char * text, int isDefaul
 	initialValue = ' ';
 
     co = newtCheckbox(left, top, text, initialValue, " *", NULL);
+    if (co == NULL)
+	return NULL;
     rb = co->data;
     rb->type = RADIO;
 

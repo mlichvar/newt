@@ -445,7 +445,15 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     struct form * form;
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+	return NULL;
+
     form = malloc(sizeof(*form));
+    if (form == NULL) {
+	free(co);
+	return NULL;
+    }
+
     co->data = form;
     co->width = 0;
     co->height = 0;
@@ -457,6 +465,9 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     co->ops = &formOps;
     co->callback = NULL;
     co->destroyCallback = NULL;
+
+    form->elements = NULL;
+    form->hotKeys = NULL;
 
     form->help = help;
     form->flags = flags;
@@ -470,9 +481,12 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     form->maxFd = 0;
     form->fds = NULL;
     form->elements = malloc(sizeof(*(form->elements)) * form->numCompsAlloced);
+    if (form->elements == NULL) goto error;
 
     form->background = COLORSET_WINDOW;
     form->hotKeys = malloc(sizeof(int));
+    if (form->hotKeys == NULL) goto error;
+
     form->numHotKeys = 0;
     form->timer = 0;
     form->lastTimeout.tv_sec = form->lastTimeout.tv_usec = 0;
@@ -489,6 +503,14 @@ newtComponent newtForm(newtComponent vertBar, void * help, int flags) {
     form->helpCb = helpCallback;
 
     return co;
+
+error:
+    free(form->hotKeys);
+    free(form->elements);
+    free(form);
+    free(co);
+
+    return NULL;
 }
 
 newtComponent newtFormGetCurrent(newtComponent co) {

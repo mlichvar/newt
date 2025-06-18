@@ -71,7 +71,13 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
     struct entry * en;
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+	return NULL;
     en = malloc(sizeof(struct entry));
+    if (en == NULL) {
+	free(co);
+	return NULL;
+    }
     co->data = en;
 
     co->top = top;
@@ -100,6 +106,11 @@ newtComponent newtEntry(int left, int top, const char * initialValue, int width,
 	en->bufAlloced = strlen(initialValue) + 1;
     }
     en->buf = malloc(en->bufAlloced);
+    if (en->buf == NULL) {
+	free(en);
+	free(co);
+	return NULL;
+    }
     en->resultPtr = resultPtr;
     if (en->resultPtr) *en->resultPtr = en->buf;
 

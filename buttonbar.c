@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stddef.h>
 
 #include "newt.h"
 
@@ -21,6 +22,8 @@ newtGrid newtButtonBarv(char * button1, newtComponent * b1comp, va_list args) {
     }
 
     grid = newtCreateGrid(num, 1);
+    if (grid == NULL)
+	return NULL;
 
     for (i = 0; i < num; i++) {
 	*buttons[i].compPtr = newtButton(-1, -1, buttons[i].name);

@@ -44,7 +44,13 @@ newtComponent newtVerticalScrollbar(int left, int top, int height,
     struct scrollbar * sb;
 
     co = malloc(sizeof(*co));
+    if (co == NULL)
+	return NULL;
     sb = malloc(sizeof(*sb));
+    if (sb == NULL) {
+	free(co);
+	return NULL;
+    }
     co->data = sb;
     co->destroyCallback = NULL;
 
