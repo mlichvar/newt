@@ -13,15 +13,25 @@ TAG = r$(subst .,-,$(VERSION))
 SONAME = @SONAME@
 SOEXT = so
 
+INSTALL_NLS = @INSTALL_NLS@
 PYTHONVERS = @PYTHONVERS@
+WHIPTAIL = @WHIPTAIL@
+ifneq ($(WHIPTAIL),)
+INSTALL_WHIPTAIL = install-whiptail
+else
+INSTALL_WHIPTAIL =
+endif
+
 WHIPTCLLIB = @WHIPTCLLIB@
 ifneq ($(WHIPTCLLIB),)
 WHIPTCLSO = $(WHIPTCLLIB).$(SOEXT)
+INSTALL_TCL = install-tcl
 else
 WHIPTCLSO =
+INSTALL_TCL =
 endif
 
-PROGS = test whiptail $(WHIPTCLSO) testgrid testtree showchars showkey
+PROGS = $(WHIPTAIL) $(WHIPTCLSO) test testgrid testtree showchars showkey
 TESTOBJS = test.o testgrid.o testtree.o showchars.o showkey.o
 NDIALOGOBJS = whiptail.o dialogboxes.o
 WHIPTCLOBJS = shared/whiptcl.o shared/dialogboxes.o
@@ -134,16 +144,12 @@ $(SHAREDDIR)/%.o : %.c
 	@mkdir -p $(SHAREDDIR)
 	$(CC) $(SHCFLAGS) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
-install: $(LIBNEWT) install-sh whiptail
-	[ -d $(instroot)/$(bindir) ] || install -m 755 -d $(instroot)/$(bindir)
+install: $(LIBNEWT) $(INSTALL_WHIPTAIL) install-sh
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	[ -d $(instroot)/$(man1dir) ] || install -m 755 -d $(instroot)/$(man1dir)
 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
-	install -m 755 whiptail $(instroot)/$(bindir)
-	install -m 644 whiptail.1 $(instroot)/$(man1dir)
-	make -C po datadir=$(instroot)/$(datadir) install
 
-install-sh: sharedlib install-tcl install-py
+install-sh: sharedlib install-py $(INSTALL_TCL)
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	[ -d $(instroot)/$(includedir) ] || install -m 755 -d $(instroot)/$(includedir)
 	[ -d $(instroot)/$(pkgconfigdir) ] || install -m 755 -d $(instroot)/$(pkgconfigdir)
@@ -153,11 +159,15 @@ install-sh: sharedlib install-tcl install-py
 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/$(LIBNEWTSONAME)
 	install -m 644 libnewt.pc $(instroot)/$(pkgconfigdir)
 
-install-tcl: $(WHIPTCLSO)
-ifneq ($(WHIPTCLSO),)
+install-whiptail: $(WHIPTAIL) $(INSTALL_NLS)
+	[ -d $(instroot)/$(bindir) ] || install -m 755 -d $(instroot)/$(bindir)
+	[ -d $(instroot)/$(man1dir) ] || install -m 755 -d $(instroot)/$(man1dir)
+	install -m 755 whiptail $(instroot)/$(bindir)
+	install -m 644 whiptail.1 $(instroot)/$(man1dir)
+
+install-tcl: $(WHIPTCLSO) $(INSTALL_NLS)
 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
 	install -m 755 $(WHIPTCLSO) $(instroot)/$(libdir)
-endif
 
 install-py: _snack.$(SOEXT)
 ifneq ($(PYTHONVERS),)
@@ -170,6 +180,9 @@ ifneq ($(PYTHONVERS),)
 		install -m 644 snack.py $(instroot)/$$PLATLIB;\
 	done
 endif
+
+install-nls:
+	make -C po datadir=$(instroot)/$(datadir) install
 
 Makefile: configure.ac
 	@echo "You need to rerun ./autogen.sh and ./configure before continuing"
@@ -194,3 +207,5 @@ archive: tag-archive create-archive
 ifeq (.depend,$(wildcard .depend))
 include .depend
 endif
+
+.PHONY: install-nls install-sh

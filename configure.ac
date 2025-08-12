@@ -56,7 +56,7 @@ if test x$ac_cv_header_slang_h = x; then
     LDFLAGS="${LDFLAGS} -L/sw/lib"
   fi
 fi
-AC_CHECK_HEADERS([popt.h libintl.h])
+AC_CHECK_HEADERS([libintl.h])
 
 AC_MSG_CHECKING([for python versions])
 AC_ARG_WITH([python], [  --without-python        do not compile python support],
@@ -137,8 +137,17 @@ if test "x$enable_nls" != "xno"; then
   ])
   if test "x$enable_nls" != "xno"; then
     AC_DEFINE([ENABLE_NLS], 1, [Define to 1 if NLS support is enabled])
+    INSTALL_NLS=install-nls
   fi
 fi
+AC_SUBST([INSTALL_NLS])
+
+AC_ARG_ENABLE([whiptail], [  --disable-whiptail      disable compilation of whiptail])
+
+if test "x$enable_whiptail" != "xno"; then
+  WHIPTAIL=whiptail
+fi
+AC_SUBST([WHIPTAIL])
 
 AC_ARG_WITH(colorsfile, [  --with-colorsfile=file  set default location of colors file])
 
@@ -148,6 +157,10 @@ if test "x$with_colorsfile" != "xno"; then
       AC_DEFINE_UNQUOTED(NEWT_COLORS_FILE, "$with_colorsfile", [Default NEWT_COLORS_FILE ])
     fi
   fi
+fi
+
+if test "x$with_tcl" != "xno" || test "x$enable_whiptail" != "xno"; then
+  AC_CHECK_HEADERS([popt.h])
 fi
 
 AC_CONFIG_FILES([Makefile libnewt.pc])
