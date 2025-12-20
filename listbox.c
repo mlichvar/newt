@@ -224,12 +224,11 @@ void newtListboxSelectItem(newtComponent co, const void * key,
 	enum newtFlagsSense sense)
 {
     struct listbox * li = co->data;
-    int i;
     struct items * item;
 
-    item = li->boxItems, i = 0;
+    item = li->boxItems;
     while (item && item->data != key)
-	item = item->next, i++;
+	item = item->next;
 
     if (!item) return;
 
