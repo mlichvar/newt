@@ -870,6 +870,7 @@ void newtFormDestroy(newtComponent co) {
     }
 
     if (form->hotKeys) free(form->hotKeys);
+    if (form->fds) free(form->fds);
 
     free(form->elements);
     free(form);
